@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import Navbar from '../../components/Navbar/Navbar';
 import PageTitle from '../../components/pagetitle/PageTitle'
 import Scrollbar from '../../components/scrollbar/scrollbar'
@@ -10,22 +10,38 @@ import crt1 from '../../images/certificates/1.jpg'
 import crt2 from '../../images/certificates/2.jpg'
 import crt3 from '../../images/certificates/3.jpg'
 import crt4 from '../../images/certificates/4.jpg'
+import { useGetUserDetailsQuery } from '../../api/accountApi';
 
 const TeamSinglePage = (props) => {
     const { slug } = useParams()
+    const {data,isLoading} = useGetUserDetailsQuery(slug);
+    const [userDetail,setUserDetail] = useState();
 
-    const TeamDetails = Team.find(item => item.slug === slug)
+    useEffect(() => {
+        if (data) {
+            setUserDetail(data.result);
+        }
+    }, [isLoading]);
+
+    if (isLoading || !userDetail) {
+        return (
+            <div>
+                ...isLoading
+            </div>
+        );
+    }
+
+
 
     const SubmitHandler = (e) => {
         e.preventDefault()
     }
 
-
-
+if (data) {
     return (
         <Fragment>
             <Navbar />
-            <PageTitle pageTitle={TeamDetails.name} pagesub={TeamDetails.title} />
+            <PageTitle pageTitle={userDetail.userName} pagesub={userDetail.userName} />
             <div className="team-pg-area section-padding">
                 <div className="container">
                     <div className="team-single-wrap">
@@ -33,14 +49,14 @@ const TeamSinglePage = (props) => {
                             <div className="row align-items-center">
                                 <div className="col-lg-5">
                                     <div className="team-info-img">
-                                        <img src={TeamDetails.tImg} alt="" />
+                                        {/* <img src={TeamDetails.tImg} alt="" /> */}
                                     </div>
                                 </div>
                                 <div className="col-lg-7">
                                     <div className="team-info-text">
                                         <h2>Esther Howard</h2>
                                         <ul>
-                                            <li>Position: <span>{TeamDetails.title}</span></li>
+                                            <li>Position: <span>{userDetail.fullName}</span></li>
                                             <li>Experience:<span>12 Years</span></li>
                                             <li>Address:<span>6391 Elgin St. Celina, Delaware 10299</span></li>
                                             <li>Phone:<span>+00 568 746 987</span></li>
@@ -207,5 +223,8 @@ const TeamSinglePage = (props) => {
             <Scrollbar />
         </Fragment>
     )
+}
+
+ 
 };
 export default TeamSinglePage;

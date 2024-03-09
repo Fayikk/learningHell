@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from 'react-router-dom'
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -70,10 +70,15 @@ const settings = {
 
 const CategorySection = (props) => {
 
-    console.log("CategorySection")
-    console.log(props.categories)
+    const [categories,setCategories] = useState([]);
+    useEffect(()=>{
+        if (props.categories) {
+            setCategories(props.categories)
+        }
+    },[props])
 
 
+        
     return (
         <section className={`wpo-courses-section section-padding ${props.cClass}`}>
             <div className="container">
@@ -98,15 +103,15 @@ const CategorySection = (props) => {
                 </div>
                 <div className="row-grid wpo-courses-wrap wpo-courses-slider owl-carousel">
                     <Slider {...settings}>
-                        {CoursesCategory.map((category, aitem) => (
-                            <div className={`grid s${category.Id}`} key={aitem}>
+                        {categories.map((category, item) => (
+                            <div className={`grid s${category.Id}`} key={item}>
                                 <div className="wpo-courses-item">
                                     <div className="wpo-courses-text">
                                         <div className="courses-icon">
                                             <i className="fi flaticon-user-experience"></i>
                                         </div>
-                                        <h2><Link onClick={ClickHandler} to={`/category-single/${category.slug}`}>{category.title}</Link></h2>
-                                        <p>{category.description}</p>
+                                        <h2><Link onClick={ClickHandler} to={`/course/${category.categoryId}`}>{category.categoryName}</Link></h2>
+                                        <p>{category.categoryDescription    }</p>
                                     </div>
                                 </div>
                             </div>
@@ -119,7 +124,9 @@ const CategorySection = (props) => {
             <div className="shape-3"><img src={cImag3} alt="" /></div>
             <div className="shape-4"><img src={cImag4} alt="" /></div>
         </section>
-    );
-}
+    );        
+    }
+
+
 
 export default CategorySection;

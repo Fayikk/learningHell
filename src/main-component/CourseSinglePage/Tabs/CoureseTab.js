@@ -1,18 +1,38 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from 'reactstrap';
 import classnames from 'classnames';
 import Overview from './Overview';
 import Curriculum from './Curriculum';
 import Instructor from './Instructor';
 import Review from './Review';
+import { useGetSectionsByCourseIdQuery } from '../../../api/courseApi';
 
 
 
-const CoureseTab = ({ EventsDetails }) => {
+const CoureseTab = ({ EventsDetails,CoursesDetails }) => {
+
+
+  const {data,isLoading} = useGetSectionsByCourseIdQuery(CoursesDetails.courseId)
+
+
+
   const [activeTab, setActiveTab] = useState('1');
+  const [sections,setSections] = useState([]);
+  const [user,setUser] = useState();
+
+  useEffect(()=>{
+    if (data) {
+     
+    setSections(data.result.sections)
+    setUser(data.result.user)
+    }
+  },[isLoading])
+
+
 
   const toggle = tab => {
     if (activeTab !== tab) setActiveTab(tab);
+
   }
 
   return (
@@ -68,14 +88,14 @@ const CoureseTab = ({ EventsDetails }) => {
           <TabPane tabId="2">
             <Row>
               <Col sm="12">
-                <Curriculum />
+                <Curriculum sections={sections}/>
               </Col>
             </Row>
           </TabPane>
           <TabPane tabId="3">
             <Row>
               <Col sm="12">
-                <Instructor />
+                <Instructor user={user} />
               </Col>
             </Row>
           </TabPane>

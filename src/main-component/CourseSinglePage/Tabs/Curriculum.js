@@ -1,12 +1,51 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import {  useThisCourseEnrolledUserMutation } from '../../../api/studentCourseApi'
+import { useSelector } from 'react-redux'
+import {toast} from "react-toastify";
+
+const Curriculum = ({sections}) => {
+
+    const [CheckHasThisCourse] = useThisCourseEnrolledUserMutation();
+    const authenticationState = useSelector((state) => state.authStore);
+    const [sectionsData,setSectionsData] = useState([]);
+    const [isEnrolledCourse,setIsEnrolledCourse] = useState(false);
+
+    useEffect(()=>{
+        if (sections.Length > 0) {
+        setSectionsData(sections)
+            
+        }
+    },[sections])
+
+    useEffect(()=>{
+            async function CheckActiveCourse(){
+
+                const model = {
+                    userId:authenticationState.nameIdentifier,
+                    courseId:sections[0].courseId
+                }
 
 
-const Curriculum = () => {
+                var response = await  CheckHasThisCourse(model)
+                 setIsEnrolledCourse(response.data)
+              }
+                CheckActiveCourse();
+                
+            
+    },[authenticationState])
 
     const ClickHandler = () => {
+        console.log("trigger click handler")
+        if (!isEnrolledCourse) {
+            toast.warning("You must have purchased the course to watch it.")
+            return;
+        }
+
         window.scrollTo(10, 0);
     }
+
+
 
     
     return (
@@ -25,10 +64,21 @@ const Curriculum = () => {
                 </div>
                 <div className="course-curriculam">
                     <ul>
-                        <li><span><i className="fi flaticon-play-button"></i>Introduction of Editing<Link onClick={ClickHandler} to="/lesson">Preview</Link></span><small>20 Minutes</small></li>
-                        <li><span><i className="fi flaticon-play-button"></i>Overview of Editing<Link onClick={ClickHandler} to="/lesson">Preview</Link></span><small>16 Minutes</small></li>
-                        <li><span><i className="fi flaticon-e-learning"></i>Basic Editing Technology</span></li>
-                        <li><span><i className="fi flaticon-knowledge"></i>Quiz</span><small>5 Questions</small></li>
+                        {
+                            isEnrolledCourse ? (
+                                sections.map((section,key) => (
+                                    <li key={key} ><span><i className="fi flaticon-play-button"></i> {section.sectionName} <Link onClick={()=>ClickHandler(section.sectionId)} to={`/lessons/${section.sectionId}`}>Preview</Link></span><small>20 Minutes</small></li>
+    
+                                ))
+                            ) : (
+                                sections.map((section,key) => (
+                                    <li key={key} ><span><i className="fi flaticon-play-button"></i> {section.sectionName} <a onClick={()=>ClickHandler(section.sectionId)} >Locked</a></span><small>20 Minutes</small></li>
+    
+                                ))
+                            )
+                           
+                        }
+                        
                     </ul>
                 </div>
             </div>

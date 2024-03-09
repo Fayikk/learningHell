@@ -22,9 +22,11 @@ export default function Navbar(props) {
         setToken(token)
 
         Dispatch(setLoggedInUser({
+          nameIdentifier:decode_Token.nameid,
             email:decode_Token.email,
             role:decode_Token.role,
-            userName:decode_Token.unique_name
+            userName:decode_Token.unique_name,
+            name:decode_Token.givenName
         }))
     }
   })

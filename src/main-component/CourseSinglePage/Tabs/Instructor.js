@@ -1,11 +1,31 @@
-import React from 'react'
+import React, { useEffect,useState } from 'react'
 import tsImg from '../../../images/at-single.jpg'
 import cImg1 from '../../../images/certificates/1.jpg'
 import cImg2 from '../../../images/certificates/2.jpg'
 import cImg3 from '../../../images/certificates/3.jpg'
 import cImg4 from '../../../images/certificates/4.jpg'
 
-const Instructor = () => {
+const Instructor = ({user}) => {
+        console.log("slide effect user")
+        console.log(user)
+        const [userData,setUserData] = useState();
+
+        useEffect(()=>{
+            if (user) {
+                setUserData(user)
+                
+            }
+        },[user])
+
+        if (!userData) {
+            return (
+                <div>
+                    <h1><span>...isLoading</span></h1>
+                </div>
+            )
+        }
+    
+    
     return (
         <div className="team-info-wrap">
             <div className="row align-items-center">
@@ -16,13 +36,13 @@ const Instructor = () => {
                 </div>
                 <div className="col-lg-7">
                     <div className="team-info-text">
-                        <h2>Courtney Henry</h2>
+                        <h2> {userData.userName} </h2>
                         <ul>
                             <li>Position: <span>Web Developer</span></li>
                             <li>Experience:<span>12 Years</span></li>
                             <li>Address:<span>6391 Elgin St. Celina, Delaware 10299</span></li>
                             <li>Phone:<span>+00 568 746 987</span></li>
-                            <li>Email:<span>youremail@gmail.com</span></li>
+                            <li>Email:<span> {userData.email} </span></li>
                         </ul>
 
                         <div className="certificates-wrap">

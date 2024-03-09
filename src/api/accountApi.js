@@ -27,9 +27,15 @@ export const accountApi = createApi({
                 },
                 body:loginModel
             })
+        }),
+        getUserDetails:builder.query({
+            query:(userId) => ({
+                
+                url:`GetUserDetail?userId=${userId}`
+            })
         })
     })
 })
 
 
-export const {useSignInMutation,useSignUpMutation} = accountApi
+export const {useSignInMutation,useSignUpMutation,useGetUserDetailsQuery} = accountApi

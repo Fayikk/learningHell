@@ -1,19 +1,42 @@
-import React, { Fragment } from "react";
+import React, { Fragment,useEffect,useState } from "react";
 import Navbar from '../../components/Navbar/Navbar';
 import PageTitle from "../../components/pagetitle/PageTitle";
 import Scrollbar from "../../components/scrollbar/scrollbar";
 import { Button, Grid } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { connect } from "react-redux";
 import { totalPrice } from "../../utils";
-import {
-  removeFromCart,
-  incrementQuantity,
-  decrementQuantity,
-} from "../../store/actions/action";
 import Footer from "../../components/footer/Footer";
+import { useGetShoppingCartQuery, useRemoveShoppingCartItemMutation } from "../../api/shoppingCartApi";
+import { useSelector } from "react-redux";
 
 const CartPage = (props) => {
+
+  const authenticationState = useSelector((state) => state.authStore);
+  const {data,isLoading} = useGetShoppingCartQuery(authenticationState.nameIdentifier);
+  const [removeCartItem] = useRemoveShoppingCartItemMutation();
+  const [courses,setCourses] = useState();
+
+  useEffect(()=>{
+    if (data) {
+        setCourses(data.result.courses)
+    }
+  },[data])
+
+
+  if (isLoading || !courses) {
+    
+  }
+
+  const removeFromCart = async (courseId) => {
+    console.log("trigger remove from cart")
+    console.log(courseId)
+    var response = await removeCartItem(courseId);
+    console.log("response")
+    console.log(response);
+  }
+
+
   const ClickHandler = () => {
     window.scrollTo(10, 0);
   };
@@ -36,30 +59,29 @@ const CartPage = (props) => {
                         <tr>
                           <th className="images images-b">Image</th>
                           <th className="product-2">Product Name</th>
-                          <th className="pr">Quantity</th>
                           <th className="ptice">Price</th>
                           <th className="stock">Total Price</th>
                           <th className="remove remove-b">Action</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {carts &&
-                          carts.length > 0 &&
-                          carts.map((catItem, crt) => (
+                        {courses &&
+                          courses.length > 0 &&
+                          courses.map((courseItem, crt) => (
                             <tr key={crt}>
                               <td className="images">
-                                <img src={catItem.proImg} alt="" />
+                                <img src={courseItem.courseImage} alt="" />
                               </td>
                               <td className="product">
                                 <ul>
                                   <li className="first-cart">
-                                    {catItem.title}
+                                    {courseItem.courseName}
                                   </li>
-                                  <li>Brand : {catItem.brand}</li>
-                                  <li>Size : {catItem.size}</li>
+                                  <li>Brand : {courseItem.courseName}</li>
+                                  <li>Size : {courseItem.courseName}</li>
                                 </ul>
                               </td>
-                              <td className="stock">
+                              {/* <td className="stock">
                                 <div className="pro-single-btn">
                                   <Grid className="quantity cart-plus-minus">
                                     <Button
@@ -81,15 +103,16 @@ const CartPage = (props) => {
                                     </Button>
                                   </Grid>
                                 </div>
-                              </td>
-                              <td className="ptice">${catItem.qty * catItem.price}</td>
-                              <td className="stock">${catItem.qty * catItem.price}</td>
+                              </td> */}
+                              <td className="ptice">${courseItem.coursePrice}</td>
+                              <td></td>
+                              {/* <td className="stock">${catItem.qty * catItem.price}</td> */}
                               <td className="action">
                                 <ul>
                                   <li
                                     className="w-btn"
                                     onClick={() =>
-                                      props.removeFromCart(catItem.id)
+                                      removeFromCart(courseItem.courseId)
                                     }
                                   >
                                     <i className="fi ti-trash"></i>
@@ -101,7 +124,7 @@ const CartPage = (props) => {
                       </tbody>
                     </table>
                   </form>
-                  <div className="submit-btn-area">
+                  {/* <div className="submit-btn-area">
                     <ul>
                       <li>
                         <Link
@@ -151,7 +174,7 @@ const CartPage = (props) => {
                         </Link>
                       </li>
                     </ul>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -164,13 +187,5 @@ const CartPage = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    carts: state.cartList.cart,
-  };
-};
-export default connect(mapStateToProps, {
-  removeFromCart,
-  incrementQuantity,
-  decrementQuantity,
-})(CartPage);
+
+export default CartPage

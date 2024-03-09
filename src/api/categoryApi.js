@@ -14,8 +14,14 @@ export const categoryApi = createApi({
 
             })
         }),
+        getCoursesByCategoryId:builder.query({
+            query:(categoryId)=>({
+                url:`GetCategoryById/${categoryId}`,
+                method:"GET" 
+            })
+        })
     })
 })
 
 
-export const {useGetAllCategoriesQuery} = categoryApi
+export const {useGetAllCategoriesQuery,useGetCoursesByCategoryIdQuery} = categoryApi

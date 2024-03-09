@@ -18,8 +18,6 @@ const CoursePageS2 = () => {
         )
     }
 
-    console.log(data)
-
     return (
         <Fragment>
             <Navbar />

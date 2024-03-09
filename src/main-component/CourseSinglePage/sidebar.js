@@ -1,12 +1,44 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import blogs from '../../api/blogs'
+import { Button } from 'reactstrap'
+import { useAddShoppingCartItemMutation } from '../../api/shoppingCartApi'
+import {toast} from 'react-toastify'
 
 const Sidebar = (props) => {
 
+// courseId,
+// courseName,
+// coursePrice
+    const [addBasketItem] = useAddShoppingCartItemMutation();
+
+
+
+    const addBasket = async () => {
+        console.log("trigger add basket item")
+        const shoppingCartModel = {
+            courseId:props.CourseDetail.courseId
+        }
+
+       var response = await addBasketItem(shoppingCartModel)
+        if (response.data.isSuccess) {
+                toast.success(response.data.messages[0])
+        }
+        else {
+               toast.error(response.data.errorMessages[0])
+
+        }
+    }
+
+
+
     const ClickHandler = () => {
+        console.log("trigger cart item")
         window.scrollTo(10, 0);
     }
+
+    console.log("trigger course detail")
+    console.log(props.CourseDetail)
 
     return (
         <div className="col col-lg-4 col-12 course-sitebar">
@@ -17,7 +49,7 @@ const Sidebar = (props) => {
                         <span> 5 days left!</span>
                     </div>
                     <div className="cart-btn">
-                        <Link onClick={ClickHandler} to="/cart" className="theme-btn-s3">Add to Cart</Link>
+                        <Button onClick={()=>addBasket()}  className="theme-btn-s3">Add to Cart</Button>
                     </div>
                     <ul>
                         <li>Duration: <span>20 Hours</span></li>

@@ -12,7 +12,6 @@ const ClickHandler = () => {
 }
 
 const CategorySection2 = (props) => {
-    console.log("trigger section22")
     return (
         <section className={`wpo-courses-section-s2 section-padding ${props.cClass}`}>
             <div className="container">
