@@ -25,7 +25,9 @@ const CartPage = (props) => {
 
 
   if (isLoading || !courses) {
-    
+    return (
+      <div><h1><span>...isLoading</span></h1></div>
+    )
   }
 
   const removeFromCart = async (courseId) => {
@@ -47,7 +49,9 @@ const CartPage = (props) => {
     <Fragment>
       <Navbar />
       <PageTitle pageTitle={"Cart"} pagesub={"Cart"} />
-      <div className="cart-area section-padding">
+    {
+      courses!=undefined ? (
+        <div className="cart-area section-padding">
         <div className="container">
           <div className="form">
             <div className="cart-wrapper">
@@ -139,16 +143,16 @@ const CartPage = (props) => {
                         <button type="submit">Update Cart</button>
                       </li>
                     </ul>
-                  </div>
+                  </div> */}
                   <div className="cart-product-list">
                     <ul>
                       <li>
-                        Total product<span>( {carts.length} )</span>
+                        Total product<span>( {courses.length} )</span>
                       </li>
                       <li>
-                        Sub Price<span>${totalPrice(carts)}</span>
+                        Total Price<span>${totalPrice(courses)}</span>
                       </li>
-                      <li>
+                      {/* <li>
                         Vat<span>$0</span>
                       </li>
                       <li>
@@ -156,10 +160,10 @@ const CartPage = (props) => {
                       </li>
                       <li>
                         Delivery Charge<span>$0</span>
-                      </li>
-                      <li className="cart-b">
+                      </li> */}
+                      {/* <li className="cart-b">
                         Total Price<span>${totalPrice(carts)}</span>
-                      </li>
+                      </li> */}
                     </ul>
                   </div>
                   <div className="submit-btn-area">
@@ -174,13 +178,22 @@ const CartPage = (props) => {
                         </Link>
                       </li>
                     </ul>
-                  </div> */}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+      ) : (
+        <div><h1><span>
+            You dont have any founds element
+          </span></h1></div>
+      )
+    }
+
+
+  
       <Footer />
       <Scrollbar />
     </Fragment>

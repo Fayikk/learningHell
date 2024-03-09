@@ -7,9 +7,15 @@ function getFeaturedProducts(products) {
 }
 
 function totalPrice(items) {
-    return items.reduce((itemAcc, item) => {
-        return itemAcc += (item.price * item.qty);
+    console.log("trigger total price")
+    console.log(items)
+    var response = items.reduce((itemAcc, item) => {
+        return itemAcc += (item.coursePrice);
     }, 0);
+
+    console.log("result response")
+    console.log(response)
+    return response
 }
 
 function isWishListed(productId, wishList) {
