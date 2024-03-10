@@ -20,7 +20,6 @@ const CoursePage = () => {
             setCourses(data.result.courses)
         }
 
-        console.log(data)
 
     },[isLoading])
 

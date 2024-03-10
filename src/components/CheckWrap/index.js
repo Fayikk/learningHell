@@ -5,11 +5,18 @@ import {toast} from "react-toastify";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import {useNavigate} from "react-router-dom";
+import { usePaymentCheckoutMutation } from '../../api/paymentApi';
 
 import './style.scss';
+import { useSelector } from 'react-redux';
 
 const CheckWrap = (props) => {
-
+    console.log("check wrap")
+    console.log(props)
+    const [CreatePayment] = usePaymentCheckoutMutation();
+    const authenticationState = useSelector((state) => state.authStore)
+    console.log("userId")
+    console.log(authenticationState)
     const push = useNavigate()
 
     const [value, setValue] = useState({
@@ -22,39 +29,93 @@ const CheckWrap = (props) => {
         remember: false,
     });
 
+
+
+    // {
+    //     "cardHolderName": "string",
+    //     "cardNumber": "string",
+    //     "expireMonth": "string",
+    //     "expireYear": "string",
+    //     "cvc": "string",
+    //     "identityNumber": "string",
+    //     "registrationAddress": "string",
+    //     "city": "string",
+    //     "country": "string",
+    //     "zipCode": "string",
+    //     "userId": "string"
+    //   }
+
+
+
     const changeHandler = (e) => {
         setValue({...value, [e.target.name]: e.target.value});
         validator.showMessages();
     };
 
 
+
     const [validator] = React.useState(new SimpleReactValidator({
         className: 'errorMessage'
     }));
 
-    const submitForm = (e) => {
+    const submitForm = async (e) => {
+        var formData = new FormData();
+
         e.preventDefault();
         if (validator.allValid()) {
-            setValue({
-                email: '',
-                password: '',
-                card_holder: '',
-                card_number: '',
-                cvv: '',
-                expire_date: '',
-                remember: false
-            });
+            // setValue({
+            //     email: '',
+            //     password: '',
+            //     card_holder: '',
+            //     card_number: '',
+            //     cvv: '',
+            //     expire_date: '',
+            //     remember: false
+            // });
+
+            // public string CardHolderName { get; set; }
+            // public string CardNumber { get; set; }
+            // public string ExpireMonth { get; set; }
+            // public string ExpireYear { get; set; }
+            // public string cvc { get; set; }
+            // public string IdentityNumber { get; set; }
+            // public string RegistrationAddress { get; set; }
+            // public string City { get; set; }
+            // public string Country { get; set; }
+            // public string ZipCode { get; set; }
+            // public string UserId { get; set; }
+
+       
+
+            formData.append("CardHolderName",value.card_holder);
+            formData.append("CardNumber",value.card_number);
+            formData.append("ExpireMonth",value.expire_date);
+            formData.append("ExpireYear",value.expire_date);
+            formData.append("CardHolderName",value.card_holder);
+            formData.append("cvc",value.cvv);
+            formData.append("IdentityNumber",props.values.fname);
+            formData.append("RegistrationAddress",props.values.address);
+            formData.append("City",props.values.dristrict);
+            formData.append("Country",props.values.country);
+            formData.append("ZipCode",props.values.post_code);
+            formData.append("UserId",authenticationState.nameIdentifier);
+
+
+     var response = await CreatePayment(formData)
+            console.log("response trigger")
+            console.log(response)
             validator.hideMessages();
 
             const userRegex = /^user+.*/gm;
             const email = value.email;
 
-            if (email.match(userRegex)) {
-                toast.success('Order Recived sucessfully!');
+            if (email.match(userRegex) && response.isSuccess ) {
+                toast.success(response.data.messages[0]);
                 push('/order_received');
-            }  else {
-                toast.info('user not existed!');
-                alert('user not existed! credential is : user@*****.com | vendor@*****.com | admin@*****.com');
+            }  else if(!response.isSuccess) {
+                console.log("trigger inner else if")
+                toast.info(response.data.messages[0] + ".Please check your information again");
+                // alert('user not existed! credential is : user@*****.com | vendor@*****.com | admin@*****.com');
             }
         } else {
             validator.showMessages();

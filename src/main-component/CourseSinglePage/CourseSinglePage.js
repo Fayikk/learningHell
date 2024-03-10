@@ -14,8 +14,6 @@ const CourseSinglePage = (props) => {
     const { slug } = useParams()
     const {data,isLoading} = useGetCourseDetailByIdQuery(slug);
     const [course,setCourse] = useState()
-    console.log("course single page")
-    console.log(data)
     useEffect(()=>{
         if (data) {
             setCourse(data.result)

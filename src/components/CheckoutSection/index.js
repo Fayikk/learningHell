@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react';
+import React, {Fragment, useEffect, useState} from 'react';
 import Grid from "@mui/material/Grid";
 import Collapse from "@mui/material/Collapse";
 import FontAwesome from "../../components/UiStyle/FontAwesome";
@@ -28,6 +28,8 @@ import paypal from '../../images/icon/paypal.png';
 import CheckWrap from '../CheckWrap'
 
 import './style.scss';
+import { useSelector } from 'react-redux';
+import { usePaymentCheckoutMutation } from '../../api/paymentApi';
 
 const cardType = [
     {
@@ -51,6 +53,29 @@ const cardType = [
 
 const CheckoutSection = ({cartList}) => {
     // states
+
+
+    const cartState = useSelector((state) => state.cartStore)
+    const [cartLists,setCartLists] =useState([]);
+    const basketItems = localStorage.getItem("basketItems")
+
+    let cartItems = JSON.parse(basketItems)
+
+    useEffect(()=>{
+            if (cartState.length > 0) {
+                setCartLists(cartState)
+            }
+
+            
+        
+    },[cartState])
+
+
+    
+
+
+
+
     const [tabs, setExpanded] = React.useState({
         cupon: false,
         billing_adress: false,
@@ -99,9 +124,10 @@ const CheckoutSection = ({cartList}) => {
 
     // forms handler
     const changeHandler = e => {
+        console.log("trigger change handler")
         setForms({...forms, [e.target.name]: e.target.value})
     };
-
+    console.log(forms)
 
     return (
         <Fragment>
@@ -435,8 +461,8 @@ const CheckoutSection = ({cartList}) => {
                                                     onChange={(e) => changeHandler(e)}>
                                             <FormControlLabel value="cash" control={<Radio color="primary"/>}
                                                     label="Payment By Card "/>
-                                            <FormControlLabel value="card" control={<Radio color="primary"/>}
-                                                            label="Cash On delivery"/>
+                                            {/* <FormControlLabel value="card" control={<Radio color="primary"/>}
+                                                            label="Cash On delivery"/> */}
                                             
                                         </RadioGroup>
                                         <Collapse in={forms.payment_method === 'cash'} timeout="auto">
@@ -451,7 +477,7 @@ const CheckoutSection = ({cartList}) => {
                                                 ))}
                                             </Grid>
                                             <Grid>
-                                                <CheckWrap/>
+                                                <CheckWrap values={forms} />
                                             </Grid>
                                         </Collapse>
                                         <Collapse in={forms.payment_method === 'card'} timeout="auto">
@@ -472,25 +498,25 @@ const CheckoutSection = ({cartList}) => {
                                         <h4>Cart Total</h4>
                                         <Table>
                                             <TableBody>
-                                                {cartList.map(item => (
-                                                    <TableRow key={item.id}>
-                                                        <TableCell>{item.title} ${item.price} x {item.qty}</TableCell>
+                                                {cartItems.map(item => (
+                                                    <TableRow key={item.courseId}>
+                                                        <TableCell>{item.courseName} ${item.coursePrice} </TableCell>
                                                         <TableCell
-                                                            align="right">${item.qty * item.price}</TableCell>
+                                                            align="right">${item.coursePrice}</TableCell>
                                                     </TableRow>
                                                 ))}
                                                 <TableRow className="totalProduct">
                                                     <TableCell>Total product</TableCell>
-                                                    <TableCell align="right">{cartList.length}</TableCell>
+                                                    <TableCell align="right">{cartItems.length}</TableCell>
                                                 </TableRow>
                                                 <TableRow>
                                                     <TableCell>Sub Price</TableCell>
-                                                    <TableCell align="right">${totalPrice(cartList)}</TableCell>
+                                                    <TableCell align="right">${totalPrice(cartItems)}</TableCell>
                                                 </TableRow>
                                                 <TableRow>
                                                     <TableCell>Total Price</TableCell>
-                                                    <TableCell
-                                                        align="right">${totalPrice(cartList)}</TableCell>
+                                                     <TableCell 
+                                                        align="right">${totalPrice(cartItems)}</TableCell> 
                                                 </TableRow>
                                             </TableBody>
                                         </Table>

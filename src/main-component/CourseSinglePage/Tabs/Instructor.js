@@ -6,8 +6,6 @@ import cImg3 from '../../../images/certificates/3.jpg'
 import cImg4 from '../../../images/certificates/4.jpg'
 
 const Instructor = ({user}) => {
-        console.log("slide effect user")
-        console.log(user)
         const [userData,setUserData] = useState();
 
         useEffect(()=>{

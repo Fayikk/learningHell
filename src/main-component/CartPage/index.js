@@ -2,26 +2,36 @@ import React, { Fragment,useEffect,useState } from "react";
 import Navbar from '../../components/Navbar/Navbar';
 import PageTitle from "../../components/pagetitle/PageTitle";
 import Scrollbar from "../../components/scrollbar/scrollbar";
-import { Button, Grid } from "@mui/material";
-import { Link, useParams } from "react-router-dom";
-import { connect } from "react-redux";
+import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { totalPrice } from "../../utils";
 import Footer from "../../components/footer/Footer";
 import { useGetShoppingCartQuery, useRemoveShoppingCartItemMutation } from "../../api/shoppingCartApi";
 import { useSelector } from "react-redux";
+import {toast} from 'react-toastify'
 
 const CartPage = (props) => {
 
   const authenticationState = useSelector((state) => state.authStore);
   const {data,isLoading} = useGetShoppingCartQuery(authenticationState.nameIdentifier);
   const [removeCartItem] = useRemoveShoppingCartItemMutation();
-  const [courses,setCourses] = useState();
+  const [courses,setCourses] = useState([]);
+  const Dispatch = useDispatch();
+
 
   useEffect(()=>{
+
     if (data) {
-        setCourses(data.result.courses)
+        setCourses(data.result?.courses || [])
+
+  let jsonSerializer = JSON.stringify(data.result?.courses)
+  localStorage.setItem("basketItems",jsonSerializer)
+
+
     }
+  
   },[data])
+
 
 
   if (isLoading || !courses) {
@@ -31,26 +41,26 @@ const CartPage = (props) => {
   }
 
   const removeFromCart = async (courseId) => {
-    console.log("trigger remove from cart")
-    console.log(courseId)
     var response = await removeCartItem(courseId);
-    console.log("response")
-    console.log(response);
+    if (response) {
+      toast.success(response.data.messages[0])
+    }
   }
 
 
   const ClickHandler = () => {
-    window.scrollTo(10, 0);
+   window.scrollTo(10, 0);
   };
 
   const { carts } = props;
 
+if (courses.length > 0) {
+ 
   return (
     <Fragment>
       <Navbar />
       <PageTitle pageTitle={"Cart"} pagesub={"Cart"} />
-    {
-      courses!=undefined ? (
+    
         <div className="cart-area section-padding">
         <div className="container">
           <div className="form">
@@ -85,32 +95,8 @@ const CartPage = (props) => {
                                   <li>Size : {courseItem.courseName}</li>
                                 </ul>
                               </td>
-                              {/* <td className="stock">
-                                <div className="pro-single-btn">
-                                  <Grid className="quantity cart-plus-minus">
-                                    <Button
-                                      className="dec qtybutton"
-                                      onClick={() =>
-                                        props.decrementQuantity(catItem.id)
-                                      }
-                                    >
-                                      -
-                                    </Button>
-                                    <input value={catItem.qty} type="text" />
-                                    <Button
-                                      className="inc qtybutton"
-                                      onClick={() =>
-                                        props.incrementQuantity(catItem.id)
-                                      }
-                                    >
-                                      +
-                                    </Button>
-                                  </Grid>
-                                </div>
-                              </td> */}
                               <td className="ptice">${courseItem.coursePrice}</td>
                               <td></td>
-                              {/* <td className="stock">${catItem.qty * catItem.price}</td> */}
                               <td className="action">
                                 <ul>
                                   <li
@@ -124,26 +110,14 @@ const CartPage = (props) => {
                                 </ul>
                               </td>
                             </tr>
-                          ))}
+                          ))
+                          
+                          
+                          
+                          }
                       </tbody>
                     </table>
                   </form>
-                  {/* <div className="submit-btn-area">
-                    <ul>
-                      <li>
-                        <Link
-                          onClick={ClickHandler}
-                          className="theme-btn"
-                          to="/shop"
-                        >
-                          Continue Shopping{" "}
-                        </Link>
-                      </li>
-                      <li>
-                        <button type="submit">Update Cart</button>
-                      </li>
-                    </ul>
-                  </div> */}
                   <div className="cart-product-list">
                     <ul>
                       <li>
@@ -152,18 +126,6 @@ const CartPage = (props) => {
                       <li>
                         Total Price<span>${totalPrice(courses)}</span>
                       </li>
-                      {/* <li>
-                        Vat<span>$0</span>
-                      </li>
-                      <li>
-                        Eco Tax<span>$0</span>
-                      </li>
-                      <li>
-                        Delivery Charge<span>$0</span>
-                      </li> */}
-                      {/* <li className="cart-b">
-                        Total Price<span>${totalPrice(carts)}</span>
-                      </li> */}
                     </ul>
                   </div>
                   <div className="submit-btn-area">
@@ -185,19 +147,57 @@ const CartPage = (props) => {
           </div>
         </div>
       </div>
-      ) : (
-        <div><h1><span>
-            You dont have any founds element
-          </span></h1></div>
-      )
-    }
 
 
   
       <Footer />
       <Scrollbar />
     </Fragment>
-  );
+  ); 
+}
+else{
+  return (
+    <Fragment>
+    <Navbar />
+    <PageTitle pageTitle={"Cart"} pagesub={"Cart"} />
+  
+      <div className="cart-area section-padding">
+      <div className="container">
+        <div className="form">
+          <div className="cart-wrapper">
+            <div className="row">
+              <div className="col-12">
+                <form action="cart">
+                <h1 style={{textAlign:"center"}} ><span  > You Dont Have Any Item </span></h1>
+                  <table className="table-responsive cart-wrap">
+                    <thead>
+                      <tr>
+                        <th className="images images-b">Image</th>
+                        <th className="product-2">Product Name</th>
+                        <th className="ptice">Price</th>
+                        <th className="stock">Total Price</th>
+                        <th className="remove remove-b">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                     
+                    </tbody>
+                  </table>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <Footer />
+    <Scrollbar />
+  </Fragment>
+  )
+}
 };
 
 

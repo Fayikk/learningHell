@@ -7,15 +7,12 @@ import {toast} from 'react-toastify'
 
 const Sidebar = (props) => {
 
-// courseId,
-// courseName,
-// coursePrice
     const [addBasketItem] = useAddShoppingCartItemMutation();
 
-
+    console.log("trigger sidebar props")
+    console.log(props)
 
     const addBasket = async () => {
-        console.log("trigger add basket item")
         const shoppingCartModel = {
             courseId:props.CourseDetail.courseId
         }
@@ -33,20 +30,18 @@ const Sidebar = (props) => {
 
 
     const ClickHandler = () => {
-        console.log("trigger cart item")
         window.scrollTo(10, 0);
     }
 
-    console.log("trigger course detail")
-    console.log(props.CourseDetail)
 
     return (
         <div className="col col-lg-4 col-12 course-sitebar">
             <div className="blog-sidebar">
                 <div className="widget features-widget">
                     <div className="features-top">
-                        <h4>$80.20 <del>$94.99</del></h4>
-                        <span> 5 days left!</span>
+                        {/* <h4>$80.20 <del>$94.99</del></h4> */}
+                        <h4>$ {props.CourseDetail.coursePrice} </h4>
+                        {/* <span> 5 days left!</span> */}
                     </div>
                     <div className="cart-btn">
                         <Button onClick={()=>addBasket()}  className="theme-btn-s3">Add to Cart</Button>
@@ -56,7 +51,7 @@ const Sidebar = (props) => {
                         <li>Lessons: <span>24</span></li>
                         <li>Videos <span>10 Hours</span></li>
                         <li>Students: <span>Max 100</span></li>
-                        <li>Language: <span>English</span></li>
+                        <li>Language: <span> {props.CourseDetail.courseLanguage} </span></li>
                         <li>Skill Level <span>Advanced</span></li>
                     </ul>
                 </div>

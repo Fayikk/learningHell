@@ -36,7 +36,6 @@ const Curriculum = ({sections}) => {
     },[authenticationState])
 
     const ClickHandler = () => {
-        console.log("trigger click handler")
         if (!isEnrolledCourse) {
             toast.warning("You must have purchased the course to watch it.")
             return;

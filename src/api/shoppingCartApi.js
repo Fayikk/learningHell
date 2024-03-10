@@ -11,8 +11,6 @@ export const shoppingCartApi = createApi({
         prepareHeaders:(headers,api) => {
             const token = localStorage.getItem("token");
             token && headers.append("Authorization","Bearer "+token);
-            console.log(token)
-            console.log("prepare headers")
         }
     }),
     tagTypes:["shoppingCart"],
@@ -33,7 +31,6 @@ export const shoppingCartApi = createApi({
         }),
         removeShoppingCartItem:builder.mutation({
             query:(shoppingCartId) => {
-                console.log(shoppingCartId)
                 return {
                     method:"POST",
                     url:`RemoveCartItem/${shoppingCartId}`

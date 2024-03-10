@@ -13,8 +13,6 @@ function totalPrice(items) {
         return itemAcc += (item.coursePrice);
     }, 0);
 
-    console.log("result response")
-    console.log(response)
     return response
 }
 

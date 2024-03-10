@@ -7,6 +7,7 @@ import { sectionApi } from "../api/sectionApi";
 import { studentCourseApi } from "../api/studentCourseApi";
 import { cartReducer } from "./reducers/cartSlice";
 import { shoppingCartApi } from "../api/shoppingCartApi";
+import { paymentApi } from "../api/paymentApi";
 
 const store = configureStore({
     reducer:{
@@ -20,6 +21,7 @@ const store = configureStore({
         [sectionApi.reducerPath]:sectionApi.reducer,
         [studentCourseApi.reducerPath]:studentCourseApi.reducer,
         [shoppingCartApi.reducerPath]:shoppingCartApi.reducer,
+        [paymentApi.reducerPath]:paymentApi.reducer,
 
     },middleware:(getDefaultMiddleware) => getDefaultMiddleware()
         .concat(
@@ -29,6 +31,7 @@ const store = configureStore({
             ,sectionApi.middleware
             ,studentCourseApi.middleware
             ,shoppingCartApi.middleware
+            ,paymentApi.middleware
             )
 })
 

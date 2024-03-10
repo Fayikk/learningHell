@@ -20,4 +20,6 @@ const mapStateToProps = state => {
     }
 };
 
-export default connect(mapStateToProps)(OrderRecived);
+// export default connect(mapStateToProps)(OrderRecived);
+
+export default OrderRecived

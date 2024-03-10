@@ -4,12 +4,16 @@ import { jwtDecode } from "jwt-decode";
 import { useDispatch } from 'react-redux'
 import { useScrollTrigger } from "@mui/material";
 import { setLoggedInUser } from "../../store/reducers/authSlice";
+import { useSelector } from "react-redux/es/hooks/useSelector";
 
 
 export default function Navbar(props) {
   const [scroll, setScroll] = React.useState(0);
   const [token,setToken] = React.useState('')
   const Dispatch = useDispatch();
+  const cartState = useSelector((state) => state.cartStore);
+
+
 
   const handleScroll = () => setScroll(document.documentElement.scrollTop);
 
