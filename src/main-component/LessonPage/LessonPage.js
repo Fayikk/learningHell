@@ -7,20 +7,25 @@ import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom'
 import { useParams } from 'react-router-dom';
 import { useGetSectionSubDetailsQuery } from '../../api/sectionApi';
+import { useGetWatchVideoUrlMutation } from '../../api/videoApi';
+import VideoPage from './VideoPage';
 
 const LessonPage = () => {
 
     const {sectionId} = useParams();
+    console.log(sectionId)
     const [expanded, setExpanded] = React.useState(false);
     const {data,isLoading} = useGetSectionSubDetailsQuery(sectionId);
     const [videos,setVideos] = useState([]);
     const [selectedVideo,setSelectedVideo] = useState();
+    var willSelectedVideo = "";
 
-
+    const [decryptVideoUrl] = useGetWatchVideoUrlMutation()
     useEffect(() => {
         if (data) {
+            console.log(data)
             setVideos(data.result.videos || []); 
-        }
+        } 
     }, [data]);
 
     if (isLoading) {
@@ -33,10 +38,18 @@ const LessonPage = () => {
         setExpanded(isExpanded ? panel : false);
     };
 
-    const changeVideo = (videoId) => {
-        const videoUrl =  videos.find(video => video.videoId === videoId);
-        setSelectedVideo(videoUrl.publicVideoId)
+    const changeVideo = async (videoId) => {
+        const videoUrl = videos.find(video => video.videoId === videoId);
+        console.log(videoUrl)
+        if (videoUrl) {
+            const response = await decryptVideoUrl(videoUrl.publicVideoId);
+            
+            localStorage.setItem('willSelectedVideo', JSON.stringify(response.data.result));
+        } else {
+            console.error("Video not found!");
+        }
     }
+    
 
     const ClickHandler = () => {
         window.scrollTo(10, 0);
@@ -69,7 +82,7 @@ const LessonPage = () => {
                                                                videos.map((video,key) => (
 
                                                                     <li key={key} ><Link onClick={()=>changeVideo(video.videoId)} to={''} ><span>1.1<i
-                                                                    className="fi flaticon-play-button"></i> {video.title} </span> <span> {video.duration} min<i className="fa fa-check-circle"
+                                                                    className="fi flaticon-play-button"></i> {video.title} </span> <span> {video.duration.toString(2)} min<i className="fa fa-check-circle"
                                                                         aria-hidden="true"></i></span></Link></li>
                                                                         ))
                                                                     }
@@ -109,21 +122,16 @@ const LessonPage = () => {
                                 <div className="video-heading">
                                     <h2>1.1 Introduction of Language</h2>
                                     <Link onClick={ClickHandler} className="theme-btn" to="/">Back To Home</Link>
-                                </div>
-                                <video autoPlay muted poster={video} loop>
-                                    <source
-                                        src="http://res.cloudinary.com/deae8kgzs/video/upload/v1/learningHell/xkjn0cbcfdbv5ilnmfuw"
-                                        type="video/mp4"
-                                    />
-                                </video>
+                                </div>                            
+                              <VideoPage></VideoPage>
                                 <div className="video-details">
                                     <h2>About Lesson</h2>
-                                    <p>On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire</p>
+                                     <p>On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire</p>
                                 </div>
                                 <div className="video-details-pagination">
                                     <ul>
                                         <li><Link onClick={ClickHandler} to="/lesson">Previews</Link></li>
-                                        <li><Link onClick={ClickHandler} to="/lesson">Next</Link></li>
+                                         <li><Link onClick={ClickHandler} to="/lesson">Next</Link></li>
                                     </ul>
                                 </div>
                             </div>

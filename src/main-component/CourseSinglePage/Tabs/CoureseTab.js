@@ -11,7 +11,6 @@ import { useGetSectionsByCourseIdQuery } from '../../../api/courseApi';
 
 const CoureseTab = ({ EventsDetails,CoursesDetails }) => {
 
-
   const {data,isLoading} = useGetSectionsByCourseIdQuery(CoursesDetails.courseId)
 
 

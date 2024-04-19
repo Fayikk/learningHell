@@ -70,7 +70,7 @@ const Review = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> 
 
             <div className="col col-lg-12 col-12 review-form-wrapper">
                 <div className="review-form">

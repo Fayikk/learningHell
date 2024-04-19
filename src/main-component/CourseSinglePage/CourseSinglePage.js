@@ -3,19 +3,19 @@ import Navbar from '../../components/Navbar/Navbar'
 import PageTitle from '../../components/pagetitle/PageTitle'
 import Scrollbar from '../../components/scrollbar/scrollbar'
 import { useParams } from 'react-router-dom'
-import Courses from "../../api/Courses";
 import Footer from '../../components/footer/Footer';
 import CoureseTab from './Tabs/CoureseTab';
 import Sidebar from './sidebar';
-import { useGetCoursesByCategoryIdQuery } from '../../api/categoryApi';
 import { useGetCourseDetailByIdQuery } from '../../api/courseApi';
 
 const CourseSinglePage = (props) => {
     const { slug } = useParams()
     const {data,isLoading} = useGetCourseDetailByIdQuery(slug);
+    console.log("CourseSinglePage")
     const [course,setCourse] = useState()
     useEffect(()=>{
         if (data) {
+            
             setCourse(data.result)
         }
     },[isLoading])
@@ -37,7 +37,7 @@ const CourseSinglePage = (props) => {
                         <div className="col col-lg-8">
                             <div className="wpo-course-details-wrap">
                                 <div className="wpo-course-details-img">
-                                    <img src={data.result.courseImage} alt="" />
+                                    <img src={data.result.courseImage} alt="" /> 
                                 </div>
                                 <CoureseTab CoursesDetails={course} />
                             </div>

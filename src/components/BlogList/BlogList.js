@@ -19,23 +19,25 @@ const BlogList = (props) => {
     const [myCourse,setMyCourse] = useState(); 
 
     useEffect(() => {
-        if (authenticationState.nameIdentifier) {
             const getMyCourses = async () => {
-                const data = await GetMyCourses(authenticationState.nameIdentifier);
-                if (data) {
-                    console.log("trigger");
-                    setMyCourse(data.result);
-                    console.log(myCourse)
-                }
-            }; 
-    
-            getMyCourses();
+        if (authenticationState.nameIdentifier) {
+
+                await GetMyCourses(authenticationState.nameIdentifier).then((response) => 
+               
+                   setMyCourse(response.data.result),
+               )
+              
+           }; 
         }
-    }, [authenticationState.nameIdentifier]); 
+           
+    
+            getMyCourses(); 
+       
+    }); 
     
 
 
-
+ 
 
 
 
@@ -45,30 +47,50 @@ const BlogList = (props) => {
 
     return(
         <section className="wpo-blog-pg-section section-padding">
-            <div className="container">
-                <div className="row">
-                    <div className={`col col-lg-8 col-12 ${props.blRight}`}>
-                        <div className="wpo-blog-content">
+            <div className={`wpo-popular-area section-padding ${props.pClass}`}>
+           <div className="container">
+                <div className="wpo-popular-wrap">
+                    <div className="row">
                             { myCourse &&  myCourse.courses.map((course, key) => (
-                                 <img src={course.courseImage} alt=""/>
-                                // <div className={`post  ${blog.blClass}`}key={key}>
-                                //     <div className="entry-media video-holder">
-                                //         <img src={course.courseImage} alt=""/>
-                                //         <VideoModal/>
-                                //     </div>
-                                //     <div className="entry-meta">
-                                //         <ul>
-                                //             <li><i className="fi flaticon-user"></i> By <Link onClick={ClickHandler} to={`/blog-single/${blog.slug}`}>{blog.authorTitle}</Link> </li>
-                                //             <li><i className="fi flaticon-comment-white-oval-bubble"></i> Comments {blog.comment} </li>
-                                //             <li><i className="fi flaticon-calendar"></i> {blog.create_at}</li>
-                                //         </ul>
-                                //     </div>
-                                //     <div className="entry-details">
-                                //         <h3><Link onClick={ClickHandler} to={`/blog-single/${blog.slug}`}>{blog.title}</Link></h3>
-                                //         <p>Law is a great career path if you want to build a broad skill set that includes everything from critical thinking and strategic planning to communications. If you love rising to a challenge.</p>
-                                //         <Link onClick={ClickHandler} to={`/blog-single/${blog.slug}`} className="read-more">READ MORE...</Link>
-                                //     </div>
-                                // </div>
+                                <>
+                                <Link onClick={ClickHandler} to={`/course-single/${course.courseId}`}>
+                                   <div className="col col-lg-4 col-md-6 col-12" key={key}>
+                                <div className="wpo-popular-single">
+                                    <div className="wpo-popular-item">
+                                        <div className="wpo-popular-img">
+                                            <img src={course.courseImage} alt="" />
+                                            {/* <div className="thumb">
+                                                <span>${course.coursePrice}</span>
+                                            </div> */}
+                                        </div>
+                                        <div className="wpo-popular-content">
+                                            <div className="wpo-popular-text-top">
+                                                <ul>
+                                                    <li><img src={course.author} alt="" /></li>
+                                                    {/* <li><Link onClick={ClickHandler} to={`/team-single/${course.courseId }`}>{course.user.normalizedUserName}</Link></li> */}
+                                                </ul>
+                                                <ul>
+                                                    <li><i className="fi flaticon-star"></i></li>
+                                                    <li>({course.ratting})</li>
+                                                </ul>
+                                            </div>
+                                           {course.courseName}
+                                           
+
+                                            <div className="wpo-popular-text-bottom">
+                                                <ul>
+                                                    <li><i className="fi flaticon-reading-book"></i> {course.student} Students</li>
+                                                    <li><i className="fi flaticon-agenda"></i> {course.lesson} Lesson</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            </Link>
+
+                                </>
                             ))}
 
                             <div className="pagination-wrapper pagination-wrapper-left">
@@ -92,7 +114,7 @@ const BlogList = (props) => {
                     </div>
                     <BlogSidebar blLeft={props.blLeft}/>
                 </div>
-            </div>
+                </div>
         </section>
 
      )
