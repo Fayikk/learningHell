@@ -7,6 +7,8 @@ import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { InitialState,setLoggedInUser } from '../../store/reducers/authSlice'
 import { useSelector } from 'react-redux'
+import {Dropdown } from 'react-bootstrap'
+
 const Header = (props) => {
 
 
@@ -15,7 +17,17 @@ const Header = (props) => {
     const push = useNavigate();
     const Dispatch = useDispatch();
 
+    const [showDropdown, setShowDropdown] = useState(false);
 
+    const handleMouseEnter = () => {
+        console.log("trigger mouse enter")
+      setShowDropdown(true);
+    };
+  
+    const handleMouseLeave = () => {
+        console.log("trigger mouse leaving")
+      setShowDropdown(false);
+    };
     useEffect(()=>{
 
     },[authenticationState])
@@ -154,18 +166,40 @@ const Header = (props) => {
                                                 </>
                                             ) : (
                                                     <>
-                                                     <div className='ml-2' >
+                                                    <div className='ml-2' >
+
+                                                   <Dropdown
+                                                    show={showDropdown}
+                                                    onMouseEnter={handleMouseEnter}
+                                                    onMouseLeave={handleMouseLeave}
+                                                 
+                                                    >
+                                                    <Dropdown.Toggle variant="primary" id="dropdown-basic"    style={{ backgroundColor: 'transparent', border: 'none' }} >
                                                <a className='theme-btn' style={{backgroundColor:'blueviolet'}} > <span className="text"> {authenticationState.userName} </span></a>
-                                                <span className="mobile">
-                                                    <i className="fi flaticon-charity"></i>
-                                                </span>
-                                                </div>
+                                                    </Dropdown.Toggle>
+
+                                                    <Dropdown.Menu style={{borderRadius:"20px"}} >
+                                                        <Dropdown.Item as={Link} to="/MyCourse" >
+                                                        My Courses
+                                                        </Dropdown.Item>
+                                                        <Dropdown.Item as={Link} to="/home" onClick={logout}>
+                                                        MyAccount
+                                                        </Dropdown.Item>
+                                                    </Dropdown.Menu>
+                                                    </Dropdown>
+                                                    </div>
+
+
+
+                                                  
                                                 <div>
                                                 <Link onClick={logout} className="theme-btn" to="/home"><span className="text">Logout</span>
                                                 <span className="mobile">
                                                     <i className="fi flaticon-charity"></i>
                                                 </span></Link>
                                                 </div>
+
+                                          
                                                     </>
 
                                             ) 

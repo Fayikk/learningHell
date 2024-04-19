@@ -23,10 +23,15 @@ export const shoppingCartApi = createApi({
             providesTags:["shoppingCart"]
         }),
         addShoppingCartItem:builder.mutation({
-            query:(shoppingCartModel) => ({
-                method:"POST",
+            query:(shoppingCartModel) => 
+            {
+                console.log("trigger add shopping cart")
+                console.log(shoppingCartModel);
+                return {
+                    method:"POST",
                 body:shoppingCartModel
-            }),
+                }
+            },
             invalidatesTags:["shoppingCart"]
         }),
         removeShoppingCartItem:builder.mutation({

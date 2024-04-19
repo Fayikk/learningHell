@@ -87,6 +87,7 @@ const CheckoutSection = ({cartList}) => {
         lname: '',
         country: '',
         dristrict: '',
+        identityNumber:'',
         address: '',
         post_code: '',
         email: '',
@@ -187,6 +188,20 @@ const CheckoutSection = ({cartList}) => {
                                                         label="Last Name"
                                                         name="lname"
                                                         value={forms.lname}
+                                                        onChange={(e) => changeHandler(e)}
+                                                        type="text"
+                                                        InputLabelProps={{
+                                                            shrink: true,
+                                                        }}
+                                                        className="formInput radiusNone"
+                                                    />
+                                                </Grid>
+                                                <Grid item sm={6} xs={12}>
+                                                    <TextField
+                                                        fullWidth
+                                                        label="Identity Number"
+                                                        name="identityNumber"
+                                                        value={forms.identityNumber}
                                                         onChange={(e) => changeHandler(e)}
                                                         type="text"
                                                         InputLabelProps={{

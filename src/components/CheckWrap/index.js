@@ -25,7 +25,8 @@ const CheckWrap = (props) => {
         card_holder: 'Jhon Doe',
         card_number: '589622144',
         cvv: '856226',
-        expire_date: '',
+        expire_month: '',
+        expire_year:'',
         remember: false,
     });
 
@@ -73,27 +74,15 @@ const CheckWrap = (props) => {
             //     remember: false
             // });
 
-            // public string CardHolderName { get; set; }
-            // public string CardNumber { get; set; }
-            // public string ExpireMonth { get; set; }
-            // public string ExpireYear { get; set; }
-            // public string cvc { get; set; }
-            // public string IdentityNumber { get; set; }
-            // public string RegistrationAddress { get; set; }
-            // public string City { get; set; }
-            // public string Country { get; set; }
-            // public string ZipCode { get; set; }
-            // public string UserId { get; set; }
-
        
 
             formData.append("CardHolderName",value.card_holder);
             formData.append("CardNumber",value.card_number);
-            formData.append("ExpireMonth",value.expire_date);
-            formData.append("ExpireYear",value.expire_date);
+            formData.append("ExpireMonth",value.expire_month);
+            formData.append("ExpireYear",value.expire_year);
             formData.append("CardHolderName",value.card_holder);
             formData.append("cvc",value.cvv);
-            formData.append("IdentityNumber",props.values.fname);
+            formData.append("IdentityNumber",props.values.identityNumber);
             formData.append("RegistrationAddress",props.values.address);
             formData.append("City",props.values.dristrict);
             formData.append("Country",props.values.country);
@@ -109,10 +98,10 @@ const CheckWrap = (props) => {
             const userRegex = /^user+.*/gm;
             const email = value.email;
 
-            if (email.match(userRegex) && response.isSuccess ) {
+            if (email.match(userRegex) && response.data.isSuccess ) {
                 toast.success(response.data.messages[0]);
                 push('/order_received');
-            }  else if(!response.isSuccess) {
+            }  else if(!response.data.isSuccess) {
                 console.log("trigger inner else if")
                 toast.info(response.data.messages[0] + ".Please check your information again");
                 // alert('user not existed! credential is : user@*****.com | vendor@*****.com | admin@*****.com');
@@ -169,14 +158,30 @@ const CheckWrap = (props) => {
                                 className="formInput radiusNone"
                             />
                         </Grid>
-                        <Grid item sm={6} xs={12}>
+                        <Grid item sm={3} xs={6}>
                             <TextField
                                 fullWidth
-                                label="Expire Date"
-                                name="expire_date"
+                                label="Expire Month"
+                                name="expire_month"
                                 value={value.expire_date}
                                 onChange={(e) => changeHandler(e)}
-                                type="date"
+                                type="number"
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                                className="formInput radiusNone"
+                            />
+                        </Grid>
+                        <Grid item sm={3} xs={6}>
+                            <TextField
+                                minRows={2}
+                                maxRows={2}
+                                fullWidth
+                                label="Expire Year"
+                                name="expire_year"
+                                value={value.expire_date}
+                                onChange={(e) => changeHandler(e)}
+                                type="number"
                                 InputLabelProps={{
                                     shrink: true,
                                 }}

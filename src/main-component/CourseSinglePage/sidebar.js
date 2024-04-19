@@ -18,12 +18,20 @@ const Sidebar = (props) => {
         }
 
        var response = await addBasketItem(shoppingCartModel)
+       console.log("trigger response")
+       console.log(response)
         if (response.data.isSuccess) {
                 toast.success(response.data.messages[0])
         }
         else {
-               toast.error(response.data.errorMessages[0])
+            if (response.data.errorMessages.length > 0) {
+                toast.error(response.data.errorMessages[0])
+                
+            }
+            else {
+                toast.info(response.data.messages[0])
 
+            }
         }
     }
 

@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import CoursesCategory from '../../api/CoursesCategory'
 import cImag from '../../images/shape/1.svg'
 import cImag2 from '../../images/shape/2.svg'
 import cImag3 from '../../images/shape/3.svg'
@@ -69,7 +68,8 @@ const settings = {
 
 
 const CategorySection = (props) => {
-
+    console.log("Category Section")
+    console.log(props)
     const [categories,setCategories] = useState([]);
     useEffect(()=>{
         if (props.categories) {
@@ -77,7 +77,7 @@ const CategorySection = (props) => {
         }
     },[props])
 
-
+    console.log(categories)
         
     return (
         <section className={`wpo-courses-section section-padding ${props.cClass}`}>
@@ -104,7 +104,7 @@ const CategorySection = (props) => {
                 <div className="row-grid wpo-courses-wrap wpo-courses-slider owl-carousel">
                     <Slider {...settings}>
                         {categories.map((category, item) => (
-                            <div className={`grid s${category.Id}`} key={item}>
+                            <div className={`grid ${category.categoryId}`} key={category.categoryId}>
                                 <div className="wpo-courses-item">
                                     <div className="wpo-courses-text">
                                         <div className="courses-icon">

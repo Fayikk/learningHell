@@ -33,7 +33,7 @@ const Curriculum = ({sections}) => {
                 CheckActiveCourse();
                 
             
-    },[authenticationState])
+    },[authenticationState,sections])
 
     const ClickHandler = () => {
         if (!isEnrolledCourse) {

@@ -23,7 +23,7 @@ import CheckoutPage from '../CheckoutPage';
 import OrderRecived from '../OrderRecived';
 import BlogPage from '../BlogPage/BlogPage'
 import BlogPageLeft from '../BlogPageLeft/BlogPageLeft'
-import BlogPageFullwidth from '../BlogPageFullwidth/BlogPageFullwidth'
+import BlogPageFullwidth from '../BlogPageFullwidth/MyCourses'
 import BlogDetails from '../BlogDetails/BlogDetails'
 import BlogDetailsFull from '../BlogDetailsFull/BlogDetailsFull'
 import BlogDetailsLeftSiide from '../BlogDetailsLeftSiide/BlogDetailsLeftSiide'
@@ -37,6 +37,7 @@ import ErrorPage from '../ErrorPage/ErrorPage';
 import LoginPage from '../LoginPage';
 import SignUpPage from '../SignUpPage';
 import ForgotPassword from '../ForgotPassword';
+import MyCourses from '../BlogPageFullwidth/MyCourses';
 
 const AllRoute = () => {
   return (
@@ -72,7 +73,7 @@ const AllRoute = () => {
           <Route path='terms' element={<TermsPage/>} />
           <Route path='blog' element={<BlogPage />} />
           <Route path='blog-left-sidebar' element={<BlogPageLeft />} />
-          <Route path='blog-fullwidth' element={<BlogPageFullwidth />} />
+          <Route path='MyCourse' element={<MyCourses />} />
           <Route path='blog-single/:slug' element={<BlogDetails />} />
           <Route path='blog-single-left-sidebar/:slug' element={<BlogDetailsLeftSiide />} />
           <Route path='blog-single-fullwidth/:slug' element={<BlogDetailsFull />} />

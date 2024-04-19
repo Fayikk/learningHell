@@ -1,11 +1,11 @@
 import React, {Fragment} from 'react';
-import Navbar from '../../components/Navbar/Navbar';
-import PageTitle from '../../components/pagetitle/PageTitle'
+import Navbar from '../../components/Navbar/Navbar.js';
+import PageTitle from '../../components/pagetitle/PageTitle.js'
 import BlogList from '../../components/BlogList/BlogList.js'
-import Scrollbar from '../../components/scrollbar/scrollbar'
-import Footer from '../../components/footer/Footer';
+import Scrollbar from '../../components/scrollbar/scrollbar.js'
+import Footer from '../../components/footer/Footer.js';
 
-const BlogPageFullwidth =() => {
+const MyCourses =() => {
     return(
         <Fragment>
             <Navbar/>
@@ -16,5 +16,5 @@ const BlogPageFullwidth =() => {
         </Fragment>
     )
 };
-export default BlogPageFullwidth;
+export default MyCourses;
 

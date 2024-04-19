@@ -16,6 +16,7 @@ export const paymentApi = createApi({
     endpoints:(builder) => ({
         paymentCheckout:builder.mutation({
             query:(paymentModel) => {
+                console.log("trigger that is correct");
                 console.log("trigger inner create Api")
                 console.log(paymentModel)
                 return {
