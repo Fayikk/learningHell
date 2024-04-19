@@ -13,7 +13,6 @@ import VideoPage from './VideoPage';
 const LessonPage = () => {
 
     const {sectionId} = useParams();
-    console.log(sectionId)
     const [expanded, setExpanded] = React.useState(false);
     const {data,isLoading} = useGetSectionSubDetailsQuery(sectionId);
     const [videos,setVideos] = useState([]);
@@ -23,7 +22,6 @@ const LessonPage = () => {
     const [decryptVideoUrl] = useGetWatchVideoUrlMutation()
     useEffect(() => {
         if (data) {
-            console.log(data)
             setVideos(data.result.videos || []); 
         } 
     }, [data]);
@@ -40,7 +38,6 @@ const LessonPage = () => {
 
     const changeVideo = async (videoId) => {
         const videoUrl = videos.find(video => video.videoId === videoId);
-        console.log(videoUrl)
         if (videoUrl) {
             const response = await decryptVideoUrl(videoUrl.publicVideoId);
             

@@ -11,7 +11,6 @@ import { useGetCourseDetailByIdQuery } from '../../api/courseApi';
 const CourseSinglePage = (props) => {
     const { slug } = useParams()
     const {data,isLoading} = useGetCourseDetailByIdQuery(slug);
-    console.log("CourseSinglePage")
     const [course,setCourse] = useState()
     useEffect(()=>{
         if (data) {

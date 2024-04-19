@@ -19,21 +19,25 @@ const BlogList = (props) => {
     const [myCourse,setMyCourse] = useState(); 
 
     useEffect(() => {
-            const getMyCourses = async () => {
-        if (authenticationState.nameIdentifier) {
-
-                await GetMyCourses(authenticationState.nameIdentifier).then((response) => 
-               
-                   setMyCourse(response.data.result),
-               )
-              
-           }; 
-        }
-           
+        const getMyCourses = async () => {
+            if (authenticationState.nameIdentifier) {
+                try {
+                    const response = await GetMyCourses(authenticationState.nameIdentifier);
+                    setMyCourse(response.data.result);
+                } catch (error) {
+                    console.error("Error fetching courses:", error);
+                }
+            }
+        };
     
-            getMyCourses(); 
-       
-    }); 
+        getMyCourses();
+    
+        return () => {
+            // Cleanup function
+            // Eğer asenkron işlemler iptal edilmeliyse, burada iptal edebilirsiniz.
+        };
+    }, [authenticationState]);
+    
     
 
 

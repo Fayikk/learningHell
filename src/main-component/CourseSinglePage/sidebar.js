@@ -9,8 +9,6 @@ const Sidebar = (props) => {
 
     const [addBasketItem] = useAddShoppingCartItemMutation();
 
-    console.log("trigger sidebar props")
-    console.log(props)
 
     const addBasket = async () => {
         const shoppingCartModel = {
@@ -18,8 +16,6 @@ const Sidebar = (props) => {
         }
 
        var response = await addBasketItem(shoppingCartModel)
-       console.log("trigger response")
-       console.log(response)
         if (response.data.isSuccess) {
                 toast.success(response.data.messages[0])
         }

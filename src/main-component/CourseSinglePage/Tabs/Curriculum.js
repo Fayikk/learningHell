@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux'
 import {toast} from "react-toastify";
 
 const Curriculum = ({sections}) => {
-    console.log("trigger curricullum")
     const [CheckHasThisCourse] = useThisCourseEnrolledUserMutation();
     const authenticationState = useSelector((state) => state.authStore);
     const [sectionsData,setSectionsData] = useState([]);
@@ -20,8 +19,6 @@ const Curriculum = ({sections}) => {
 
     useEffect(()=>{
             async function CheckActiveCourse(){
-                console.log("sections")
-                console.log(sections)
                 const model = {
                     userId:authenticationState.nameIdentifier,
                     courseId:sections[0].courseId
@@ -29,7 +26,6 @@ const Curriculum = ({sections}) => {
 
 
                 var response = await  CheckHasThisCourse(model)
-                console.log(response);
                  setIsEnrolledCourse(response.data)
               }
                 CheckActiveCourse();

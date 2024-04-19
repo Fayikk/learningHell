@@ -11,12 +11,8 @@ import './style.scss';
 import { useSelector } from 'react-redux';
 
 const CheckWrap = (props) => {
-    console.log("check wrap")
-    console.log(props)
     const [CreatePayment] = usePaymentCheckoutMutation();
     const authenticationState = useSelector((state) => state.authStore)
-    console.log("userId")
-    console.log(authenticationState)
     const push = useNavigate()
 
     const [value, setValue] = useState({
@@ -91,8 +87,6 @@ const CheckWrap = (props) => {
 
 
      var response = await CreatePayment(formData)
-            console.log("response trigger")
-            console.log(response)
             validator.hideMessages();
 
             const userRegex = /^user+.*/gm;
@@ -102,7 +96,6 @@ const CheckWrap = (props) => {
                 toast.success(response.data.messages[0]);
                 push('/order_received');
             }  else if(!response.data.isSuccess) {
-                console.log("trigger inner else if")
                 toast.info(response.data.messages[0] + ".Please check your information again");
                 // alert('user not existed! credential is : user@*****.com | vendor@*****.com | admin@*****.com');
             }

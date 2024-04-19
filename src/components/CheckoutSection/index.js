@@ -125,10 +125,8 @@ const CheckoutSection = ({cartList}) => {
 
     // forms handler
     const changeHandler = e => {
-        console.log("trigger change handler")
         setForms({...forms, [e.target.name]: e.target.value})
     };
-    console.log(forms)
 
     return (
         <Fragment>

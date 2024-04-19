@@ -25,8 +25,6 @@ export const shoppingCartApi = createApi({
         addShoppingCartItem:builder.mutation({
             query:(shoppingCartModel) => 
             {
-                console.log("trigger add shopping cart")
-                console.log(shoppingCartModel);
                 return {
                     method:"POST",
                 body:shoppingCartModel

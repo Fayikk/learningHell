@@ -20,12 +20,10 @@ const Header = (props) => {
     const [showDropdown, setShowDropdown] = useState(false);
 
     const handleMouseEnter = () => {
-        console.log("trigger mouse enter")
       setShowDropdown(true);
     };
   
     const handleMouseLeave = () => {
-        console.log("trigger mouse leaving")
       setShowDropdown(false);
     };
     useEffect(()=>{

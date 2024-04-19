@@ -68,8 +68,6 @@ const settings = {
 
 
 const CategorySection = (props) => {
-    console.log("Category Section")
-    console.log(props)
     const [categories,setCategories] = useState([]);
     useEffect(()=>{
         if (props.categories) {
@@ -77,7 +75,6 @@ const CategorySection = (props) => {
         }
     },[props])
 
-    console.log(categories)
         
     return (
         <section className={`wpo-courses-section section-padding ${props.cClass}`}>

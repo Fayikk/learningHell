@@ -7,8 +7,6 @@ function getFeaturedProducts(products) {
 }
 
 function totalPrice(items) {
-    console.log("trigger total price")
-    console.log(items)
     var response = items.reduce((itemAcc, item) => {
         return itemAcc += (item.coursePrice);
     }, 0);
