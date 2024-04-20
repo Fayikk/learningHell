@@ -30,6 +30,10 @@ const Hero = ({ introductionVideos }) => {
     };
   
     return (
+        <div className="hero-container">
+        <div className="hero-inner">
+            <div className="container-fluid">
+                <div className="hero-content">
       <div className="carousel">
         <Link to={`/course-single/${items[mainIndex].courseId}`}>
         <IntroductionVideoPage introductionVideoUrl={items[mainIndex].introductionVideoUrl}></IntroductionVideoPage>
@@ -42,6 +46,10 @@ const Hero = ({ introductionVideos }) => {
         <div className="btn-next" onClick={slideNext}>
           &rang;
         </div>
+      </div>
+      </div>
+      </div>
+      </div>
       </div>
     );
   };

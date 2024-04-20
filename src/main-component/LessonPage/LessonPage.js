@@ -9,15 +9,13 @@ import { useParams } from 'react-router-dom';
 import { useGetSectionSubDetailsQuery } from '../../api/sectionApi';
 import { useGetWatchVideoUrlMutation } from '../../api/videoApi';
 import VideoPage from './VideoPage';
-
+import IsLoading from '../../components/Loading/IsLoading';
 const LessonPage = () => {
 
     const {sectionId} = useParams();
     const [expanded, setExpanded] = React.useState(false);
     const {data,isLoading} = useGetSectionSubDetailsQuery(sectionId);
     const [videos,setVideos] = useState([]);
-    const [selectedVideo,setSelectedVideo] = useState();
-    var willSelectedVideo = "";
 
     const [decryptVideoUrl] = useGetWatchVideoUrlMutation()
     useEffect(() => {
@@ -28,7 +26,7 @@ const LessonPage = () => {
 
     if (isLoading) {
         return (
-            <div><span>...isLoading</span></div>
+            <IsLoading></IsLoading>
         )
     }
 

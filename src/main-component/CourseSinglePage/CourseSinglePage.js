@@ -7,6 +7,7 @@ import Footer from '../../components/footer/Footer';
 import CoureseTab from './Tabs/CoureseTab';
 import Sidebar from './sidebar';
 import { useGetCourseDetailByIdQuery } from '../../api/courseApi';
+import IsLoading from '../../components/Loading/IsLoading';
 
 const CourseSinglePage = (props) => {
     const { slug } = useParams()
@@ -21,7 +22,7 @@ const CourseSinglePage = (props) => {
     
     if (isLoading || !course ) {
         return (
-            <div><span>...isLoading</span></div>
+            <IsLoading></IsLoading>
         )
     }
     

@@ -4,6 +4,7 @@ import cImg1 from '../../../images/certificates/1.jpg'
 import cImg2 from '../../../images/certificates/2.jpg'
 import cImg3 from '../../../images/certificates/3.jpg'
 import cImg4 from '../../../images/certificates/4.jpg'
+import IsLoading from '../../../components/Loading/IsLoading'
 
 const Instructor = ({user}) => {
         const [userData,setUserData] = useState();
@@ -17,9 +18,7 @@ const Instructor = ({user}) => {
 
         if (!userData) {
             return (
-                <div>
-                    <h1><span>...isLoading</span></h1>
-                </div>
+               <IsLoading></IsLoading>
             )
         }
     

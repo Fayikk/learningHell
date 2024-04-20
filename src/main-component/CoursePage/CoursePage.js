@@ -8,6 +8,9 @@ import Footer from '../../components/footer/Footer';
 import { useParams } from 'react-router-dom';
 import { useScrollTrigger } from '@mui/material';
 import { useGetCoursesByCategoryIdQuery } from '../../api/categoryApi';
+import IsLoading from '../../components/Loading/IsLoading';
+
+
 const CoursePage = () => {
 
     const {slug} = useParams();
@@ -25,11 +28,7 @@ const CoursePage = () => {
 
     if (isLoading) {
         return (
-            <div>
-                <h1>
-                    <span>...isLoading</span>
-                </h1>
-            </div>
+            <IsLoading></IsLoading>
         )
     }
     

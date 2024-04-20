@@ -11,6 +11,7 @@ import crt2 from '../../images/certificates/2.jpg'
 import crt3 from '../../images/certificates/3.jpg'
 import crt4 from '../../images/certificates/4.jpg'
 import { useGetUserDetailsQuery } from '../../api/accountApi';
+import IsLoading from '../../components/Loading/IsLoading';
 
 const TeamSinglePage = (props) => {
     const { slug } = useParams()
@@ -25,9 +26,7 @@ const TeamSinglePage = (props) => {
 
     if (isLoading || !userDetail) {
         return (
-            <div>
-                ...isLoading
-            </div>
+            <IsLoading></IsLoading>
         );
     }
 

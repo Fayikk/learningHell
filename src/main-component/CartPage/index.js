@@ -9,6 +9,7 @@ import Footer from "../../components/footer/Footer";
 import { useGetShoppingCartQuery, useRemoveShoppingCartItemMutation } from "../../api/shoppingCartApi";
 import { useSelector } from "react-redux";
 import {toast} from 'react-toastify'
+import IsLoading from "../../components/Loading/IsLoading";
 
 const CartPage = (props) => {
 
@@ -36,7 +37,7 @@ const CartPage = (props) => {
 
   if (isLoading || !courses) {
     return (
-      <div><h1><span>...isLoading</span></h1></div>
+      <IsLoading></IsLoading>
     )
   }
 

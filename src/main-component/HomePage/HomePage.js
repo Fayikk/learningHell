@@ -13,6 +13,7 @@ import Scrollbar from '../../components/scrollbar/scrollbar';
 import Footer from '../../components/footer/Footer';
 import { jwtDecode } from 'jwt-decode';
 import { useGetCourseIntroductionVideosQuery } from '../../api/courseApi';
+import IsLoading from '../../components/Loading/IsLoading';
 
 const HomePage =() => {
     const {data,isLoading} = useGetCourseIntroductionVideosQuery(null);
@@ -31,11 +32,7 @@ const HomePage =() => {
 
     if (isLoading) {
         return (
-            <>
-            <div>
-                <h1><span>...isLoading</span></h1>
-            </div>
-            </>
+           <IsLoading></IsLoading>
         )
     }
     if (!introductionVideos) {

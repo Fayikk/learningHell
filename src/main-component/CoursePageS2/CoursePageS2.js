@@ -5,6 +5,7 @@ import CategorySection from '../../components/CategorySection/CategorySection';
 import Newslatter2 from '../../components/Newslatter2/Newslatter2';
 import Scrollbar from '../../components/scrollbar/scrollbar'
 import Footer from '../../components/footer/Footer';
+import IsLoading from '../../components/Loading/IsLoading';
 import { useGetAllCategoriesQuery } from '../../api/categoryApi';
 
 const CoursePageS2 = () => {
@@ -14,7 +15,7 @@ const CoursePageS2 = () => {
 
     if (isLoading) {
         return (
-            <></>
+            <IsLoading></IsLoading>
         )
     }
 

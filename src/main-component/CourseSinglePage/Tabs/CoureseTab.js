@@ -6,6 +6,7 @@ import Curriculum from './Curriculum';
 import Instructor from './Instructor';
 import Review from './Review';
 import { useGetSectionsByCourseIdQuery } from '../../../api/courseApi';
+import IsLoading from '../../../components/Loading/IsLoading';
 
 
 
@@ -28,6 +29,11 @@ const CoureseTab = ({ EventsDetails,CoursesDetails }) => {
   },[isLoading])
 
 
+  if (isLoading) {
+    return (
+      <IsLoading></IsLoading>
+    )
+  }
 
   const toggle = tab => {
     if (activeTab !== tab) setActiveTab(tab);
