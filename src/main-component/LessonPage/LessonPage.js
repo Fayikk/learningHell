@@ -16,6 +16,7 @@ const LessonPage = () => {
     const [expanded, setExpanded] = React.useState(false);
     const {data,isLoading} = useGetSectionSubDetailsQuery(sectionId);
     const [videos,setVideos] = useState([]);
+    const [videoCounter,setVideoCounter] = useState(0)
 
     const [decryptVideoUrl] = useGetWatchVideoUrlMutation()
     useEffect(() => {
@@ -36,6 +37,7 @@ const LessonPage = () => {
 
     const changeVideo = async (videoId) => {
         const videoUrl = videos.find(video => video.videoId === videoId);
+        console.log(videoUrl)
         if (videoUrl) {
             const response = await decryptVideoUrl(videoUrl.publicVideoId);
             
@@ -45,6 +47,15 @@ const LessonPage = () => {
         }
     }
     
+    const formatDuration = (duration) => {
+        const hours = Math.floor(duration / 3600);
+        const minutes = Math.floor((duration % 3600) / 60);
+        const seconds = Math.floor((duration % 1) * 100); // Extract milliseconds
+    
+        const formatTime = (time) => (time < 10 ? `0${time}` : time);
+    
+        return `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
+    };
 
     const ClickHandler = () => {
         window.scrollTo(10, 0);
@@ -76,33 +87,11 @@ const LessonPage = () => {
                                                     {
                                                                videos.map((video,key) => (
 
-                                                                    <li key={key} ><Link onClick={()=>changeVideo(video.videoId)} to={''} ><span>1.1<i
-                                                                    className="fi flaticon-play-button"></i> {video.title} </span> <span> {video.duration.toString(2)} min<i className="fa fa-check-circle"
+                                                                    <li key={key} ><Link onClick={()=>changeVideo(video.videoId)} style={{color:'white'}} to={''} ><span> {videoCounter + key + 1} <i
+                                                                    className="fi flaticon-play-button"></i> {video.title} </span> <span> {formatDuration(video.duration)} min<i className="fa fa-check-circle"
                                                                         aria-hidden="true"></i></span></Link></li>
                                                                         ))
-                                                                    }
-
-                                                        {/* <li><Link onClick={ClickHandler} to="/lesson"><span>1.2<i
-                                                            className="fi flaticon-play-button"></i>Introduction of HTML
-                                                            Editors</span> <span>30 min<i className="fa fa-check-circle"
-                                                                aria-hidden="true"></i></span></Link></li>
-                                                        <li><Link onClick={ClickHandler} to="/lesson"><span>1.3<i
-                                                            className="fi flaticon-play-button"></i>Introduction of
-                                                            Basic</span> <span>15 min<i className="fa fa-check-circle"
-                                                                aria-hidden="true"></i></span></Link></li>
-                                                        <li><Link onClick={ClickHandler} to="/lesson"><span>1.4<i
-                                                            className="fi flaticon-play-button"></i>Introduction of
-                                                            Style</span> <span><i className="fa fa-circle-thin"
-                                                                aria-hidden="true"></i></span></Link></li>
-                                                        <li><Link onClick={ClickHandler} to="/lesson"><span>1.5<i
-                                                            className="fi flaticon-play-button"></i>Introduction of
-                                                            Start</span> <span><i className="fa fa-circle-thin"
-                                                                aria-hidden="true"></i></span></Link></li>
-                                                        <li><Link onClick={ClickHandler} to="/lesson"><span>1.6<i
-                                                            className="fi flaticon-play-button"></i>Introduction of
-                                                            Oparator</span> <span><i className="fa fa-circle-thin"
-                                                                aria-hidden="true"></i></span></Link></li> */}
-                                                       
+                                                   }
                                                     </ul>
 
                                                 </div>
@@ -122,12 +111,6 @@ const LessonPage = () => {
                                 <div className="video-details">
                                     <h2>About Lesson</h2>
                                      <p>On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire</p>
-                                </div>
-                                <div className="video-details-pagination">
-                                    <ul>
-                                        <li><Link onClick={ClickHandler} to="/lesson">Previews</Link></li>
-                                         <li><Link onClick={ClickHandler} to="/lesson">Next</Link></li>
-                                    </ul>
                                 </div>
                             </div>
                         </div>

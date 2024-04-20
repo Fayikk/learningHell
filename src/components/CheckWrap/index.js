@@ -121,6 +121,7 @@ const CheckWrap = (props) => {
                                     shrink: true,
                                 }}
                                 className="formInput radiusNone"
+                                required
                             />
                         </Grid>
                         <Grid item sm={6} xs={12}>
