@@ -12,12 +12,40 @@ import Newslatter from '../../components/Newslatter/Newslatter';
 import Scrollbar from '../../components/scrollbar/scrollbar';
 import Footer from '../../components/footer/Footer';
 import { jwtDecode } from 'jwt-decode';
+import { useGetCourseIntroductionVideosQuery } from '../../api/courseApi';
 
 const HomePage =() => {
+    const {data,isLoading} = useGetCourseIntroductionVideosQuery(null);
+    const [introductionVideos,setIntroductionVideos] = useState();
+
+
+    useEffect(()=>{
+        if (data) {
+            setIntroductionVideos(data)
+            
+        }
+    },[data])
+    console.log(data);
+
+
+
+    if (isLoading) {
+        return (
+            <>
+            <div>
+                <h1><span>...isLoading</span></h1>
+            </div>
+            </>
+        )
+    }
+    if (!introductionVideos) {
+        return <div>Veri yükleniyor...</div>;
+      }
+
     return(
         <Fragment>
             <Navbar hclass={'wpo-header-style-4'}/>
-            <Hero/>
+            <Hero introductionVideos = {introductionVideos} />
             <About/>
             <CategorySection/>
             <CourseSection/>

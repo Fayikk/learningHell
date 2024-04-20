@@ -20,9 +20,15 @@ export const courseApi = createApi({
                 url:`CourseSections/${courseId}`,
                 method:"GET"
             })
+        }),
+        getCourseIntroductionVideos:builder.query({
+            query:()=> ({
+                url:`GetCourseIntroductionVideos`,
+                method:"GET"
+            })
         })
     })
 })
 
 
-export const {useGetCourseDetailByIdQuery,useGetSectionsByCourseIdQuery} = courseApi
+export const {useGetCourseDetailByIdQuery,useGetSectionsByCourseIdQuery,useGetCourseIntroductionVideosQuery} = courseApi

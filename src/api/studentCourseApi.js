@@ -19,7 +19,7 @@ export const studentCourseApi = createApi({
         thisCourseEnrolledUser:builder.mutation({
             query:(model) => {
                 return {
-                    method:"POST",
+                    method:"POST", 
                     url:`IsEnrolledCourse`,
                     body:model
                 }
