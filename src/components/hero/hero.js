@@ -10,7 +10,10 @@ const Hero = ({ introductionVideos }) => {
   const items = introductionVideos.result || [];
 
   useEffect(() => {
-    localStorage.setItem("introductionVideo", items[mainIndex].introductionVideoUrl || []);
+    if (items[mainIndex]) {
+      localStorage.setItem("introductionVideo", items[mainIndex].introductionVideoUrl || []);
+      
+    }
   }, [mainIndex, items]);
 
   const slideNext = () => {
@@ -32,9 +35,17 @@ const Hero = ({ introductionVideos }) => {
           <div className="hero-content">
             <div className="carousel">
             <div className="item">
-              <Link to={`/course-single/${items[mainIndex].courseId}`}>
-                <IntroductionVideoPage introductionVideoUrl={items[mainIndex].introductionVideoUrl} />
-              </Link>
+
+              {
+                items.length > 0 ? (
+                  <Link to={`/course-single/${ items[mainIndex].courseId}`}>
+                  <IntroductionVideoPage introductionVideoUrl={items[mainIndex].introductionVideoUrl} />
+                </Link>
+                ) : (
+                  ""
+                )
+              }
+         
 </div>
               <p className="index">{`${mainIndex + 1}/${items.length}`}</p>
               <div className="controls">
