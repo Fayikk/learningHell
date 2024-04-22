@@ -8,16 +8,17 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import {Link, useNavigate} from "react-router-dom";
 import './style.scss';
-import { useSignInMutation } from '../../api/accountApi';
+import { useSignInMutation,useSignInWithGoogleMutation } from '../../api/accountApi';
+import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
-
-
+import config from "../config.json"
 
 
 const LoginPage = (props) => {
 
     const push = useNavigate()
     const [Login] = useSignInMutation();
+    const [LoginWithGoogle] = useSignInWithGoogleMutation();
 
 
     const [value, setValue] = useState({
@@ -26,10 +27,48 @@ const LoginPage = (props) => {
         remember: false,
     });
 
+
     const changeHandler = (e) => {
         setValue({...value, [e.target.name]: e.target.value});
         validator.showMessages();
     };
+
+
+    
+    const googleResponse =async (response) => {
+        if (!response.credential) {
+          console.error("Unable to get clientId from Google", response)
+          return;
+        }
+        
+        var decodeJwt = jwtDecode(response.credential)
+        // const tokenBlob = new Blob([JSON.stringify({ tokenId: response.tokenId }, null, 2)], { type: 'application/json' });
+        // const options = {
+        //   method: 'POST',
+        //   body: tokenBlob,
+        //   mode: 'cors',
+        //   cache: 'default'
+        // };
+        // fetch(config.GOOGLE_AUTH_CALLBACK_URL, options)
+        //   .then(r => {
+        //     r.json().then(user => {
+        //       const token = user.token;
+        //       console.log(token);
+        //       this.props.login(token);
+        //     });
+        //   })
+
+        var tokenResult = await LoginWithGoogle({
+            credential:response.credential
+        }).then((response) => 
+            localStorage.setItem("token",response.data.result.accessToken)
+
+    )
+    push('/home-2');
+        
+          
+      };
+
 
 
     const rememberHandler = () => {
@@ -119,9 +158,22 @@ const LoginPage = (props) => {
                                 <Button fullWidth className="cBtnTheme" type="submit">Login</Button>
                             </Grid>
                             <Grid className="loginWithSocial">
-                                <Button className="facebook"><i className="fa fa-facebook"></i></Button>
-                                <Button className="twitter"><i className="fa fa-twitter"></i></Button>
-                                <Button className="linkedin"><i className="fa fa-linkedin"></i></Button>
+                                <Button className="google"><i className="fa fa-google">
+                                <div>
+                                    <GoogleOAuthProvider clientId={config.GOOGLE_CLIENT_ID} >
+                                            <GoogleLogin
+                                                clientId={config.GOOGLE_CLIENT_ID}
+                                                buttonText="Google Login"
+                                                onSuccess={googleResponse}
+                                                onFailure={googleResponse}
+                                            />                                    
+                                    </GoogleOAuthProvider>
+     
+        </div>
+                                    
+                                    </i></Button>
+                                {/* <Button className="twitter"><i className="fa fa-twitter"></i></Button>
+                                <Button className="linkedin"><i className="fa fa-linkedin"></i></Button> */}
                             </Grid>
                             <p className="noteHelp">Don't have an account? <Link to="/register">Create free account</Link>
                             </p>

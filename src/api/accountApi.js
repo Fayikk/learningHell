@@ -18,6 +18,16 @@ export const accountApi = createApi({
                 body:registerModel
             })
         }),
+        signInWithGoogle:builder.mutation({
+            query:(credentialModel) => ({
+                url:"Google-Auth",
+                method:"POST",
+                headers:{
+                    "Content-type":"application/json"
+                },
+                body:credentialModel
+            })
+        }),
         signIn:builder.mutation({
             query:(loginModel) => ({
                 url:"Login",
@@ -38,4 +48,4 @@ export const accountApi = createApi({
 })
 
 
-export const {useSignInMutation,useSignUpMutation,useGetUserDetailsQuery} = accountApi
+export const {useSignInMutation,useSignInWithGoogleMutation,useSignUpMutation,useGetUserDetailsQuery} = accountApi

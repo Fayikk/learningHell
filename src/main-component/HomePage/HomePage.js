@@ -11,7 +11,6 @@ import BlogSection from '../../components/BlogSection/BlogSection';
 import Newslatter from '../../components/Newslatter/Newslatter';
 import Scrollbar from '../../components/scrollbar/scrollbar';
 import Footer from '../../components/footer/Footer';
-import { jwtDecode } from 'jwt-decode';
 import { useGetCourseIntroductionVideosQuery } from '../../api/courseApi';
 import IsLoading from '../../components/Loading/IsLoading';
 
@@ -43,13 +42,13 @@ const HomePage =() => {
         <Fragment>
             <Navbar hclass={'wpo-header-style-4'}/>
             <Hero introductionVideos = {introductionVideos} />
-            <About/>
-            <CategorySection/>
+            {/* <About/> */}
+            {/* <CategorySection/> */}
             <CourseSection/>
-            <Testimonial/>
+            {/* <Testimonial/> */}
             <TeamSection pbClass={'pb-big'}/>
             <ChooseSection/>
-            <BlogSection/>
+            {/* <BlogSection/> */}
             <Newslatter/>
             <Footer/> 
             <Scrollbar/>

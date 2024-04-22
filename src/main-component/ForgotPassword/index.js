@@ -70,7 +70,7 @@ const ForgotPassword = (props) => {
                                     Password</Button>
                             </Grid>
                             <Grid className="loginWithSocial">
-                                <Button className="facebook"><i className="fa fa-facebook"></i></Button>
+                                <Button className="facebook"><i className="fa fa-google"></i></Button>
                                 <Button className="twitter"><i className="fa fa-twitter"></i></Button>
                                 <Button className="linkedin"><i className="fa fa-linkedin"></i></Button>
                             </Grid>

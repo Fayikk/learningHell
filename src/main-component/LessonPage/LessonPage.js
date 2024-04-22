@@ -109,7 +109,7 @@ const LessonPage = () => {
                                 </div>                            
                               <VideoPage></VideoPage>
                                 <div className="video-details">
-                                    <h2>About Lesson</h2>
+                                    <h2>About Lesson</h2> 
                                      <p>On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire</p>
                                 </div>
                             </div>

@@ -168,8 +168,8 @@ const Header = (props) => {
 
                                                    <Dropdown
                                                     show={showDropdown}
-                                                    onMouseEnter={handleMouseEnter}
-                                                    onMouseLeave={handleMouseLeave}
+                                                    onClick={handleMouseEnter}
+                                                    onDoubleClick={handleMouseLeave}
                                                  
                                                     >
                                                     <Dropdown.Toggle variant="primary" id="dropdown-basic"    style={{ backgroundColor: 'transparent', border: 'none' }} >

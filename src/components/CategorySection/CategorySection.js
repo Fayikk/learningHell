@@ -68,6 +68,9 @@ const settings = {
 
 
 const CategorySection = (props) => {
+
+    var x = 1;
+
     const [categories,setCategories] = useState([]);
     useEffect(()=>{
         if (props.categories) {
@@ -99,22 +102,23 @@ const CategorySection = (props) => {
                     </div>
                 </div>
                 <div className="row-grid wpo-courses-wrap wpo-courses-slider owl-carousel">
-                    <Slider {...settings}>
-                        {categories.map((category, item) => (
+                        {categories.map((category) => ( 
                             <div className={`grid ${category.categoryId}`} key={category.categoryId}>
+                                <Link onClick={ClickHandler} to={`/course/${category.categoryId}`}>
                                 <div className="wpo-courses-item">
                                     <div className="wpo-courses-text">
                                         <div className="courses-icon">
                                             <i className="fi flaticon-user-experience"></i>
                                         </div>
-                                        <h2><Link onClick={ClickHandler} to={`/course/${category.categoryId}`}>{category.categoryName}</Link></h2>
-                                        <p>{category.categoryDescription    }</p>
+                                        <h2>{category.categoryName}</h2>
+                                        <p>{category.categoryDescription}</p>
                                     </div>
                                 </div>
+                                </Link>
                             </div>
                         ))}
-                    </Slider>
                 </div>
+
             </div>
             <div className="shape-1"><img src={cImag} alt="" /></div>
             <div className="shape-2"><img src={cImag2} alt="" /></div>
