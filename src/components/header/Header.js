@@ -39,6 +39,7 @@ const Header = (props) => {
 
     const logout = () => {
         localStorage.removeItem("token")
+        localStorage.removeItem("refreshToken")
         Dispatch(setLoggedInUser({...InitialState}))
         push("/")
     }
@@ -191,7 +192,7 @@ const Header = (props) => {
 
                                                   
                                                 <div>
-                                                <Link onClick={logout} className="theme-btn" to="/home"><span className="text">Logout</span>
+                                                <Link onClick={logout} className="theme-btn" to="/home-2"><span className="text">Logout</span>
                                                 <span className="mobile">
                                                     <i className="fi flaticon-charity"></i>
                                                 </span></Link>

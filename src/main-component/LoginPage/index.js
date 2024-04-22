@@ -60,11 +60,15 @@ const LoginPage = (props) => {
 
         var tokenResult = await LoginWithGoogle({
             credential:response.credential
-        }).then((response) => 
-            localStorage.setItem("token",response.data.result.accessToken)
-
-    )
+        });
+        if (tokenResult && tokenResult.data && tokenResult.data.result && tokenResult.data.result.accessToken) {
+            localStorage.setItem("token", tokenResult.data.result.accessToken);
+            localStorage.setItem("refreshToken", tokenResult.data.result.refreshToken);
     push('/home-2');
+                
+        }
+
+     
         
           
       };

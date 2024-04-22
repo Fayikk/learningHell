@@ -28,6 +28,16 @@ export const accountApi = createApi({
                 body:credentialModel
             })
         }),
+        generateJwtTokenForExpired:builder.mutation({
+            query:(refreshToken) => ({
+                url:"Refresh-Token",
+                method:"POST",
+                headers:{
+                    "Content-type":"application/json"
+                },
+                body:refreshToken
+            })
+        }),
         signIn:builder.mutation({
             query:(loginModel) => ({
                 url:"Login",
@@ -48,4 +58,4 @@ export const accountApi = createApi({
 })
 
 
-export const {useSignInMutation,useSignInWithGoogleMutation,useSignUpMutation,useGetUserDetailsQuery} = accountApi
+export const {useSignInMutation,useGenerateJwtTokenForExpiredMutation,useSignInWithGoogleMutation,useSignUpMutation,useGetUserDetailsQuery} = accountApi

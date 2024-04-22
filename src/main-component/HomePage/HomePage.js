@@ -25,7 +25,6 @@ const HomePage =() => {
             
         }
     },[data])
-    console.log(data);
 
 
 

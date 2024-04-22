@@ -10,18 +10,15 @@ const ClickHandler = () => {
 };
 
 const BlogList = (props) => {
-    console.log("trigger blog list");
 
     const authenticationState = useSelector((state) => state.authStore);
     const [GetMyCourses] = useIsCourseHaveStudentMutation();
     const [myCourse, setMyCourse] = useState(); 
 
     useEffect(() => {
-        console.log("trigger inner use effect");
         const getMyCourses = async () => {
             if (authenticationState.nameIdentifier) {
                 try {
-                    console.log("inner try");
                     const response = await GetMyCourses(authenticationState.nameIdentifier);
                     setMyCourse(response.data.result);
                 } catch (error) {

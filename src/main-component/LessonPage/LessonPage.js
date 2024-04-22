@@ -37,7 +37,6 @@ const LessonPage = () => {
 
     const changeVideo = async (videoId) => {
         const videoUrl = videos.find(video => video.videoId === videoId);
-        console.log(videoUrl)
         if (videoUrl) {
             const response = await decryptVideoUrl(videoUrl.publicVideoId);
             

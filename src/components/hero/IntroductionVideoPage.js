@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 
 export default function IntroductionVideoPage({introductionVideoUrl}) {
 
-    console.log("trigger videos")
 
   return (
     <>

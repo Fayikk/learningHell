@@ -9,6 +9,49 @@ import { cartReducer } from "./reducers/cartSlice";
 import { shoppingCartApi } from "../api/shoppingCartApi";
 import { paymentApi } from "../api/paymentApi";
 import { videoApi } from "../api/videoApi";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
+import { useGenerateJwtTokenForExpiredMutation } from "../api/accountApi";
+import axios from "axios";
+const errorLoggerMiddleware = (store) => (next) => (action) => {
+
+
+    console.log("trigger middleware");
+    if (action && action.payload && action.payload.status) {
+        console.log(typeof(action.payload.status))
+        console.error("API error:", action.payload.status);
+        if (action.payload.status === 401) {
+            const token = localStorage.getItem("token");
+            if (token) {
+                const refreshToken = localStorage.getItem("refreshToken");
+                const useGenerateJwtToken = async () => {
+                    try {
+                        // Dispatch the action to refresh the token
+
+                        const response = await axios.post("https://localhost:7042/api/User/Refresh-Token",{refreshToken})
+                        console.log("generate jwt token response");
+                        console.log(response);
+                        if (!response.data.isSuccess) {
+                            localStorage.removeItem("refreshToken");
+                            localStorage.removeItem("token");
+                            // Redirect to login page
+                            window.location.href = "/login";
+                        }
+                        else {
+                            localStorage.setItem("token",response.data.result.accessToken)
+                        }
+                    } catch (error) {
+                        console.error("Error refreshing token:", error);
+                        // Handle error
+                    }
+                    console.log("trigger")
+                };
+                useGenerateJwtToken();
+            }
+        }
+    }
+    return next(action);
+};
 
 const store = configureStore({
     reducer:{
@@ -35,6 +78,7 @@ const store = configureStore({
             ,shoppingCartApi.middleware
             ,paymentApi.middleware
             ,videoApi.middleware
+            ,errorLoggerMiddleware
             )
 })
 
