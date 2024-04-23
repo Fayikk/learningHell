@@ -4,12 +4,15 @@ import {  useThisCourseEnrolledUserMutation } from '../../../api/studentCourseAp
 import { useSelector } from 'react-redux'
 import {toast} from "react-toastify";
 
-const Curriculum = ({sections}) => {
+const Curriculum = ({sections,user}) => {
     const [CheckHasThisCourse] = useThisCourseEnrolledUserMutation();
     const authenticationState = useSelector((state) => state.authStore);
     const [sectionsData,setSectionsData] = useState([]);
     const [isEnrolledCourse,setIsEnrolledCourse] = useState(false);
-
+    const [ownMyCourse,setOwnMyCourse] = useState(false);
+    console.log(user)
+    console.log("authenticationState")
+    console.log(authenticationState)
     useEffect(()=>{
         if (sections.Length > 0) {
         setSectionsData(sections)
@@ -22,6 +25,9 @@ const Curriculum = ({sections}) => {
                 const model = {
                     userId:authenticationState.nameIdentifier,
                     courseId:sections[0].courseId
+                }
+                if (user.id === authenticationState.nameIdentifier) {
+                    setOwnMyCourse(true)
                 }
 
 
@@ -62,7 +68,7 @@ const Curriculum = ({sections}) => {
                 <div className="course-curriculam">
                     <ul>
                         {
-                            isEnrolledCourse ? (
+                            isEnrolledCourse || ownMyCourse ? (
                                 sections.map((section,key) => (
                                     <li key={key} ><span><i className="fi flaticon-play-button"></i> {section.sectionName} <Link onClick={()=>ClickHandler(section.sectionId)} to={`/lessons/${section.sectionId}`}>Preview</Link></span><small>20 Minutes</small></li>
     

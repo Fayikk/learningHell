@@ -176,11 +176,11 @@ const SignUpPage = (props) => {
                             <Grid className="formFooter">
                                 <Button fullWidth className="cBtn cBtnLarge cBtnTheme" type="submit">Sign Up</Button>
                             </Grid>
-                            <Grid className="loginWithSocial">
+                            {/* <Grid className="loginWithSocial">
                                 <Button className="google"><i className="fa fa-google"></i></Button>
                                 <Button className="twitter"><i className="fa fa-twitter"></i></Button>
                                 <Button className="linkedin"><i className="fa fa-linkedin"></i></Button>
-                            </Grid>
+                            </Grid> */}
                             <p className="noteHelp">Already have an account? <Link to="/login">Return to Sign In</Link>
                             </p>
                         </Grid>

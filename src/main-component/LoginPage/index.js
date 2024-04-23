@@ -162,7 +162,6 @@ const LoginPage = (props) => {
                                 <Button fullWidth className="cBtnTheme" type="submit">Login</Button>
                             </Grid>
                             <Grid className="loginWithSocial">
-                                <Button className="google"><i className="fa fa-google">
                                 <div>
                                     <GoogleOAuthProvider clientId={config.GOOGLE_CLIENT_ID} >
                                             <GoogleLogin
@@ -175,7 +174,6 @@ const LoginPage = (props) => {
      
         </div>
                                     
-                                    </i></Button>
                                 {/* <Button className="twitter"><i className="fa fa-twitter"></i></Button>
                                 <Button className="linkedin"><i className="fa fa-linkedin"></i></Button> */}
                             </Grid>

@@ -7,14 +7,15 @@ import Instructor from './Instructor';
 import Review from './Review';
 import { useGetSectionsByCourseIdQuery } from '../../../api/courseApi';
 import IsLoading from '../../../components/Loading/IsLoading';
-
+import { useSelector } from 'react-redux';
 
 
 const CoureseTab = ({ EventsDetails,CoursesDetails }) => {
 
   const {data,isLoading} = useGetSectionsByCourseIdQuery(CoursesDetails.courseId)
+  const authenticationState = useSelector((state) => state.authStore);
 
-
+  console.log(authenticationState)
 
   const [activeTab, setActiveTab] = useState('1');
   const [sections,setSections] = useState([]);
@@ -34,6 +35,9 @@ const CoureseTab = ({ EventsDetails,CoursesDetails }) => {
       <IsLoading></IsLoading>
     )
   }
+
+  console.log(data)
+
 
   const toggle = tab => {
     if (activeTab !== tab) setActiveTab(tab);
@@ -93,7 +97,7 @@ const CoureseTab = ({ EventsDetails,CoursesDetails }) => {
           <TabPane tabId="2">
             <Row>
               <Col sm="12">
-                <Curriculum sections={sections}/>
+                <Curriculum sections={sections} user={user}  />
               </Col>
             </Row>
           </TabPane>
