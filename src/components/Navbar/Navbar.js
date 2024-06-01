@@ -26,7 +26,6 @@ export default function Navbar(props) {
     const token = localStorage.getItem("token")
 
     if (token) {
-        console.log("trigger navbar")
       
     const decode_Token = jwtDecode(token);
 

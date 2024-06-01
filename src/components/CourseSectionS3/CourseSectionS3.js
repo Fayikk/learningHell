@@ -13,6 +13,8 @@ const CourseSectionS3 = (props) => {
     const [courses,setCourses] = useState([])
 
     useEffect(()=>{
+        console.log("Course section inner system")
+        console.log(props.courses)
         if (props.courses) {
             setCourses(props.courses)
         }
@@ -42,7 +44,7 @@ const CourseSectionS3 = (props) => {
                                             <div className="wpo-popular-text-top">
                                                 <ul>
                                                     <li><img src={course.author} alt="" /></li>
-                                                    <li><Link onClick={ClickHandler} to={`/team-single/${course.user.id }`}>{course.user.normalizedUserName}</Link></li>
+                                                    {/* <li><Link onClick={ClickHandler} to={`/team-single/${course.user.id }`}>{course.user.normalizedUserName}</Link></li> */}
                                                 </ul>
                                                 <ul>
                                                     <li><i className="fi flaticon-star"></i></li>
@@ -64,23 +66,7 @@ const CourseSectionS3 = (props) => {
                             </div>
                         ))}
                     </div>
-                    <div className="pagination-wrapper">
-                        <ul className="pg-pagination">
-                            <li>
-                                <Link to="/blog-left-sidebar" aria-label="Previous">
-                                    <i className="fi ti-angle-left"></i>
-                                </Link>
-                            </li>
-                            <li className="active"><Link to="/blog-left-sidebar">1</Link></li>
-                            <li><Link to="/blog-left-sidebar">2</Link></li>
-                            <li><Link to="/blog-left-sidebar">3</Link></li>
-                            <li>
-                                <Link to="/blog-left-sidebar" aria-label="Next">
-                                    <i className="fi ti-angle-right"></i>
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
+                  
                 </div>
             </div>
         </div>

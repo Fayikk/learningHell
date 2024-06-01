@@ -71,7 +71,7 @@ const Header = (props) => {
                                 <div id="navbar" className="collapse navbar-collapse navigation-holder">
                                     <button className="menu-close"><i className="ti-close"></i></button>
                                     <ul className="nav navbar-nav mb-2 mb-lg-0">
-                                        <li className="menu-item-has-children">
+                                        {/* <li className="menu-item-has-children">
                                             <Link onClick={ClickHandler} to="/">Home</Link>
                                             <ul className="sub-menu">
                                                 <li><Link onClick={ClickHandler} to="/home">Home Style 1</Link></li>
@@ -80,21 +80,21 @@ const Header = (props) => {
                                                 <li><Link onClick={ClickHandler} to="/home-4">Home Style 4</Link></li>
                                                 <li><Link onClick={ClickHandler} to="/home-5">Home Style 5</Link></li>
                                             </ul>
-                                        </li>
-                                        <li><Link onClick={ClickHandler} to="/about">About</Link></li>
+                                        </li> */}
+                                        {/* <li><Link onClick={ClickHandler} to="/about">About</Link></li> */}
                                         <li className="menu-item-has-children">
                                             <Link onClick={ClickHandler} to="/">Courses</Link>
                                             <ul className="sub-menu">
-                                                <li><Link onClick={ClickHandler} to="/course">Messed Up</Link></li>
+                                                {/* <li><Link onClick={ClickHandler} to="/course">Messed Up</Link></li> */}
                                                 <li><Link onClick={ClickHandler} to="/course-2">Categories</Link></li>
                                                 <li><Link onClick={ClickHandler} to="/course-3">Full Festivitiy</Link></li>
-                                                <li><Link onClick={ClickHandler} to="/course-single/Learn-WordPress-&-Elementor-for-Beginners">Beginner Levels</Link></li>
+                                                {/* <li><Link onClick={ClickHandler} to="/course-single/Learn-WordPress-&-Elementor-for-Beginners">Beginner Levels</Link></li> */}
                                             </ul>
                                         </li>
                                         <li className="menu-item-has-children">
                                             <Link onClick={ClickHandler} to="/">Pages</Link>
                                             <ul className="sub-menu">
-                                                <li><Link onClick={ClickHandler} to="/lesson">Lesson</Link></li>
+                                                {/* <li><Link onClick={ClickHandler} to="/lesson">Lesson</Link></li> */}
                                                 <li><Link onClick={ClickHandler} to="/gallery">Gallery</Link></li>
                                                 <li><Link onClick={ClickHandler} to="/testimonial">Testimonial</Link></li>
                                                 <li><Link onClick={ClickHandler} to="/teacher">Teachers</Link></li>
@@ -109,7 +109,7 @@ const Header = (props) => {
                                             <ul className="sub-menu">
                                                 <li><Link onClick={ClickHandler} to="/blog">Blog right sidebar</Link></li>
                                                 <li><Link onClick={ClickHandler} to="/blog-left-sidebar">Blog left sidebar</Link></li>
-                                                <li><Link onClick={ClickHandler} to="/blog-fullwidth">Blog fullwidth</Link></li>
+                                                {/* <li><Link onClick={ClickHandler} to="/blog-fullwidth">Blog fullwidth</Link></li> */}
                                                 <li className="menu-item-has-children">
                                                     <Link onClick={ClickHandler} to="/">Blog details</Link>
                                                     <ul className="sub-menu">

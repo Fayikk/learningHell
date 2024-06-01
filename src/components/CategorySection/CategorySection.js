@@ -70,11 +70,12 @@ const settings = {
 const CategorySection = (props) => {
 
     var x = 1;
-
+    console.log("CategorySection")
+    console.log(props.categories.result)
     const [categories,setCategories] = useState([]);
     useEffect(()=>{
         if (props.categories) {
-            setCategories(props.categories)
+            setCategories(props.categories.result)
         }
     },[props])
 

@@ -9,7 +9,7 @@ const BlogPage =() => {
     return(
         <Fragment>
             <Navbar/>
-            <PageTitle pageTitle={'Latest News'} pagesub={'Blog'}/> 
+            <PageTitle pageTitle={'All Courses'} pagesub={'Courses'}/> 
             <BlogList/>
             <Footer/>
             <Scrollbar/>

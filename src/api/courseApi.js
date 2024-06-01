@@ -26,9 +26,22 @@ export const courseApi = createApi({
                 url:`GetCourseIntroductionVideos`,
                 method:"GET"
             })
+        }),
+        getAllCourses:builder.mutation({
+            query:(model)=>   {
+                return ({
+                    url:`GetAllCourses?pageNumber=${model.pageNumber}&pageSize=${model.pageSize}&filterProperty=${model.filterProperty}&filterValue=${model.filterValue}`,
+                    method:"POST"
+                })
+            }
+
+
+
+              
+               
         })
     })
 })
 
 
-export const {useGetCourseDetailByIdQuery,useGetSectionsByCourseIdQuery,useGetCourseIntroductionVideosQuery} = courseApi
+export const {useGetCourseDetailByIdQuery,useGetSectionsByCourseIdQuery,useGetCourseIntroductionVideosQuery,useGetAllCoursesMutation} = courseApi

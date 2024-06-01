@@ -5,6 +5,11 @@ import { useSelector } from 'react-redux'
 import {toast} from "react-toastify";
 
 const Curriculum = ({sections,user}) => {
+
+
+    console.log("trigger curricullum")
+    console.log(sections)
+
     const [CheckHasThisCourse] = useThisCourseEnrolledUserMutation();
     const authenticationState = useSelector((state) => state.authStore);
     const [sectionsData,setSectionsData] = useState([]);
@@ -24,7 +29,7 @@ const Curriculum = ({sections,user}) => {
             async function CheckActiveCourse(){
                 const model = {
                     userId:authenticationState.nameIdentifier,
-                    courseId:sections[0].courseId
+                    courseId:sections != [] ?  sections[0].courseId : 1 
                 }
                 if (user.id === authenticationState.nameIdentifier) {
                     setOwnMyCourse(true)

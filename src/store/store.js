@@ -16,7 +16,6 @@ import axios from "axios";
 const errorLoggerMiddleware = (store) => (next) => (action) => {
 
 
-    console.log("trigger middleware");
     if (action && action.payload && action.payload.status) {
         console.log(typeof(action.payload.status))
         console.error("API error:", action.payload.status);
