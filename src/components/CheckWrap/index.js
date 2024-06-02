@@ -9,11 +9,14 @@ import { usePaymentCheckoutMutation } from '../../api/paymentApi';
 
 import './style.scss';
 import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { cartStateUpdate } from '../../store/reducers/cartSlice';
 
 const CheckWrap = (props) => {
     const [CreatePayment] = usePaymentCheckoutMutation();
     const authenticationState = useSelector((state) => state.authStore)
     const push = useNavigate()
+    const Dispatch = useDispatch();
 
     const [value, setValue] = useState({
         email: 'user@gmail.com',
@@ -91,8 +94,10 @@ const CheckWrap = (props) => {
 
             const userRegex = /^user+.*/gm;
             const email = value.email;
-
+            console.log("trigger payment response")
+            console.log(response)
             if (email.match(userRegex) && response.data.isSuccess ) {
+                Dispatch(cartStateUpdate(response.data.result.item2))
                 toast.success(response.data.messages[0]);
                 push('/order_received');
             }  else if(!response.data.isSuccess) {

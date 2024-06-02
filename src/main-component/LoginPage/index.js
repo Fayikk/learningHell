@@ -64,7 +64,7 @@ const LoginPage = (props) => {
         if (tokenResult && tokenResult.data && tokenResult.data.result && tokenResult.data.result.accessToken) {
             localStorage.setItem("token", tokenResult.data.result.accessToken);
             localStorage.setItem("refreshToken", tokenResult.data.result.refreshToken);
-    push('/home-2');
+        push('/home');
                 
         }
 
@@ -97,9 +97,11 @@ const LoginPage = (props) => {
 
             const userRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
             const email = value.email;
-
+            console.log("trigger -  login response")
+            console.log(response)
             if (email.match(userRegex)) {
                 localStorage.setItem("token",response.data.result.accessToken)
+                localStorage.setItem("refreshToken",response.data.result.refreshToken)
                 toast.success('You successfully Login on Eduko !');
                 push('/home');
             }

@@ -14,8 +14,6 @@ import { useNavigate } from "react-router-dom";
 import { useGenerateJwtTokenForExpiredMutation } from "../api/accountApi";
 import axios from "axios";
 const errorLoggerMiddleware = (store) => (next) => (action) => {
-
-
     if (action && action.payload && action.payload.status) {
         console.error("API error:", action.payload.status);
         if (action.payload.status === 401) {
@@ -31,7 +29,7 @@ const errorLoggerMiddleware = (store) => (next) => (action) => {
                             localStorage.removeItem("refreshToken");
                             localStorage.removeItem("token");
                             // Redirect to login page
-                            window.location.href = "/login";
+                           
                         }
                         else {
                             localStorage.setItem("token",response.data.result.accessToken)
@@ -42,6 +40,9 @@ const errorLoggerMiddleware = (store) => (next) => (action) => {
                     }
                 };
                 useGenerateJwtToken();
+            }
+            else {
+                window.location.href = "/login";
             }
         }
     }

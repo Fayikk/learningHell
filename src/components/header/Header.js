@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux'
 import { InitialState,setLoggedInUser } from '../../store/reducers/authSlice'
 import { useSelector } from 'react-redux'
 import {Dropdown } from 'react-bootstrap'
-
+import { CiShoppingCart } from "react-icons/ci";
 const Header = (props) => {
 
 
@@ -16,7 +16,7 @@ const Header = (props) => {
     const authenticationState = useSelector((state) => state.authStore);
     const cartCounter = useSelector((state) => state.cartStore.cartCounter);
 
-    const push = useNavigate();
+    const Navigate = useNavigate();
     const Dispatch = useDispatch();
     // console.log("trigger cartCounter")
     // console.log(cartCounter)
@@ -45,7 +45,8 @@ const Header = (props) => {
         localStorage.removeItem("token")
         localStorage.removeItem("refreshToken")
         Dispatch(setLoggedInUser({...InitialState}))
-        push("/")
+        console.log("trigger logout")
+        Navigate("/home")
     }
 
 
@@ -127,11 +128,11 @@ const Header = (props) => {
                                                 </li>
                                             </ul>
                                         </li>
+                                        <li><Link onClick={ClickHandler} to="/contact">Contact</Link></li>
                                         <li className="menu-item-has-children">
-                                            <Link onClick={ClickHandler} to="/cart">Shop {(cartCounter)}</Link>
+                                            <Link onClick={ClickHandler} to="/cart"><CiShoppingCart /> ({cartCounter})</Link>
                                            
                                         </li>
-                                        <li><Link onClick={ClickHandler} to="/contact">Contact</Link></li>
                                     </ul>
                                 </div>
                             </div>
@@ -196,7 +197,7 @@ const Header = (props) => {
 
                                                   
                                                 <div>
-                                                <Link onClick={logout} className="theme-btn" to="/home-2"><span className="text">Logout</span>
+                                                <Link onClick={logout} className="theme-btn" to="/home"><span className="text">Logout</span>
                                                 <span className="mobile">
                                                     <i className="fi flaticon-charity"></i>
                                                 </span></Link>
