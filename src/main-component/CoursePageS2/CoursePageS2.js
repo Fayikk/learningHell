@@ -12,13 +12,11 @@ const CoursePageS2 = () => {
 
 
     const {data,isLoading} = useGetAllCategoriesQuery();
-    console.log("trigger Course page 2")
     if (isLoading) {
         return (
             <IsLoading></IsLoading>
         )
     }
-    console.log(data)
 
     return (
         <Fragment>

@@ -26,7 +26,7 @@ const CoursePage = () => {
     const [filter,setFilter] = useState({
         filterProperty:"categoryId",
         filterValue:categoryId,
-        pageSize:5,
+        pageSize:6,
         pageNumber:1
     })
    
@@ -39,8 +39,6 @@ const CoursePage = () => {
         async function fetchData() {
             // You can await here
             await fetchAllDatas(filter).then((response) => {
-                console.log("trigger inenr use effect")
-                console.log(response)
                 setCourses(response.data.result.data)
                 // setCurrentPage(response.data.result.data)
                 setPageCounter(response.data.result.pageCounter)
@@ -62,7 +60,6 @@ const CoursePage = () => {
     };
 
     if (courses.length <=0 && pageCounter == 0) {
-        console.log("trigger")
         return (
             <IsLoading></IsLoading>
         )
@@ -78,15 +75,21 @@ const CoursePage = () => {
             <CourseSectionS3 courses={courses} />
             <div className="pagination-wrapper">
                         <ul className="pg-pagination">
-                            {/* <li>
-                                <Link to="/blog-left-sidebar" aria-label="Previous">
-                                    <i className="fi ti-angle-left"></i>
-                                </Link>
-                            </li> */}
+                            {
+                                filter.pageNumber != 1 ? (
+                                    <li>
+                                    <Button color='primary' aria-label="Previous" onClick={()=>handleClickChangePageNumber(filter.pageNumber-1)}>
+                                        <i className="fi ti-angle-left"></i>
+                                    </Button>
+                                   </li>
+
+                                ) : ("")
+                            }
+                          
                             {
                                 [...Array(pageCounter)].map((_, index) => (
                                     <li key={index} className={index === 0 ? "active" : ""}>
-                                        <li className="active"><Button onClick={()=>handleClickChangePageNumber(index+1)} >{index + 1}</Button></li>
+                                        <li className="active"><Button color="primary" onClick={()=>handleClickChangePageNumber(index+1)} >{index + 1}</Button></li>
                                     </li>
                                 ))
                               
@@ -94,11 +97,17 @@ const CoursePage = () => {
 
                              
                             }
-                            {/* <li>
-                                <Link to="/blog-left-sidebar" aria-label="Next">
-                                    <i className="fi ti-angle-right"></i>
-                                </Link>
-                            </li> */}
+                            {
+                                filter.pageNumber != pageCounter ? (
+                                    <li>
+                                    <Button color='primary' aria-label="Next" onClick={()=>handleClickChangePageNumber(filter.pageNumber+1)}>
+                                        <i className="fi ti-angle-right"></i>
+                                    </Button>
+                                </li>
+                                ) : ("")
+                            }
+
+                           
                         </ul>
                     </div>
             <Newslatter2/>

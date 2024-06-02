@@ -13,8 +13,6 @@ const CourseSectionS3 = (props) => {
     const [courses,setCourses] = useState([])
 
     useEffect(()=>{
-        console.log("Course section inner system")
-        console.log(props.courses)
         if (props.courses) {
             setCourses(props.courses)
         }

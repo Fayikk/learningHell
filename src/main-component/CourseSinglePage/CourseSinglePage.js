@@ -11,8 +11,6 @@ import IsLoading from '../../components/Loading/IsLoading';
 
 const CourseSinglePage = (props) => {
     const { slug } = useParams()
-    console.log("trigger course slug")
-    console.log(slug)
     const {data,isLoading} = useGetCourseDetailByIdQuery(slug);
     const [course,setCourse] = useState()
     useEffect(()=>{

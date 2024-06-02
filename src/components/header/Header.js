@@ -14,8 +14,12 @@ const Header = (props) => {
 
     const [menuActive, setMenuState] = useState(false);
     const authenticationState = useSelector((state) => state.authStore);
+    const cartCounter = useSelector((state) => state.cartStore.cartCounter);
+
     const push = useNavigate();
     const Dispatch = useDispatch();
+    // console.log("trigger cartCounter")
+    // console.log(cartCounter)
 
     const [showDropdown, setShowDropdown] = useState(false);
 
@@ -87,7 +91,7 @@ const Header = (props) => {
                                             <ul className="sub-menu">
                                                 {/* <li><Link onClick={ClickHandler} to="/course">Messed Up</Link></li> */}
                                                 <li><Link onClick={ClickHandler} to="/course-2">Categories</Link></li>
-                                                <li><Link onClick={ClickHandler} to="/course-3">Full Festivitiy</Link></li>
+                                                {/* <li><Link onClick={ClickHandler} to="/course-3">Full Festivitiy</Link></li> */}
                                                 {/* <li><Link onClick={ClickHandler} to="/course-single/Learn-WordPress-&-Elementor-for-Beginners">Beginner Levels</Link></li> */}
                                             </ul>
                                         </li>
@@ -124,7 +128,7 @@ const Header = (props) => {
                                             </ul>
                                         </li>
                                         <li className="menu-item-has-children">
-                                            <Link onClick={ClickHandler} to="/cart">Shop</Link>
+                                            <Link onClick={ClickHandler} to="/cart">Shop {(cartCounter)}</Link>
                                            
                                         </li>
                                         <li><Link onClick={ClickHandler} to="/contact">Contact</Link></li>

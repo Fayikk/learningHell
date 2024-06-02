@@ -4,11 +4,12 @@ import blogs from '../../api/blogs'
 import { Button } from 'reactstrap'
 import { useAddShoppingCartItemMutation } from '../../api/shoppingCartApi'
 import {toast} from 'react-toastify'
-
+import { useDispatch } from 'react-redux'
+import { cartStateUpdate } from '../../store/reducers/cartSlice'
 const Sidebar = (props) => {
 
     const [addBasketItem] = useAddShoppingCartItemMutation();
-
+    const dispatch = useDispatch();
 
     const addBasket = async () => {
         const shoppingCartModel = {
@@ -17,6 +18,9 @@ const Sidebar = (props) => {
 
        var response = await addBasketItem(shoppingCartModel)
         if (response.data.isSuccess) {
+            console.log("for basket counter");
+            console.log(response)
+                dispatch(cartStateUpdate(response.data.result.item2))
                 toast.success(response.data.messages[0])
         }
         else {

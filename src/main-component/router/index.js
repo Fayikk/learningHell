@@ -55,7 +55,7 @@ const AllRoute = () => {
           <Route path="course-single/:slug" element={<CourseSinglePage />} />
           <Route path="course/:slug" element={<CoursePage />} />
           <Route path="course-2" element={<CoursePageS2 />} />
-          <Route path="course-3" element={<CoursePageS3 />} />
+          {/* <Route path="course-3" element={<CoursePageS3 />} /> */}
           <Route path="lessons/:sectionId" element={<LessonPage />} />
           <Route path="gallery" element={<GalleryPage />} />
           <Route path="testimonial" element={<TestimonialPage />} />

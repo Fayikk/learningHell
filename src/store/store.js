@@ -17,7 +17,6 @@ const errorLoggerMiddleware = (store) => (next) => (action) => {
 
 
     if (action && action.payload && action.payload.status) {
-        console.log(typeof(action.payload.status))
         console.error("API error:", action.payload.status);
         if (action.payload.status === 401) {
             const token = localStorage.getItem("token");
@@ -28,8 +27,6 @@ const errorLoggerMiddleware = (store) => (next) => (action) => {
                         // Dispatch the action to refresh the token
 
                         const response = await axios.post("https://localhost:7042/api/User/Refresh-Token",{refreshToken})
-                        console.log("generate jwt token response");
-                        console.log(response);
                         if (!response.data.isSuccess) {
                             localStorage.removeItem("refreshToken");
                             localStorage.removeItem("token");
@@ -43,7 +40,6 @@ const errorLoggerMiddleware = (store) => (next) => (action) => {
                         console.error("Error refreshing token:", error);
                         // Handle error
                     }
-                    console.log("trigger")
                 };
                 useGenerateJwtToken();
             }

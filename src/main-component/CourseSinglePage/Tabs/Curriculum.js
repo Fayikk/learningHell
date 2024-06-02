@@ -7,17 +7,12 @@ import {toast} from "react-toastify";
 const Curriculum = ({sections,user}) => {
 
 
-    console.log("trigger curricullum")
-    console.log(sections)
 
     const [CheckHasThisCourse] = useThisCourseEnrolledUserMutation();
     const authenticationState = useSelector((state) => state.authStore);
     const [sectionsData,setSectionsData] = useState([]);
     const [isEnrolledCourse,setIsEnrolledCourse] = useState(false);
     const [ownMyCourse,setOwnMyCourse] = useState(false);
-    console.log(user)
-    console.log("authenticationState")
-    console.log(authenticationState)
     useEffect(()=>{
         if (sections.Length > 0) {
         setSectionsData(sections)

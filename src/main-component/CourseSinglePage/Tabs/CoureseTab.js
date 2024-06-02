@@ -11,11 +11,9 @@ import { useSelector } from 'react-redux';
 
 
 const CoureseTab = ({ EventsDetails,CoursesDetails }) => {
-  console.log("trigger courseTab")
   const {data,isLoading} = useGetSectionsByCourseIdQuery(CoursesDetails.courseId)
   const authenticationState = useSelector((state) => state.authStore);
 
-  console.log(authenticationState)
 
   const [activeTab, setActiveTab] = useState('1');
   const [sections,setSections] = useState([]);
