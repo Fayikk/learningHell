@@ -72,7 +72,7 @@ const CoursePage = () => {
         <Fragment>
             <Navbar />
             <PageTitle pageTitle={'Course'} pagesub={'Course'} />
-            <CourseSectionS3 courses={courses} />
+            <CourseSectionS3 courses={courses} component={"course"} />
             <div className="pagination-wrapper">
                         <ul className="pg-pagination">
                             {

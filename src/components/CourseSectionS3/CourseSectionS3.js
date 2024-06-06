@@ -11,6 +11,8 @@ const CourseSectionS3 = (props) => {
 
 
     const [courses,setCourses] = useState([])
+    console.log("trigger for component")
+    console.log(props.component)
     console.log("trigger course section 3")
     console.log(props.courses)
     useEffect(()=>{
@@ -53,7 +55,7 @@ const CourseSectionS3 = (props) => {
                                                     <li>({course.ratting})</li>
                                                 </ul>
                                             </div>
-                                            <h2><Link onClick={ClickHandler} to={`/course-single/${course.courseId}`}>{course.courseName}</Link>
+                                            <h2><Link onClick={ClickHandler} to={props.component == "course" ?`/course-single/${course.courseId}` : `/Instructor/CourseDetail/${course.courseId}`}>{course.courseName}</Link>
                                             </h2>
 
                                             <div className="wpo-popular-text-bottom">

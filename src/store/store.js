@@ -12,8 +12,10 @@ import { videoApi } from "../api/videoApi";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { useGenerateJwtTokenForExpiredMutation } from "../api/accountApi";
+import { baseUrl } from "../api/Base/baseApiModel";
 import axios from "axios";
 import { instructorApi } from "../api/instructorApi";
+import { materialApi } from "../api/materialApi";
 const errorLoggerMiddleware = (store) => (next) => (action) => {
     if (action && action.payload && action.payload.status) {
         console.error("API error:", action.payload);
@@ -25,7 +27,7 @@ const errorLoggerMiddleware = (store) => (next) => (action) => {
                     try {
                         // Dispatch the action to refresh the token
 
-                        const response = await axios.post("https://localhost:7042/api/User/Refresh-Token",{refreshToken})
+                        const response = await axios.post( `${baseUrl}User/Refresh-Token`,{refreshToken})
                         if (!response.data.isSuccess) {
                             localStorage.removeItem("refreshToken");
                             localStorage.removeItem("token");
@@ -65,6 +67,7 @@ const store = configureStore({
         [paymentApi.reducerPath]:paymentApi.reducer,
         [videoApi.reducerPath]:videoApi.reducer,
         [instructorApi.reducerPath]:instructorApi.reducer,
+        [materialApi.reducerPath]:materialApi.reducer,
 
     },middleware:(getDefaultMiddleware) => getDefaultMiddleware()
         .concat(
@@ -77,6 +80,7 @@ const store = configureStore({
             ,paymentApi.middleware
             ,videoApi.middleware
             ,instructorApi.middleware
+            ,materialApi.middleware
             ,errorLoggerMiddleware
             )
 })

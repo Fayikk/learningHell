@@ -38,6 +38,7 @@ import SignUpPage from '../SignUpPage';
 import ForgotPassword from '../ForgotPassword';
 import MyCourses from '../BlogPageFullwidth/MyCourses';
 import InstructorDetail from '../Instructor/InstructorDetail';
+import InstructorsCourseDetail from '../Instructor/InstructorsCourseDetail';
 const AllRoute = () => {
   return (
     <div className="App">
@@ -60,6 +61,7 @@ const AllRoute = () => {
           <Route path="testimonial" element={<TestimonialPage />} />
           <Route path="teacher" element={<TeamPage />} />
           <Route path="Instructor" element={<InstructorDetail />} />
+          <Route path="Instructor/CourseDetail/:slug" element={<InstructorsCourseDetail />} />
           <Route path="team-single/:slug" element={<TeamSinglePage />} />
           <Route path="event-single/:slug" element={<EventSinglePage />} />
           <Route path='become-teacher' element={<BeComeTeacherPage />} />

@@ -30,7 +30,10 @@ function InstructorDetail() {
     <Fragment>
       <Navbar />
       <PageTitle pageTitle={'Instructor'} pagesub={'Instructor'} />
-      <CourseSectionS3 courses={courses} />
+      <div style={{ textAlign: 'right' }}>
+    <button className="btn btn-success">New Course Create</button>
+</div>
+      <CourseSectionS3 courses={courses} component={"instructor"} />
       <Footer />
       <Scrollbar />
     </Fragment>

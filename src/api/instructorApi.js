@@ -16,9 +16,15 @@ export const instructorApi = createApi({
             query:()=>({
                 method:"POST"
             })
+        }),
+        getCourseDetail:builder.query({
+            query:(courseId)=>({
+                method:"GET",
+                url:`${courseId}`
+            })
         })
     })
 })
 
 
-export const {useGetAllInstructorCoursesMutation} = instructorApi
+export const {useGetAllInstructorCoursesMutation,useGetCourseDetailQuery} = instructorApi

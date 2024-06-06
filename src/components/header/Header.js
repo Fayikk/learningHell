@@ -9,6 +9,7 @@ import { InitialState,setLoggedInUser } from '../../store/reducers/authSlice'
 import { useSelector } from 'react-redux'
 import {Dropdown } from 'react-bootstrap'
 import { CiShoppingCart } from "react-icons/ci";
+import { FaLock } from 'react-icons/fa'; 
 const Header = (props) => {
 
 
@@ -97,18 +98,14 @@ const Header = (props) => {
                                             </ul>
                                         </li>
                                         <li className="menu-item-has-children">
-                                            <Link onClick={ClickHandler} to="/">Pages</Link>
-                                            <ul className="sub-menu">
-                                                {/* <li><Link onClick={ClickHandler} to="/lesson">Lesson</Link></li> */}
-                                                <li><Link onClick={ClickHandler} to="/gallery">Gallery</Link></li>
-                                                <li><Link onClick={ClickHandler} to="/testimonial">Testimonial</Link></li>
-                                                <li><Link onClick={ClickHandler} to="/teacher">Teachers</Link></li>
-                                                <li><Link onClick={ClickHandler} to="/team-single/Courtney-Henry">Teacher Single</Link></li>
-                                                <li><Link onClick={ClickHandler} to="/become-teacher">Become Teacher</Link></li>
-                                                <li><Link onClick={ClickHandler} to="/faq">FAQ</Link></li>
-                                                <li><Link onClick={ClickHandler} to="/404">404 Error</Link></li>
-                                            </ul>
+                                            <Link onClick={ClickHandler} to=""><FaLock></FaLock> Collections</Link>
+                                          
                                         </li>
+                                        <li className="menu-item-has-children">
+                                            <Link onClick={ClickHandler} to=""><FaLock></FaLock>Pair Working Rooms</Link>
+                                           
+                                        </li>
+                                    
                                         <li className="menu-item-has-children">
                                             <Link onClick={ClickHandler} to="/">Blog</Link>
                                             <ul className="sub-menu">
@@ -226,3 +223,19 @@ const Header = (props) => {
 }
 
 export default Header;
+
+
+
+// <li className="menu-item-has-children">
+// <Link onClick={ClickHandler} to="/">Pages</Link>
+// <ul className="sub-menu">
+//     {/* <li><Link onClick={ClickHandler} to="/lesson">Lesson</Link></li> */}
+//     <li><Link onClick={ClickHandler} to="/gallery">Gallery</Link></li>
+//     <li><Link onClick={ClickHandler} to="/testimonial">Testimonial</Link></li>
+//     <li><Link onClick={ClickHandler} to="/teacher">Teachers</Link></li>
+//     <li><Link onClick={ClickHandler} to="/team-single/Courtney-Henry">Teacher Single</Link></li>
+//     <li><Link onClick={ClickHandler} to="/become-teacher">Become Teacher</Link></li>
+//     <li><Link onClick={ClickHandler} to="/faq">FAQ</Link></li>
+//     <li><Link onClick={ClickHandler} to="/404">404 Error</Link></li>
+// </ul>
+// </li>
