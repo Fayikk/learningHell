@@ -186,6 +186,9 @@ const Header = (props) => {
                                                         <Dropdown.Item as={Link} to="/MyCourse" >
                                                         My Courses
                                                         </Dropdown.Item>
+                                                        <Dropdown.Item as={Link} to="/Instructor" >
+                                                        Instructor
+                                                        </Dropdown.Item>
                                                         <Dropdown.Item as={Link} to="/home" onClick={logout}>
                                                         MyAccount
                                                         </Dropdown.Item>

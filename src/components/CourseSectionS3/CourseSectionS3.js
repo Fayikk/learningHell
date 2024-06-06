@@ -11,13 +11,17 @@ const CourseSectionS3 = (props) => {
 
 
     const [courses,setCourses] = useState([])
-
+    console.log("trigger course section 3")
+    console.log(props.courses)
     useEffect(()=>{
+        console.log("trigger - 1")
+
         if (props.courses) {
+            console.log("trigger")
             setCourses(props.courses)
         }
         
-    },[props])
+    },[props.courses])
 
 
 
@@ -28,7 +32,7 @@ const CourseSectionS3 = (props) => {
             <div className="container">
                 <div className="wpo-popular-wrap">
                     <div className="row">
-                        {courses.slice(0, 6).map((course, aitem) => (
+                        {courses.map((course, aitem) => (
                             <div className="col col-lg-4 col-md-6 col-12" key={aitem}>
                                 <div className="wpo-popular-single">
                                     <div className="wpo-popular-item">

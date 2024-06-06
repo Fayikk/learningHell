@@ -13,9 +13,10 @@ import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { useGenerateJwtTokenForExpiredMutation } from "../api/accountApi";
 import axios from "axios";
+import { instructorApi } from "../api/instructorApi";
 const errorLoggerMiddleware = (store) => (next) => (action) => {
     if (action && action.payload && action.payload.status) {
-        console.error("API error:", action.payload.status);
+        console.error("API error:", action.payload);
         if (action.payload.status === 401) {
             const token = localStorage.getItem("token");
             if (token) {
@@ -63,6 +64,7 @@ const store = configureStore({
         [shoppingCartApi.reducerPath]:shoppingCartApi.reducer,
         [paymentApi.reducerPath]:paymentApi.reducer,
         [videoApi.reducerPath]:videoApi.reducer,
+        [instructorApi.reducerPath]:instructorApi.reducer,
 
     },middleware:(getDefaultMiddleware) => getDefaultMiddleware()
         .concat(
@@ -74,6 +76,7 @@ const store = configureStore({
             ,shoppingCartApi.middleware
             ,paymentApi.middleware
             ,videoApi.middleware
+            ,instructorApi.middleware
             ,errorLoggerMiddleware
             )
 })

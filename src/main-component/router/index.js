@@ -7,7 +7,6 @@ import CoursePageS2 from '../CoursePageS2/CoursePageS2';
 import CoursePageS3 from '../CoursePageS3/CoursePageS3';
 import CourseSinglePage from '../CourseSinglePage/CourseSinglePage';
 import HomePage2 from '../HomePage2/HomePage2';
-import HomePage3 from '../HomePage3/HomePage3';
 import HomePage4 from '../HomePage4/HomePage4';
 import HomePage5 from '../HomePage5/HomePage5';
 import AboutPage from '../AboutPage/AboutPage';
@@ -38,7 +37,7 @@ import LoginPage from '../LoginPage';
 import SignUpPage from '../SignUpPage';
 import ForgotPassword from '../ForgotPassword';
 import MyCourses from '../BlogPageFullwidth/MyCourses';
-
+import InstructorDetail from '../Instructor/InstructorDetail';
 const AllRoute = () => {
   return (
     <div className="App">
@@ -60,6 +59,7 @@ const AllRoute = () => {
           <Route path="gallery" element={<GalleryPage />} />
           <Route path="testimonial" element={<TestimonialPage />} />
           <Route path="teacher" element={<TeamPage />} />
+          <Route path="Instructor" element={<InstructorDetail />} />
           <Route path="team-single/:slug" element={<TeamSinglePage />} />
           <Route path="event-single/:slug" element={<EventSinglePage />} />
           <Route path='become-teacher' element={<BeComeTeacherPage />} />

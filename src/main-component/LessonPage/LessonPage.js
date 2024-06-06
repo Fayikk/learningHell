@@ -38,9 +38,11 @@ const LessonPage = () => {
     const changeVideo = async (videoId) => {
         const videoUrl = videos.find(video => video.videoId === videoId);
         if (videoUrl) {
-            const response = await decryptVideoUrl(videoUrl.publicVideoId);
+            await decryptVideoUrl(videoUrl.publicVideoId).then((response) => {
+                localStorage.setItem('willSelectedVideo', JSON.stringify(response.data.result));
+                console.log(response)
+            }).catch((err) => console.error(err));
             
-            localStorage.setItem('willSelectedVideo', JSON.stringify(response.data.result));
         } else {
             console.error("Video not found!");
         }

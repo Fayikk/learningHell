@@ -8,6 +8,11 @@ const ClickHandler = () => {
 }
 
 const CourseSection = (props) => {
+
+    console.log("trigger course section")
+    console.log(props)
+
+
     return (
         <div className={`wpo-popular-area section-padding ${props.pClass}`}>
             <div className="container">
