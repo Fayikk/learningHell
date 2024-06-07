@@ -6,30 +6,31 @@ import Footer from '../../components/footer/Footer';
 import Scrollbar from '../../components/scrollbar/scrollbar';
 import { useParams } from 'react-router-dom';
 import IsLoading from '../../components/Loading/IsLoading';
-import { useGetCourseDetailQuery } from '../../api/instructorApi';
+import { instructorApi, useGetCourseDetailQuery } from '../../api/instructorApi';
 import { useDownloadMaterialFileMutation } from '../../api/materialApi';
-import JSZip from 'jszip';
-import { useGetWatchVideoUrlMutation } from '../../api/videoApi';
-import { useNavigate } from 'react-router-dom';
+import JSZip, { remove } from 'jszip';
+import { useGetWatchVideoUrlMutation, useRemoveVideoAsyncMutation } from '../../api/videoApi';
 import VideoPage from '../LessonPage/VideoPage';
+import { CiCircleRemove } from "react-icons/ci";
+import { useRemoveSectionAsyncMutation } from '../../api/sectionApi';
+import { useDispatch } from 'react-redux';
 function InstructorsCourseDetail() {
+    const Dispatch = useDispatch();
     const { slug } = useParams();
     const { data, isLoading } = useGetCourseDetailQuery(slug);
     const [downloadFile] = useDownloadMaterialFileMutation();
     const [watchingVideo] = useGetWatchVideoUrlMutation();
+    const [removeVideoAsync] = useRemoveVideoAsyncMutation();
+    const [removeSectionAsync] = useRemoveSectionAsyncMutation();
     const [chooseVideo,setChooseVideo] = useState(false);
     const [sections, setSections] = useState([]);
 
-    console.log("trigger instructor course details");
-    console.log(data);
 
     useEffect(() => {
         if (data && data.result[0] && data.result[0].sections) {
             setSections(data.result[0].sections);
-            console.log("trigger");
-            console.log(sections);
+            console.log(sections)
         }
-        console.log("trigger inner use effect");
     }, [data]);
 
     if (isLoading) {
@@ -38,8 +39,6 @@ function InstructorsCourseDetail() {
     
     const handleClickWatchingVideo = async (publicVideoId) => {
        await watchingVideo(publicVideoId).then((response) => {
-        console.log(response)
-        console.log("trigger watvhing response video url")
         // window.open(response.data.result,'_blank')
         localStorage.setItem('willSelectedVideo', JSON.stringify(response.data.result));
         setChooseVideo(true)
@@ -50,6 +49,36 @@ function InstructorsCourseDetail() {
         setChooseVideo(false)
     }
 
+    const removeItem = async (itemId,itemName) => {
+        var answer = window.confirm("Are you sure want to delete?");
+
+        if (itemName == "video") {
+            if (answer) {
+                //some code
+               await removeVideoAsync(itemId).then((response) => {
+                    console.log("trigger response handle remove click")
+                    console.log(response)
+                })
+                console.log("trigger yes")
+                Dispatch(instructorApi.util.invalidateTags(["instructor"]))
+
+            }
+            else {
+                console.log("trigger no")
+                //some code
+            }
+        }
+        else if(itemName == "section")
+        {
+                await removeSectionAsync(itemId).then((response) => {
+                    console.log("trigger response section")
+                    console.log(response)
+                })
+                Dispatch(instructorApi.util.invalidateTags(["instructor"]))
+        }
+
+        
+    }
 
     const clickDownloadFile = async (fileUrl) => {
         var materialModel = {
@@ -59,11 +88,7 @@ function InstructorsCourseDetail() {
 
 
         await downloadFile(materialModel).then((response) => {
-            console.log("trigger download file response")
-            console.log(response)
             if (response.data.isSuccess) {
-                console.log("trigger blob download file")
-                console.log( response.data.result)
 
                 // const blob = await response.data.result.blob();
                 // const arrayBuffer = await  blob.arrayBuffer();
@@ -107,15 +132,15 @@ function InstructorsCourseDetail() {
                       
                 {sections.length > 0 ? (
                     sections.map((section, key) => (
-                        <Accordion.Item eventKey={key} key={key}>
+                        <Accordion.Item eventKey={key}>
                          
-                            <Accordion.Header>{section.sectionName}</Accordion.Header>
+                            <Accordion.Header style={{ display: 'flex', alignItems: 'center', width: '100%' }}>{section.sectionName} <button style={{ marginLeft: 'auto' }} onClick={()=>removeItem(section.sectionId,"section")} className='btn btn-danger' >Remove Section</button> </Accordion.Header>
                             {
                                 section.videos.map((video,key) => (
                                     <Accordion.Body>
                                     <a width="100%" controls>
                                             {/* <source src={section.publicVideoId} type="video/mp4" /> */}
-                                            <strong><a> {video.title} - <button onClick={()=>handleClickWatchingVideo(video.publicVideoId)}>Watching Video</button></a></strong>
+                                            <strong><a> {video.title} - <button onClick={()=>handleClickWatchingVideo(video.publicVideoId)}>Watching Video</button> <a onClick={()=>removeItem(video.publicVideoId,"video")} ><CiCircleRemove color='red' /></a>  </a></strong>
                                             <hr></hr>
                                             <div style={{position:"relative"}} >
                                                 <a> {video.materials.length > 0 ? (video.materials.map((material,key) => (

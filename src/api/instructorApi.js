@@ -10,18 +10,22 @@ export const instructorApi = createApi({
             const token = localStorage.getItem("token");
             token && headers.append("Authorization","Bearer "+token);
         }
+        
     }),
+    tagTypes:["instructor"],
     endpoints:(builder) => ({
         getAllInstructorCourses:builder.mutation({
             query:()=>({
                 method:"POST"
-            })
+            }),
+            providesTags:["instructor"]
         }),
         getCourseDetail:builder.query({
             query:(courseId)=>({
                 method:"GET",
                 url:`${courseId}`
-            })
+            }),
+            providesTags:["instructor"]
         })
     })
 })

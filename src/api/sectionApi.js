@@ -7,15 +7,24 @@ export const sectionApi = createApi({
     baseQuery:fetchBaseQuery({
         baseUrl:baseUrl+"Section"
     }),
+    tagTypes:["section"],
     endpoints:(builder) => ({
         getSectionSubDetails:builder.query({
             query:(sectionId)=>({
                 url:`${sectionId}`,
                 method:"GET"
-            })
+            }),
+            providesTags:["section"]
+        }),
+        removeSectionAsync:builder.mutation({
+            query:(sectionId) => ({
+                method:"DELETE",
+                url:`?sectionId=${sectionId}`
+            }),
+            invalidatesTags:["section"]
         })
     })
 })
 
 
-export const {useGetSectionSubDetailsQuery} = sectionApi
+export const {useGetSectionSubDetailsQuery,useRemoveSectionAsyncMutation} = sectionApi

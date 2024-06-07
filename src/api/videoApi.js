@@ -12,9 +12,15 @@ export const videoApi = createApi({
                 url:`WatchVideo?publicId=${publicId}`,
                 method:"POST",
             })
+        }),
+        removeVideoAsync:builder.mutation({
+            query:(publicVideoId) => ({
+                url:`?fileName=${publicVideoId}`,
+                method:"DELETE",
+            })
         })
     })
 })
 
 
-export const {useGetWatchVideoUrlMutation} = videoApi;
+export const {useGetWatchVideoUrlMutation,useRemoveVideoAsyncMutation} = videoApi;
