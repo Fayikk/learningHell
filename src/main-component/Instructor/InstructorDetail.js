@@ -5,7 +5,7 @@ import Footer from '../../components/footer/Footer';
 import PageTitle from '../../components/pagetitle/PageTitle';
 import CourseSectionS3 from '../../components/CourseSectionS3/CourseSectionS3';
 import InstructorAuth from '../../Wrappers/HoC/InstructorAuth';
-import { useGetAllInstructorCoursesMutation } from '../../api/instructorApi';
+import { useGetAllInstructorCoursesMutation, useGetAllInstructorCoursesQuery } from '../../api/instructorApi';
 import { useCreateCourseAsyncMutation } from '../../api/courseApi';
 import IsLoading from '../../components/Loading/IsLoading';
 import { Link } from 'react-router-dom';
@@ -32,7 +32,8 @@ const style = {
 function InstructorDetail() {
   const dispatch = useDispatch();
   const [courses, setCourses] = useState([]);
-  const [getAllInstructorCourses] = useGetAllInstructorCoursesMutation();
+  // const [getAllInstructorCourses] = useGetAllInstructorCoursesMutation();
+  const {data,IsLoading} = useGetAllInstructorCoursesQuery();
   const [createCourseAsync] = useCreateCourseAsyncMutation();
   const [courseModel, setCourseModel] = useState({
     courseName: "",
@@ -50,14 +51,30 @@ function InstructorDetail() {
   const handleClose = () => setOpen(false);
 
   useEffect(() => {
-    async function fetchAllMyCourses() {
-      const response = await getAllInstructorCourses();
-      if (response.data) {
-        setCourses(response.data.result);
-      }
+    // async function fetchAllMyCourses() {
+    //   const response = await getAllInstructorCourses();
+    //   if (response.data) {
+    //     setCourses(response.data.result);
+    //   }
+    // }
+    // fetchAllMyCourses();
+    if (data) {
+      setCourses(data.result)
     }
-    fetchAllMyCourses();
-  }, []);
+  }, [data]);
+
+  console.log("trigger data.result")
+  console.log(data)
+
+
+
+  if (IsLoading) {
+    return (
+      <IsLoading></IsLoading>
+    )
+  }
+
+
 
   const createCourse = async () => {
     const formData = new FormData();
