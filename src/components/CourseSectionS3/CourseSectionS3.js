@@ -11,15 +11,9 @@ const CourseSectionS3 = (props) => {
 
 
     const [courses,setCourses] = useState([])
-    console.log("trigger for component")
-    console.log(props.component)
-    console.log("trigger course section 3")
-    console.log(props.courses)
     useEffect(()=>{
-        console.log("trigger - 1")
 
         if (props.courses) {
-            console.log("trigger")
             setCourses(props.courses)
         }
         

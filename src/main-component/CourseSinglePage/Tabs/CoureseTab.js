@@ -34,7 +34,6 @@ const CoureseTab = ({ EventsDetails,CoursesDetails }) => {
     )
   }
 
-  console.log(data)
 
 
   const toggle = tab => {

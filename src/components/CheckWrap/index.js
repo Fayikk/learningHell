@@ -94,8 +94,6 @@ const CheckWrap = (props) => {
 
             const userRegex = /^user+.*/gm;
             const email = value.email;
-            console.log("trigger payment response")
-            console.log(response)
             if (email.match(userRegex) && response.data.isSuccess ) {
                 Dispatch(cartStateUpdate(response.data.result.item2))
                 toast.success(response.data.messages[0]);

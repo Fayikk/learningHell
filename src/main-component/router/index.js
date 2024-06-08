@@ -4,11 +4,7 @@ import Homepage from '../HomePage/HomePage'
 import CategorySinglePage from '../CategorySinglePage/CategorySinglePage';
 import CoursePage from '../CoursePage/CoursePage';
 import CoursePageS2 from '../CoursePageS2/CoursePageS2';
-import CoursePageS3 from '../CoursePageS3/CoursePageS3';
 import CourseSinglePage from '../CourseSinglePage/CourseSinglePage';
-import HomePage2 from '../HomePage2/HomePage2';
-import HomePage4 from '../HomePage4/HomePage4';
-import HomePage5 from '../HomePage5/HomePage5';
 import AboutPage from '../AboutPage/AboutPage';
 import TestimonialPage from '../TestimonialPage/TestimonialPage';
 import TeamPage from '../TeamPage/TeamPage';
@@ -22,7 +18,6 @@ import CheckoutPage from '../CheckoutPage';
 import OrderRecived from '../OrderRecived';
 import BlogPage from '../BlogPage/BlogPage'
 import BlogPageLeft from '../BlogPageLeft/BlogPageLeft'
-import BlogPageFullwidth from '../BlogPageFullwidth/MyCourses'
 import BlogDetails from '../BlogDetails/BlogDetails'
 import BlogDetailsFull from '../BlogDetailsFull/BlogDetailsFull'
 import BlogDetailsLeftSiide from '../BlogDetailsLeftSiide/BlogDetailsLeftSiide'

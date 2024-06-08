@@ -21,10 +21,12 @@ export const instructorApi = createApi({
             providesTags:["instructor"]
         }),
         getCourseDetail:builder.query({
-            query:(courseId)=>({
-                method:"GET",
-                url:`${courseId}`
-            }),
+            query:(courseId)=>{return (
+                courseId == "NewCourse" ? null : {
+                    method:"GET",
+                    url:`${courseId}`
+                }
+            )},
             providesTags:["instructor"]
         })
     })

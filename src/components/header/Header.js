@@ -19,8 +19,6 @@ const Header = (props) => {
 
     const Navigate = useNavigate();
     const Dispatch = useDispatch();
-    // console.log("trigger cartCounter")
-    // console.log(cartCounter)
 
     const [showDropdown, setShowDropdown] = useState(false);
 
@@ -46,7 +44,6 @@ const Header = (props) => {
         localStorage.removeItem("token")
         localStorage.removeItem("refreshToken")
         Dispatch(setLoggedInUser({...InitialState}))
-        console.log("trigger logout")
         Navigate("/home")
     }
 

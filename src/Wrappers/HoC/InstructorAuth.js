@@ -14,8 +14,6 @@ const InstructorAuth = (WrappedComponent)  => {
             if (token!=null) {
                 const decode  = jwtDecode(token);
 
-                console.log("trigger InstructorAuth")
-                console.log(decode.role)
                 var rolCounter = 0;
                 for (let index = 0; index < decode.role.length; index++) {
                     const element = decode.role[index];
@@ -24,7 +22,7 @@ const InstructorAuth = (WrappedComponent)  => {
                     }
                 }   
                 if (rolCounter != 0) {
-                    toast.success("Succeded Enter")
+                    // toast.success("Succeded Enter")
                 }
                 else {
                     window.location.replace("/ErrorPage/403")

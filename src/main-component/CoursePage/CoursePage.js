@@ -31,11 +31,6 @@ const CoursePage = () => {
     })
    
     useEffect(()=>{
-        // console.log("trigger course page")
-        // console.log(data)
-        // if (data)    {
-        //     setCourses(data.result.courses)
-        // }
         async function fetchData() {
             // You can await here
             await fetchAllDatas(filter).then((response) => {

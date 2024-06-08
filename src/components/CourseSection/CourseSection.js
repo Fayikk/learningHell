@@ -9,8 +9,6 @@ const ClickHandler = () => {
 
 const CourseSection = (props) => {
 
-    console.log("trigger course section")
-    console.log(props)
 
 
     return (

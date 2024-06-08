@@ -6,7 +6,12 @@ import { create } from '@mui/material/styles/createTransitions'
 export const courseApi = createApi({
     reducerPath:"courseApi",
     baseQuery:fetchBaseQuery({
-        baseUrl:baseUrl+"Course"
+        baseUrl:baseUrl+"Course",
+        prepareHeaders:(headers,api) => {
+            const token = localStorage.getItem("token");
+            token && headers.append("Authorization","Bearer "+token);
+        }
+        
     }),
     endpoints:(builder) => ({
         getCourseDetailById:builder.query({
@@ -34,14 +39,15 @@ export const courseApi = createApi({
                     method:"POST"
                 })
             }
-
-
-
-              
-               
+        }),
+        createCourseAsync:builder.mutation({
+            query:(courseModel) => ({
+                method:"POST",
+                body:courseModel
+            })
         })
     })
 })
 
 
-export const {useGetCourseDetailByIdQuery,useGetSectionsByCourseIdQuery,useGetCourseIntroductionVideosQuery,useGetAllCoursesMutation} = courseApi
+export const {useGetCourseDetailByIdQuery,useGetSectionsByCourseIdQuery,useGetCourseIntroductionVideosQuery,useGetAllCoursesMutation,useCreateCourseAsyncMutation} = courseApi

@@ -12,10 +12,12 @@ import JSZip from 'jszip';
 import { useChangeVideoAsncMutation, useGetWatchVideoUrlMutation, useRemoveVideoAsyncMutation } from '../../api/videoApi';
 import VideoPage from '../LessonPage/VideoPage';
 import { CiCircleRemove } from "react-icons/ci";
-import { useRemoveSectionAsyncMutation } from '../../api/sectionApi';
+import { useAddSectionAsyncMutation, useRemoveSectionAsyncMutation } from '../../api/sectionApi';
 import { useDispatch } from 'react-redux';
 import CustomModal from '../CustomComponents/CustomModal';
 import InstructorAuth from '../../Wrappers/HoC/InstructorAuth';
+
+
 
 function InstructorsCourseDetail() {
     const dispatch = useDispatch();
@@ -26,6 +28,7 @@ function InstructorsCourseDetail() {
     const [removeVideoAsync] = useRemoveVideoAsyncMutation();
     const [removeSectionAsync] = useRemoveSectionAsyncMutation();
     const [changeVideoAsync] = useChangeVideoAsncMutation();
+
     const [chooseVideo, setChooseVideo] = useState(false);
     const [sections, setSections] = useState([]);
     const [modal, isShowModal] = useState(false);
@@ -33,7 +36,8 @@ function InstructorsCourseDetail() {
         publicVideoId:"",
         sectionId:""
     });
-    console.log(videoDetail)
+
+
     useEffect(() => {
         if (data && data.result[0] && data.result[0].sections) {
             setSections(data.result[0].sections);
@@ -102,20 +106,12 @@ function InstructorsCourseDetail() {
 
     const handleFromChildData = async (event) => {
 
-        // changeVideoAsnc:builder.mutation({
-        //     query:(fileModel) => ({
-        //         url:`${fileModel.fileName}?Title=${fileModel.title}&SectionId=${fileModel.sectionId}`,
-        //         method:"PUT",
-        //         body:fileModel.file
-        //     })
-        // })
-        
-        // title:event.title,
-        // sectionId:videoDetail.sectionId,    
-        // file:event.file.target.files[0]
 
         const formData = new FormData();
-        console.log(event.file)
+        const typeFile = event.file.target.files[0].type.split("/");
+        if (typeFile[1] !== 'mp4') {
+            return alert("Please just mp4 format")
+        }
         formData.append("File",event.file.target.files[0])
         formData.append("Title",event.title)
         formData.append("SectionId",videoDetail.sectionId)
@@ -136,7 +132,13 @@ function InstructorsCourseDetail() {
 
     };
 
+
+
+
+
     return (
+        <div>
+            
         <Fragment>
             <Navbar />
             <PageTitle pageTitle={'Instructor'} pageSub={'CourseDetail'} />
@@ -202,12 +204,16 @@ function InstructorsCourseDetail() {
                         </Accordion.Item>
                     ))
                 ) : (
+                    <>
+                   
                     <p>No sections available.</p>
+                    </>
                 )}
             </Accordion>
             <Footer />
             <Scrollbar />
         </Fragment>
+        </div>
     );
 }
 

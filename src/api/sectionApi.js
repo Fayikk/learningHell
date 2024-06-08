@@ -22,9 +22,17 @@ export const sectionApi = createApi({
                 url:`?sectionId=${sectionId}`
             }),
             invalidatesTags:["section"]
+        }),
+        addSectionAsync:builder.mutation({
+            query:(sectionModel) => ({
+                method:"POST",
+                body:sectionModel
+            }),
+            invalidatesTags:["section"]
+
         })
     })
 })
 
 
-export const {useGetSectionSubDetailsQuery,useRemoveSectionAsyncMutation} = sectionApi
+export const {useGetSectionSubDetailsQuery,useRemoveSectionAsyncMutation,useAddSectionAsyncMutation} = sectionApi

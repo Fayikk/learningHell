@@ -45,8 +45,6 @@ const CartPage = (props) => {
   const removeFromCart = async (courseId) => {
     var response = await removeCartItem(courseId);
     if (response) {
-      console.log("trigger remove cart item response")
-      console.log(response)
       Dispatch(cartStateUpdate(response.data.result.item2))
       toast.success(response.data.messages[0])
     }

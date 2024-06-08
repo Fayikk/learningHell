@@ -3,14 +3,11 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
 function CustomModal({ props, onData }) {
-    console.log("trigger is show");
-    console.log(props);
     const [closeModal, setCloseModal] = useState(props);
     const [file, setFile] = useState();
     const [title,setTitle] = useState();
 
     const sendDataToParent = () => {
-        console.log("trigger onData");
         onData({file,title});
     };
 

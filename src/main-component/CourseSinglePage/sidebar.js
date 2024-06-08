@@ -18,8 +18,6 @@ const Sidebar = (props) => {
 
        var response = await addBasketItem(shoppingCartModel)
         if (response && response.data.isSuccess) {
-            console.log("for basket counter");
-            console.log(response)
                 dispatch(cartStateUpdate(response.data.result.item2))
                 toast.success(response.data.messages[0])
         }
