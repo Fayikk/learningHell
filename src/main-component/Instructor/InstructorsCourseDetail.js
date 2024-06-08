@@ -9,14 +9,30 @@ import IsLoading from '../../components/Loading/IsLoading';
 import { instructorApi, useGetCourseDetailQuery } from '../../api/instructorApi';
 import { useDownloadMaterialFileMutation } from '../../api/materialApi';
 import JSZip from 'jszip';
-import { useChangeVideoAsncMutation, useGetWatchVideoUrlMutation, useRemoveVideoAsyncMutation } from '../../api/videoApi';
+import { useAddVideoAsyncMutation, useChangeVideoAsncMutation, useGetWatchVideoUrlMutation, useRemoveVideoAsyncMutation } from '../../api/videoApi';
 import VideoPage from '../LessonPage/VideoPage';
 import { CiCircleRemove } from "react-icons/ci";
 import { useAddSectionAsyncMutation, useRemoveSectionAsyncMutation } from '../../api/sectionApi';
 import { useDispatch } from 'react-redux';
 import CustomModal from '../CustomComponents/CustomModal';
 import InstructorAuth from '../../Wrappers/HoC/InstructorAuth';
-
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
+import { Input } from 'reactstrap';
+import {toast} from 'react-toastify' 
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
 
 function InstructorsCourseDetail() {
@@ -28,14 +44,24 @@ function InstructorsCourseDetail() {
     const [removeVideoAsync] = useRemoveVideoAsyncMutation();
     const [removeSectionAsync] = useRemoveSectionAsyncMutation();
     const [changeVideoAsync] = useChangeVideoAsncMutation();
-
+    const [addVideoAsync] = useAddVideoAsyncMutation();
+    const [title, setTitle] = useState("");
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
     const [chooseVideo, setChooseVideo] = useState(false);
     const [sections, setSections] = useState([]);
     const [modal, isShowModal] = useState(false);
+    const [createSectionAsync] = useAddSectionAsyncMutation();
     const [videoDetail,setVideoDetail] = useState({
         publicVideoId:"",
         sectionId:""
     });
+    const [sectionModel,setSectionModel] = useState({
+        sectionName:"",
+        description:"",
+        courseId:slug
+    })
 
 
     useEffect(() => {
@@ -75,8 +101,9 @@ function InstructorsCourseDetail() {
         }
     };
 
-    const handleChangeVideoAsync = () => {
+    const handleChangeVideoAsync = (title) => {
         isShowModal(!modal);
+        setTitle(title)
     };
 
     const clickDownloadFile = async (fileUrl) => {
@@ -112,28 +139,53 @@ function InstructorsCourseDetail() {
         if (typeFile[1] !== 'mp4') {
             return alert("Please just mp4 format")
         }
+
+
+
         formData.append("File",event.file.target.files[0])
         formData.append("Title",event.title)
         formData.append("SectionId",videoDetail.sectionId)
+        console.log(event.file.target.files[0])
+        console.log(event.title)
+        console.log(videoDetail.sectionId)
        const fileName = videoDetail.publicVideoId;
-
-        await changeVideoAsync({fileName,formData}).then((response) => {
-            console.log("trigger use change video")
-            console.log(response)
-            if (response.data.isSuccess) {
-                    dispatch(instructorApi.util.invalidateTags(["instructor"]));
+        if(title == "ChangeVideo"){
+            await changeVideoAsync({fileName,formData}).then((response) => {
+                if (response.data.isSuccess) {
+                        dispatch(instructorApi.util.invalidateTags(["instructor"]));
+                    
+                }
+                else {
+    
+                }
                 
-            }
-            else {
-
-            }
-            
-        })
+            })
+        }
+        else {
+            await addVideoAsync(formData).then((response) => {
+                console.log(response)
+                if (response.data.isSuccess) {
+                    dispatch(instructorApi.util.invalidateTags(["instructor"]));
+                    isShowModal(false)
+                    toast.success(response.data.messages[0])
+                }
+            })
+        }
+       
 
     };
 
+   
 
-
+    const createSection = async () => {
+        await createSectionAsync(sectionModel).then((response) => {
+            if (response.data.isSuccess) {
+                handleClose()
+                dispatch(instructorApi.util.invalidateTags(["instructor"]));
+                toast.success("Section created succeded");
+            }
+        })
+    }
 
 
     return (
@@ -155,6 +207,41 @@ function InstructorsCourseDetail() {
             ) : (
                 ""
             )}
+
+            <div>
+            <Button onClick={handleOpen}>Create New Section</Button>
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              <div className='col'>
+                <div className='row'>
+                  <Input
+                    type='text'
+                    placeholder='Section Name'
+                    onChange={(e) => setSectionModel({ ...sectionModel, sectionName: e.target.value })}
+                  />
+                </div>
+                <div className='row'>
+                  <Input
+                    type='text'
+                    placeholder='Description'
+                    onChange={(e) => setSectionModel({ ...sectionModel, description: e.target.value })}
+                  />
+                </div>
+                
+              </div>
+            </Typography>
+            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+              <Button onClick={createSection}>Save Section</Button>
+            </Typography>
+          </Box>
+        </Modal>
+            </div>
             <Accordion>
                 {sections.length > 0 ? (
                     sections.map((section, key) => (
@@ -163,6 +250,13 @@ function InstructorsCourseDetail() {
                                 {section.sectionName} 
                                 <button style={{ marginLeft: 'auto' }} onClick={() => removeItem(section.sectionId, "section")} className='btn btn-danger'>
                                     Remove Section
+                                </button>
+                                <button style={{ marginLeft: 'auto' }} data-target={section.sectionId} onClick={()=> {
+                                     setVideoDetail({ publicVideoId: "", sectionId: section.sectionId });
+                                     handleChangeVideoAsync("NewVideo")
+                                    }
+                                 } className='btn btn-secondary'>
+                                    Add Video
                                 </button>
                             </Accordion.Header>
                             {section.videos.map((video, key) => (
@@ -174,7 +268,7 @@ function InstructorsCourseDetail() {
                                                 <button onClick={() => handleClickWatchingVideo(video.publicVideoId)}>Watching Video</button>
                                                 <button className='btn btn-primary' onClick={() => {
                                                         setVideoDetail({ publicVideoId: video.publicVideoId, sectionId: section.sectionId });
-                                                        handleChangeVideoAsync();
+                                                        handleChangeVideoAsync("ChangeVideo");
                                                     }}>Change Video</button> 
                                                 <a onClick={() => removeItem(video.publicVideoId, "video")}>  
                                                     <CiCircleRemove color='red'>Remove</CiCircleRemove>

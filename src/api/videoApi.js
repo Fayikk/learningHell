@@ -28,6 +28,13 @@ export const videoApi = createApi({
     body:fileModel.formData
 }
             )
+        }),
+        addVideoAsync:builder.mutation({
+            query:(videoModel) => ({
+                url:"UploadVideo",
+                method:"POST",
+                body:videoModel
+            })
         })
     })
 })
@@ -35,4 +42,4 @@ export const videoApi = createApi({
 // fileName,formData
 
 
-export const {useGetWatchVideoUrlMutation,useRemoveVideoAsyncMutation,useChangeVideoAsncMutation} = videoApi;
+export const {useGetWatchVideoUrlMutation,useRemoveVideoAsyncMutation,useChangeVideoAsncMutation,useAddVideoAsyncMutation} = videoApi;
