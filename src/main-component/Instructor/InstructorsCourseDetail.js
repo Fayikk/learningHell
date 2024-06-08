@@ -15,6 +15,7 @@ import { CiCircleRemove } from "react-icons/ci";
 import { useRemoveSectionAsyncMutation } from '../../api/sectionApi';
 import { useDispatch } from 'react-redux';
 import CustomModal from '../CustomComponents/CustomModal';
+import InstructorAuth from '../../Wrappers/HoC/InstructorAuth';
 
 function InstructorsCourseDetail() {
     const dispatch = useDispatch();
@@ -210,4 +211,4 @@ function InstructorsCourseDetail() {
     );
 }
 
-export default InstructorsCourseDetail;
+export default InstructorAuth(InstructorsCourseDetail);

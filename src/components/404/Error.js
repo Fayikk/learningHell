@@ -1,12 +1,38 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {Link} from 'react-router-dom'
 import erimg from '../../images/error-404.png'
 
 
 const Error = (props) => {
+
+    const [message,setMessage] = useState();
+    
     const ClickHandler = () =>{
         window.scrollTo(10, 0);
      }
+
+
+     if (props.slug == "403") {
+        setMessage("Access Denied")
+     }
+     else if(props.slug == "404")
+        {
+            setMessage("Not Found")
+        }
+        else if(props.slug == "500")
+             {
+                setMessage("Inernal Server Error")
+        }
+        else if(props.slug == "400"){
+            setMessage("Bad Request")
+        }
+     
+
+
+
+
+
+
 
     return(
         <section className="error-404-section section-padding">
@@ -18,8 +44,7 @@ const Error = (props) => {
                                 <img src={erimg} alt=""/>
                             </div>
                             <div className="error-message">
-                                <h3>Oops! Page Not Found!</h3>
-                                <p>We’re sorry but we can’t seem to find the page you requested. This might be because you have typed the web address incorrectly.</p>
+                                <h3>{message}</h3>
                                 <Link onClick={ClickHandler} to="/home" className="theme-btn"> Back to home</Link>
                             </div>
                         </div>

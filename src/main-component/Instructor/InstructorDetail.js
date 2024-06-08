@@ -7,7 +7,7 @@ import CourseSection from '../../components/CourseSection/CourseSection';
 import { useGetAllInstructorCoursesMutation } from '../../api/instructorApi';
 import IsLoading from '../../components/Loading/IsLoading';
 import CourseSectionS3 from '../../components/CourseSectionS3/CourseSectionS3';
-
+import InstructorAuth from '../../Wrappers/HoC/InstructorAuth';
 function InstructorDetail() {
   const [courses, setCourses] = useState();
   const [getAllInstructorCourses] = useGetAllInstructorCoursesMutation();
@@ -40,4 +40,4 @@ function InstructorDetail() {
   );
 }
 
-export default InstructorDetail;
+export default InstructorAuth(InstructorDetail);
