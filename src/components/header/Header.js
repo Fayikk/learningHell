@@ -125,7 +125,7 @@ const Header = (props) => {
                                                 </li>
                                             </ul>
                                         </li>
-                                        <li><Link onClick={ClickHandler} to="/contact">Contact</Link></li>
+                                        {/* <li><Link onClick={ClickHandler} to="/contact">Contact</Link></li> */}
                                         <li className="menu-item-has-children">
                                             <Link onClick={ClickHandler} to="/cart"><CiShoppingCart /> ({cartCounter})</Link>
                                            

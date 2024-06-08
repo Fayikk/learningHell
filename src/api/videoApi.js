@@ -18,9 +18,21 @@ export const videoApi = createApi({
                 url:`?fileName=${publicVideoId}`,
                 method:"DELETE",
             })
+        }),
+        changeVideoAsnc:builder.mutation({
+            query:(fileModel) => (
+                
+{
+    url:`${fileModel.fileName}`,
+    method:"PUT",
+    body:fileModel.formData
+}
+            )
         })
     })
 })
 
+// fileName,formData
 
-export const {useGetWatchVideoUrlMutation,useRemoveVideoAsyncMutation} = videoApi;
+
+export const {useGetWatchVideoUrlMutation,useRemoveVideoAsyncMutation,useChangeVideoAsncMutation} = videoApi;

@@ -8,153 +8,196 @@ import { useParams } from 'react-router-dom';
 import IsLoading from '../../components/Loading/IsLoading';
 import { instructorApi, useGetCourseDetailQuery } from '../../api/instructorApi';
 import { useDownloadMaterialFileMutation } from '../../api/materialApi';
-import JSZip, { remove } from 'jszip';
-import { useGetWatchVideoUrlMutation, useRemoveVideoAsyncMutation } from '../../api/videoApi';
+import JSZip from 'jszip';
+import { useChangeVideoAsncMutation, useGetWatchVideoUrlMutation, useRemoveVideoAsyncMutation } from '../../api/videoApi';
 import VideoPage from '../LessonPage/VideoPage';
 import { CiCircleRemove } from "react-icons/ci";
 import { useRemoveSectionAsyncMutation } from '../../api/sectionApi';
 import { useDispatch } from 'react-redux';
+import CustomModal from '../CustomComponents/CustomModal';
+
 function InstructorsCourseDetail() {
-    const Dispatch = useDispatch();
+    const dispatch = useDispatch();
     const { slug } = useParams();
     const { data, isLoading } = useGetCourseDetailQuery(slug);
     const [downloadFile] = useDownloadMaterialFileMutation();
     const [watchingVideo] = useGetWatchVideoUrlMutation();
     const [removeVideoAsync] = useRemoveVideoAsyncMutation();
     const [removeSectionAsync] = useRemoveSectionAsyncMutation();
-    const [chooseVideo,setChooseVideo] = useState(false);
+    const [changeVideoAsync] = useChangeVideoAsncMutation();
+    const [chooseVideo, setChooseVideo] = useState(false);
     const [sections, setSections] = useState([]);
-
-
+    const [modal, isShowModal] = useState(false);
+    const [videoDetail,setVideoDetail] = useState({
+        publicVideoId:"",
+        sectionId:""
+    });
+    console.log(videoDetail)
     useEffect(() => {
         if (data && data.result[0] && data.result[0].sections) {
             setSections(data.result[0].sections);
-            console.log(sections)
         }
     }, [data]);
 
     if (isLoading) {
         return <IsLoading />;
     }
-    
+
     const handleClickWatchingVideo = async (publicVideoId) => {
-       await watchingVideo(publicVideoId).then((response) => {
-        // window.open(response.data.result,'_blank')
-        localStorage.setItem('willSelectedVideo', JSON.stringify(response.data.result));
-        setChooseVideo(true)
-       })
-    }
+        await watchingVideo(publicVideoId).then((response) => {
+            localStorage.setItem('willSelectedVideo', JSON.stringify(response.data.result));
+            setChooseVideo(true);
+        });
+    };
 
     const closeVideo = () => {
-        setChooseVideo(false)
-    }
+        setChooseVideo(false);
+    };
 
-    const removeItem = async (itemId,itemName) => {
+    const removeItem = async (itemId, itemName) => {
         var answer = window.confirm("Are you sure want to delete?");
 
-        if (itemName == "video") {
+        if (itemName === "video") {
             if (answer) {
-                //some code
-               await removeVideoAsync(itemId).then((response) => {
-                    console.log("trigger response handle remove click")
-                    console.log(response)
-                })
-                console.log("trigger yes")
-                Dispatch(instructorApi.util.invalidateTags(["instructor"]))
-
+                await removeVideoAsync(itemId).then((response) => {
+                });
+                dispatch(instructorApi.util.invalidateTags(["instructor"]));
             }
-            else {
-                console.log("trigger no")
-                //some code
-            }
+        } else if (itemName === "section") {
+            await removeSectionAsync(itemId).then((response) => {
+            });
+            dispatch(instructorApi.util.invalidateTags(["instructor"]));
         }
-        else if(itemName == "section")
-        {
-                await removeSectionAsync(itemId).then((response) => {
-                    console.log("trigger response section")
-                    console.log(response)
-                })
-                Dispatch(instructorApi.util.invalidateTags(["instructor"]))
-        }
+    };
 
-        
-    }
+    const handleChangeVideoAsync = () => {
+        isShowModal(!modal);
+    };
 
     const clickDownloadFile = async (fileUrl) => {
         var materialModel = {
-            fileUrl:fileUrl,
-            type:1
-        }
-
+            fileUrl: fileUrl,
+            type: 1,
+        };
 
         await downloadFile(materialModel).then((response) => {
             if (response.data.isSuccess) {
-
-                // const blob = await response.data.result.blob();
-                // const arrayBuffer = await  blob.arrayBuffer();
-
-                // Create a new zip file
-                const zip = new JSZip()
+                const zip = new JSZip();
                 zip.file("file.pdf", response.data.result);
 
-                // Generate the zip file and trigger the download
-                zip.generateAsync({ type: "blob" })
-                    .then(function (zipBlob) {
-                        const url = window.URL.createObjectURL(zipBlob);
-                        const a = document.createElement('a');
-                        a.style.display = 'none';
-                        a.href = url;
-                        a.download = 'download.zip'; // The name of the zip file
-                        document.body.appendChild(a);
-                        a.click();
-                        window.URL.revokeObjectURL(url);
-                    });
+                zip.generateAsync({ type: "blob" }).then(function (zipBlob) {
+                    const url = window.URL.createObjectURL(zipBlob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = 'download.zip';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                });
             }
-        })
-    }
+        });
+    };
 
+    const handleFromChildData = async (event) => {
+
+        // changeVideoAsnc:builder.mutation({
+        //     query:(fileModel) => ({
+        //         url:`${fileModel.fileName}?Title=${fileModel.title}&SectionId=${fileModel.sectionId}`,
+        //         method:"PUT",
+        //         body:fileModel.file
+        //     })
+        // })
+        
+        // title:event.title,
+        // sectionId:videoDetail.sectionId,    
+        // file:event.file.target.files[0]
+
+        const formData = new FormData();
+        console.log(event.file)
+        formData.append("File",event.file.target.files[0])
+        formData.append("Title",event.title)
+        formData.append("SectionId",videoDetail.sectionId)
+       const fileName = videoDetail.publicVideoId;
+
+        await changeVideoAsync({fileName,formData}).then((response) => {
+            console.log("trigger use change video")
+            console.log(response)
+            if (response.data.isSuccess) {
+                    dispatch(instructorApi.util.invalidateTags(["instructor"]));
+                
+            }
+            else {
+
+            }
+            
+        })
+
+    };
 
     return (
         <Fragment>
             <Navbar />
             <PageTitle pageTitle={'Instructor'} pageSub={'CourseDetail'} />
-            {
-    chooseVideo ? (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '60%', margin: '0 auto' }}>
-            <VideoPage />
-            <button onClick={closeVideo}>Close Video</button>
-        </div>
-    ) : ("")
-}
-
+            {chooseVideo ? (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '60%', margin: '0 auto' }}>
+                    <VideoPage />
+                    <button onClick={closeVideo}>Close Video</button>
+                </div>
+            ) : (
+                ""
+            )}
+            {modal ? (
+                <CustomModal props={modal} onData={handleFromChildData} />
+            ) : (
+                ""
+            )}
             <Accordion>
-       
-                      
                 {sections.length > 0 ? (
                     sections.map((section, key) => (
-                        <Accordion.Item eventKey={key}>
-                         
-                            <Accordion.Header style={{ display: 'flex', alignItems: 'center', width: '100%' }}>{section.sectionName} <button style={{ marginLeft: 'auto' }} onClick={()=>removeItem(section.sectionId,"section")} className='btn btn-danger' >Remove Section</button> </Accordion.Header>
-                            {
-                                section.videos.map((video,key) => (
-                                    <Accordion.Body>
-                                    <a width="100%" controls>
-                                            {/* <source src={section.publicVideoId} type="video/mp4" /> */}
-                                            <strong><a> {video.title} - <button onClick={()=>handleClickWatchingVideo(video.publicVideoId)}>Watching Video</button> <a onClick={()=>removeItem(video.publicVideoId,"video")} ><CiCircleRemove color='red' /></a>  </a></strong>
-                                            <hr></hr>
-                                            <div style={{position:"relative"}} >
-                                                <a> {video.materials.length > 0 ? (video.materials.map((material,key) => (
-                                                    <a> {material.name} - <button onClick={()=>clickDownloadFile(material.fileUrl)} >download</button>  </a> 
-                                                ))) : ("material is not found")} </a>
-                                            </div>
-                                        </a>
-                                      <br></br>
-                                      <hr style={{backgroundColor:"red",height:"5px"}} ></hr>
-                                    </Accordion.Body>
-                                ))
-                            }
-                            
-                           
+                        <Accordion.Item eventKey={key} key={key}>
+                            <Accordion.Header style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                                {section.sectionName} 
+                                <button style={{ marginLeft: 'auto' }} onClick={() => removeItem(section.sectionId, "section")} className='btn btn-danger'>
+                                    Remove Section
+                                </button>
+                            </Accordion.Header>
+                            {section.videos.map((video, key) => (
+                                <Accordion.Body key={key}>
+                                    <a>
+                                        <strong>
+                                            <a> 
+                                                {video.title} 
+                                                <button onClick={() => handleClickWatchingVideo(video.publicVideoId)}>Watching Video</button>
+                                                <button className='btn btn-primary' onClick={() => {
+                                                        setVideoDetail({ publicVideoId: video.publicVideoId, sectionId: section.sectionId });
+                                                        handleChangeVideoAsync();
+                                                    }}>Change Video</button> 
+                                                <a onClick={() => removeItem(video.publicVideoId, "video")}>  
+                                                    <CiCircleRemove color='red'>Remove</CiCircleRemove>
+                                                </a>   
+                                            </a>
+                                        </strong>
+                                        <hr />
+                                        <div style={{ position: "relative" }}>
+                                            <a> 
+                                                {video.materials.length > 0 ? (
+                                                    video.materials.map((material, key) => (
+                                                        <a key={key}> 
+                                                            {material.name} 
+                                                            <button onClick={() => clickDownloadFile(material.fileUrl)}>download</button>  
+                                                        </a> 
+                                                    ))
+                                                ) : (
+                                                    "material is not found"
+                                                )}
+                                            </a>
+                                        </div>
+                                    </a>
+                                    <br />
+                                    <hr style={{ backgroundColor: "red", height: "5px" }} />
+                                </Accordion.Body>
+                            ))}
                         </Accordion.Item>
                     ))
                 ) : (
