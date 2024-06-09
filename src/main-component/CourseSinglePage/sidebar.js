@@ -61,7 +61,7 @@ const Sidebar = (props) => {
                         <li>Skill Level <span>Advanced</span></li>
                     </ul>
                 </div>
-                <div className="widget recent-post-widget">
+                {/* <div className="widget recent-post-widget">
                     <h3>Latest Course</h3>
                     <div className="posts">
                         {blogs.map((blog, bl) => (
@@ -76,7 +76,7 @@ const Sidebar = (props) => {
                             </div>
                         ))}
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
     )

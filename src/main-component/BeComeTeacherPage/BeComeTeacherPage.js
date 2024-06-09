@@ -1,45 +1,74 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import SimpleReactValidator from 'simple-react-validator';
-import Navbar from '../../components/Navbar/Navbar'
-import PageTitle from '../../components/pagetitle/PageTitle'
-import Footer from '../../components/footer/Footer'
-import Scrollbar from '../../components/scrollbar/scrollbar'
-import vImg from '../../images/teacher.jpg'
+import Navbar from '../../components/Navbar/Navbar';
+import PageTitle from '../../components/pagetitle/PageTitle';
+import Footer from '../../components/footer/Footer';
+import Scrollbar from '../../components/scrollbar/scrollbar';
+import vImg from '../../images/teacher.jpg';
 import TeamSection from '../../components/TeamSection/TeamSection';
-
-
+import { useApplyCvMutation } from '../../api/becomeTeacherApi';
+import {toast} from 'react-toastify'
+import { useNavigate } from 'react-router-dom';
 const BeComeTeacherPage = (props) => {
-
+    const [becomeTeacherAsync] = useApplyCvMutation();
+    const Navigate = useNavigate();
     const [forms, setForms] = useState({
         name: '',
         email: '',
         subject: '',
-        file: '',
         message: ''
     });
+    const [file, setFile] = useState(null);
+
     const [validator] = useState(new SimpleReactValidator({
         className: 'errorMessage'
     }));
-    const changeHandler = e => {
-        setForms({ ...forms, [e.target.name]: e.target.value })
-        if (validator.allValid()) {
-            validator.hideMessages();
-        } else {
-            validator.showMessages();
-        }
+
+    const changeHandler = (e) => {
+        setForms({ ...forms, [e.target.name]: e.target.value });
+        validator.showMessages();
     };
 
-    const submitHandler = e => {
+    const changeFileHandler = (event) => {
+        setFile(event.target.files[0]);
+    };
+
+    const submitHandler = async (e) => {
         e.preventDefault();
-        if (validator.allValid()) {
+        
+        if (validator.allValid() && file) {
             validator.hideMessages();
-            setForms({
-                name: '',
-                email: '',
-                subject: '',
-                file: '',
-                message: ''
-            })
+
+            const formData = new FormData();
+            formData.append("Name", forms.name);
+            formData.append("Email", forms.email);
+            formData.append("Subject", forms.subject);
+            formData.append("Message", forms.message);
+            formData.append("Cv", file);
+
+            try {
+                await becomeTeacherAsync({ formData }).then((response) => {
+                    console.log("trigger response")
+                    console.log(response)
+                    if (response.data.isSuccess) {
+                        Navigate("/Home")
+                        toast.success(response.data.errorMessages[0])
+                    }
+                    if (!response.data.isSuccess) {
+                        toast.error(response.data.errorMessages[0])
+                    }
+                });
+
+                setForms({
+                    name: '',
+                    email: '',
+                    subject: '',
+                    message: ''
+                });
+                setFile(null);
+            } catch (error) {
+                console.error("Form submission error:", error);
+            }
         } else {
             validator.showMessages();
         }
@@ -48,82 +77,75 @@ const BeComeTeacherPage = (props) => {
     return (
         <div className="teacher-page">
             <Navbar />
-            <PageTitle pageTitle={'Become a Teacher'} pagesub={'Teacher'} />
+            <PageTitle pageTitle={"Apply for Teacher"} pagesub={'Teacher'} />
             <div className="teacher-area section-padding pb-0">
                 <div className="teacher-wrap">
                     <div className="container">
                         <div className="row justify-content-center">
                             <div className="col-lg-10">
-                                <div className="teacher-item">
-                                    <div className="teacher-img-wrap">
-                                        <div className="volunter-img">
-                                            <img src={vImg} alt="" />
-                                        </div>
-                                    </div>
-                                </div>
                                 <div className="teacher-contact">
                                     <div className="teacher-contact-form">
                                         <h2>Become a teacher</h2>
-                                        <form onSubmit={(e) => submitHandler(e)} className="contact-validation-active" id="contact-form-main">
+                                        <form onSubmit={submitHandler} className="contact-validation-active" id="contact-form-main">
                                             <div className="row">
                                                 <div className="col-lg-6 col-md-6 col-sm-6 col-12 form-group">
                                                     <div className="form-field">
                                                         <input
-                                                            value={forms.name}
                                                             type="text"
                                                             name="name"
-                                                            onBlur={(e) => changeHandler(e)}
-                                                            onChange={(e) => changeHandler(e)}
-                                                            placeholder="Your Name" />
+                                                            onBlur={changeHandler}
+                                                            onChange={changeHandler}
+                                                            placeholder="Your Name"
+                                                            value={forms.name}
+                                                        />
                                                         {validator.message('name', forms.name, 'required|alpha_space')}
                                                     </div>
                                                 </div>
                                                 <div className="col-lg-6 col-md-6 col-sm-6 col-12 form-group clearfix">
                                                     <div className="form-field">
                                                         <input
-                                                            value={forms.email}
                                                             type="email"
                                                             name="email"
-                                                            onBlur={(e) => changeHandler(e)}
-                                                            onChange={(e) => changeHandler(e)}
-                                                            placeholder="Your Email" />
+                                                            onBlur={changeHandler}
+                                                            onChange={changeHandler}
+                                                            placeholder="Your Email"
+                                                            value={forms.email}
+                                                        />
                                                         {validator.message('email', forms.email, 'required|email')}
                                                     </div>
                                                 </div>
                                                 <div className="col-lg-6 col-md-6 col-sm-6 col-12 form-group">
                                                     <div className="form-field">
                                                         <input
-                                                            value={forms.subject}
                                                             type="text"
                                                             name="subject"
-                                                            onBlur={(e) => changeHandler(e)}
-                                                            onChange={(e) => changeHandler(e)}
-                                                            placeholder="Your subject" />
+                                                            onBlur={changeHandler}
+                                                            onChange={changeHandler}
+                                                            placeholder="Your Subject"
+                                                            value={forms.subject}
+                                                        />
                                                         {validator.message('subject', forms.subject, 'required|alpha_space')}
                                                     </div>
                                                 </div>
                                                 <div className="col-lg-6 col-md-6 col-sm-6 col-12 form-group form-group-in">
                                                     <label htmlFor="file">Upload Your CV</label>
                                                     <input
-                                                        value={forms.file}
                                                         type="file"
                                                         name="file"
-                                                        id='file'
-                                                        onBlur={(e) => changeHandler(e)}
-                                                        onChange={(e) => changeHandler(e)}
-                                                        placeholder="Your Email" />
-                                                    {validator.message('file', forms.file, 'required|file')}
+                                                        id="file"
+                                                        onBlur={changeFileHandler}
+                                                        onChange={changeFileHandler}
+                                                    />
                                                     <i className="ti-cloud-up"></i>
                                                 </div>
                                                 <div className="col-lg-12 col-12 form-group">
                                                     <textarea
-                                                        onBlur={(e) => changeHandler(e)}
-                                                        onChange={(e) => changeHandler(e)}
-                                                        value={forms.message}
-                                                        type="text"
+                                                        onBlur={changeHandler}
+                                                        onChange={changeHandler}
                                                         name="message"
-                                                        placeholder="Message">
-                                                    </textarea>
+                                                        placeholder="Message"
+                                                        value={forms.message}
+                                                    />
                                                     {validator.message('message', forms.message, 'required')}
                                                 </div>
                                                 <div className="submit-area col-lg-12 col-12">
@@ -135,8 +157,7 @@ const BeComeTeacherPage = (props) => {
                                             </div>
                                             <div className="clearfix error-handling-messages">
                                                 <div id="success">Thank you</div>
-                                                <div id="error"> Error occurred while sending email. Please try again later.
-                                                </div>
+                                                <div id="error"> Error occurred while sending email. Please try again later.</div>
                                             </div>
                                         </form>
                                     </div>
@@ -145,13 +166,12 @@ const BeComeTeacherPage = (props) => {
                         </div>
                     </div>
                 </div>
-                <TeamSection pbClass={'s2'}/>
+                <TeamSection pbClass={'s2'} />
             </div>
             <Footer />
             <Scrollbar />
         </div>
-
-    )
-}
+    );
+};
 
 export default BeComeTeacherPage;

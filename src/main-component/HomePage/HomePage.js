@@ -1,13 +1,9 @@
 import React, {Fragment, useEffect, useState} from 'react';
 import Navbar from '../../components/Navbar/Navbar'
 import Hero from '../../components/hero/hero';
-import About from '../../components/about/about';
-import CategorySection from '../../components/CategorySection/CategorySection';
 import CourseSection from '../../components/CourseSection/CourseSection';
-import Testimonial from '../../components/Testimonial/Testimonial';
 import TeamSection from '../../components/TeamSection/TeamSection';
 import ChooseSection from '../../components/ChooseSection/ChooseSection';
-import BlogSection from '../../components/BlogSection/BlogSection';
 import Newslatter from '../../components/Newslatter/Newslatter';
 import Scrollbar from '../../components/scrollbar/scrollbar';
 import Footer from '../../components/footer/Footer';

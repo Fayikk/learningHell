@@ -16,6 +16,7 @@ import { baseUrl } from "../api/Base/baseApiModel";
 import axios from "axios";
 import { instructorApi } from "../api/instructorApi";
 import { materialApi } from "../api/materialApi";
+import { becomeTeacherApi } from "../api/becomeTeacherApi";
 const errorLoggerMiddleware = (store) => (next) => (action) => {
     if (action && action.payload && action.payload.status) {
         console.error("API error:", action.payload);
@@ -68,6 +69,7 @@ const store = configureStore({
         [videoApi.reducerPath]:videoApi.reducer,
         [instructorApi.reducerPath]:instructorApi.reducer,
         [materialApi.reducerPath]:materialApi.reducer,
+        [becomeTeacherApi.reducerPath]:becomeTeacherApi.reducer,
 
     },middleware:(getDefaultMiddleware) => getDefaultMiddleware()
         .concat(
@@ -81,6 +83,7 @@ const store = configureStore({
             ,videoApi.middleware
             ,instructorApi.middleware
             ,materialApi.middleware
+            ,becomeTeacherApi.middleware
             ,errorLoggerMiddleware
             )
 })

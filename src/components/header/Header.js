@@ -102,14 +102,13 @@ const Header = (props) => {
                                             <Link onClick={ClickHandler} to=""><FaLock></FaLock>Pair Working Rooms</Link>
                                            
                                         </li>
-                                    
                                         <li className="menu-item-has-children">
-                                            <Link onClick={ClickHandler} to="/">Blog</Link>
-                                            <ul className="sub-menu">
+                                            <Link onClick={ClickHandler} to="/become-teacher">Become Teacher</Link>
+                                            {/* <ul className="sub-menu">
                                                 <li><Link onClick={ClickHandler} to="/blog">Blog right sidebar</Link></li>
-                                                <li><Link onClick={ClickHandler} to="/blog-left-sidebar">Blog left sidebar</Link></li>
+                                                <li><Link onClick={ClickHandler} to="/blog-left-sidebar">Blog left sidebar</Link></li> */}
                                                 {/* <li><Link onClick={ClickHandler} to="/blog-fullwidth">Blog fullwidth</Link></li> */}
-                                                <li className="menu-item-has-children">
+                                                {/* <li className="menu-item-has-children">
                                                     <Link onClick={ClickHandler} to="/">Blog details</Link>
                                                     <ul className="sub-menu">
                                                         <li><Link onClick={ClickHandler} to="/blog-single/Become-a-great-WordPress-&-PHP-developer.">Blog details right sidebar</Link>
@@ -119,8 +118,8 @@ const Header = (props) => {
                                                         <li><Link onClick={ClickHandler} to="/blog-single-fullwidth/Become-a-great-WordPress-&-PHP-developer.">Blog details
                                                             fullwidth</Link></li>
                                                     </ul>
-                                                </li>
-                                            </ul>
+                                                </li> */}
+                                            {/* </ul> */}
                                         </li>
                                         {/* <li><Link onClick={ClickHandler} to="/contact">Contact</Link></li> */}
                                         <li className="menu-item-has-children">
