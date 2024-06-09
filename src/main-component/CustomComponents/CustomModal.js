@@ -1,15 +1,32 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
-function CustomModal({ props, onData }) {
+function CustomModal({ props,type, onData }) {
     const [closeModal, setCloseModal] = useState(props);
     const [file, setFile] = useState();
     const [title,setTitle] = useState();
-
+    const [message,setMessage] = useState("");
     const sendDataToParent = () => {
         onData({file,title});
     };
+
+
+    useEffect(()=>{
+        if (type === "NewMaterial") {
+            setMessage("Add New Material")   
+           }
+           else if (type === "NewVideo")
+               {
+                   setMessage("Add New Video")
+               }
+               else if(type === "Change Video")
+                   {
+                       setMessage("Change Video")
+                   }
+    },[])
+
+   
 
     return (
         <div
@@ -18,7 +35,7 @@ function CustomModal({ props, onData }) {
         >
             <Modal.Dialog>
                 <Modal.Header closeButton onClick={() => setCloseModal(false)}>
-                    <Modal.Title>Change The Video</Modal.Title>
+                    <Modal.Title>{message}</Modal.Title>
                 </Modal.Header>
 
                 <Modal.Body>

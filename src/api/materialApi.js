@@ -19,10 +19,28 @@ export const materialApi = createApi({
                 }
             }
 
+        }),
+        uploadMaterialFile:builder.mutation({
+            query:(formData) => {
+                return {
+                    method:"POST",
+                    body:formData,
+                    url:"UploadFile"
+                }
+            }
+        }),
+        removeMaterialAsync:builder.mutation({
+            query:(fileName) => {
+                return {
+                    method:"DELETE",
+                    url:`${fileName}`,
+
+                }
+            }
         })
     })
 })
 
 
 
-export const {useDownloadMaterialFileMutation} = materialApi
+export const {useDownloadMaterialFileMutation,useUploadMaterialFileMutation,useRemoveMaterialAsyncMutation} = materialApi

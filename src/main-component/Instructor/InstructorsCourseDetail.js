@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import Accordion from 'react-bootstrap/Accordion';
 import Navbar from '../../components/Navbar/Navbar';
 import PageTitle from '../../components/pagetitle/PageTitle';
@@ -7,12 +7,12 @@ import Scrollbar from '../../components/scrollbar/scrollbar';
 import { useParams } from 'react-router-dom';
 import IsLoading from '../../components/Loading/IsLoading';
 import { instructorApi, useGetCourseDetailQuery } from '../../api/instructorApi';
-import { useDownloadMaterialFileMutation } from '../../api/materialApi';
+import { useDownloadMaterialFileMutation, useRemoveMaterialAsyncMutation, useUploadMaterialFileMutation } from '../../api/materialApi';
 import JSZip from 'jszip';
 import { useAddVideoAsyncMutation, useChangeVideoAsncMutation, useGetWatchVideoUrlMutation, useRemoveVideoAsyncMutation } from '../../api/videoApi';
 import VideoPage from '../LessonPage/VideoPage';
 import { CiCircleRemove } from "react-icons/ci";
-import { useAddSectionAsyncMutation, useRemoveSectionAsyncMutation } from '../../api/sectionApi';
+import { useAddSectionAsyncMutation, useRemoveSectionAsyncMutation, useUpdateSectionAsyncMutation } from '../../api/sectionApi';
 import { useDispatch } from 'react-redux';
 import CustomModal from '../CustomComponents/CustomModal';
 import InstructorAuth from '../../Wrappers/HoC/InstructorAuth';
@@ -21,7 +21,8 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { Input } from 'reactstrap';
-import {toast} from 'react-toastify' 
+import {toast} from 'react-toastify'
+import { IoPencil } from "react-icons/io5"; 
 const style = {
   position: 'absolute',
   top: '50%',
@@ -36,6 +37,8 @@ const style = {
 
 
 function InstructorsCourseDetail() {
+    const buttonRef = useRef(null);
+
     const dispatch = useDispatch();
     const { slug } = useParams();
     const { data, isLoading } = useGetCourseDetailQuery(slug);
@@ -45,6 +48,9 @@ function InstructorsCourseDetail() {
     const [removeSectionAsync] = useRemoveSectionAsyncMutation();
     const [changeVideoAsync] = useChangeVideoAsncMutation();
     const [addVideoAsync] = useAddVideoAsyncMutation();
+    const [updateSectionAsync] = useUpdateSectionAsyncMutation();
+    const [uploadMaterialAsync] = useUploadMaterialFileMutation();
+    const [removeMaterialAsync] = useRemoveMaterialAsyncMutation();
     const [title, setTitle] = useState("");
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -53,6 +59,7 @@ function InstructorsCourseDetail() {
     const [sections, setSections] = useState([]);
     const [modal, isShowModal] = useState(false);
     const [createSectionAsync] = useAddSectionAsyncMutation();
+    const [isEnable,setIsEnable] = useState(false);
     const [videoDetail,setVideoDetail] = useState({
         publicVideoId:"",
         sectionId:""
@@ -62,6 +69,8 @@ function InstructorsCourseDetail() {
         description:"",
         courseId:slug
     })
+    const [videoId,setVideoId] = useState(buttonRef.current ? buttonRef.current.dataset.value:"");
+
 
 
     useEffect(() => {
@@ -101,9 +110,11 @@ function InstructorsCourseDetail() {
         }
     };
 
-    const handleChangeVideoAsync = (title) => {
+    const handleOpenCustomModal = (title) => {
         isShowModal(!modal);
         setTitle(title)
+       
+
     };
 
     const clickDownloadFile = async (fileUrl) => {
@@ -136,19 +147,33 @@ function InstructorsCourseDetail() {
 
         const formData = new FormData();
         const typeFile = event.file.target.files[0].type.split("/");
-        if (typeFile[1] !== 'mp4') {
+        if (title == "ChangeVideo" || title=="NewVideo" &&typeFile[1] !== 'mp4') {
             return alert("Please just mp4 format")
         }
+        console.log("trigger",typeFile)
+        // if (title == "ChangeMaterial" || title=="NewMaterial" && (typeFile[1] !== 'x-zip-compressed' || typeFile[1] !== 'pdf') ) {
+        //     return alert("Please just .zip and pdf format")
+        // }
 
+        if (title == "ChangeVideo" || title=="NewVideo") {
+            formData.append("File",event.file.target.files[0])
+            formData.append("Title",event.title)
+            formData.append("SectionId",videoDetail.sectionId)
+        }
 
+//x-zip-compressed
+//pdf
 
-        formData.append("File",event.file.target.files[0])
-        formData.append("Title",event.title)
-        formData.append("SectionId",videoDetail.sectionId)
-        console.log(event.file.target.files[0])
-        console.log(event.title)
-        console.log(videoDetail.sectionId)
-       const fileName = videoDetail.publicVideoId;
+        if (title == "NewMaterial") {
+            console.log("trigger videoId",videoId)
+            formData.append("Name",event.title)
+            formData.append("FileUrl","")
+            formData.append("VideoId",videoId)
+            formData.append("File",event.file.target.files[0])
+        }
+
+        const fileName = videoDetail.publicVideoId;   
+       
         if(title == "ChangeVideo"){
             await changeVideoAsync({fileName,formData}).then((response) => {
                 if (response.data.isSuccess) {
@@ -161,13 +186,23 @@ function InstructorsCourseDetail() {
                 
             })
         }
+        else if(title == "NewMaterial"){
+            await uploadMaterialAsync(formData).then((response) => {
+                console.log("response",response)
+                if (response.data.isSuccess) {
+                    toast.success(response.data.messages[0])
+                    dispatch(instructorApi.util.invalidateTags(["instructor"]));
+                    isShowModal(false)
+                }
+            })
+        }
         else {
             await addVideoAsync(formData).then((response) => {
-                console.log(response)
                 if (response.data.isSuccess) {
                     dispatch(instructorApi.util.invalidateTags(["instructor"]));
                     isShowModal(false)
                     toast.success(response.data.messages[0])
+                    
                 }
             })
         }
@@ -188,6 +223,46 @@ function InstructorsCourseDetail() {
     }
 
 
+    const handleUpdateSection = async (sectionId) => {
+        const sectionUpdateModel = {
+            
+            sectionName:sectionModel.sectionName,
+            description:sectionModel.description
+        }
+
+
+
+        await updateSectionAsync({sectionId,sectionUpdateModel}).then((response) => {
+            if (response.data.isSuccess) {
+                dispatch(instructorApi.util.invalidateTags(["instructor"]));
+                toast.success("Section updated");
+                setIsEnable(!isEnable)
+                    
+            }
+        })
+
+        
+    }
+
+
+    const handleRemoveFile = async (fileName) => {
+        var answer = window.confirm("Are you sure want to delete?");
+
+        if (answer) {
+            await removeMaterialAsync(fileName).then((response) => {
+                console.log("trigger response",response)
+                if (response.data.isSuccess) {
+                    toast.success("removed material")
+                    dispatch(instructorApi.util.invalidateTags(["instructor"]));
+    
+                }
+            })
+        }
+      
+    }
+
+
+
     return (
         <div>
             
@@ -203,7 +278,7 @@ function InstructorsCourseDetail() {
                 ""
             )}
             {modal ? (
-                <CustomModal props={modal} onData={handleFromChildData} />
+                <CustomModal props={modal} type={title} onData={handleFromChildData} />
             ) : (
                 ""
             )}
@@ -247,19 +322,32 @@ function InstructorsCourseDetail() {
                     sections.map((section, key) => (
                         <Accordion.Item eventKey={key} key={key}>
                             <Accordion.Header style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                                {section.sectionName} 
+                            <input defaultValue={section.sectionName} disabled={isEnable} onChange={(e) => setSectionModel({...sectionModel,sectionName:e.target.value})} ></input> - <input defaultValue={section.description} onChange={(e) => setSectionModel({...sectionModel,description:e.target.value})} disabled={isEnable}  ></input> 
+                            <a onClick={()=>setIsEnable(!isEnable)} ><IoPencil /></a>
+                            {
+                                !isEnable ? (
+                             <button className='btn btn-success' onClick={()=>{handleUpdateSection(section.sectionId)}} >update</button>
+
+                                ) : ("")
+                            }
+                            
+                            
+                            
+                            
+                            
                                 <button style={{ marginLeft: 'auto' }} onClick={() => removeItem(section.sectionId, "section")} className='btn btn-danger'>
                                     Remove Section
                                 </button>
                                 <button style={{ marginLeft: 'auto' }} data-target={section.sectionId} onClick={()=> {
                                      setVideoDetail({ publicVideoId: "", sectionId: section.sectionId });
-                                     handleChangeVideoAsync("NewVideo")
+                                     handleOpenCustomModal("NewVideo")
                                     }
                                  } className='btn btn-secondary'>
                                     Add Video
                                 </button>
                             </Accordion.Header>
                             {section.videos.map((video, key) => (
+                                console.log(video.videoId),
                                 <Accordion.Body key={key}>
                                     <a>
                                         <strong>
@@ -268,7 +356,7 @@ function InstructorsCourseDetail() {
                                                 <button onClick={() => handleClickWatchingVideo(video.publicVideoId)}>Watching Video</button>
                                                 <button className='btn btn-primary' onClick={() => {
                                                         setVideoDetail({ publicVideoId: video.publicVideoId, sectionId: section.sectionId });
-                                                        handleChangeVideoAsync("ChangeVideo");
+                                                        handleOpenCustomModal("ChangeVideo");
                                                     }}>Change Video</button> 
                                                 <a onClick={() => removeItem(video.publicVideoId, "video")}>  
                                                     <CiCircleRemove color='red'>Remove</CiCircleRemove>
@@ -282,11 +370,12 @@ function InstructorsCourseDetail() {
                                                     video.materials.map((material, key) => (
                                                         <a key={key}> 
                                                             {material.name} 
-                                                            <button onClick={() => clickDownloadFile(material.fileUrl)}>download</button>  
+                                                            <button className='btn btn-secondary' onClick={() => clickDownloadFile(material.fileUrl)}>download</button>  
+                                                            <button className='btn btn-danger' onClick={() => handleRemoveFile(material.fileUrl)}>remove</button>  
                                                         </a> 
                                                     ))
                                                 ) : (
-                                                    "material is not found"
+                                                    <button className='btn btn-warning'id="newMaterialButton" ref={buttonRef} data-value={video.videoId} onClick={()=>{handleOpenCustomModal("NewMaterial");setVideoId(video?.videoId)}} >Add Material</button>
                                                 )}
                                             </a>
                                         </div>
