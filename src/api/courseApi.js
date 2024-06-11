@@ -13,6 +13,7 @@ export const courseApi = createApi({
         }
         
     }),
+    tagTypes:["course"],
     endpoints:(builder) => ({
         getCourseDetailById:builder.query({
             query:(courseId) => ({
@@ -24,13 +25,16 @@ export const courseApi = createApi({
             query:(courseId)=> ({
                 url:`CourseSections/${courseId}`,
                 method:"GET"
-            })
+            }),
+            providesTags:["course"]
         }),
         getCourseIntroductionVideos:builder.query({
             query:()=> ({
                 url:`GetCourseIntroductionVideos`,
                 method:"GET"
-            })
+            }),
+            providesTags:["course"]
+
         }),
         getAllCourses:builder.mutation({
             query:(model)=>   {
@@ -38,16 +42,35 @@ export const courseApi = createApi({
                     url:`GetAllCourses?pageNumber=${model.pageNumber}&pageSize=${model.pageSize}&filterProperty=${model.filterProperty}&filterValue=${model.filterValue}`,
                     method:"POST"
                 })
-            }
+            },
+            providesTags:["course"]
+
         }),
         createCourseAsync:builder.mutation({
             query:(courseModel) => ({
                 method:"POST",
                 body:courseModel
-            })
+            }),
+            invalidatesTags:["course"]
+        }),
+        // https://localhost:7042/api/Course/06d1b9de-d22e-4dea-a82b-119897a8243f
+        removeCourseAsync:builder.mutation({
+            query:(courseId) =>({
+                method:"DELETE",
+                url:`${courseId}`
+            }),
+            invalidatesTags:["course"]
+
         })
+
+
     })
 })
 
 
-export const {useGetCourseDetailByIdQuery,useGetSectionsByCourseIdQuery,useGetCourseIntroductionVideosQuery,useGetAllCoursesMutation,useCreateCourseAsyncMutation} = courseApi
+export const {useGetCourseDetailByIdQuery,
+            useGetSectionsByCourseIdQuery,
+            useGetCourseIntroductionVideosQuery,
+            useGetAllCoursesMutation,
+            useCreateCourseAsyncMutation,
+            useRemoveCourseAsyncMutation} = courseApi

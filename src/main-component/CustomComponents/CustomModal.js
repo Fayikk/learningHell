@@ -6,9 +6,10 @@ function CustomModal({ props,type, onData }) {
     const [closeModal, setCloseModal] = useState(props);
     const [file, setFile] = useState();
     const [title,setTitle] = useState();
+    const [rowNumber,setRowNumber] = useState();
     const [message,setMessage] = useState("");
     const sendDataToParent = () => {
-        onData({file,title});
+        onData({file,title,rowNumber});
     };
 
 
@@ -20,7 +21,7 @@ function CustomModal({ props,type, onData }) {
                {
                    setMessage("Add New Video")
                }
-               else if(type === "Change Video")
+               else if(type === "ChangeVideo")
                    {
                        setMessage("Change Video")
                    }
@@ -40,13 +41,21 @@ function CustomModal({ props,type, onData }) {
 
                 <Modal.Body>
                 <div className="d-flex flex-column align-items-center justify-content-center" style={{ minHeight: '200px' }}>
-                <div className="row w-100" style={{ alignItems: 'center' }}>
+                <div className="col" style={{ alignItems: 'center' }}>
                     <input type='file' onChange={setFile} />
 
                     </div>
                     <div className='col'>
                       <input type='text'placeholder='what is title' onChange={(e) => setTitle(e.target.value)} ></input>
                     </div>
+
+            {
+                type === "NewVideo" ? (  <div className='col' >
+                    <input type='number'placeholder='Section Row Number' onChange={(e) => setRowNumber(e.target.value)} ></input>
+                    </div>) : ("")
+            }
+
+                  
                   </div>
                 </Modal.Body>
 

@@ -16,9 +16,9 @@ const Header = (props) => {
     const [menuActive, setMenuState] = useState(false);
     const authenticationState = useSelector((state) => state.authStore);
     const cartCounter = useSelector((state) => state.cartStore.cartCounter);
-
     const Navigate = useNavigate();
     const Dispatch = useDispatch();
+
 
     const [showDropdown, setShowDropdown] = useState(false);
 

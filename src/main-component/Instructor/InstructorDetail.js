@@ -6,7 +6,7 @@ import PageTitle from '../../components/pagetitle/PageTitle';
 import CourseSectionS3 from '../../components/CourseSectionS3/CourseSectionS3';
 import InstructorAuth from '../../Wrappers/HoC/InstructorAuth';
 import { useGetAllInstructorCoursesMutation, useGetAllInstructorCoursesQuery } from '../../api/instructorApi';
-import { useCreateCourseAsyncMutation } from '../../api/courseApi';
+import { useCreateCourseAsyncMutation, useRemoveCourseAsyncMutation } from '../../api/courseApi';
 import IsLoading from '../../components/Loading/IsLoading';
 import { Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
@@ -17,6 +17,9 @@ import { Input } from 'reactstrap';
 import { instructorApi } from '../../api/instructorApi';
 import { useDispatch } from 'react-redux';
 import {toast} from 'react-toastify' 
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -35,6 +38,7 @@ function InstructorDetail() {
   // const [getAllInstructorCourses] = useGetAllInstructorCoursesMutation();
   const {data,IsLoading} = useGetAllInstructorCoursesQuery();
   const [createCourseAsync] = useCreateCourseAsyncMutation();
+  const [removeCourseAsync] = useRemoveCourseAsyncMutation();
   const [courseModel, setCourseModel] = useState({
     courseName: "",
     coursePrice: 0,
@@ -46,9 +50,14 @@ function InstructorDetail() {
   const [introductionVideo, setIntroductionVideo] = useState(null);
   const [image, setImage] = useState(null);
   const [open, setOpen] = useState(false);
+  const [openCourseModal, setOpenCourseModal] = useState(false);
   
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  
+
+  const handleOpenCourseModal = () => setOpenCourseModal(true);
+  const handleCloseCourseModal = () => setOpenCourseModal(false);
 
   useEffect(() => {
     // async function fetchAllMyCourses() {
@@ -63,8 +72,6 @@ function InstructorDetail() {
     }
   }, [data]);
 
-  console.log("trigger data.result")
-  console.log(data)
 
 
 
@@ -87,15 +94,48 @@ function InstructorDetail() {
     formData.append("ImageUrl", courseModel.imageUrl);
     formData.append("CategoryId", courseModel.categoryId);
 
-    await createCourseAsync(formData).then((response) => {
-      console.log(response)
-      if (response.data.isSuccess) {
-        handleClose();
-        dispatch(instructorApi.util.invalidateTags(["instructor"]));
-        toast.success(response.data.messages[0])
-      }
-    })
+  
+      await createCourseAsync(formData).then((response) => {
+        if (response.data.isSuccess) {
+          handleClose();
+          dispatch(instructorApi.util.invalidateTags(["instructor"]));
+          toast.success(response.data.messages[0])
+        }
+        else {
+          toast.error("has not been removed this course")
+        }
+      })
+        
+    
+
+
+
   };
+
+
+  const handleRemoveCourse = async (courseId) =>{
+    const answer = window.confirm("are you want to delete this course?")
+
+    if (answer) {
+      await removeCourseAsync(courseId).then((response) => {
+        if (response.data.isSuccess) {
+          toast.success("Course removed succeded")
+          setOpenCourseModal(false)
+          dispatch(instructorApi.util.invalidateTags(["instructor"]));
+  
+        }
+       })   
+    }
+
+
+   
+  }
+
+
+
+  console.log("trigger courses")
+  console.log(courses)
+
 
   return (
     <Fragment>
@@ -103,6 +143,7 @@ function InstructorDetail() {
       <PageTitle pageTitle={'Instructor'} pagesub={'Instructor'} />
       <div style={{ textAlign: 'right' }}>
         <Button onClick={handleOpen}>Create New Course</Button>
+        <Button onClick={handleOpenCourseModal} style={{color:"red"}} > Remove Course </Button>
         <Modal
           open={open}
           onClose={handleClose}
@@ -175,6 +216,37 @@ function InstructorDetail() {
             </Typography>
           </Box>
         </Modal>
+
+        <Modal
+          open={openCourseModal}
+          onClose={handleCloseCourseModal}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+            <Container>
+      <Row>
+
+    {
+      courses.map((course,key) => (
+
+        <Col style={{marginTop:"6px"}} >
+          {course.courseName} - <button className='btn btn-danger' onClick={()=>handleRemoveCourse(course.courseId)}>Remove This Course</button>
+        </Col>
+      ))
+    }
+
+
+      </Row>
+    </Container>
+            </Typography>
+            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+              <Button onClick={createCourse}>Save Course</Button>
+            </Typography>
+          </Box>
+        </Modal>
+
       </div>
       <CourseSectionS3 courses={courses} component={"instructor"} />
       <Footer />

@@ -10,6 +10,9 @@ import { useGetSectionSubDetailsQuery } from '../../api/sectionApi';
 import { useGetWatchVideoUrlMutation } from '../../api/videoApi';
 import VideoPage from './VideoPage';
 import IsLoading from '../../components/Loading/IsLoading';
+import './style/lessonPage.css'
+
+
 const LessonPage = () => {
 
     const {sectionId} = useParams();
@@ -18,10 +21,17 @@ const LessonPage = () => {
     const [videos,setVideos] = useState([]);
     const [videoCounter,setVideoCounter] = useState(0)
 
+
+
+
+
     const [decryptVideoUrl] = useGetWatchVideoUrlMutation()
     useEffect(() => {
         if (data) {
             setVideos(data.result.videos || []); 
+            if (videos == []) {
+                localStorage.removeItem("willSelectedVideo")
+            }
         } 
     }, [data]);
 
@@ -58,9 +68,6 @@ const LessonPage = () => {
         return `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
     };
 
-    const ClickHandler = () => {
-        window.scrollTo(10, 0);
-    }
 
     return (
         <Fragment>
@@ -83,17 +90,22 @@ const LessonPage = () => {
                                                 <div className="accordion-body">
                                               
                                               
-                                                    <ul  className="item">
 
                                                     {
                                                                videos.map((video,key) => (
 
-                                                                    <li key={key} ><Link onClick={()=>changeVideo(video.videoId)} style={{color:'white'}} to={''} ><span> {videoCounter + key + 1} <i
-                                                                    className="fi flaticon-play-button"></i> {video.title} </span> <span> {formatDuration(video.duration)} min<i className="fa fa-check-circle"
-                                                                        aria-hidden="true"></i></span></Link></li>
+                                                                <a key={key} className="video-item" >
+                                                                <Link onClick={() => changeVideo(video.videoId)} to={""} className="video-link">
+                                                                    <span className="video-info">
+                                                                        {videoCounter + key + 1} 
+                                                                        <i className="fi flaticon-play-button"></i> 
+                                                                        {video.title}
+                                                                    </span>
+                                                                </Link>
+                                                            </a>
+                                                            
                                                                         ))
                                                    }
-                                                    </ul>
 
                                                 </div>
                                             </Typography>
@@ -102,19 +114,9 @@ const LessonPage = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="col col-xl-9 col-lg-8 col-12">
-                            <div className="video-area">
-                                <div className="video-heading">
-                                    <h2>1.1 Introduction of Language</h2>
-                                    <Link onClick={ClickHandler} className="theme-btn" to="/">Back To Home</Link>
-                                </div>                            
-                              <VideoPage></VideoPage>
-                                <div className="video-details">
-                                    <h2>About Lesson</h2> 
-                                     <p>On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire</p>
-                                </div>
-                            </div>
-                        </div>
+                        <VideoPage></VideoPage>
+
+                       
                     </div>
                 </div>
             </section>

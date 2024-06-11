@@ -48,8 +48,6 @@ const BeComeTeacherPage = (props) => {
 
             try {
                 await becomeTeacherAsync({ formData }).then((response) => {
-                    console.log("trigger response")
-                    console.log(response)
                     if (response.data.isSuccess) {
                         Navigate("/Home")
                         toast.success(response.data.errorMessages[0])

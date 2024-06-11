@@ -1,0 +1,39 @@
+.video-item {
+    margin: 10px 0;
+    margin-top: 10px;
+}
+
+.video-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+    background-color: #333;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.video-link:hover {
+    background-color: #444;
+}
+
+.video-info {
+    display: flex;
+    align-items: center;
+}
+
+.video-info i {
+    margin-left: 10px;
+    margin-right: 5px;
+}
+
+.video-duration {
+    display: flex;
+    align-items: center;
+}
+
+.video-duration i {
+    margin-left: 5px;
+}

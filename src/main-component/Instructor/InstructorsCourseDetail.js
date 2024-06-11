@@ -23,6 +23,7 @@ import Modal from '@mui/material/Modal';
 import { Input } from 'reactstrap';
 import {toast} from 'react-toastify'
 import { IoPencil } from "react-icons/io5"; 
+import Spinner from 'react-bootstrap/Spinner';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -38,7 +39,7 @@ const style = {
 
 function InstructorsCourseDetail() {
     const buttonRef = useRef(null);
-
+    const inputRef = useRef(null)
     const dispatch = useDispatch();
     const { slug } = useParams();
     const { data, isLoading } = useGetCourseDetailQuery(slug);
@@ -60,6 +61,8 @@ function InstructorsCourseDetail() {
     const [modal, isShowModal] = useState(false);
     const [createSectionAsync] = useAddSectionAsyncMutation();
     const [isEnable,setIsEnable] = useState(false);
+    const [loading,setLoading] = useState(false);
+    const [selectedVideoId,setSelectedVideoId] = useState();
     const [videoDetail,setVideoDetail] = useState({
         publicVideoId:"",
         sectionId:""
@@ -145,12 +148,13 @@ function InstructorsCourseDetail() {
     const handleFromChildData = async (event) => {
 
 
+        setLoading(true)
+
         const formData = new FormData();
         const typeFile = event.file.target.files[0].type.split("/");
         if (title == "ChangeVideo" || title=="NewVideo" &&typeFile[1] !== 'mp4') {
             return alert("Please just mp4 format")
         }
-        console.log("trigger",typeFile)
         // if (title == "ChangeMaterial" || title=="NewMaterial" && (typeFile[1] !== 'x-zip-compressed' || typeFile[1] !== 'pdf') ) {
         //     return alert("Please just .zip and pdf format")
         // }
@@ -158,6 +162,8 @@ function InstructorsCourseDetail() {
         if (title == "ChangeVideo" || title=="NewVideo") {
             formData.append("File",event.file.target.files[0])
             formData.append("Title",event.title)
+            formData.append("RowNumberForSection",event.rowNumber)
+
             formData.append("SectionId",videoDetail.sectionId)
         }
 
@@ -165,7 +171,6 @@ function InstructorsCourseDetail() {
 //pdf
 
         if (title == "NewMaterial") {
-            console.log("trigger videoId",videoId)
             formData.append("Name",event.title)
             formData.append("FileUrl","")
             formData.append("VideoId",videoId)
@@ -188,7 +193,6 @@ function InstructorsCourseDetail() {
         }
         else if(title == "NewMaterial"){
             await uploadMaterialAsync(formData).then((response) => {
-                console.log("response",response)
                 if (response.data.isSuccess) {
                     toast.success(response.data.messages[0])
                     dispatch(instructorApi.util.invalidateTags(["instructor"]));
@@ -202,6 +206,7 @@ function InstructorsCourseDetail() {
                     dispatch(instructorApi.util.invalidateTags(["instructor"]));
                     isShowModal(false)
                     toast.success(response.data.messages[0])
+                    setLoading(false);
                     
                 }
             })
@@ -250,7 +255,6 @@ function InstructorsCourseDetail() {
 
         if (answer) {
             await removeMaterialAsync(fileName).then((response) => {
-                console.log("trigger response",response)
                 if (response.data.isSuccess) {
                     toast.success("removed material")
                     dispatch(instructorApi.util.invalidateTags(["instructor"]));
@@ -261,11 +265,26 @@ function InstructorsCourseDetail() {
       
     }
 
+    const handleClickedVideo = (videoId) => {
+        setSelectedVideoId(videoId)
+    }
 
+
+    console.log("videoId")
+    console.log(selectedVideoId)
 
     return (
         <div>
-            
+    {
+        loading == true ?  (
+        <div>
+        <Spinner></Spinner>
+            <h1>Please Waiting While Uploading File</h1>
+        </div>
+        
+        ) : ""
+    }
+                
         <Fragment>
             <Navbar />
             <PageTitle pageTitle={'Instructor'} pageSub={'CourseDetail'} />
@@ -277,7 +296,11 @@ function InstructorsCourseDetail() {
             ) : (
                 ""
             )}
-            {modal ? (
+            {
+            
+            
+            
+            modal ? (
                 <CustomModal props={modal} type={title} onData={handleFromChildData} />
             ) : (
                 ""
@@ -347,12 +370,12 @@ function InstructorsCourseDetail() {
                                 </button>
                             </Accordion.Header>
                             {section.videos.map((video, key) => (
-                                console.log(video.videoId),
                                 <Accordion.Body key={key}>
                                     <a>
                                         <strong>
-                                            <a> 
-                                                {video.title} 
+                                        
+                                            <a>
+                                            <input ref={inputRef} id={video.videoId} disabled={selectedVideoId != videoId} defaultValue={video.rowNumberForSection} ></input>   <button className='btn btn-warning' onClick={()=>handleClickedVideo(video.videoId)} >Sıra değiştir</button> ----- {video.title} 
                                                 <button onClick={() => handleClickWatchingVideo(video.publicVideoId)}>Watching Video</button>
                                                 <button className='btn btn-primary' onClick={() => {
                                                         setVideoDetail({ publicVideoId: video.publicVideoId, sectionId: section.sectionId });
