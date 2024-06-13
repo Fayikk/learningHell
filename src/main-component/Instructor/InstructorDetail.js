@@ -20,6 +20,7 @@ import {toast} from 'react-toastify'
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { useGetAllCategoriesQuery } from '../../api/categoryApi';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -35,10 +36,13 @@ const style = {
 function InstructorDetail() {
   const dispatch = useDispatch();
   const [courses, setCourses] = useState([]);
+  const [categories,setCategories] = useState([])
   // const [getAllInstructorCourses] = useGetAllInstructorCoursesMutation();
   const {data,IsLoading} = useGetAllInstructorCoursesQuery();
+
   const [createCourseAsync] = useCreateCourseAsyncMutation();
   const [removeCourseAsync] = useRemoveCourseAsyncMutation();
+
   const [courseModel, setCourseModel] = useState({
     courseName: "",
     coursePrice: 0,
@@ -59,6 +63,7 @@ function InstructorDetail() {
   const handleOpenCourseModal = () => setOpenCourseModal(true);
   const handleCloseCourseModal = () => setOpenCourseModal(false);
 
+  
   useEffect(() => {
     // async function fetchAllMyCourses() {
     //   const response = await getAllInstructorCourses();
@@ -67,15 +72,15 @@ function InstructorDetail() {
     //   }
     // }
     // fetchAllMyCourses();
-    if (data) {
+    if (data ) {
       setCourses(data.result)
+      // setCategories(category.result)
     }
   }, [data]);
 
 
 
-
-  if (IsLoading) {
+  if (IsLoading ) {
     return (
       <IsLoading></IsLoading>
     )
@@ -182,6 +187,7 @@ function InstructorDetail() {
                   />
                 </div>
                 <div className='row'>
+                  <span>Introduction Video</span>
                   <Input
                     type='file'
                     placeholder='Introduction Video'
@@ -189,6 +195,8 @@ function InstructorDetail() {
                   />
                 </div>
                 <div className='row'>
+                <span>Course Image</span>
+
                   <Input
                     type='file'
                     placeholder='Image'
@@ -198,7 +206,7 @@ function InstructorDetail() {
                 <div className='row'>
                   <Input
                     type='text'
-                    placeholder='Image Url'
+                    placeholder='Image Url(Optional)'
                     onChange={(e) => setCourseModel({ ...courseModel, imageUrl: e.target.value })}
                   />
                 </div>

@@ -34,6 +34,7 @@ import ForgotPassword from '../ForgotPassword';
 import MyCourses from '../BlogPageFullwidth/MyCourses';
 import InstructorDetail from '../Instructor/InstructorDetail';
 import InstructorsCourseDetail from '../Instructor/InstructorsCourseDetail';
+import TeacherApplications from '../SuperVisor/TeacherApplications';
 const AllRoute = () => {
   return (
     <div className="App">
@@ -52,6 +53,7 @@ const AllRoute = () => {
           <Route path="course-2" element={<CoursePageS2 />} />
           {/* <Route path="course-3" element={<CoursePageS3 />} /> */}
           <Route path="lessons/:sectionId" element={<LessonPage />} />
+          <Route path='TeacherApplications' element={<TeacherApplications></TeacherApplications>} ></Route>
           <Route path="gallery" element={<GalleryPage />} />
           <Route path="testimonial" element={<TestimonialPage />} />
           <Route path="teacher" element={<TeamPage />} />

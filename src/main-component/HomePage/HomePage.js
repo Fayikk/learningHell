@@ -41,7 +41,7 @@ const HomePage =() => {
             {/* <CategorySection/> */}
             <CourseSection/>
             {/* <Testimonial/> */}
-            <TeamSection pbClass={'pb-big'}/>
+            {/* <TeamSection pbClass={'pb-big'}/> */}
             <ChooseSection/>
             {/* <BlogSection/> */}
             <Newslatter/>

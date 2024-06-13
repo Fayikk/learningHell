@@ -186,6 +186,14 @@ const Header = (props) => {
                                                         ) : ("")
                                                     }
 
+                                                    {
+                                                        authenticationState.role && authenticationState.role.includes("Supervisor") ? (
+                                                            <Dropdown.Item as={Link} to="/TeacherApplications" >
+                                                            Instructive Applications
+                                                            </Dropdown.Item>
+                                                        ) : ("")
+                                                    }
+
 
                                                       
                                                         <Dropdown.Item as={Link} to="/home" onClick={logout}>

@@ -12,9 +12,16 @@ export const becomeTeacherApi = createApi({
                 method:"POST",
                 body:becomeTeacherModel.formData
             })
+        }),
+        getInstructiveApplicants:builder.mutation({
+            query:(instructiveModel) => ({
+                method:"POST",
+                body:instructiveModel,
+                url:`GetInstructiveApplicants?pageNumber=${instructiveModel.filter.pageNumber}&pageSize=${instructiveModel.filter.pageSize}&filterProperty=${instructiveModel.filter.filterProperty}&filterValue=${instructiveModel.filter.filterValue}`
+            })
         })
     })
 })
 
 
-export const {useApplyCvMutation} = becomeTeacherApi
+export const {useApplyCvMutation,useGetInstructiveApplicantsMutation} = becomeTeacherApi

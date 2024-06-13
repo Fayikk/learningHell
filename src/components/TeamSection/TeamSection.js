@@ -1,24 +1,76 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Team from '../../api/team'
 import shape1 from '../../images/team/shape-1.svg'
 import shape2 from '../../images/team/shape-2.svg'
 import shape3 from '../../images/team/shape-3.svg'
 import shape4 from '../../images/team/shape-4.svg'
-
+import VerticallyCenteredModal from '../../main-component/CustomComponents/VerticallyCenteredModal'
+import { useMakeInstructiveUserMutation } from '../../api/accountApi'
+import { toast } from 'react-toastify'
 const ClickHandler = () => {
     window.scrollTo(10, 0);
 }
 
-const TeamSection = (props) => {
+const   TeamSection = (props) => {
+    const [modalShow, setModalShow] = React.useState(false);
+    const [applicantDetail,setApplicantDetail] = useState({
+        cvPath:"",
+        email:"",
+        userId:"",
+        message:"",
+        name:"",
+        subject:""
+    });
+    const [makeInstructive] = useMakeInstructiveUserMutation();
+    console.log("trigger team sectio",props)
+
+
+    console.log(modalShow)
+    const handleChangeRoleUserAsync = async (event) => {
+        const userId = event.userId;
+        console.log("trigger user id",userId)
+        console.log(event.decideInstructive)    
+        var isMakeInstructor = false;
+        if (event.decideInstructive === "MakeInstructor") {
+            isMakeInstructor = true;
+        }
+        const decisionModel = {
+        isMakeInstructive:isMakeInstructor,
+
+        }
+
+
+
+        
+        await makeInstructive({userId,decisionModel}).then((response) => {
+            if (response.data.isSuccess) {
+                toast.success("User added role with Instructor successfully");
+            }
+            else {
+                toast.error("Oops! something went wrong")
+            }
+            })
+    }
+
+
     return (
         <section className={`wpo-team-section section-padding ${props.pbClass}`}>
+       
+      <VerticallyCenteredModal
+                                    show={modalShow}
+                                    onHide={() => setModalShow(false)}
+                                    applicantDetail={applicantDetail}
+                                    onData={handleChangeRoleUserAsync}
+                                        
+                                    
+                                />
             <div className="container">
                 <div className="wpo-section-title-s2">
-                    <small>Our Professionals</small>
-                    <h2>Meet our
+                    <small>{props.title}</small>
+                    <h2>{props.title}
                         <span>
-                            Teachers
+                            
                             <i className="shape">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 206 53" fill="none">
                                     <path
@@ -30,8 +82,10 @@ const TeamSection = (props) => {
                 </div>
                 <div className="wpo-team-wrap">
                     <div className="row">
-                    {Team.map((team, aitem) => (
+                    {props.applicants && props.applicants.map((team, aitem) => (
+                        
                             <div className="col col-lg-3 col-md-6 col-12" key={aitem}>
+                              
                             <div className="wpo-team-item">
                                 <div className="wpo-team-img">
                                     <div className="wpo-team-img-box">
@@ -41,10 +95,13 @@ const TeamSection = (props) => {
                                                 <li><Link onClick={ClickHandler} to="/"><i className="fi flaticon-twitter"></i></Link></li>
                                                 <li><Link onClick={ClickHandler} to="/"><i className="fi flaticon-linkedin"></i></Link></li>
                                             </ul>
+                                      
                                     </div>
                                 </div>
                                 <div className="wpo-team-text">
-                                    <h2><Link onClick={ClickHandler} to={`/team-single/${team.slug}`}>{team.name}</Link></h2>
+                                    <h2><a onClick={() => {
+                                        setModalShow(true); 
+                                        setApplicantDetail({cvPath:team.cvPath,email:team.email,userId:team.userId,message:team.message,name:team.name,subject:team.subject})}} >{team.name}</a></h2>
                                     <span>{team.title}</span>
                                 </div>
                             </div>

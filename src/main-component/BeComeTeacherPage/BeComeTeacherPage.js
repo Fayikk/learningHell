@@ -9,6 +9,8 @@ import TeamSection from '../../components/TeamSection/TeamSection';
 import { useApplyCvMutation } from '../../api/becomeTeacherApi';
 import {toast} from 'react-toastify'
 import { useNavigate } from 'react-router-dom';
+import MustBeAuthorize from '../../Wrappers/HoC/MustBeAuthorize';
+import { useSelector } from 'react-redux';
 const BeComeTeacherPage = (props) => {
     const [becomeTeacherAsync] = useApplyCvMutation();
     const Navigate = useNavigate();
@@ -18,6 +20,7 @@ const BeComeTeacherPage = (props) => {
         subject: '',
         message: ''
     });
+    const userId = useSelector((state) => state.authStore.nameIdentifier);
     const [file, setFile] = useState(null);
 
     const [validator] = useState(new SimpleReactValidator({
@@ -45,6 +48,7 @@ const BeComeTeacherPage = (props) => {
             formData.append("Subject", forms.subject);
             formData.append("Message", forms.message);
             formData.append("Cv", file);
+            formData.append("userId",userId);
 
             try {
                 await becomeTeacherAsync({ formData }).then((response) => {
@@ -172,4 +176,4 @@ const BeComeTeacherPage = (props) => {
     );
 };
 
-export default BeComeTeacherPage;
+export default MustBeAuthorize(BeComeTeacherPage);
