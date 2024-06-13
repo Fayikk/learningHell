@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
-function CustomModal({ props,type, onData }) {
+function CustomModal({ props,changeVideoObject,type, onData }) {
     const [closeModal, setCloseModal] = useState(props);
     const [file, setFile] = useState();
-    const [title,setTitle] = useState();
-    const [rowNumber,setRowNumber] = useState();
+    const [title, setTitle] = useState(changeVideoObject.videoName || "");
+    const [rowNumber, setRowNumber] = useState(changeVideoObject.rowNumber || "");
+
     const [message,setMessage] = useState("");
     const sendDataToParent = () => {
         onData({file,title,rowNumber});
@@ -46,14 +47,13 @@ function CustomModal({ props,type, onData }) {
 
                     </div>
                     <div className='col'>
-                      <input type='text'placeholder='what is title' onChange={(e) => setTitle(e.target.value)} ></input>
-                    </div>
-
-            {
-                type === "NewVideo" ? (  <div className='col' >
-                    <input type='number'placeholder='Section Row Number' onChange={(e) => setRowNumber(e.target.value)} ></input>
-                    </div>) : ("")
-            }
+                            <input type='text' placeholder='What is title' value={title} onChange={(e) => setTitle(e.target.value)} />
+                        </div>
+                        {(type === "NewVideo" || type === "ChangeVideo") && (
+                            <div className='col'>
+                                <input type='number' placeholder='Section Row Number' value={rowNumber} onChange={(e) => setRowNumber(e.target.value)} />
+                            </div>
+                        )}
 
                   
                   </div>

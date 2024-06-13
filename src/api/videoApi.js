@@ -19,6 +19,22 @@ export const videoApi = createApi({
                 method:"DELETE",
             })
         }),
+
+        // const updateVideoModel = {
+        //     videoId:videoId,
+        //     videoModel:rowNumber
+        //   }
+      
+
+      
+        updateVideoAsync:builder.mutation({
+            query:(updateVideoModel) =>   (
+                {
+                    url:`UpdateVideo/${updateVideoModel.videoId}`,
+                    method:"PUT",
+                     body:updateVideoModel.updateVideoModel
+                }
+            )         }),
         changeVideoAsnc:builder.mutation({
             query:(fileModel) => (
                 
@@ -42,4 +58,4 @@ export const videoApi = createApi({
 // fileName,formData
 
 
-export const {useGetWatchVideoUrlMutation,useRemoveVideoAsyncMutation,useChangeVideoAsncMutation,useAddVideoAsyncMutation} = videoApi;
+export const {useGetWatchVideoUrlMutation,useRemoveVideoAsyncMutation,useChangeVideoAsncMutation,useAddVideoAsyncMutation,useUpdateVideoAsyncMutation} = videoApi;
