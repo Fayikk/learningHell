@@ -154,9 +154,6 @@ function InstructorsCourseDetail() {
     if ((title == "ChangeVideo" || title == "NewVideo") && typeFile[1] !== 'mp4') {
       return alert("Please just mp4 format");
     }
-    // if (title == "ChangeMaterial" || title == "NewMaterial" && (typeFile[1] !== 'x-zip-compressed' || typeFile[1] !== 'pdf') ) {
-    //     return alert("Please just .zip and pdf format")
-    // }
 
     if (title == "ChangeVideo" || title == "NewVideo") {
         console.log("trigger inner if conditional")
@@ -166,9 +163,6 @@ function InstructorsCourseDetail() {
       formData.append("RowNumberForSection", event.rowNumber);
       formData.append("SectionId", videoDetail.sectionId);
     }
-
-    //x-zip-compressed
-    //pdf
 
     if (title == "NewMaterial") {
       formData.append("Name", event.title);

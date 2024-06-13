@@ -13,7 +13,7 @@ const InstructorAuth = (WrappedComponent)  => {
             const token = localStorage.getItem("token");
             if (token!=null) {
                 const decode  = jwtDecode(token);
-
+                    
                 var rolCounter = 0;
                 for (let index = 0; index < decode.role.length; index++) {
                     const element = decode.role[index];
@@ -21,15 +21,12 @@ const InstructorAuth = (WrappedComponent)  => {
                         rolCounter = rolCounter + 1;
                     }
                 }   
-                if (rolCounter != 0) {
+                if (rolCounter == 0) {
                     // toast.success("Succeded Enter")
-                }
-                else {
                     window.location.replace("/ErrorPage/403")
                     toast.error("Access Denied")
-
+                    return;
                 }
-               
             }
             else {
                 window.location.replace("/login")

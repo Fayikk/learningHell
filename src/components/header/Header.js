@@ -19,7 +19,6 @@ const Header = (props) => {
     const Navigate = useNavigate();
     const Dispatch = useDispatch();
 
-
     const [showDropdown, setShowDropdown] = useState(false);
 
     const handleMouseEnter = () => {
@@ -179,9 +178,16 @@ const Header = (props) => {
                                                         <Dropdown.Item as={Link} to="/MyCourse" >
                                                         My Courses
                                                         </Dropdown.Item>
-                                                        <Dropdown.Item as={Link} to="/Instructor" >
-                                                        Instructor
-                                                        </Dropdown.Item>
+                                                    {
+                                                       authenticationState.role &&  authenticationState.role.includes("Instructor") ? (
+                                                            <Dropdown.Item as={Link} to="/Instructor" >
+                                                            Instructor
+                                                            </Dropdown.Item>
+                                                        ) : ("")
+                                                    }
+
+
+                                                      
                                                         <Dropdown.Item as={Link} to="/home" onClick={logout}>
                                                         MyAccount
                                                         </Dropdown.Item>

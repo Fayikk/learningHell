@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom';
 const ErrorPage =() => {
     const slug = useParams();
 
-
+    console.log(slug)
     return(
         <Fragment>
             <Navbar/>
