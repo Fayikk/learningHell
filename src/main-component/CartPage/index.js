@@ -14,8 +14,7 @@ import { cartStateUpdate } from "../../store/reducers/cartSlice";
 
 const CartPage = (props) => {
 
-  const authenticationState = useSelector((state) => state.authStore);
-  const {data,isLoading} = useGetShoppingCartQuery(authenticationState.nameIdentifier);
+  const {data,isLoading} = useGetShoppingCartQuery(useSelector((state) => state.authStore.nameIdentifier));
   const [removeCartItem] = useRemoveShoppingCartItemMutation();
   const [courses,setCourses] = useState([]);
   const Dispatch = useDispatch();
@@ -31,7 +30,8 @@ const CartPage = (props) => {
 
 
     }
-  
+    console.log("trigger inner courses")
+    console.log(courses.length)
   },[data])
 
 
