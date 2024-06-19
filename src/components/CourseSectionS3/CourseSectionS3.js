@@ -35,7 +35,7 @@ const CourseSectionS3 = (props) => {
                                         <div className="wpo-popular-img">
                                             <img src={course.courseImage} alt="" />
                                             <div className="thumb">
-                                                <span>${course.coursePrice}</span>
+                                                <span>&#8378;{course.coursePrice}</span>
                                             </div>
                                         </div>
                                         <div className="wpo-popular-content">

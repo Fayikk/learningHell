@@ -513,9 +513,9 @@ const CheckoutSection = ({cartList}) => {
                                             <TableBody>
                                                 {cartItems.map(item => (
                                                     <TableRow key={item.courseId}>
-                                                        <TableCell>{item.courseName} ${item.coursePrice} </TableCell>
+                                                        <TableCell>{item.courseName} &#8378;{item.coursePrice} </TableCell>
                                                         <TableCell
-                                                            align="right">${item.coursePrice}</TableCell>
+                                                            align="right">&#8378;{item.coursePrice}</TableCell>
                                                     </TableRow>
                                                 ))}
                                                 <TableRow className="totalProduct">
@@ -524,12 +524,12 @@ const CheckoutSection = ({cartList}) => {
                                                 </TableRow>
                                                 <TableRow>
                                                     <TableCell>Sub Price</TableCell>
-                                                    <TableCell align="right">${totalPrice(cartItems)}</TableCell>
+                                                    <TableCell align="right">&#8378;{totalPrice(cartItems)}</TableCell>
                                                 </TableRow>
                                                 <TableRow>
                                                     <TableCell>Total Price</TableCell>
                                                      <TableCell 
-                                                        align="right">${totalPrice(cartItems)}</TableCell> 
+                                                        align="right">&#8378;{totalPrice(cartItems)}</TableCell> 
                                                 </TableRow>
                                             </TableBody>
                                         </Table>

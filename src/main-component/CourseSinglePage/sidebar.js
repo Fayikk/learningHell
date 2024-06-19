@@ -46,7 +46,7 @@ const Sidebar = (props) => {
                 <div className="widget features-widget">
                     <div className="features-top">
                         {/* <h4>$80.20 <del>$94.99</del></h4> */}
-                        <h4>$ {props.CourseDetail.coursePrice} </h4>
+                        <h4>&#8378; {props.CourseDetail.coursePrice} </h4>
                         {/* <span> 5 days left!</span> */}
                     </div>
                     <div className="cart-btn">

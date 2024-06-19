@@ -98,7 +98,7 @@ if (courses.length > 0) {
                                   <li>Size : {courseItem.courseName}</li>
                                 </ul>
                               </td>
-                              <td className="ptice">${courseItem.coursePrice}</td>
+                              <td className="ptice">&#8378;{courseItem.coursePrice}</td>
                               <td></td>
                               <td className="action">
                                 <ul>
@@ -127,7 +127,7 @@ if (courses.length > 0) {
                         Total product<span>( {courses.length} )</span>
                       </li>
                       <li>
-                        Total Price<span>${totalPrice(courses)}</span>
+                        Total Price<span>&#8378;{totalPrice(courses)}</span>
                       </li>
                     </ul>
                   </div>
