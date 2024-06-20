@@ -64,12 +64,22 @@ export const accountApi = createApi({
                 method:"POST",
                 body:decisionModel.decisionModel
             })
+        }),
+        verifyEmail:builder.mutation({
+            query:(verificationModel) => ({
+                url:`${verificationModel.verificationCode.slug}?emailAddress=${verificationModel.emailAddress}`,
+                method:"POST"
+            })
+        }),
+        reSendVerifyEmail:builder.mutation({
+            query:(emailAddress) => ({
+                url:`ReSendVerifyEmail?emailAddress=${emailAddress}`,
+                method:"POST"
+            })
         })
-        // https://localhost:7042/api/User/DecisionInstructor/5092d7bf-910b-48c5-ab20-6454765fc37e
 
     })
 })
-
 
 export const {
         useSignInMutation,
@@ -77,4 +87,6 @@ export const {
         useSignInWithGoogleMutation,
         useSignUpMutation,
         useGetUserDetailsQuery,
-        useMakeInstructiveUserMutation} = accountApi
+        useMakeInstructiveUserMutation,
+        useVerifyEmailMutation,
+        useReSendVerifyEmailMutation} = accountApi

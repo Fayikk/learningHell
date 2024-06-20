@@ -35,6 +35,7 @@ import MyCourses from '../BlogPageFullwidth/MyCourses';
 import InstructorDetail from '../Instructor/InstructorDetail';
 import InstructorsCourseDetail from '../Instructor/InstructorsCourseDetail';
 import TeacherApplications from '../SuperVisor/TeacherApplications';
+import VerifyEmail from '../Verification/VerifyEmail';
 const AllRoute = () => {
   return (
     <div className="App">
@@ -81,6 +82,7 @@ const AllRoute = () => {
           <Route path='login' element={<LoginPage />} />
           <Route path='register' element={<SignUpPage />} />
           <Route path='forgot-password' element={<ForgotPassword />} />
+          <Route path='verify-email/:slug' element={<VerifyEmail></VerifyEmail>} ></Route>
         </Routes>
       </BrowserRouter>
 

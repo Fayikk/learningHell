@@ -18,7 +18,7 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import {Link} from 'react-router-dom'
 import {totalPrice} from "../../utils";
-
+import {toast} from 'react-toastify'
 // images
 import visa from '../../images/icon/visa.png';
 import mastercard from '../../images/icon/mastercard.png';
@@ -83,28 +83,28 @@ const CheckoutSection = ({cartList}) => {
     });
     const [forms, setForms] = React.useState({
         cupon_key: '',
-        fname: '',
-        lname: '',
-        country: '',
-        dristrict: '',
-        identityNumber:'',
-        address: '',
-        post_code: '',
-        email: '',
-        phone: '',
-        note: '',
+        // fname: '',
+        // lname: '',
+        // country: '',
+        // dristrict: '',
+        // identityNumber:'',
+        // address: '',
+        // post_code: '',
+        // email: '',
+        // phone: '',
+        // note: '',
 
         payment_method: 'cash',
         card_type: '',
 
-        fname2: '',
-        lname2: '',
-        country2: '',
-        dristrict2: '',
-        address2: '',
-        post_code2: '',
-        email2: '',
-        phone2: '',
+        // fname2: '',
+        // lname2: '',
+        // country2: '',
+        // dristrict2: '',
+        // address2: '',
+        // post_code2: '',
+        // email2: '',
+        // phone2: '',
 
         card_holder: '',
         card_number: '',
@@ -157,7 +157,7 @@ const CheckoutSection = ({cartList}) => {
                                     </Grid>
                                 </Collapse>
                             </Grid>
-                            <Grid className="cuponWrap checkoutCard">
+                            {/* <Grid className="cuponWrap checkoutCard">
                                 <Button className="collapseBtn" fullWidth onClick={() => faqHandler('billing_adress')}>
                                     Billing Address
                                     <FontAwesome name={tabs.billing_adress ? 'minus' : 'plus'}/>
@@ -460,7 +460,7 @@ const CheckoutSection = ({cartList}) => {
                                         </form>
                                     </Grid>
                                 </Collapse>
-                            </Grid>
+                            </Grid> */}
                             <Grid className="cuponWrap checkoutCard">
                                 <Button className="collapseBtn" fullWidth onClick={() => faqHandler('payment')}>
                                     Payment Method

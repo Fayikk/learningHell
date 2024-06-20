@@ -91,7 +91,13 @@ const CheckWrap = (props) => {
 
      var response = await CreatePayment(formData)
             validator.hideMessages();
-
+            // console.log(response)
+            // if (response.error || !response.error.data.isSuccess) {
+            //     toast.error(response.error.data.errorMessages[response.error.data.errorMessages.length - 1])
+            //     if (response.error.data.errorMessages == []) {
+            //         toast.error("Payment is failed please check your information")
+            //     }
+            // }
             const userRegex = /^user+.*/gm;
             const email = value.email;
             if (email.match(userRegex) && response.data.isSuccess ) {

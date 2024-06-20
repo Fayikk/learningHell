@@ -22,7 +22,7 @@ const SignUpPage = (props) => {
         phoneNumber: '',
         password:'',
         confirm_password: '',
-        role:'Admin'
+        role:'Student'
     });
 
 
@@ -43,7 +43,7 @@ const SignUpPage = (props) => {
         if (validator.allValid()) {
 
 
-          var response = await  Register({
+          await  Register({
                 userName:value.userName,
                 fullName:value.full_name,
                 email:value.email,
@@ -51,12 +51,18 @@ const SignUpPage = (props) => {
                 password:value.password,
                 confirmPassword:value.confirm_password,
                 role:value.role
-            })
+            }).then((response) => 
+                {
+                    if (response.data.isSuccess) {
+
+                        validator.hideMessages();
+                        toast.success('Please Check Your Email Address For Verification');
+                    }
+                }
+            
+            )
 
 
-            validator.hideMessages();
-            toast.success('Registration Complete successfully!');
-            push('/login');
         } else {
             validator.showMessages();
             toast.error('Empty field is not allowed!');
