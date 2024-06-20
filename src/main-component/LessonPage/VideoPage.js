@@ -14,7 +14,7 @@ export default function VideoPage() {
         </div> 
 
         <div>
-          <video className="w-100" loop autoPlay  muted controls key={localStorage.getItem('willSelectedVideo')} >
+          <video className="w-100" loop autoPlay  muted controls controlsList="nodownload" key={localStorage.getItem('willSelectedVideo')} >
                                 <source
                                             src={JSON.parse(localStorage.getItem('willSelectedVideo'))}
                                             type="video/mp4"
