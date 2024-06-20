@@ -9,6 +9,7 @@ import Scrollbar from '../../components/scrollbar/scrollbar';
 import Footer from '../../components/footer/Footer';
 import { useGetCourseIntroductionVideosQuery } from '../../api/courseApi';
 import IsLoading from '../../components/Loading/IsLoading';
+import Newslatter2 from '../../components/Newslatter2/Newslatter2';
 
 const HomePage =() => {
     const {data,isLoading} = useGetCourseIntroductionVideosQuery(null);
@@ -44,7 +45,7 @@ const HomePage =() => {
             {/* <TeamSection pbClass={'pb-big'}/> */}
             <ChooseSection/>
             {/* <BlogSection/> */}
-            <Newslatter/>
+            <Newslatter2/>
             <Footer/> 
             <Scrollbar/>
         </Fragment>
