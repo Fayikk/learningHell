@@ -1,76 +1,88 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import Grid from "@mui/material/Grid";
 import SimpleReactValidator from "simple-react-validator";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import {Link, useNavigate} from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
 
 import './style.scss';
 import { useSignUpMutation } from '../../api/accountApi';
 
 const SignUpPage = (props) => {
-
-    const push = useNavigate()
-    const [Register] = useSignUpMutation();
+    const navigate = useNavigate();
+    const [register] = useSignUpMutation();
 
     const [value, setValue] = useState({
         email: '',
         full_name: '',
-        userName:'',
+        userName: '',
         phoneNumber: '',
-        password:'',
+        password: '',
         confirm_password: '',
-        role:'Student'
+        role: 'Student'
     });
 
+    console.log(value.password)
 
-
-
-    const changeHandler = (e) => {
-        setValue({...value, [e.target.name]: e.target.value});
-        validator.showMessages();
-    };
-
-    const [validator] = React.useState(new SimpleReactValidator({
-        className: 'errorMessage'
+    const [validator] = useState(new SimpleReactValidator({
+        className: 'errorMessage',
+        validators: {
+            matchPassword: {  // Custom validator
+                message: 'Passwords do not match.',
+                rule: (val, params, validator) => {
+                    console.log(val)
+                    console.log(params)
+                    console.log(validator)
+                    console.log(value.password)
+                    console.log(val === value.password)
+                    return val !== value.password;
+                },
+                required: true
+            }
+        }
     }));
 
+    const changeHandler = (e) => {
+        setValue({ ...value, [e.target.name]: e.target.value });
+        validator.showMessages();
+    };
+    
 
     const submitForm = async (e) => {
         e.preventDefault();
         if (validator.allValid()) {
 
+            if (value.password !== value.confirm_password) {
+                alert("The selected confirm password must be password.")
+                return;
+            }
 
-          await  Register({
-                userName:value.userName,
-                fullName:value.full_name,
-                email:value.email,
-                phoneNumber:value.phoneNumber,
-                password:value.password,
-                confirmPassword:value.confirm_password,
-                role:value.role
-            }).then((response) => 
-                {
-                    if (response.data.isSuccess) {
 
-                        validator.hideMessages();
-                        toast.success('Please Check Your Email Address For Verification');
-                    }
+
+            await register({
+                userName: value.userName,
+                fullName: value.full_name,
+                email: value.email,
+                phoneNumber: value.phoneNumber,
+                password: value.password,
+                confirmPassword: value.confirm_password,
+                role: value.role
+            }).then((response) => {
+                if (response.data.isSuccess) {
+                    validator.hideMessages();
+                    toast.success('Please Check Your Email Address For Verification');
+                    navigate('/login');
                 }
-            
-            )
-
-
+            });
         } else {
             validator.showMessages();
             toast.error('Empty field is not allowed!');
         }
     };
+
     return (
         <Grid className="loginWrapper">
-
             <Grid className="loginForm">
                 <h2>Signup</h2>
                 <p>Signup your account</p>
@@ -147,6 +159,7 @@ const SignUpPage = (props) => {
                         <Grid item xs={12}>
                             <TextField
                                 className="inputOutline"
+                                type='password'
                                 fullWidth
                                 placeholder="Password"
                                 value={value.password}
@@ -165,8 +178,9 @@ const SignUpPage = (props) => {
                             <TextField
                                 className="inputOutline"
                                 fullWidth
+                                type='password'
                                 placeholder="Confirm Password"
-                                value={value.password}
+                                value={value.confirm_password}
                                 variant="outlined"
                                 name="confirm_password"
                                 label="Confirm Password"
@@ -176,19 +190,13 @@ const SignUpPage = (props) => {
                                 onBlur={(e) => changeHandler(e)}
                                 onChange={(e) => changeHandler(e)}
                             />
-                            {validator.message('confirm password', value.confirm_password, `in:${value.password}`)}
+                            {validator.message('confirm_password', value.confirm_password, 'required|matchPassword')}
                         </Grid>
                         <Grid item xs={12}>
                             <Grid className="formFooter">
                                 <Button fullWidth className="cBtn cBtnLarge cBtnTheme" type="submit">Sign Up</Button>
                             </Grid>
-                            {/* <Grid className="loginWithSocial">
-                                <Button className="google"><i className="fa fa-google"></i></Button>
-                                <Button className="twitter"><i className="fa fa-twitter"></i></Button>
-                                <Button className="linkedin"><i className="fa fa-linkedin"></i></Button>
-                            </Grid> */}
-                            <p className="noteHelp">Already have an account? <Link to="/login">Return to Sign In</Link>
-                            </p>
+                            <p className="noteHelp">Already have an account? <Link to="/login">Return to Sign In</Link></p>
                         </Grid>
                     </Grid>
                 </form>
