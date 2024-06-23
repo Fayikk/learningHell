@@ -30,7 +30,8 @@ export default function Navbar(props) {
     const decode_Token = jwtDecode(token);
 
         setToken(token)
-
+      console.log("trigger dispatch useLoggedInd")
+      console.log(decode_Token)
         Dispatch(setLoggedInUser({
             nameIdentifier:decode_Token.nameid,
             email:decode_Token.email,

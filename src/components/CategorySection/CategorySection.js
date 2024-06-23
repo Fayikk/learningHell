@@ -100,8 +100,9 @@ const CategorySection = (props) => {
                         </div>
                     </div>
                 </div>
+                {categories.map((category) => ( 
+
                 <div className="row-grid wpo-courses-wrap wpo-courses-slider owl-carousel">
-                        {categories.map((category) => ( 
                             <div className={`grid ${category.categoryId}`} key={category.categoryId}>
                                 <Link onClick={ClickHandler} to={`/course/${category.categoryId}`}>
                                 <div className="wpo-courses-item">
@@ -115,8 +116,8 @@ const CategorySection = (props) => {
                                 </div>
                                 </Link>
                             </div>
-                        ))}
                 </div>
+                        ))}
 
             </div>
             <div className="shape-1"><img src={cImag} alt="" /></div>

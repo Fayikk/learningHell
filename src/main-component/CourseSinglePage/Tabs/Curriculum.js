@@ -20,11 +20,13 @@ const Curriculum = ({sections,user}) => {
         }
     },[sections])
 
+
+
     useEffect(()=>{
             async function CheckActiveCourse(){
                 const model = {
                     userId:authenticationState.nameIdentifier,
-                    courseId:sections != [] ?  sections[0].courseId : 1 
+                    courseId:sections != undefined ? sections[0].courseId : null
                 }
                 if (user.id === authenticationState.nameIdentifier) {
                     setOwnMyCourse(true)

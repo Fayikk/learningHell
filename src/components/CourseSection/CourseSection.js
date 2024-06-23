@@ -68,9 +68,9 @@ const CourseSection = (props) => {
 
                     </div>
                 </div>
-                <div className="more-btn text-center">
+                {/* <div className="more-btn text-center">
                     <Link onClick={ClickHandler} to="/course" className="theme-btn-s2">View All Courses</Link>
-                </div>
+                </div> */}
             </div>
         </div>
     );

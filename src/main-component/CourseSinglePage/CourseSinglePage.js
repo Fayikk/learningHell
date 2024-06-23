@@ -10,6 +10,7 @@ import { useGetCourseDetailByIdQuery } from '../../api/courseApi';
 import IsLoading from '../../components/Loading/IsLoading';
 import { useThisCourseEnrolledUserMutation } from '../../api/studentCourseApi';
 import { useSelector } from 'react-redux';
+import { jwtDecode } from 'jwt-decode';
 const CourseSinglePage = (props) => {
     const { slug } = useParams()
     const {data,isLoading} = useGetCourseDetailByIdQuery(slug);
@@ -19,17 +20,23 @@ const CourseSinglePage = (props) => {
     const [course,setCourse] = useState()
     const authenticationState = useSelector((state) => state.authStore.nameIdentifier);
 
+    // console.log("trigger authenticationState",useSelector((state) => state.authStore.nameIdentifier))
+
+
     useEffect(()=>{
         if (data) {
-            console.log("trigger",data.result.courseId)
             setCourse(data.result)
         }
 
         async function CheckActiveCourse(){
+
+            const decode = jwtDecode(localStorage.getItem("token"))
+
             const model = {
-                userId:authenticationState,
+                userId:decode.nameid,
                 courseId:data.result.courseId 
             }
+
             // if (user.id === useSelector((state) => state.authStore)) {
             //     setOwnMyCourse(true)
             // }
