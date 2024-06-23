@@ -1,0 +1,11 @@
+/* styles.css */
+.course-card {
+    width: 100%;
+    max-width: 600px; /* İstediğiniz maksimum genişliği belirleyin */
+    height: 500px; /* İstediğiniz sabit yüksekliği belirleyin */
+    box-sizing: border-box;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+

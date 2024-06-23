@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Link } from 'react-router-dom'
 import Courses from "../../api/Courses";
 
-
 const ClickHandler = () => {
     window.scrollTo(10, 0);
 }
@@ -24,12 +23,12 @@ const CourseSectionS3 = (props) => {
 
 
     return (
-        <div className={`wpo-popular-area section-padding ${props.pClass}`}>
+        <div className={`wpo-popular-area section-padding ${props.pClass} course-section`}>
             <div className="container">
                 <div className="wpo-popular-wrap">
                     <div className="row">
                         {courses.map((course, aitem) => (
-                            <div className="col col-lg-4 col-md-6 col-12" key={aitem}>
+                            <div className="col col-lg-4 col-md-6 col-12 course-card" key={aitem}>
                                 <div className="wpo-popular-single">
                                     <div className="wpo-popular-item">
                                         <div className="wpo-popular-img">

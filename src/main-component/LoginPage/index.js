@@ -22,8 +22,8 @@ const LoginPage = (props) => {
 
 
     const [value, setValue] = useState({
-        email: 'fayik.v21@gmail.com',
-        password: 'Osman02emre.',
+        email: '',
+        password: '',
         remember: false,
     });
 

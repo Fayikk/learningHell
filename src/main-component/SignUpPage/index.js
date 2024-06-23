@@ -69,10 +69,15 @@ const SignUpPage = (props) => {
                 confirmPassword: value.confirm_password,
                 role: value.role
             }).then((response) => {
+                console.log(response)
+
                 if (response.data.isSuccess) {
                     validator.hideMessages();
                     toast.success('Please Check Your Email Address For Verification');
                     navigate('/login');
+                }
+                else {
+                    toast.error(response.data.errorMessages[0])
                 }
             });
         } else {

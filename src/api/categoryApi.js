@@ -7,6 +7,9 @@ export const categoryApi = createApi({
         baseUrl:baseUrl+"Category"
     }),
     endpoints:(builder) => ({
+        getAllCategoriesForSelected:builder.query({
+           query:()=>`Categories`
+        }),
         getAllCategories:builder.query({
             query:() => ({
                 url:"Categories",
@@ -22,6 +25,8 @@ export const categoryApi = createApi({
         })
     })
 })
+// getUsers: builder.query({
+//     query: (user) => `users/${user}`
+// }),
 
-
-export const {useGetAllCategoriesQuery,useGetCoursesByCategoryIdQuery} = categoryApi
+export const {useGetAllCategoriesQuery,useLazyGetAllCategoriesForSelectedQuery,useGetCoursesByCategoryIdQuery} = categoryApi
