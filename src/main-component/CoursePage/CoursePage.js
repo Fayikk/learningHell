@@ -6,11 +6,8 @@ import Newslatter2 from '../../components/Newslatter2/Newslatter2';
 import Scrollbar from '../../components/scrollbar/scrollbar'
 import Footer from '../../components/footer/Footer';
 import { useParams } from 'react-router-dom';
-import { useScrollTrigger } from '@mui/material';
-import { useGetCoursesByCategoryIdQuery } from '../../api/categoryApi';
 import IsLoading from '../../components/Loading/IsLoading';
 import { useGetAllCoursesMutation } from '../../api/courseApi';
-import { Link } from 'react-router-dom';
 import { Button } from 'reactstrap';
 
 const CoursePage = () => {
@@ -24,19 +21,58 @@ const CoursePage = () => {
     const [pageCounter,setPageCounter] = useState(0);
     const [categoryId,setCategoryId] = useState(slug)
     const [filter,setFilter] = useState({
-        filterProperty:"categoryId",
-        filterValue:categoryId,
+        isSearch:true,
+        pageIndex:1,
         pageSize:6,
-        pageNumber:1
+        sortColumn:"CourseName",
+        sortOrder:"desc",
+        filters:{
+            groupOp:"AND",
+            rules:[
+                {
+                    field:"CourseEvaluteStatus",
+                    op:1,
+                    data:"1"
+                }
+            ]
+        }        
     })
+
+    // filterProperty:"categoryId",
+    // filterValue:categoryId,
+    // pageSize:6,
+    // pageNumber:1
+
+    // {
+    //     "isSearch": true,
+    //     "pageIndex": 0,
+    //     "pageSize": 0,
+    //     "sortColumn": "string",
+    //     "sortOrder": "string",
+    //     "filters": {
+    //       "groupOp": "string",
+    //       "rules": [
+    //         {
+    //           "field": "string",
+    //           "op": 0,
+    //           "data": "string"
+    //         }
+    //       ]
+    //     }
+    //   }
+
+
+
    
     useEffect(()=>{
         async function fetchData() {
             // You can await here
             await fetchAllDatas(filter).then((response) => {
+                console.log("trigger",response.data)
+
                 setCourses(response.data.result.data)
                 // setCurrentPage(response.data.result.data)
-                setPageCounter(response.data.result.pageCounter)
+                setPageCounter(response.data.result.paginationCounter)
             })
             // ...
           }
@@ -48,13 +84,15 @@ const CoursePage = () => {
 
 
     const handleClickChangePageNumber = (clickedPageNumber) => {
+  
         setFilter((prevFilter) => ({
             ...prevFilter,      
-            pageNumber: clickedPageNumber 
+            pageIndex: clickedPageNumber 
         }));
     };
 
     if (courses.length <=0 && pageCounter == 0) {
+        
         return (
             <IsLoading></IsLoading>
         )
@@ -71,9 +109,9 @@ const CoursePage = () => {
             <div className="pagination-wrapper">
                         <ul className="pg-pagination">
                             {
-                                filter.pageNumber != 1 ? (
+                                filter.pageIndex != 1 ? (
                                     <li>
-                                    <Button color='primary' aria-label="Previous" onClick={()=>handleClickChangePageNumber(filter.pageNumber-1)}>
+                                    <Button color='primary' aria-label="Previous" onClick={()=>handleClickChangePageNumber(filter.pageIndex-1)}>
                                         <i className="fi ti-angle-left"></i>
                                     </Button>
                                    </li>
@@ -93,9 +131,9 @@ const CoursePage = () => {
                              
                             }
                             {
-                                filter.pageNumber != pageCounter ? (
+                                filter.pageIndex != pageCounter ? (
                                     <li>
-                                    <Button color='primary' aria-label="Next" onClick={()=>handleClickChangePageNumber(filter.pageNumber+1)}>
+                                    <Button color='primary' aria-label="Next" onClick={()=>handleClickChangePageNumber(filter.pageIndex+1)}>
                                         <i className="fi ti-angle-right"></i>
                                     </Button>
                                 </li>

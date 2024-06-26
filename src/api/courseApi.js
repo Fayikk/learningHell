@@ -39,8 +39,9 @@ export const courseApi = createApi({
         getAllCourses:builder.mutation({
             query:(model)=>   {
                 return ({
-                    url:`GetAllCourses?pageNumber=${model.pageNumber}&pageSize=${model.pageSize}&filterProperty=${model.filterProperty}&filterValue=${model.filterValue}`,
-                    method:"POST"
+                    url:`GetAllCourses`,
+                    method:"POST",
+                    body:model
                 })
             },
             providesTags:["course"]

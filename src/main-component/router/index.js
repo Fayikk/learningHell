@@ -36,6 +36,7 @@ import InstructorDetail from '../Instructor/InstructorDetail';
 import InstructorsCourseDetail from '../Instructor/InstructorsCourseDetail';
 import TeacherApplications from '../SuperVisor/TeacherApplications';
 import VerifyEmail from '../Verification/VerifyEmail';
+import EvaluateCourses from '../Evaluate/EvaluateCourses';
 const AllRoute = () => {
   return (
     <div className="App">
@@ -67,6 +68,7 @@ const AllRoute = () => {
           <Route path='product-single/:slug' element={<ProductSinglePage />} />
           <Route path='cart' element={<CartPage />} />
           <Route path='checkout' element={<CheckoutPage />} />
+          <Route path='supervisor/evaluatecourses' element={<EvaluateCourses></EvaluateCourses>} ></Route>
           <Route path='order_received' element={<OrderRecived />} />
           <Route path='faq' element={<FaqPage />} />
           <Route path='privacy' element={<PrivacyPage/>} />

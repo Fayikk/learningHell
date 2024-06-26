@@ -70,7 +70,7 @@ const BlogList = (props) => {
                                 </Link>
                             ))}
                         </div>
-                        <div className="pagination-wrapper pagination-wrapper-left">
+                        {/* <div className="pagination-wrapper pagination-wrapper-left">
                             <ul className="pg-pagination">
                                 <li>
                                     <Link to="/blog-left-sidebar" aria-label="Previous">
@@ -86,7 +86,7 @@ const BlogList = (props) => {
                                     </Link>
                                 </li>
                             </ul>
-                        </div>
+                        </div> */}
                     </div>
                     <BlogSidebar blLeft={props.blLeft}/>
                 </div>

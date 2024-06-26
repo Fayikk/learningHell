@@ -247,6 +247,12 @@ function InstructorsCourseDetail() {
     }
   };
 
+
+  const handleSendEvaluate = () => {
+    
+  }
+
+
   const handleClickedVideo = (videoId) => {
     console.log(videoId)
     console.log(handleClickedUpdateRows)
@@ -305,7 +311,12 @@ function InstructorsCourseDetail() {
         ) : ""}
 
         <div>
+        <div className='row' >
+          <div className='col' >
           <Button onClick={handleOpen}>Create New Section</Button>
+          <Button className='btn btn-danger'  >Send Evaluate</Button>
+          </div>
+        </div>
           <Modal
             open={open}
             onClose={handleClose}
