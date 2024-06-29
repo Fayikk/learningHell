@@ -23,14 +23,10 @@ const   TeamSection = (props) => {
         subject:""
     });
     const [makeInstructive] = useMakeInstructiveUserMutation();
-    console.log("trigger team sectio",props)
 
 
-    console.log(modalShow)
     const handleChangeRoleUserAsync = async (event) => {
         const userId = event.userId;
-        console.log("trigger user id",userId)
-        console.log(event.decideInstructive)    
         var isMakeInstructor = false;
         if (event.decideInstructive === "MakeInstructor") {
             isMakeInstructor = true;

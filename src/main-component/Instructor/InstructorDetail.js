@@ -117,7 +117,6 @@ function InstructorDetail() {
     await getAllCategories();
   };
 
-  console.log("trigger courses",courses)
 
   return (
     <Fragment>

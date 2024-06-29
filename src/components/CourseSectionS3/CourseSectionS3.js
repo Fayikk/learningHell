@@ -20,7 +20,7 @@ const CourseSectionS3 = (props) => {
 
 
 
-
+    console.log("courses",courses)
 
     return (
         <div className={`wpo-popular-area section-padding ${props.pClass} course-section`}>

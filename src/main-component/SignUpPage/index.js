@@ -23,7 +23,6 @@ const SignUpPage = (props) => {
         role: 'Student'
     });
 
-    console.log(value.password)
 
     const [validator] = useState(new SimpleReactValidator({
         className: 'errorMessage',
@@ -31,11 +30,6 @@ const SignUpPage = (props) => {
             matchPassword: {  // Custom validator
                 message: 'Passwords do not match.',
                 rule: (val, params, validator) => {
-                    console.log(val)
-                    console.log(params)
-                    console.log(validator)
-                    console.log(value.password)
-                    console.log(val === value.password)
                     return val !== value.password;
                 },
                 required: true
@@ -69,7 +63,6 @@ const SignUpPage = (props) => {
                 confirmPassword: value.confirm_password,
                 role: value.role
             }).then((response) => {
-                console.log(response)
 
                 if (response.data.isSuccess) {
                     validator.hideMessages();

@@ -62,6 +62,19 @@ export const courseApi = createApi({
             }),
             invalidatesTags:["course"]
 
+        }),
+        evaluateUpdateCourse:builder.mutation({
+            query:(evaluateModel) => ({
+                method:"PUT",
+                body:evaluateModel,
+                url:"EvaluateCourse",
+            })
+        }),
+        getEvaluateCourses:builder.query({
+            query:() => ({
+                method:"GET",
+                url:"GetEvaluationCourses"
+            })
         })
 
 
@@ -74,4 +87,6 @@ export const {useGetCourseDetailByIdQuery,
             useGetCourseIntroductionVideosQuery,
             useGetAllCoursesMutation,
             useCreateCourseAsyncMutation,
-            useRemoveCourseAsyncMutation} = courseApi
+            useRemoveCourseAsyncMutation,
+            useEvaluateUpdateCourseMutation,
+            useGetEvaluateCoursesQuery} = courseApi

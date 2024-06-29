@@ -10,7 +10,6 @@ const Error = (props) => {
     const ClickHandler = () =>{
         window.scrollTo(10, 0);
      }
-     console.log("triggererror page",props.props.slug)
 
 
      useEffect(()=>{

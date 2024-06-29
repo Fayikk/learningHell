@@ -30,8 +30,6 @@ const CartPage = (props) => {
 
 
     }
-    console.log("trigger inner courses")
-    console.log(courses.length)
   },[data])
 
 

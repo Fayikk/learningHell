@@ -19,8 +19,6 @@ const Newslatter2 = (props) => {
         }
 
         await sendEmail(model).then((response) => {
-            console.log("trigger")
-            console.log(response)
             if (response.data.isSuccess) {
                 toast.success(response.data.messages[0])
                 
@@ -32,7 +30,6 @@ const Newslatter2 = (props) => {
     }
 
 
-console.log(email)
 
     return (
         <section className="wpo-subscribe-section-s2 section-padding">

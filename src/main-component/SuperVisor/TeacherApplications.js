@@ -24,7 +24,6 @@ function TeacherApplications() {
         async function getApplicantsAsync()
         {
             await getApplicants({filter}).then((response) => {
-                console.log("deneme",response.data.result.data)
                 setApplicants(response.data.result.data)
             })
         }

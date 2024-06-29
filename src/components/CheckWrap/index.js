@@ -91,7 +91,6 @@ const CheckWrap = (props) => {
 
      var response = await CreatePayment(formData)
             validator.hideMessages();
-            // console.log(response)
             // if (response.error || !response.error.data.isSuccess) {
             //     toast.error(response.error.data.errorMessages[response.error.data.errorMessages.length - 1])
             //     if (response.error.data.errorMessages == []) {

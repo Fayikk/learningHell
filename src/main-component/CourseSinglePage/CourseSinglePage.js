@@ -20,7 +20,6 @@ const CourseSinglePage = (props) => {
     const [course,setCourse] = useState()
     const authenticationState = useSelector((state) => state.authStore.nameIdentifier);
 
-    // console.log("trigger authenticationState",useSelector((state) => state.authStore.nameIdentifier))
 
 
     useEffect(()=>{

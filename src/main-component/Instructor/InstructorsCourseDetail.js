@@ -24,7 +24,10 @@ import { Input } from 'reactstrap';
 import { toast } from 'react-toastify';
 import { IoPencil } from "react-icons/io5";
 import Spinner from 'react-bootstrap/Spinner';
-
+import { useEvaluateUpdateCourseMutation } from '../../api/courseApi';
+import { courseEvaluateEnum } from '../../api/Enums/evaluateEnum';
+import { useSelector } from 'react-redux';
+import EvaluateModal from '../CustomComponents/EvaluateModal';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -41,6 +44,8 @@ function InstructorsCourseDetail() {
   const buttonRef = useRef(null);
   const inputRef = useRef(null);
   const dispatch = useDispatch();
+  const userId = useSelector((state) => state.authStore.nameIdentifier);
+
   const { slug } = useParams();
   const { data, isLoading } = useGetCourseDetailQuery(slug);
   const [downloadFile] = useDownloadMaterialFileMutation();
@@ -53,6 +58,7 @@ function InstructorsCourseDetail() {
   const [uploadMaterialAsync] = useUploadMaterialFileMutation();
   const [removeMaterialAsync] = useRemoveMaterialAsyncMutation();
   const [updateVideoAsync] = useUpdateVideoAsyncMutation();
+  const [updateEvaluate] = useEvaluateUpdateCourseMutation();
   const [title, setTitle] = useState("");
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -60,6 +66,7 @@ function InstructorsCourseDetail() {
   const [chooseVideo, setChooseVideo] = useState(false);
   const [sections, setSections] = useState([]);
   const [modal, isShowModal] = useState(false);
+  const [evaluateModal,setEvaluateModal] = useState(false);
   const [createSectionAsync] = useAddSectionAsyncMutation();
   const [isEnable, setIsEnable] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -75,11 +82,24 @@ function InstructorsCourseDetail() {
     description: "",
     courseId: slug
   });
+
+  // {
+  //   "courseId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  //   "courseEvaluteStatus": 0,
+  //   "courseEvaluateDescription": "string"
+  // }
+
+
+  const [evaluateModel,setEvaluateModel] = useState({
+    courseId:slug,
+    courseEvaluateStatus:Number,
+    courseEvaluateDescription:String
+  });
   const [videoId, setVideoId] = useState(buttonRef.current ? buttonRef.current.dataset.value : "");
 
+  
+
   useEffect(() => {
-    console.log("trigger inner use effect data")
-    console.log(data)
     if (data && data.result[0] && data.result[0].sections) {
       setSections(data.result[0].sections);
     }
@@ -113,6 +133,9 @@ function InstructorsCourseDetail() {
       dispatch(instructorApi.util.invalidateTags(["instructor"]));
     }
   };
+
+
+
 
   const handleOpenCustomModal = (title) => {
     isShowModal(!modal);
@@ -149,15 +172,11 @@ function InstructorsCourseDetail() {
 
     const formData = new FormData();
     const typeFile = event.file.target.files[0].type.split("/");
-    console.log("trigger is title",title)
-    console.log(typeFile)
     if ((title == "ChangeVideo" || title == "NewVideo") && typeFile[1] !== 'mp4') {
       return alert("Please just mp4 format");
     }
 
     if (title == "ChangeVideo" || title == "NewVideo") {
-        console.log("trigger inner if conditional")
-        console.log(event)
       formData.append("File", event.file.target.files[0]);
       formData.append("Title", event.title);
       formData.append("RowNumberForSection", event.rowNumber);
@@ -175,7 +194,6 @@ function InstructorsCourseDetail() {
 
     if (title == "ChangeVideo") {
       await changeVideoAsync({ fileName, formData }).then((response) => {
-        console.log(response)
         if (response.data.isSuccess) {
             toast.success("Change Video Succeded");
           dispatch(instructorApi.util.invalidateTags(["instructor"]));
@@ -208,6 +226,9 @@ function InstructorsCourseDetail() {
       });
     }
   };
+
+
+
 
   const createSection = async () => {
     await createSectionAsync(sectionModel).then((response) => {
@@ -248,14 +269,60 @@ function InstructorsCourseDetail() {
   };
 
 
-  const handleSendEvaluate = () => {
-    
+  const handleSendEvaluate = async (model) => {
+    console.log("model",model.returnEvaluate)
+
+    if (model.returnEvaluate === undefined) {
+      if (data.result[0].userId === userId) {
+        //here is in the send to for evaluate instructor
+        //this reason enums value is = 
+
+      dispatch(instructorApi.util.invalidateTags(["course"]));
+        // setEvaluateModel({
+        //   courseId:slug,
+        //   courseEvaluateStatus:courseEvaluateEnum.InEvaluation,
+        //   courseEvaluateDescription:"Send To Evaluate"  
+        // })
+
+      const evaluationModel = {
+        courseId:slug,
+        CourseEvaluteStatus:courseEvaluateEnum.InEvaluation,
+        courseEvaluateDescription:"Send To Evaluate"
+      }
+
+        await updateEvaluate(evaluationModel).then((response) => {
+          dispatch(instructorApi.util.invalidateTags(["instructor"]));
+
+        })
+    }
+    }
+    else {
+      const evaluationModel = {
+        courseId:slug,
+        CourseEvaluteStatus:model.returnEvaluate.statu,
+        courseEvaluateDescription:model.returnEvaluate.description
+      }
+
+      await updateEvaluate(evaluationModel).then((response) => {
+        console.log(response);
+        if (response.data.isSuccess) {
+          dispatch(instructorApi.util.invalidateTags(["instructor"]));
+        setEvaluateModal(false)
+        }
+        else {
+          toast.error("Ooops!sometihng went wrong")
+        }
+      })
+
+
+    }
+ 
+
+
   }
 
 
   const handleClickedVideo = (videoId) => {
-    console.log(videoId)
-    console.log(handleClickedUpdateRows)
     if (handleClickedUpdateRows === false) {
           setSelectedVideoId(videoId);
     setHandleClickedUpdateRows(!handleClickedUpdateRows)
@@ -275,7 +342,6 @@ function InstructorsCourseDetail() {
 
 
    await updateVideoAsync({videoId,updateVideoModel}).then((response) => {
-        console.log(response)
         if (response.data.isSuccess) {
           toast.success("Video Updated Successfully")
           dispatch(instructorApi.util.invalidateTags(["instructor"]));
@@ -284,8 +350,53 @@ function InstructorsCourseDetail() {
     })
 
 
-    console.log("trigger handle videoId click",videoId)
   }
+
+  const renderButton = () => {
+   
+     if (data.result[0].userId === userId && data.result[0].courseEvaluteStatus === courseEvaluateEnum.Pending ) {
+        return (
+          <Button className='btn btn-danger' onClick={handleSendEvaluate}  >Send Evaluate</Button>
+        )                                           
+    }      
+    if (data.result[0].userId === userId && data.result[0].courseEvaluteStatus === courseEvaluateEnum.InRevision) {
+      return (
+        <>
+        <Button className='btn btn-danger' onClick={handleSendEvaluate}  >ReSend Evaluate</Button>
+        <Button className='btn btn-warning' onClick={()=>setEvaluateModal(!evaluateModal)} >Read The Description</Button>
+        </>
+      )                                           
+  }             
+   
+    else if(data.result[0].userId !== userId &&data.result[0].courseEvaluteStatus === courseEvaluateEnum.InEvaluation){
+        return (
+          <Button className='btn btn-success' onClick={()=>setEvaluateModal(!evaluateModal)}  >Evaluate</Button>
+        )
+    }
+    else if(data.result[0].courseEvaluteStatus === courseEvaluateEnum.Accept){
+      return (
+        <Button className='btn btn-success' disabled >Course Is Published</Button>
+      )
+    }
+    else if(data.result[0].courseEvaluteStatus === courseEvaluateEnum.Cancel)
+      {
+        return (
+          <>
+            <Button className='btn btn-danger' disabled >Course is rejected</Button>
+            <Button className='btn btn-warning' onClick={()=>setEvaluateModal(!evaluateModal)} >Read The Description</Button>
+          </>
+        )
+      }
+    else {
+
+        return (
+          <Button className='btn btn-warning' disabled >Sended to evaluate</Button>
+        )
+    }
+   
+  }
+
+
 
   return (
     <div>
@@ -310,11 +421,19 @@ function InstructorsCourseDetail() {
           <CustomModal props={modal} changeVideoObject={videoDetail}  type={title} onData={handleFromChildData} />
         ) : ""}
 
+
+        {
+          evaluateModal ? (
+            <EvaluateModal  props={evaluateModal} status={data} onData={handleSendEvaluate} ></EvaluateModal>
+          ) : ""
+        }
         <div>
         <div className='row' >
           <div className='col' >
           <Button onClick={handleOpen}>Create New Section</Button>
-          <Button className='btn btn-danger'  >Send Evaluate</Button>
+
+      
+          {renderButton()}
           </div>
         </div>
           <Modal

@@ -22,9 +22,7 @@ function VerifyEmail() {
         verificationCode:verifyCode,
         emailAddress:email
     }
-    console.log("trigger send")
     await SendVerificationCode(verificationModel).then((response) => {
-        console.log(response)
         if (response.data.isSuccess) {
             toast.success("Your account approved")
             push("/login")
@@ -37,9 +35,7 @@ function VerifyEmail() {
 
 
  const handleReSendVerifyEmail = async () => {
-    console.log("trigger")
     await ReSendEmail(email).then((response) => {
-        console.log(response);
         if(response.error)
             {
                 toast.error(response.error.data.errorMessages[0])

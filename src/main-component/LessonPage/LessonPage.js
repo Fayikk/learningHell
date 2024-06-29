@@ -50,7 +50,6 @@ const LessonPage = () => {
         if (videoUrl) {
             await decryptVideoUrl(videoUrl.publicVideoId).then((response) => {
                 localStorage.setItem('willSelectedVideo', JSON.stringify(response.data.result));
-                console.log(response)
             }).catch((err) => console.error(err));
             
         } else {

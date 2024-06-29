@@ -32,7 +32,7 @@ const CoursePage = () => {
                 {
                     field:"CourseEvaluteStatus",
                     op:1,
-                    data:"1"
+                    data:"3"
                 }
             ]
         }        
@@ -70,7 +70,7 @@ const CoursePage = () => {
             await fetchAllDatas(filter).then((response) => {
                 console.log("trigger",response.data)
 
-                setCourses(response.data.result.data)
+                setCourses(response.data.result != [] ? response.data.result.data : [])
                 // setCurrentPage(response.data.result.data)
                 setPageCounter(response.data.result.paginationCounter)
             })
@@ -91,7 +91,7 @@ const CoursePage = () => {
         }));
     };
 
-    if (courses.length <=0 && pageCounter == 0) {
+    if (courses.length <0 && pageCounter == 0) {
         
         return (
             <IsLoading></IsLoading>

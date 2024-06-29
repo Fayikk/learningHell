@@ -10,7 +10,6 @@ function VerticallyCenteredModal(props) {
 
 const [isMakeInstructor, setIsMakeInstructor] = useState(["MakeInstructor", "Reject"]);
 const [selectedChoosen,setSelectedChoosen] = useState();
-    console.log("trigger vertically",props)
 
     const handleResponseDataChildToParent = (decideInstructive) => {
         const userId = props.applicantDetail.userId;
@@ -18,7 +17,6 @@ const [selectedChoosen,setSelectedChoosen] = useState();
     }
 
 
-    console.log("trigger is makge instructor",isMakeInstructor)
 
     const handleClickDownloadCv = async (fileUrl) => {
         // public string FileUrl { get; set; } = null!;
