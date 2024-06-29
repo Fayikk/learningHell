@@ -373,12 +373,12 @@ function InstructorsCourseDetail() {
       )                                           
   }             
    
-    else if(data.result[0].userId !== userId &&data.result[0].courseEvaluteStatus === courseEvaluateEnum.InEvaluation && userRole.includes(Roles.SuperVisor)){
+    else if((userRole.includes(Roles.SuperVisor) &&data.result[0].courseEvaluteStatus === courseEvaluateEnum.InEvaluation)   ){
         return (
           <Button className='btn btn-success' onClick={()=>setEvaluateModal(!evaluateModal)}  >Evaluate</Button>
         )
     }
-    else if(data.result[0].courseEvaluteStatus === courseEvaluateEnum.Accept){
+    else if(data.result[0].courseEvaluteStatus === courseEvaluateEnum.Accept || ((userRole.includes(Roles.SuperVisor) || data.result[0].userId !== userId) && data.result[0].courseEvaluteStatus === courseEvaluateEnum.Accept)){
       return (
         <Button className='btn btn-success' disabled >Course Is Published</Button>
       )

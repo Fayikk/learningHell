@@ -37,6 +37,7 @@ import InstructorsCourseDetail from '../Instructor/InstructorsCourseDetail';
 import TeacherApplications from '../SuperVisor/TeacherApplications';
 import VerifyEmail from '../Verification/VerifyEmail';
 import EvaluateCourses from '../Evaluate/EvaluateCourses';
+import VerifyDigitCode from '../Verification/VerifyDigitCode';
 const AllRoute = () => {
   return (
     <div className="App">
@@ -85,6 +86,7 @@ const AllRoute = () => {
           <Route path='register' element={<SignUpPage />} />
           <Route path='forgot-password' element={<ForgotPassword />} />
           <Route path='verify-email/:slug' element={<VerifyEmail></VerifyEmail>} ></Route>
+          <Route path='verify-digit/:slug' element={<VerifyDigitCode></VerifyDigitCode>} ></Route>
         </Routes>
       </BrowserRouter>
 

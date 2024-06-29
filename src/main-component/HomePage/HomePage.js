@@ -37,7 +37,7 @@ const HomePage =() => {
     return(
         <Fragment>
             <Navbar hclass={'wpo-header-style-4'}/>
-            <Hero introductionVideos = {introductionVideos} />
+            {/* <Hero introductionVideos = {introductionVideos} /> */}
             {/* <About/> */}
             {/* <CategorySection/> */}
             <CourseSection/>

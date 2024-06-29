@@ -75,9 +75,10 @@ export const courseApi = createApi({
                 method:"GET",
                 url:"GetEvaluationCourses"
             })
-        })
+        }),
+       
 
-
+        // https://localhost:7042/api/User/CheckVerificationMailCode?email=deneme%40gmail.com&digitCode=123456
     })
 })
 
@@ -89,4 +90,5 @@ export const {useGetCourseDetailByIdQuery,
             useCreateCourseAsyncMutation,
             useRemoveCourseAsyncMutation,
             useEvaluateUpdateCourseMutation,
-            useGetEvaluateCoursesQuery} = courseApi
+            useGetEvaluateCoursesQuery,
+            } = courseApi

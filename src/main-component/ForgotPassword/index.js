@@ -7,11 +7,12 @@ import Button from "@mui/material/Button";
 import {Link, useNavigate} from "react-router-dom";
 
 import './style.scss';
+import { useForgotPasswordMutation } from '../../api/accountApi';
 
 const ForgotPassword = (props) => {
 
     const push = useNavigate()
-
+    const [sendForgotPasswordEmail] = useForgotPasswordMutation();
     const [value, setValue] = useState({
         email: '',
     });
@@ -25,15 +26,26 @@ const ForgotPassword = (props) => {
         className: 'errorMessage'
     }));
 
+    console.log(value.email)
+
+
     const submitForm = (e) => {
         e.preventDefault();
         if (validator.allValid()) {
+
+            sendForgotPasswordEmail(value.email).then((response) => {
+                console.log("trigger response")
+                console.log(response)
+                if (response.data.isSuccess) {
+                    toast.success(response.data.messages[0])
+                }
+            })
+
             setValue({
                 email: '',
             });
             validator.hideMessages();
-            toast.success('You successfully Login!');
-            push('/login');
+            push(`/verify-digit/${value.email}`);
         } else {
             validator.showMessages();
             toast.error('Empty field is not allowed!');

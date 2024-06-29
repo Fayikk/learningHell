@@ -1,5 +1,6 @@
 import {createApi,fetchBaseQuery} from "@reduxjs/toolkit/query/react"
 import {baseUrl} from './Base/baseApiModel'
+import ForgotPassword from "../main-component/ForgotPassword";
 
 export const accountApi = createApi({
     reducerPath:"accountApi",
@@ -76,6 +77,25 @@ export const accountApi = createApi({
                 url:`ReSendVerifyEmail?emailAddress=${emailAddress}`,
                 method:"POST"
             })
+        }),
+        ForgotPassword:builder.mutation({
+            query:(emailAddress) => ({
+                url:`https://localhost:7042/api/User/ForgotPassword?email=${emailAddress}`,
+                method:"POST"
+            })
+        }),
+        checkVerificationDigitCode:builder.mutation({
+            query:(digitBody)=>({
+                method:"POST",
+                url:`CheckVerificationMailCode?email=${digitBody.email}&digitCode=${digitBody.digitCode}`
+            })
+        }),
+        changePassword:builder.mutation({
+            query:(changePasswordModel) => ({
+                method:"POST",
+                url:"ChangePassword",
+                body:changePasswordModel
+            })
         })
 
     })
@@ -89,4 +109,7 @@ export const {
         useGetUserDetailsQuery,
         useMakeInstructiveUserMutation,
         useVerifyEmailMutation,
-        useReSendVerifyEmailMutation} = accountApi
+        useReSendVerifyEmailMutation,
+        useForgotPasswordMutation,
+        useCheckVerificationDigitCodeMutation,
+        useChangePasswordMutation} = accountApi
