@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux'
 import {Dropdown } from 'react-bootstrap'
 import { CiShoppingCart } from "react-icons/ci";
 import { FaLock } from 'react-icons/fa'; 
-const Header = (props) => {
+const Header = ({props,onAuthStateChange} ) => {
 
 
     const [menuActive, setMenuState] = useState(false);
@@ -21,6 +21,9 @@ const Header = (props) => {
 
     const [showDropdown, setShowDropdown] = useState(false);
 
+    console.log(authenticationState.role)
+
+
     const handleMouseEnter = () => {
       setShowDropdown(true);
     };
@@ -29,7 +32,7 @@ const Header = (props) => {
       setShowDropdown(false);
     };
     useEffect(()=>{
-
+        onAuthStateChange(authenticationState);
     },[authenticationState])
 
     const SubmitHandler = (e) => {
@@ -52,8 +55,8 @@ const Header = (props) => {
 
     return (
         <header id="header">
-            <HeaderTopbar topbarClass={props.topbarClass}/>
-            <div className={`wpo-site-header ${props.hclass}`}>
+            <HeaderTopbar />
+            <div className={`wpo-site-header`}>
                 <nav className="navigation navbar navbar-expand-lg navbar-light">
                     <div className="container-fluid">
                         <div className="row align-items-center">
@@ -222,9 +225,6 @@ const Header = (props) => {
 
                                             ) 
                                         }
-                                       
-                                           
-                                     
                                     </div>
                                 </div>
                             </div>

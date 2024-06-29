@@ -1,51 +1,47 @@
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Header from '../header/Header';
-import { jwtDecode } from "jwt-decode";
-import { useDispatch } from 'react-redux'
-import { useScrollTrigger } from "@mui/material";
-import { setLoggedInUser } from "../../store/reducers/authSlice";
-import { useSelector } from "react-redux/es/hooks/useSelector";
-import { useGenerateJwtTokenForExpiredMutation } from "../../api/accountApi";
+import {jwtDecode} from "jwt-decode";
+import { useDispatch, useSelector } from 'react-redux';
+import { setLoggedInUser, InitialState } from "../../store/reducers/authSlice";
 import { useNavigate } from "react-router-dom";
 
-
-export default function Navbar(props) {
-  const [scroll, setScroll] = React.useState(0);
-  const [token,setToken] = React.useState('')
-  const Dispatch = useDispatch();
+export default function Navbar({onAuthData}) {
+  const [scroll, setScroll] = useState(0);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const cartState = useSelector((state) => state.cartStore);
-  const push = useNavigate();
+  const [authState, setAuthState] = useState({});
 
+  const handleAuthStateChange = useCallback((newState) => {
+    setAuthState(newState);
+    console.log(typeof(onAuthData) )
+    if (typeof(onAuthData) != "undefined") {
+    onAuthData(newState)      
+    }
+  }, []);
   const handleScroll = () => setScroll(document.documentElement.scrollTop);
 
-
-
-
-
-  React.useEffect( ()=>{
-    const token = localStorage.getItem("token")
-
+  useEffect(() => {
+    const token = localStorage.getItem("token");
     if (token) {
+      const decodedToken = jwtDecode(token);
+      dispatch(setLoggedInUser({
+        nameIdentifier: decodedToken.nameid,
+        email: decodedToken.email,
+        role: decodedToken.role,
+        userName: decodedToken.unique_name,
+        name: decodedToken.givenName
+      }));
+    } else {
+      dispatch(setLoggedInUser(InitialState));
       
-    const decode_Token = jwtDecode(token);
-
-        setToken(token)
-        Dispatch(setLoggedInUser({
-            nameIdentifier:decode_Token.nameid,
-            email:decode_Token.email,
-            role:decode_Token.role,
-            userName:decode_Token.unique_name,
-            name:decode_Token.givenName
-        }))
     }
-  })
 
+  }, [dispatch]);
 
-  React.useEffect(() => {
-    
-
-
+  useEffect(() => {
     window.addEventListener("scroll", handleScroll);
+    console.log("ttrigger ede")
     return () => window.removeEventListener("scroll", handleScroll);
     
   }, []);
@@ -54,7 +50,7 @@ export default function Navbar(props) {
 
   return (
     <div className={className}>
-        <Header hclass={props.hclass} Logo={props.Logo} topbarClass={props.topbarClass} />
+      <Header onAuthStateChange={handleAuthStateChange}  />
     </div>
-  ); 
+  );
 }

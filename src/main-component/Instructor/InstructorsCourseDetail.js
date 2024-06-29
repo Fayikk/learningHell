@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import Accordion from 'react-bootstrap/Accordion';
 import Navbar from '../../components/Navbar/Navbar';
 import PageTitle from '../../components/pagetitle/PageTitle';
@@ -28,6 +28,7 @@ import { useEvaluateUpdateCourseMutation } from '../../api/courseApi';
 import { courseEvaluateEnum } from '../../api/Enums/evaluateEnum';
 import { useSelector } from 'react-redux';
 import EvaluateModal from '../CustomComponents/EvaluateModal';
+import Roles from '../../Constants/Roles';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -44,11 +45,11 @@ function InstructorsCourseDetail() {
   const buttonRef = useRef(null);
   const inputRef = useRef(null);
   const dispatch = useDispatch();
-  const userId = useSelector((state) => state.authStore.nameIdentifier);
 
   const { slug } = useParams();
   const { data, isLoading } = useGetCourseDetailQuery(slug);
   const [downloadFile] = useDownloadMaterialFileMutation();
+  const userId = useSelector((state) => state.authStore.nameIdentifier);
   const [watchingVideo] = useGetWatchVideoUrlMutation();
   const [removeVideoAsync] = useRemoveVideoAsyncMutation();
   const [removeSectionAsync] = useRemoveSectionAsyncMutation();
@@ -82,12 +83,7 @@ function InstructorsCourseDetail() {
     description: "",
     courseId: slug
   });
-
-  // {
-  //   "courseId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  //   "courseEvaluteStatus": 0,
-  //   "courseEvaluateDescription": "string"
-  // }
+  const [userRole,setUserRole] = useState([]);
 
 
   const [evaluateModel,setEvaluateModel] = useState({
@@ -226,6 +222,15 @@ function InstructorsCourseDetail() {
       });
     }
   };
+
+  // const handleAuthForRoles =  (event) =>{
+  //   console.log("handleAuthForRoles",event)
+  // }
+
+  const handleAuthForRoles = async (event) => {
+    console.log("trigger handleAuth Roles",event.role)
+    setUserRole(event.role)
+  }
 
 
 
@@ -368,7 +373,7 @@ function InstructorsCourseDetail() {
       )                                           
   }             
    
-    else if(data.result[0].userId !== userId &&data.result[0].courseEvaluteStatus === courseEvaluateEnum.InEvaluation){
+    else if(data.result[0].userId !== userId &&data.result[0].courseEvaluteStatus === courseEvaluateEnum.InEvaluation && userRole.includes(Roles.SuperVisor)){
         return (
           <Button className='btn btn-success' onClick={()=>setEvaluateModal(!evaluateModal)}  >Evaluate</Button>
         )
@@ -408,7 +413,7 @@ function InstructorsCourseDetail() {
       ) : ""}
       
       <Fragment>
-        <Navbar />
+        <Navbar onAuthData={handleAuthForRoles} />
         <PageTitle pageTitle={'Instructor'} pageSub={'CourseDetail'} />
         {chooseVideo ? (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '60%', margin: '0 auto' }}>

@@ -9,6 +9,7 @@ export const InitialState  = {
     email:"",
 }
 
+
 export const authSlice = createSlice({
     name:"authentication",
     initialState:InitialState,
