@@ -80,7 +80,7 @@ export const accountApi = createApi({
         }),
         ForgotPassword:builder.mutation({
             query:(emailAddress) => ({
-                url:`https://localhost:7042/api/User/ForgotPassword?email=${emailAddress}`,
+                url:`ForgotPassword?email=${emailAddress}`,
                 method:"POST"
             })
         }),
