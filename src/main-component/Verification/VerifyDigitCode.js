@@ -19,7 +19,6 @@ function VerifyDigitCode() {
         confirmNewPassword:String
     })
     const push = useNavigate();
-    console.log(slug)
 //    url:`CheckVerificationMailCode?email=${digitBody.email}.com&digitCode=${digitBody.digitCode}`
     const handleSendDigitCodeValidation = async () => {
         const verifyDigit = {
@@ -30,7 +29,6 @@ function VerifyDigitCode() {
     }
 
 
-    console.log(isTrueDigitCode)
     // public string  Email { get; set; }
     // public string Password { get; set; }
     // public string ConfirmPassword { get; set; } 

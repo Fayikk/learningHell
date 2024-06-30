@@ -23,7 +23,6 @@ function VerifyEmail() {
         emailAddress:email
     }
     await SendVerificationCode(verificationModel).then((response) => {
-        console.log(response)
         if (response.data.isSuccess) {
             toast.success("Your account approved")
             push("/login")

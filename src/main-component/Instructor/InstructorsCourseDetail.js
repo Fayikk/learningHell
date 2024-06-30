@@ -228,7 +228,6 @@ function InstructorsCourseDetail() {
   // }
 
   const handleAuthForRoles = async (event) => {
-    console.log("trigger handleAuth Roles",event.role)
     setUserRole(event.role)
   }
 
@@ -275,7 +274,6 @@ function InstructorsCourseDetail() {
 
 
   const handleSendEvaluate = async (model) => {
-    console.log("model",model.returnEvaluate)
 
     if (model.returnEvaluate === undefined) {
       if (data.result[0].userId === userId) {
@@ -309,7 +307,6 @@ function InstructorsCourseDetail() {
       }
 
       await updateEvaluate(evaluationModel).then((response) => {
-        console.log(response);
         if (response.data.isSuccess) {
           dispatch(instructorApi.util.invalidateTags(["instructor"]));
         setEvaluateModal(false)

@@ -26,7 +26,6 @@ const ForgotPassword = (props) => {
         className: 'errorMessage'
     }));
 
-    console.log(value.email)
 
 
     const submitForm = (e) => {
@@ -34,8 +33,6 @@ const ForgotPassword = (props) => {
         if (validator.allValid()) {
 
             sendForgotPasswordEmail(value.email).then((response) => {
-                console.log("trigger response")
-                console.log(response)
                 if (response.data.isSuccess) {
                     toast.success(response.data.messages[0])
                 }

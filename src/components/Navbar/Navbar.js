@@ -14,7 +14,6 @@ export default function Navbar({onAuthData}) {
 
   const handleAuthStateChange = useCallback((newState) => {
     setAuthState(newState);
-    console.log(typeof(onAuthData) )
     if (typeof(onAuthData) != "undefined") {
     onAuthData(newState)      
     }
@@ -41,7 +40,6 @@ export default function Navbar({onAuthData}) {
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
-    console.log("ttrigger ede")
     return () => window.removeEventListener("scroll", handleScroll);
     
   }, []);

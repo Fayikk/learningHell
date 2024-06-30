@@ -12,27 +12,26 @@ import IsLoading from '../../components/Loading/IsLoading';
 import Newslatter2 from '../../components/Newslatter2/Newslatter2';
 
 const HomePage =() => {
-    const {data,isLoading} = useGetCourseIntroductionVideosQuery(null);
     const [introductionVideos,setIntroductionVideos] = useState();
 
 
-    useEffect(()=>{
-        if (data) {
-            setIntroductionVideos(data)
+    // useEffect(()=>{
+    //     if (data) {
+    //         setIntroductionVideos(data)
             
-        }
-    },[data])
+    //     }
+    // },[data])
 
 
 
-    if (isLoading) {
-        return (
-           <IsLoading></IsLoading>
-        )
-    }
-    if (!introductionVideos) {
-        return <div>Veri yükleniyor...</div>;
-      }
+    // if (isLoading) {
+    //     return (
+    //        <IsLoading></IsLoading>
+    //     )
+    // }
+    // if (!introductionVideos) {
+    //     return <div>Veri yükleniyor...</div>;
+    //   }
 
     return(
         <Fragment>

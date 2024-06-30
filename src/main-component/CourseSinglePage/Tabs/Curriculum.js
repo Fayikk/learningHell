@@ -8,6 +8,7 @@ const Curriculum = ({sections,user}) => {
 
 
 
+
     const [CheckHasThisCourse] = useThisCourseEnrolledUserMutation();
     const authenticationState = useSelector((state) => state.authStore);
     const [sectionsData,setSectionsData] = useState([]);

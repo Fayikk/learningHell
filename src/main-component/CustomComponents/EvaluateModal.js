@@ -13,7 +13,6 @@ function EvaluateModal({ props,status, onData }) {
         statu:Number
     })
 
-    console.log("trigger evaluate modal statu",status.result[0].courseEvaluteStatus)
 
     const sendDataToParent = () => {
         onData({returnEvaluate });

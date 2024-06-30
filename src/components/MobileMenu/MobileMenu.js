@@ -8,191 +8,176 @@ import './style.css';
 const menus = [
     {
         id: 1,
-        title: 'Home',
+        title: 'Courses',
         link: '/home',
         submenu: [
             {
                 id: 11,
-                title: 'Home style 1',
-                link: '/home-1'
+                title: 'Categories',
+                link: '/course-2'
             },
-            {
-                id: 12,
-                title: 'Home style 2',
-                link: '/home-2'
-            },
-            {
-                id: 13,
-                title: 'Home style 3',
-                link: '/home-3'
-            },
-            {
-                id: 14,
-                title: 'Home style 4',
-                link: '/home-4'
-            },
-            {
-                id: 15,
-                title: 'Home style 5',
-                link: '/home-5'
-            },
+           
         ]
     },
 
     {
         id: 2,
-        title: 'About',
-        link: '/about',
+        title: 'Become Teacher',
+        link: '/become-teacher',
     },
 
-    {
-        id: 6,
-        title: 'Courses',
-        link: '/course',
-        submenu: [
-            {
-                id: 61,
-                title: 'Courses Style 1',
-                link: '/course',
-            },
-            {
-                id: 61,
-                title: 'Courses Style 2',
-                link: '/course-2',
-            },
-            {
-                id: 61,
-                title: 'Courses Style 3',
-                link: '/course-3',
-            },
-            {
-                id: 62,
-                title: 'Course Single',
-                link: '/course-single/Learn-WordPress-&-Elementor-for-Beginners'
-            }
-        ]
-    },
+    // {
+    //     id: 6,
+    //     title: 'Courses',
+    //     link: '/course',
+    //     submenu: [
+    //         {
+    //             id: 61,
+    //             title: 'Courses Style 1',
+    //             link: '/course',
+    //         },
+    //         {
+    //             id: 61,
+    //             title: 'Courses Style 2',
+    //             link: '/course-2',
+    //         },
+    //         {
+    //             id: 61,
+    //             title: 'Courses Style 3',
+    //             link: '/course-3',
+    //         },
+    //         {
+    //             id: 62,
+    //             title: 'Course Single',
+    //             link: '/course-single/Learn-WordPress-&-Elementor-for-Beginners'
+    //         }
+    //     ]
+    // },
     {
         id: 3,
-        title: 'Pages',
-        link: '/',
-        submenu: [
-            {
-                id: 31,
-                title: 'Lesson',
-                link: '/lesson'
-            },
-            {
-                id: 2,
-                title: 'Gallery',
-                link: '/gallery'
-            },
-            {
-                id: 322,
-                title: 'Testimonial',
-                link: '/testimonial'
-            },
-            {
-                id: 385,
-                title: 'Teachers',
-                link: '/teacher',
-            },
-            {
-                id: 386,
-                title: 'Team Single',
-                link: '/team-single/Courtney-Henry'
-            },
-            {
-                id: 388,
-                title: 'Become Teacher',
-                link: '/become-teacher'
-            },
-            {
-                id: 371,
-                title: 'Shop',
-                link: '/shop',
-            },
-            {
-                id: 375,
-                title: 'Shop Single',
-                link: '/product-single/Newspaper'
-            },
-            {
-                id: 376,
-                title: 'Cart',
-                link: '/cart'
-            },
-            {
-                id: 377,
-                title: 'Checkout',
-                link: '/checkout'
-            },
-            {
-                id: 33,
-                title: 'FAQ',
-                link: '/faq'
-            },
-            {
-                id: 34,
-                title: '404 Error',
-                link: '/404'
-            },
-            {
-                id: 35,
-                title: 'Login',
-                link: '/login'
-            },
-            {
-                id: 36,
-                title: 'Register',
-                link: '/register'
-            },
-        ]
+        title: 'cart',
+        link: '/cart',
+        // submenu: [
+        //     {
+        //         id: 31,
+        //         title: 'Lesson',
+        //         link: '/lesson'
+        //     },
+        //     {
+        //         id: 2,
+        //         title: 'Gallery',
+        //         link: '/gallery'
+        //     },
+        //     {
+        //         id: 322,
+        //         title: 'Testimonial',
+        //         link: '/testimonial'
+        //     },
+        //     {
+        //         id: 385,
+        //         title: 'Teachers',
+        //         link: '/teacher',
+        //     },
+        //     {
+        //         id: 386,
+        //         title: 'Team Single',
+        //         link: '/team-single/Courtney-Henry'
+        //     },
+        //     {
+        //         id: 388,
+        //         title: 'Become Teacher',
+        //         link: '/become-teacher'
+        //     },
+        //     {
+        //         id: 371,
+        //         title: 'Shop',
+        //         link: '/shop',
+        //     },
+        //     {
+        //         id: 375,
+        //         title: 'Shop Single',
+        //         link: '/product-single/Newspaper'
+        //     },
+        //     {
+        //         id: 376,
+        //         title: 'Cart',
+        //         link: '/cart'
+        //     },
+        //     {
+        //         id: 377,
+        //         title: 'Checkout',
+        //         link: '/checkout'
+        //     },
+        //     {
+        //         id: 33,
+        //         title: 'FAQ',
+        //         link: '/faq'
+        //     },
+        //     {
+        //         id: 34,
+        //         title: '404 Error',
+        //         link: '/404'
+        //     },
+        //     {
+        //         id: 35,
+        //         title: 'Login',
+        //         link: '/login'
+        //     },
+        //     {
+        //         id: 36,
+        //         title: 'Register',
+        //         link: '/register'
+        //     },
+        // ]
     },
 
-    {
-        id: 5,
-        title: 'Blog',
-        link: '/blog',
-        submenu: [
-            {
-                id: 51,
-                title: 'Blog',
-                link: '/blog'
-            },
-            {
-                id: 52,
-                title: 'Blog Left sidebar',
-                link: '/blog-left'
-            },
-            {
-                id: 53,
-                title: 'Blog full width',
-                link: '/blog-fullwidth'
-            },
-            {
-                id: 54,
-                title: 'Blog single',
-                link: '/blog-single/Become-a-great-WordPress-&-PHP-developer.'
-            },
-            {
-                id: 55,
-                title: 'Blog single Left sidebar',
-                link: '/blog-single-left-sidebar/Become-a-great-WordPress-&-PHP-developer.'
-            },
-            {
-                id: 56,
-                title: 'Blog single Left sidebar',
-                link: '/blog-single-fullwidth/Become-a-great-WordPress-&-PHP-developer.'
-            },
-        ]
-    },
+    // {
+    //     id: 5,
+    //     title: 'Blog',
+    //     link: '/blog',
+    //     submenu: [
+    //         {
+    //             id: 51,
+    //             title: 'Blog',
+    //             link: '/blog'
+    //         },
+    //         {
+    //             id: 52,
+    //             title: 'Blog Left sidebar',
+    //             link: '/blog-left'
+    //         },
+    //         {
+    //             id: 53,
+    //             title: 'Blog full width',
+    //             link: '/blog-fullwidth'
+    //         },
+    //         {
+    //             id: 54,
+    //             title: 'Blog single',
+    //             link: '/blog-single/Become-a-great-WordPress-&-PHP-developer.'
+    //         },
+    //         {
+    //             id: 55,
+    //             title: 'Blog single Left sidebar',
+    //             link: '/blog-single-left-sidebar/Become-a-great-WordPress-&-PHP-developer.'
+    //         },
+    //         {
+    //             id: 56,
+    //             title: 'Blog single Left sidebar',
+    //             link: '/blog-single-fullwidth/Become-a-great-WordPress-&-PHP-developer.'
+    //         },
+    //     ]
+    // },
     {
         id: 88,
-        title: 'Contact',
-        link: '/contact',
+        title: 'SignIn',
+        link: '/login',
+    },
+    {
+        id: 89,
+        title: 'SignUp',
+        link: '/register',
     }
-
 
 ]
 

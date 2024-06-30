@@ -32,7 +32,12 @@ const CoursePage = () => {
                 {
                     field:"CourseEvaluteStatus",
                     op:1,
-                    data:"3"
+                    data:"4"
+                },
+                {
+                    field:"CategoryId",
+                    op:1,
+                    data:slug.toString()
                 }
             ]
         }        
@@ -68,7 +73,6 @@ const CoursePage = () => {
         async function fetchData() {
             // You can await here
             await fetchAllDatas(filter).then((response) => {
-                console.log("trigger",response.data)
 
                 setCourses(response.data.result != [] ? response.data.result.data : [])
                 // setCurrentPage(response.data.result.data)

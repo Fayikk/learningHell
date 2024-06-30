@@ -21,7 +21,6 @@ const Header = ({props,onAuthStateChange} ) => {
 
     const [showDropdown, setShowDropdown] = useState(false);
 
-    console.log(authenticationState.role)
 
 
     const handleMouseEnter = () => {
