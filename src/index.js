@@ -13,13 +13,14 @@ import { PersistGate } from "redux-persist/integration/react";
 import {  persistor } from "./store/index";
 import { Provider } from "react-redux";
 import store from './store/store'
+import { AuthProvider } from './main-component/Extensions/AuthProvider';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-            <ParallaxProvider>
-                <App />
+        <ParallaxProvider>
+                    <App />
             </ParallaxProvider>
         </PersistGate>
     </Provider>

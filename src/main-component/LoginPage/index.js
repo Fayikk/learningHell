@@ -6,19 +6,24 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import './style.scss';
 import { useSignInMutation,useSignInWithGoogleMutation } from '../../api/accountApi';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import config from "../config.json"
-
+import { useAuth } from '../Extensions/AuthProvider';
 
 const LoginPage = (props) => {
-
     const push = useNavigate()
     const [Login] = useSignInMutation();
     const [LoginWithGoogle] = useSignInWithGoogleMutation();
+    const location = useLocation();
+    const from = location.state?.from || "/home";
+
+
+    console.log("trigger from",from)
+
 
 
     const [value, setValue] = useState({
@@ -64,7 +69,9 @@ const LoginPage = (props) => {
         if (tokenResult && tokenResult.data && tokenResult.data.result && tokenResult.data.result.accessToken) {
             localStorage.setItem("token", tokenResult.data.result.accessToken);
             localStorage.setItem("refreshToken", tokenResult.data.result.refreshToken);
-        push('/home');
+        // push('/home');
+        push(from,{replace:true})
+
                 
         }
 
@@ -101,7 +108,11 @@ const LoginPage = (props) => {
                 localStorage.setItem("token",response.data.result.accessToken)
                 localStorage.setItem("refreshToken",response.data.result.refreshToken)
                 toast.success('You successfully Login on Eduko !');
-                push('/home');
+
+                console.log("trigg")
+
+                push(from,{replace:true})
+                // push('/home');
             }
         } else {
             validator.showMessages();
@@ -172,7 +183,7 @@ const LoginPage = (props) => {
                                             />                                    
                                     </GoogleOAuthProvider>
      
-        </div>
+                               </div>
                                     
                                 {/* <Button className="twitter"><i className="fa fa-twitter"></i></Button>
                                 <Button className="linkedin"><i className="fa fa-linkedin"></i></Button> */}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, } from "react-router-dom";
+import { BrowserRouter, Routes, Route,Switch } from "react-router-dom";
 import Homepage from '../HomePage/HomePage'
 import CategorySinglePage from '../CategorySinglePage/CategorySinglePage';
 import CoursePage from '../CoursePage/CoursePage';
@@ -38,6 +38,8 @@ import TeacherApplications from '../SuperVisor/TeacherApplications';
 import VerifyEmail from '../Verification/VerifyEmail';
 import EvaluateCourses from '../Evaluate/EvaluateCourses';
 import VerifyDigitCode from '../Verification/VerifyDigitCode';
+import { AuthProvider } from '../Extensions/AuthProvider';
+import PrivateRoute from '../Extensions/PrivateRoute';
 const AllRoute = () => {
   return (
     <div className="App">
@@ -67,7 +69,7 @@ const AllRoute = () => {
           <Route path='become-teacher' element={<BeComeTeacherPage />} />
           <Route path="shop" element={<ShopPage />} />
           <Route path='product-single/:slug' element={<ProductSinglePage />} />
-          <Route path='cart' element={<CartPage />} />
+          <Route path='cart' element={<PrivateRoute ><CartPage /></PrivateRoute>} />
           <Route path='checkout' element={<CheckoutPage />} />
           <Route path='supervisor/evaluatecourses' element={<EvaluateCourses></EvaluateCourses>} ></Route>
           <Route path='order_received' element={<OrderRecived />} />
@@ -88,6 +90,7 @@ const AllRoute = () => {
           <Route path='verify-email/:slug' element={<VerifyEmail></VerifyEmail>} ></Route>
           <Route path='verify-digit/:slug' element={<VerifyDigitCode></VerifyDigitCode>} ></Route>
         </Routes>
+
       </BrowserRouter>
 
     </div>
