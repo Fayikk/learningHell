@@ -18,6 +18,7 @@ import { instructorApi } from "../api/instructorApi";
 import { materialApi } from "../api/materialApi";
 import { becomeTeacherApi } from "../api/becomeTeacherApi";
 import { newsLetterApi } from "../api/newsLetterApi";
+import { commentApi } from "../api/commentApi";
 const errorLoggerMiddleware = (store) => (next) => (action) => {
     if (action && action.payload && action.payload.status) {
         console.error("API error:", action.payload);
@@ -72,6 +73,7 @@ const store = configureStore({
         [materialApi.reducerPath]:materialApi.reducer,
         [becomeTeacherApi.reducerPath]:becomeTeacherApi.reducer,
         [newsLetterApi.reducerPath]:newsLetterApi.reducer,
+        [commentApi.reducerPath]:commentApi.reducer,
 
     },middleware:(getDefaultMiddleware) => getDefaultMiddleware()
         .concat(
@@ -87,6 +89,7 @@ const store = configureStore({
             ,materialApi.middleware
             ,becomeTeacherApi.middleware
             ,newsLetterApi.middleware
+            ,commentApi.middleware
             ,errorLoggerMiddleware
             )
 })

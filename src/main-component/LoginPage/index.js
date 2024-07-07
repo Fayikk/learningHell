@@ -22,7 +22,6 @@ const LoginPage = (props) => {
     const from = location.state?.from || "/home";
 
 
-    console.log("trigger from",from)
 
 
 
@@ -58,7 +57,6 @@ const LoginPage = (props) => {
         //   .then(r => {
         //     r.json().then(user => {
         //       const token = user.token;
-        //       console.log(token);
         //       this.props.login(token);
         //     });
         //   })
@@ -109,7 +107,6 @@ const LoginPage = (props) => {
                 localStorage.setItem("refreshToken",response.data.result.refreshToken)
                 toast.success('You successfully Login on Eduko !');
 
-                console.log("trigg")
 
                 push(from,{replace:true})
                 // push('/home');

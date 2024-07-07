@@ -17,8 +17,6 @@ export const cartSlice = createSlice({
 
             // if (action.payload.items.length !== 0) {
             //     state.cart = [...action.payload.items];
-            //     console.log("trigger cartSlice")
-            //     console.log(state)
             // }
         }
         

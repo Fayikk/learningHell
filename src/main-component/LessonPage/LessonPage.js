@@ -11,6 +11,8 @@ import { useGetWatchVideoUrlMutation } from '../../api/videoApi';
 import VideoPage from './VideoPage';
 import IsLoading from '../../components/Loading/IsLoading';
 import './style/lessonPage.css'
+import { Input } from 'reactstrap';
+import Comments from '../Comment/Comments'
 
 
 const LessonPage = () => {
@@ -20,7 +22,7 @@ const LessonPage = () => {
     const {data,isLoading} = useGetSectionSubDetailsQuery(sectionId);
     const [videos,setVideos] = useState([]);
     const [videoCounter,setVideoCounter] = useState(0)
-
+    const [videoId,setVideoId] = useState();
 
 
 
@@ -32,8 +34,19 @@ const LessonPage = () => {
             if (videos == []) {
                 localStorage.removeItem("willSelectedVideo")
             }
+
         } 
     }, [data]);
+
+
+
+    useEffect(() => {
+        if (videos.length > 0) {
+            changeVideo(videos[0].videoId || "");
+        }
+    }, [videos]);
+
+
 
     if (isLoading) {
         return (
@@ -46,6 +59,7 @@ const LessonPage = () => {
     };
 
     const changeVideo = async (videoId) => {
+        setVideoId(videoId)
         const videoUrl = videos.find(video => video.videoId === videoId);
         if (videoUrl) {
             await decryptVideoUrl(videoUrl.publicVideoId).then((response) => {
@@ -113,7 +127,7 @@ const LessonPage = () => {
                                 </div>
                             </div>
                         </div>
-                        <VideoPage></VideoPage>
+                        <VideoPage videoId={videoId} ></VideoPage>
 
                        
                     </div>

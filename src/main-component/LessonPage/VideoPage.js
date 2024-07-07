@@ -1,6 +1,11 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-export default function VideoPage() {
+import Comments from '../Comment/Comments';
+export default function VideoPage({videoId}) {
+
+
+
+
       const ClickHandler = () => {
         window.scrollTo(10, 0);
     }
@@ -24,8 +29,8 @@ export default function VideoPage() {
     </div>
 
         <div className="video-details">
-            <h2>About Lesson</h2> 
-             <p>On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire</p>
+        <Comments videoDetail={videoId} ></Comments>
+
         </div>
     </div>
 </div>
