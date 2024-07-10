@@ -42,7 +42,7 @@ function InstructorDetail() {
   const [getAllCategories, { data: categoriesData, isLoading: isCategoriesLoading }] = useLazyGetAllCategoriesForSelectedQuery();
   const [createCourseAsync] = useCreateCourseAsyncMutation();
   const [removeCourseAsync] = useRemoveCourseAsyncMutation();
-
+  const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
   const [courseModel, setCourseModel] = useState({
     courseName: "",
     coursePrice: 0,
@@ -62,6 +62,10 @@ function InstructorDetail() {
   const handleOpenCourseModal = () => setOpenCourseModal(true);
   const handleCloseCourseModal = () => setOpenCourseModal(false);
 
+  console.log("trigger image",image)
+
+
+
   useEffect(() => {
     if (data) {
       setCourses(data.result);
@@ -79,6 +83,13 @@ function InstructorDetail() {
   }
 
   const createCourse = async () => {
+
+    console.log("trigger",imageDimensions)
+    if (imageDimensions.width > 1170 && imageDimensions.height > 860) {
+      alert("Please check your image dimension.Image dimension so high. Max dimension is 1170x867")
+      return;
+    }
+
     const formData = new FormData();
     formData.append("CourseName", courseModel.courseName);
     formData.append("CoursePrice", courseModel.coursePrice);
@@ -116,7 +127,29 @@ function InstructorDetail() {
   const selectedCategory = async () => {
     await getAllCategories();
   };
-
+  const handleImageChange = (e) => {
+    console.log("trigger handle image change")
+    const file = e.target.files[0];
+    console.log(file)
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          setImageDimensions({ width: img.width, height: img.height });
+          console.log(img.width)
+          console.log(img.height)
+          if (img.width > 1170 && img.height > 867) {
+            toast.error("Image dimension so high. Max dimension is 1170x867");
+          } else {
+            setImage(file);
+          }
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <Fragment>
@@ -175,7 +208,8 @@ function InstructorDetail() {
                   <Input
                     type='file'
                     placeholder='Image'
-                    onChange={(e) => setImage(e.target.files[0])}
+                    // onChange={(e) => setImage(e.target.files[0])}
+                    onChange={handleImageChange}
                   />
                 </div>
                 <div className='row'>
