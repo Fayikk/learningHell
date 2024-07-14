@@ -47,7 +47,7 @@ const CourseSection = (props) => {
                                             <div className="wpo-popular-text-top">
                                                 <ul>
                                                     <li><img src={course.author} alt=""/></li>
-                                                    <li><Link onClick={ClickHandler} to={`/course-single/${course.slug}`}>{course.authortitle}</Link></li>
+                                                    <li><Link onClick={ClickHandler} to={`/course-single/${course.courseId}`}>{course.authortitle}</Link></li>
                                                 </ul>
                                                 <ul>
                                                     <li><i className="fi flaticon-star"></i></li>
