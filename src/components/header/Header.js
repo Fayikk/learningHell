@@ -131,7 +131,7 @@ const Header = ({props,onAuthStateChange} ) => {
                             </div>
                             <div className="col-lg-3 col-md-3 col-2">
                                 <div className="header-right">
-                                    <div className="header-search-form-wrapper">
+                                    {/* <div className="header-search-form-wrapper">
                                         <div className="cart-search-contact">
                                             <button onClick={() => setMenuState(!menuActive)} className="search-toggle-btn"><i
                                                 className={`fi ti-search ${menuActive ? "ti-close" : "fi "}`}></i></button>
@@ -146,7 +146,7 @@ const Header = ({props,onAuthStateChange} ) => {
                                                 </form>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> */}
                                     <div className="close-form">
 
                                         {
@@ -202,7 +202,7 @@ const Header = ({props,onAuthStateChange} ) => {
 
 
                                                       
-                                                        <Dropdown.Item as={Link} to="/home" onClick={logout}>
+                                                        <Dropdown.Item as={Link} to="/MyAccount" onClick={logout}>
                                                         MyAccount
                                                         </Dropdown.Item>
                                                     </Dropdown.Menu>

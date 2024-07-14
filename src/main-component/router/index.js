@@ -40,6 +40,7 @@ import EvaluateCourses from '../Evaluate/EvaluateCourses';
 import VerifyDigitCode from '../Verification/VerifyDigitCode';
 import { AuthProvider } from '../Extensions/AuthProvider';
 import PrivateRoute from '../Extensions/PrivateRoute';
+import MyAccount from '../Account/MyAccount';
 const AllRoute = () => {
   return (
     <div className="App">
@@ -66,7 +67,7 @@ const AllRoute = () => {
           <Route path="Instructor/CourseDetail/:slug" element={<InstructorsCourseDetail />} />
           <Route path="team-single/:slug" element={<TeamSinglePage />} />
           <Route path="event-single/:slug" element={<EventSinglePage />} />
-          <Route path='become-teacher' element={<BeComeTeacherPage />} />
+          <Route path='become-teacher' element={<PrivateRoute><BeComeTeacherPage /></PrivateRoute>} />
           <Route path="shop" element={<ShopPage />} />
           <Route path='product-single/:slug' element={<ProductSinglePage />} />
           <Route path='cart' element={<PrivateRoute ><CartPage /></PrivateRoute>} />
@@ -89,6 +90,7 @@ const AllRoute = () => {
           <Route path='forgot-password' element={<ForgotPassword />} />
           <Route path='verify-email/:slug' element={<VerifyEmail></VerifyEmail>} ></Route>
           <Route path='verify-digit/:slug' element={<VerifyDigitCode></VerifyDigitCode>} ></Route>
+          <Route path='MyAccount' element={<MyAccount></MyAccount>} ></Route>
         </Routes>
 
       </BrowserRouter>
