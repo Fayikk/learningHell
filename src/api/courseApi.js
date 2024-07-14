@@ -76,6 +76,12 @@ export const courseApi = createApi({
                 url:"GetEvaluationCourses"
             })
         }),
+        getMostPopularCourses:builder.query({
+            query:()=>({
+                method:"GET",
+                url:"MostPopularCourses"
+            })
+        })
        
 
         // https://localhost:7042/api/User/CheckVerificationMailCode?email=deneme%40gmail.com&digitCode=123456
@@ -91,4 +97,5 @@ export const {useGetCourseDetailByIdQuery,
             useRemoveCourseAsyncMutation,
             useEvaluateUpdateCourseMutation,
             useGetEvaluateCoursesQuery,
+            useGetMostPopularCoursesQuery
             } = courseApi

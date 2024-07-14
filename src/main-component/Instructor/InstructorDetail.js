@@ -62,7 +62,6 @@ function InstructorDetail() {
   const handleOpenCourseModal = () => setOpenCourseModal(true);
   const handleCloseCourseModal = () => setOpenCourseModal(false);
 
-  console.log("trigger image",image)
 
 
 
@@ -84,7 +83,6 @@ function InstructorDetail() {
 
   const createCourse = async () => {
 
-    console.log("trigger",imageDimensions)
     if (imageDimensions.width > 1170 && imageDimensions.height > 860) {
       alert("Please check your image dimension.Image dimension so high. Max dimension is 1170x867")
       return;
@@ -128,17 +126,13 @@ function InstructorDetail() {
     await getAllCategories();
   };
   const handleImageChange = (e) => {
-    console.log("trigger handle image change")
     const file = e.target.files[0];
-    console.log(file)
     if (file) {
       const reader = new FileReader();
       reader.onload = (event) => {
         const img = new Image();
         img.onload = () => {
           setImageDimensions({ width: img.width, height: img.height });
-          console.log(img.width)
-          console.log(img.height)
           if (img.width > 1170 && img.height > 867) {
             toast.error("Image dimension so high. Max dimension is 1170x867");
           } else {

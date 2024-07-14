@@ -1,0 +1,15 @@
+.video-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px;
+}
+
+.comments {
+  flex: 1;
+}
+
+.star-rating {
+  margin-left: 20px;
+  padding: 10px;
+}

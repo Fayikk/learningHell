@@ -4,6 +4,7 @@ import BlogSidebar from '../BlogSidebar/BlogSidebar.js';
 import { useSelector } from 'react-redux';
 import { useState } from 'react';
 import { useIsCourseHaveStudentMutation } from '../../api/studentCourseApi.js';
+import  {calculateAverageRating}  from "../../Helpers/calculateAverageRating";
 
 const ClickHandler = () => {
     window.scrollTo(10, 0);
@@ -30,6 +31,10 @@ const BlogList = (props) => {
         getMyCourses();
     }, [authenticationState]);
 
+
+
+
+
     return (
         <section className="wpo-blog-pg-section section-padding">
             <div className={`wpo-popular-area section-padding ${props.pClass}`}>
@@ -54,7 +59,7 @@ const BlogList = (props) => {
                                                     </ul>
                                                     <ul>
                                                         <li><i className="fi flaticon-star"></i></li>
-                                                        <li>({course.ratting})</li>
+                                                        <li>({calculateAverageRating(course.ratings)})</li>
                                                     </ul>
                                                 </div>
                                                 {course.courseName}

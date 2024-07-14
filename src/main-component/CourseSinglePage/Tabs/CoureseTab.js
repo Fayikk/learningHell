@@ -2,17 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from 'reactstrap';
 import classnames from 'classnames';
 import Overview from './Overview';
-import Curriculum from './Curriculum';
 import Instructor from './Instructor';
 import Review from './Review';
 import { useGetSectionsByCourseIdQuery } from '../../../api/courseApi';
 import IsLoading from '../../../components/Loading/IsLoading';
 import { useSelector } from 'react-redux';
+import Curriculum from './Curriculum'
 
-
-const CoureseTab = ({ EventsDetails,CoursesDetails }) => {
+const CoureseTab = ({ EventsDetails,CoursesDetails,rate }) => {
   const {data,isLoading} = useGetSectionsByCourseIdQuery(CoursesDetails.courseId)
   const authenticationState = useSelector((state) => state.authStore);
+
+
 
 
   const [activeTab, setActiveTab] = useState('1');
@@ -94,7 +95,7 @@ const CoureseTab = ({ EventsDetails,CoursesDetails }) => {
           <TabPane tabId="2">
             <Row>
               <Col sm="12">
-                <Curriculum sections={sections} user={user}  />
+                <Curriculum sections={sections} user={user} rate={rate} />
               </Col>
             </Row>
           </TabPane>

@@ -1,14 +1,17 @@
-import React from "react";
-import { Link } from 'react-router-dom'
-import Courses from "../../api/Courses";
-
-
+import React, { useEffect } from "react";
+import { Link } from 'react-router-dom';
+import  {calculateAverageRating}  from "../../Helpers/calculateAverageRating";
 const ClickHandler = () => {
     window.scrollTo(10, 0);
 }
 
 const CourseSection = (props) => {
 
+    console.log("trigger course section", props);
+
+    useEffect(() => {
+        // props değiştiğinde yapılacak işlemler buraya
+    }, [props]);
 
 
     return (
@@ -30,15 +33,15 @@ const CourseSection = (props) => {
                 </div>
                 <div className="wpo-popular-wrap">
                     <div className="row">
-                        {Courses.slice(0, 3).map((course, aitem) => (
-                            <div className="col col-lg-4 col-md-6 col-12" key={aitem}>
+                        {props.popularCourses && props.popularCourses.map((course, index) => (
+                            <div className="col col-lg-4 col-md-6 col-12" key={index}>
                                 <div className="wpo-popular-single">
                                     <div className="wpo-popular-item">
                                         <div className="wpo-popular-img">
-                                            <img src={course.cImg} alt=""/>
-                                                <div className="thumb">
-                                                    <span>${course.fee}</span>
-                                                </div>
+                                            <img src={course.courseImage} alt=""/>
+                                            <div className="thumb">
+                                                <span>&#8378;{course.coursePrice}</span> {/* TL işareti */}
+                                            </div>
                                         </div>
                                         <div className="wpo-popular-content">
                                             <div className="wpo-popular-text-top">
@@ -48,12 +51,10 @@ const CourseSection = (props) => {
                                                 </ul>
                                                 <ul>
                                                     <li><i className="fi flaticon-star"></i></li>
-                                                    <li>({course.ratting})</li>
+                                                    <li>({calculateAverageRating(course.ratings)})</li>
                                                 </ul>
                                             </div>
-                                            <h2><Link onClick={ClickHandler} to={`/course-single/${course.slug}`}>{course.title}</Link>
-                                            </h2>
-
+                                            <h2><Link onClick={ClickHandler} to={`/course-single/${course.slug}`}>{course.courseName}</Link></h2>
                                             <div className="wpo-popular-text-bottom">
                                                 <ul>
                                                     <li><i className="fi flaticon-reading-book"></i> {course.student} Students</li>
@@ -65,12 +66,8 @@ const CourseSection = (props) => {
                                 </div>
                             </div>
                         ))}
-
                     </div>
                 </div>
-                {/* <div className="more-btn text-center">
-                    <Link onClick={ClickHandler} to="/course" className="theme-btn-s2">View All Courses</Link>
-                </div> */}
             </div>
         </div>
     );

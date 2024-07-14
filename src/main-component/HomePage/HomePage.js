@@ -7,20 +7,30 @@ import ChooseSection from '../../components/ChooseSection/ChooseSection';
 import Newslatter from '../../components/Newslatter/Newslatter';
 import Scrollbar from '../../components/scrollbar/scrollbar';
 import Footer from '../../components/footer/Footer';
-import { useGetCourseIntroductionVideosQuery } from '../../api/courseApi';
+import { useGetCourseIntroductionVideosQuery, useGetMostPopularCoursesQuery } from '../../api/courseApi';
 import IsLoading from '../../components/Loading/IsLoading';
 import Newslatter2 from '../../components/Newslatter2/Newslatter2';
 
 const HomePage =() => {
-    const [introductionVideos,setIntroductionVideos] = useState();
+    const [mostPopularCourses,setMostPopularCourses] = useState();
+    const {data,isLoading} = useGetMostPopularCoursesQuery();
 
 
-    // useEffect(()=>{
-    //     if (data) {
-    //         setIntroductionVideos(data)
+    console.log("trigger home data",data)
+
+    useEffect(()=>{
+        if (data) {
+            setMostPopularCourses(data.result)
             
-    //     }
-    // },[data])
+        }
+    },[data])
+
+
+    if (isLoading) {
+        return (
+            <IsLoading></IsLoading>
+        )
+    }
 
 
 
@@ -39,7 +49,7 @@ const HomePage =() => {
             {/* <Hero introductionVideos = {introductionVideos} /> */}
             {/* <About/> */}
             {/* <CategorySection/> */}
-            <CourseSection/>
+            <CourseSection popularCourses={mostPopularCourses} />
             {/* <Testimonial/> */}
             {/* <TeamSection pbClass={'pb-big'}/> */}
             <ChooseSection/>

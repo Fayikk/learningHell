@@ -22,9 +22,12 @@ const CourseSinglePage = (props) => {
 
 
 
+
+
+
     useEffect(()=>{
         if (data) {
-            setCourse(data.result)
+            setCourse(data.result.item1)
         }
 
         async function CheckActiveCourse(){
@@ -33,7 +36,7 @@ const CourseSinglePage = (props) => {
 
             const model = {
                 userId:decode.nameid,
-                courseId:data.result.courseId 
+                courseId:data.result.item1.courseId 
             }
 
             // if (user.id === useSelector((state) => state.authStore)) {
@@ -60,16 +63,16 @@ const CourseSinglePage = (props) => {
     return (
         <Fragment>
             <Navbar />
-            <PageTitle pageTitle={data.result.courseName} pagesub={'Course'} />
+            <PageTitle pageTitle={data.result.item1.courseName} pagesub={'Course'} />
             <div className="wpo-course-details-area section-padding">
                 <div className="container">
                     <div className="row">
                         <div className="col col-lg-8">
                             <div className="wpo-course-details-wrap">
                                 <div className="wpo-course-details-img">
-                                    <img src={data.result.courseImage} alt="" /> 
+                                    <img src={data.result.item1.courseImage} alt="" /> 
                                 </div>
-                                <CoureseTab CoursesDetails={course} />
+                                <CoureseTab CoursesDetails={course} rate={data.result.item2} />
                             </div>
                         </div>
                         {

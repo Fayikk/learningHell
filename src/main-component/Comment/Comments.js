@@ -5,7 +5,6 @@ import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 export default function Comments({videoDetail}) {
 
-console.log("videoDetail for videoId",videoDetail)
     const dispatch = useDispatch();
 
     const [comments, setComments] = useState([]);
@@ -36,7 +35,7 @@ console.log("videoDetail for videoId",videoDetail)
 
             await getComments(getCommentModel).then((response) => {
                     setComments(response.data.result?.comments || [])
-                    console.log("trigger",response)})
+                   })
             
         }
 
@@ -58,7 +57,6 @@ console.log("videoDetail for videoId",videoDetail)
             sectionId:newComment.sectionId,
             videoId:videoDetail
         }
-        console.log("trigger handle comment submit",commentModel)
 
 
         await doComment(commentModel).then((response) => { 

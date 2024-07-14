@@ -4,7 +4,7 @@ import {  useThisCourseEnrolledUserMutation } from '../../../api/studentCourseAp
 import { useSelector } from 'react-redux'
 import {toast} from "react-toastify";
 
-const Curriculum = ({sections,user}) => {
+const Curriculum = ({sections,user,rate}) => {
 
 
 
@@ -20,6 +20,8 @@ const Curriculum = ({sections,user}) => {
             
         }
     },[sections])
+
+
 
 
 
@@ -73,7 +75,7 @@ const Curriculum = ({sections,user}) => {
                         {
                             isEnrolledCourse || ownMyCourse ? (
                                 sections.map((section,key) => (
-                                    <li key={key} ><span><i className="fi flaticon-play-button"></i> {section.sectionName} <Link onClick={()=>ClickHandler(section.sectionId)} to={`/lessons/${section.sectionId}`}>Preview</Link></span><small>20 Minutes</small></li>
+                                    <li key={key} ><span><i className="fi flaticon-play-button"></i> {section.sectionName} <Link onClick={()=>ClickHandler(section.sectionId)} to={`/lessons/${section.sectionId}`} state={{from:rate}}>Preview</Link></span><small>20 Minutes</small></li>
     
                                 ))
                             ) : (

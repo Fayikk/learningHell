@@ -4,7 +4,7 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useParams } from 'react-router-dom';
 import { useGetSectionSubDetailsQuery } from '../../api/sectionApi';
 import { useGetWatchVideoUrlMutation } from '../../api/videoApi';
@@ -13,24 +13,29 @@ import IsLoading from '../../components/Loading/IsLoading';
 import './style/lessonPage.css'
 import { Input } from 'reactstrap';
 import Comments from '../Comment/Comments'
+import StarRating from './StarRating';
 
 
 const LessonPage = () => {
 
+    const location = useLocation()
+  const { from } = location.state || 0
     const {sectionId} = useParams();
     const [expanded, setExpanded] = React.useState(false);
     const {data,isLoading} = useGetSectionSubDetailsQuery(sectionId);
     const [videos,setVideos] = useState([]);
     const [videoCounter,setVideoCounter] = useState(0)
     const [videoId,setVideoId] = useState();
-
-
+    const [ownRating,setOwnRating] = useState();
+    
+    const [courseId,setCourseId] = useState();
 
 
     const [decryptVideoUrl] = useGetWatchVideoUrlMutation()
     useEffect(() => {
         if (data) {
             setVideos(data.result.videos || []); 
+            setCourseId(data.result.courseId)
             if (videos == []) {
                 localStorage.removeItem("willSelectedVideo")
             }
@@ -39,6 +44,12 @@ const LessonPage = () => {
     }, [data]);
 
 
+
+    useEffect(()=>{
+        if (from != 0) {
+            setOwnRating(from)
+        }
+    },[from])
 
     useEffect(() => {
         if (videos.length > 0) {
@@ -125,10 +136,13 @@ const LessonPage = () => {
                                         </AccordionDetails>
                                     </Accordion>
                                 </div>
+                                <div className='ml-10 text-center'> {/* Using Bootstrap utility class to center */}
+                                    <span><StarRating courseId={data.result.courseId} ownRating={ownRating} ></StarRating></span>
+                                </div>
+
                             </div>
                         </div>
                         <VideoPage videoId={videoId} ></VideoPage>
-
                        
                     </div>
                 </div>
