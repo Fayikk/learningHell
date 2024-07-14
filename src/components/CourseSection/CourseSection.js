@@ -54,7 +54,7 @@ const CourseSection = (props) => {
                                                     <li>({calculateAverageRating(course.ratings)})</li>
                                                 </ul>
                                             </div>
-                                            <h2><Link onClick={ClickHandler} to={`/course-single/${course.slug}`}>{course.courseName}</Link></h2>
+                                            <h2><Link onClick={ClickHandler} to={`/course-single/${course.courseId}`}>{course.courseName}</Link></h2>
                                             <div className="wpo-popular-text-bottom">
                                                 <ul>
                                                     <li><i className="fi flaticon-reading-book"></i> {course.student} Students</li>
