@@ -13,7 +13,10 @@ import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import config from "../config.json"
 import { useAuth } from '../Extensions/AuthProvider';
-
+import GoogleRecaptcha from '../../Environments/GoogleRecaptcha';
+import ReCAPTCHA from 'react-google-recaptcha'
+import { useRef } from 'react';
+import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 const LoginPage = (props) => {
     const push = useNavigate()
     const [Login] = useSignInMutation();
@@ -21,7 +24,7 @@ const LoginPage = (props) => {
     const location = useLocation();
     const from = location.state?.from || "/home";
 
-
+    const recaptcha = useRef()
 
 
 
@@ -92,29 +95,40 @@ const LoginPage = (props) => {
 
     const submitForm = async (e)  => {
         e.preventDefault();
-
-        var response = await Login({
-            userName:value.email,
-            password:value.password
-        })
-        if (validator.allValid() && response.data.isSuccess) {
-            validator.hideMessages();
-
-            const userRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-            const email = value.email;
-            if (email.match(userRegex)) {
-                localStorage.setItem("token",response.data.result.accessToken)
-                localStorage.setItem("refreshToken",response.data.result.refreshToken)
-                toast.success('You successfully Login on Eduko !');
-
-
-                push(from,{replace:true})
-                // push('/home');
-            }
-        } else {
-            validator.showMessages();
-            toast.error(response.data.errorMessages[0]);
+        const captchaValue = recaptcha.current.getValue()
+        if (!captchaValue) {
+            alert("Please fill the I'm not robot")
         }
+        else {
+            var response = await Login({
+                userName:value.email,
+                password:value.password
+            })
+            if (validator.allValid() && response.data.isSuccess) {
+                validator.hideMessages();
+    
+                const userRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+                const email = value.email;
+                if (email.match(userRegex)) {
+                    localStorage.setItem("token",response.data.result.accessToken)
+                    localStorage.setItem("refreshToken",response.data.result.refreshToken)
+                    toast.success('You successfully Login on Eduko !');
+    
+    
+                    push(from,{replace:true})
+                    // push('/home');
+                }
+            } else {
+                validator.showMessages();
+                toast.error(response.data.errorMessages[0]);
+            }
+
+        }
+
+
+
+
+      
     };
     return (
         <Grid className="loginWrapper">
@@ -169,6 +183,12 @@ const LoginPage = (props) => {
                             <Grid className="formFooter">
                                 <Button fullWidth className="cBtnTheme" type="submit">Login</Button>
                             </Grid>
+                            <Grid>
+                            <div className="loginWithCaptcha" style={{alignItems:"center",justifyContent:"center",marginLeft:"50px",marginTop:"20px"}} >
+                            <ReCAPTCHA  ref={recaptcha} sitekey={GoogleRecaptcha.REACT_APP_SITE_KEY} />
+                            </div>
+                            </Grid>
+                           
                             <Grid className="loginWithSocial">
                                 <div>
                                     <GoogleOAuthProvider clientId={config.GOOGLE_CLIENT_ID} >
@@ -185,6 +205,9 @@ const LoginPage = (props) => {
                                 {/* <Button className="twitter"><i className="fa fa-twitter"></i></Button>
                                 <Button className="linkedin"><i className="fa fa-linkedin"></i></Button> */}
                             </Grid>
+                     
+                          
+                      
                             <p className="noteHelp">Don't have an account? <Link to="/register">Create free account</Link>
                             </p>
                         </Grid>
