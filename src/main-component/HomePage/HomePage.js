@@ -10,7 +10,7 @@ import Footer from '../../components/footer/Footer';
 import { useGetCourseIntroductionVideosQuery, useGetMostPopularCoursesQuery } from '../../api/courseApi';
 import IsLoading from '../../components/Loading/IsLoading';
 import Newslatter2 from '../../components/Newslatter2/Newslatter2';
-
+import { useTranslation } from 'react-i18next';
 const HomePage =() => {
     const [mostPopularCourses,setMostPopularCourses] = useState();
     const {data,isLoading} = useGetMostPopularCoursesQuery();

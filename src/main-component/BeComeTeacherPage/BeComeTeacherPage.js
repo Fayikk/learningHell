@@ -11,6 +11,7 @@ import {toast} from 'react-toastify'
 import { useNavigate } from 'react-router-dom';
 import MustBeAuthorize from '../../Wrappers/HoC/MustBeAuthorize';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 const BeComeTeacherPage = (props) => {
     const [becomeTeacherAsync] = useApplyCvMutation();
     const Navigate = useNavigate();
@@ -22,7 +23,7 @@ const BeComeTeacherPage = (props) => {
     });
     const userId = useSelector((state) => state.authStore.nameIdentifier);
     const [file, setFile] = useState(null);
-
+    const {t} = useTranslation()
     const [validator] = useState(new SimpleReactValidator({
         className: 'errorMessage'
     }));
@@ -79,7 +80,7 @@ const BeComeTeacherPage = (props) => {
     return (
         <div className="teacher-page">
             <Navbar />
-            <PageTitle pageTitle={"Apply for Teacher"} pagesub={'Teacher'} />
+            <PageTitle pageTitle={t("Apply for Teacher")} pagesub={'Teacher'} />
             <div className="teacher-area section-padding pb-0">
                 <div className="teacher-wrap">
                     <div className="container">
@@ -87,7 +88,7 @@ const BeComeTeacherPage = (props) => {
                             <div className="col-lg-10">
                                 <div className="teacher-contact">
                                     <div className="teacher-contact-form">
-                                        <h2>Become a teacher</h2>
+                                        <h2>{t("Become a teacher")}</h2>
                                         <form onSubmit={submitHandler} className="contact-validation-active" id="contact-form-main">
                                             <div className="row">
                                                 <div className="col-lg-6 col-md-6 col-sm-6 col-12 form-group">
@@ -97,7 +98,7 @@ const BeComeTeacherPage = (props) => {
                                                             name="name"
                                                             onBlur={changeHandler}
                                                             onChange={changeHandler}
-                                                            placeholder="Your Name"
+                                                            placeholder={t("Your Name")}
                                                             value={forms.name}
                                                         />
                                                         {validator.message('name', forms.name, 'required|alpha_space')}
@@ -110,7 +111,7 @@ const BeComeTeacherPage = (props) => {
                                                             name="email"
                                                             onBlur={changeHandler}
                                                             onChange={changeHandler}
-                                                            placeholder="Your Email"
+                                                            placeholder={t("Your Email")}
                                                             value={forms.email}
                                                         />
                                                         {validator.message('email', forms.email, 'required|email')}
@@ -123,14 +124,14 @@ const BeComeTeacherPage = (props) => {
                                                             name="subject"
                                                             onBlur={changeHandler}
                                                             onChange={changeHandler}
-                                                            placeholder="Your Subject"
+                                                            placeholder={t("Your Subject")}
                                                             value={forms.subject}
                                                         />
                                                         {validator.message('subject', forms.subject, 'required|alpha_space')}
                                                     </div>
                                                 </div>
                                                 <div className="col-lg-6 col-md-6 col-sm-6 col-12 form-group form-group-in">
-                                                    <label htmlFor="file">Upload Your CV</label>
+                                                    <label htmlFor="file">{t("Upload Your CV")}</label>
                                                     <input
                                                         type="file"
                                                         name="file"
@@ -145,13 +146,13 @@ const BeComeTeacherPage = (props) => {
                                                         onBlur={changeHandler}
                                                         onChange={changeHandler}
                                                         name="message"
-                                                        placeholder="Message"
+                                                        placeholder={t("Message")}
                                                         value={forms.message}
                                                     />
                                                     {validator.message('message', forms.message, 'required')}
                                                 </div>
                                                 <div className="submit-area col-lg-12 col-12">
-                                                    <button type="submit" className="theme-btn submit-btn">Send Message</button>
+                                                    <button type="submit" className="theme-btn submit-btn">{t("Send Message")}</button>
                                                     <div id="loader">
                                                         <i className="ti-reload"></i>
                                                     </div>

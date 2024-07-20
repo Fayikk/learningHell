@@ -23,7 +23,7 @@ export const courseApi = createApi({
         }),
         getSectionsByCourseId:builder.query({
             query:(courseId)=> ({
-                url:`CourseSections/${courseId}`,
+                url:`s/${courseId}`,
                 method:"GET"
             }),
             providesTags:["course"]

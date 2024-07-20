@@ -4,8 +4,10 @@ import sImg1 from '../../images/shape/1.svg'
 import sImg2 from '../../images/shape/2.svg'
 import sImg3 from '../../images/shape/3.svg'
 import sImg4 from '../../images/shape/4.svg'
+import { useTranslation } from 'react-i18next'
 
 const PageTitle = (props) => {
+    const {t} = useTranslation();
     return (
         <section className="wpo-page-title">
             <div className="container">
@@ -14,7 +16,7 @@ const PageTitle = (props) => {
                         <div className="wpo-breadcumb-wrap">
                             <h2>{props.pageTitle}</h2>
                             <ol className="wpo-breadcumb-wrap">
-                                <li><Link to="/home">Home</Link></li>
+                                <li><Link to="/home">{t("Home")}</Link></li>
                                 <li><span>{props.pagesub}</span></li>
                             </ol>
                         </div>

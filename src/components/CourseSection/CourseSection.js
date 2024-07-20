@@ -1,27 +1,35 @@
-import React, { useEffect } from "react";
+import React, { useEffect, startTransition } from "react";
 import { Link } from 'react-router-dom';
-import  {calculateAverageRating}  from "../../Helpers/calculateAverageRating";
+import { calculateAverageRating } from "../../Helpers/calculateAverageRating";
+import { useTranslation } from "react-i18next";
+
 const ClickHandler = () => {
     window.scrollTo(10, 0);
 }
 
 const CourseSection = (props) => {
-
-    console.log("trigger course section", props);
-
+    const { t } = useTranslation();
+    // console.log("trigger - t",t)
+    // const changeLanguage = (lng) => {
+    //     console.log("trigger change language",lng)
+    //     startTransition(() => {
+    //         i18n.changeLanguage(lng);
+    //     });
+    // };
+ 
     useEffect(() => {
-        // props değiştiğinde yapılacak işlemler buraya
+        // props değiştiğinde yapılacak işlemler buraya 
     }, [props]);
 
-
-    return (
+    return ( 
         <div className={`wpo-popular-area section-padding ${props.pClass}`}>
             <div className="container">
                 <div className="wpo-section-title-s2">
-                    <small>Popular Courses</small>
-                    <h2>Discover Your Favorite
-                        <span>
-                            Courses
+                    {/* <button onClick={() => changeLanguage('en')}>English</button>
+                    <button onClick={() => changeLanguage('tr')}>Türkçe</button>
+                    <small>{t('Popular Courses')}</small> */}
+                    <h2>{t('Discover Your Favorite Courses')} 
+                        <span> 
                             <i className="shape">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 206 53" fill="none">
                                     <path
@@ -64,9 +72,9 @@ const CourseSection = (props) => {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> 
                         ))}
-                    </div>
+                    </div> 
                 </div>
             </div>
         </div>

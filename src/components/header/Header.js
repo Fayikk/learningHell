@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState,startTransition} from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import MobileMenu from '../MobileMenu/MobileMenu'
 import Logo from '../../images/logo.svg'
@@ -9,7 +9,10 @@ import { InitialState,setLoggedInUser } from '../../store/reducers/authSlice'
 import { useSelector } from 'react-redux'
 import {Dropdown } from 'react-bootstrap'
 import { CiShoppingCart } from "react-icons/ci";
+import { TbWorld } from "react-icons/tb";
 import { FaLock } from 'react-icons/fa'; 
+import {Button} from 'react-bootstrap'
+import { useTranslation } from 'react-i18next'
 const Header = ({props,onAuthStateChange} ) => {
 
 
@@ -18,25 +21,53 @@ const Header = ({props,onAuthStateChange} ) => {
     const cartCounter = useSelector((state) => state.cartStore.cartCounter);
     const Navigate = useNavigate();
     const Dispatch = useDispatch();
-
+ const { t, i18n } = useTranslation();
     const [showDropdown, setShowDropdown] = useState(false);
+    const [showLocalizationDropdown,setShowLocalizationDropdown] = useState(false);
 
+ 
 
+    const handleMouseEnter = (params) => {
+        if (params === "localization") {
+            console.log("trigger localization")
+            setShowLocalizationDropdown(true);
+        }
+        else {
+            setShowDropdown(true);
 
-    const handleMouseEnter = () => {
-      setShowDropdown(true);
+        }
+        console.log(showLocalizationDropdown)
     };
+    console.log(showLocalizationDropdown)
   
-    const handleMouseLeave = () => {
-      setShowDropdown(false);
+    const handleMouseLeave = (params) => {
+        if (params === "localization") {
+            setShowLocalizationDropdown(false);
+        }
+        else {
+            setShowDropdown(false);
+
+        }
     };
     useEffect(()=>{
         onAuthStateChange(authenticationState);
     },[authenticationState])
 
+    useEffect(()=>{
+        changeLanguage("en");
+    },[])
+
     const SubmitHandler = (e) => {
         e.preventDefault()
     }
+
+
+    const changeLanguage = (lng) => {
+        console.log("trigger change language",lng)
+        startTransition(() => {
+          i18n.changeLanguage(lng);
+        });
+      };
 
 
 
@@ -86,24 +117,24 @@ const Header = ({props,onAuthStateChange} ) => {
                                         </li> */}
                                         {/* <li><Link onClick={ClickHandler} to="/about">About</Link></li> */}
                                         <li className="menu-item-has-children">
-                                            <Link onClick={ClickHandler} to="/">Courses</Link>
+                                            <Link onClick={ClickHandler} to="/">{t("Courses")}</Link>
                                             <ul className="sub-menu">
                                                 {/* <li><Link onClick={ClickHandler} to="/course">Messed Up</Link></li> */}
-                                                <li><Link onClick={ClickHandler} to="/course-2">Categories</Link></li>
+                                                <li><Link onClick={ClickHandler} to="/course-2">{t("Categories")}</Link></li>
                                                 {/* <li><Link onClick={ClickHandler} to="/course-3">Full Festivitiy</Link></li> */}
                                                 {/* <li><Link onClick={ClickHandler} to="/course-single/Learn-WordPress-&-Elementor-for-Beginners">Beginner Levels</Link></li> */}
                                             </ul>
                                         </li>
                                         <li className="menu-item-has-children">
-                                            <Link onClick={ClickHandler} to=""><FaLock></FaLock> Collections</Link>
+                                            <Link onClick={ClickHandler} to=""><FaLock></FaLock> {t("Collections")}</Link>
                                           
                                         </li>
                                         <li className="menu-item-has-children">
-                                            <Link onClick={ClickHandler} to=""><FaLock></FaLock>Pair Working Rooms</Link>
+                                            <Link onClick={ClickHandler} to=""><FaLock></FaLock>{t("Pair Working Rooms")}</Link>
                                            
                                         </li>
                                         <li className="menu-item-has-children">
-                                            <Link onClick={ClickHandler} to="/become-teacher">Become Teacher</Link>
+                                            <Link onClick={ClickHandler} to="/become-teacher">{t("Become Teacher")}</Link>
                                             {/* <ul className="sub-menu">
                                                 <li><Link onClick={ClickHandler} to="/blog">Blog right sidebar</Link></li>
                                                 <li><Link onClick={ClickHandler} to="/blog-left-sidebar">Blog left sidebar</Link></li> */}
@@ -152,11 +183,11 @@ const Header = ({props,onAuthStateChange} ) => {
                                         {
                                             authenticationState.userName === '' ? (
                                                 <>
-                                                <Link onClick={ClickHandler} className="login" to="/login"><span className="text">Sign In</span>
+                                                <Link onClick={ClickHandler} className="login" to="/login"><span className="text">{t("Sign In")}</span>
                                                 <span className="mobile">
                                                     <i className="fi flaticon-charity"></i>
                                                 </span></Link>
-                                            <Link onClick={ClickHandler} className="theme-btn" to="/register"><span className="text">Sign Up</span>
+                                            <Link onClick={ClickHandler} className="theme-btn" to="/register"><span className="text">{t("Sign Up")}</span>
                                                 <span className="mobile">
                                                     <i className="fi flaticon-charity"></i>
                                                 </span></Link>
@@ -167,8 +198,8 @@ const Header = ({props,onAuthStateChange} ) => {
 
                                                    <Dropdown
                                                     show={showDropdown}
-                                                    onClick={handleMouseEnter}
-                                                    onDoubleClick={handleMouseLeave}
+                                                    onClick={()=>handleMouseEnter()}
+                                                    onDoubleClick={()=>handleMouseLeave()}
                                                  
                                                     >
                                                     <Dropdown.Toggle variant="primary" id="dropdown-basic"    style={{ backgroundColor: 'transparent', border: 'none' }} >
@@ -177,12 +208,12 @@ const Header = ({props,onAuthStateChange} ) => {
 
                                                     <Dropdown.Menu style={{borderRadius:"20px"}} >
                                                         <Dropdown.Item as={Link} to="/MyCourse" >
-                                                        My Courses
+                                                        {t("My Courses")}
                                                         </Dropdown.Item>
                                                     {
                                                        authenticationState.role &&  authenticationState.role.includes("Instructor") ? (
                                                             <Dropdown.Item as={Link} to="/Instructor" >
-                                                            Instructor
+                                                            {t("Instructor")}
                                                             </Dropdown.Item>
                                                         ) : ("")
                                                     }
@@ -191,10 +222,12 @@ const Header = ({props,onAuthStateChange} ) => {
                                                         authenticationState.role && authenticationState.role.includes("Supervisor") ? (
                                                             <>
                                                             <Dropdown.Item as={Link} to="/TeacherApplications" >
-                                                            Instructive Applications
+                                                            {t("Instructive Applications")}
                                                             </Dropdown.Item>
                                                               <Dropdown.Item as={Link} to="/Supervisor/Evaluatecourses" >
-                                                            Evaluate Courses
+                                                              {t("Evaluate Courses")}
+                                                            
+                                                            
                                                               </Dropdown.Item>
                                                               </>
                                                         ) : ("")
@@ -203,17 +236,19 @@ const Header = ({props,onAuthStateChange} ) => {
 
                                                       
                                                         <Dropdown.Item as={Link} to="/MyAccount" onClick={logout}>
-                                                        MyAccount
+                                                              {t("My Account")}
                                                         </Dropdown.Item>
                                                     </Dropdown.Menu>
                                                     </Dropdown>
                                                     </div>
 
-
+ 
 
                                                   
                                                 <div>
-                                                <Link onClick={logout} className="theme-btn" to="/home"><span className="text">Logout</span>
+                                                <Link onClick={logout} className="theme-btn" to="/home"><span className="text">
+                                                {t("Logout")}
+                                                </span>
                                                 <span className="mobile">
                                                     <i className="fi flaticon-charity"></i>
                                                 </span></Link>
@@ -224,6 +259,26 @@ const Header = ({props,onAuthStateChange} ) => {
 
                                             ) 
                                         }
+                                    </div>
+                                    <div  >
+                                    <Dropdown
+                                        show={showLocalizationDropdown}
+                                        onClick={()=>handleMouseEnter("localization")}
+                                        onDoubleClick={()=>handleMouseLeave("localization")}
+                                    >                 
+                                     <Dropdown.Toggle variant="primary" id="dropdown-basic"    style={{ backgroundColor: 'transparent', border: 'none' }} >
+                                               <a className='theme-btn' style={{backgroundColor:'green'}} > <TbWorld  ></TbWorld></a>
+                                                    </Dropdown.Toggle>   
+                                                    <Dropdown.Menu style={{borderRadius:"20px"}} >
+                                                    <Dropdown.Item onClick={()=>changeLanguage("tr")}>
+                                            Türkçe
+                                        </Dropdown.Item>
+                                        <Dropdown.Item onClick={()=>changeLanguage("en")} >
+                                            English
+                                        </Dropdown.Item>
+                                                        </Dropdown.Menu>                    
+                                        
+                                    </Dropdown>
                                     </div>
                                 </div>
                             </div>

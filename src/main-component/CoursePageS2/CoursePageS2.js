@@ -7,11 +7,13 @@ import Scrollbar from '../../components/scrollbar/scrollbar'
 import Footer from '../../components/footer/Footer';
 import IsLoading from '../../components/Loading/IsLoading';
 import { useGetAllCategoriesQuery } from '../../api/categoryApi';
+import { useTranslation } from 'react-i18next';
 
 const CoursePageS2 = () => {
 
 
     const {data,isLoading} = useGetAllCategoriesQuery();
+    const {t} = useTranslation();
     if (isLoading) {
         return (
             <IsLoading></IsLoading>
@@ -21,7 +23,7 @@ const CoursePageS2 = () => {
     return (
         <Fragment>
             <Navbar />
-            <PageTitle pageTitle={'Course'} pagesub={'Course'} />
+            <PageTitle pageTitle={t('Course')} pagesub={t('Course')} />
             <CategorySection categories={data} cClass={'bg-white'}/>
             <Newslatter2/>
             <Footer />

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { startTransition } from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '../src/main-component/App/App';
 import reportWebVitals from './reportWebVitals';
@@ -14,7 +14,7 @@ import {  persistor } from "./store/index";
 import { Provider } from "react-redux";
 import store from './store/store'
 import { AuthProvider } from './main-component/Extensions/AuthProvider';
-
+import './Localization/i18n'
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <Provider store={store}>

@@ -7,6 +7,7 @@ import cImag from '../../images/shape/1.svg'
 import cImag2 from '../../images/shape/2.svg'
 import cImag3 from '../../images/shape/3.svg'
 import cImag4 from '../../images/shape/4.svg'
+import { useTranslation } from "react-i18next";
 
 
 const ClickHandler = () => {
@@ -68,7 +69,7 @@ const settings = {
 
 
 const CategorySection = (props) => {
-
+    const {t} = useTranslation();
     var x = 1;
     const [categories,setCategories] = useState([]);
     useEffect(()=>{
@@ -84,10 +85,9 @@ const CategorySection = (props) => {
                 <div className="row">
                     <div className="col-12">
                         <div className="wpo-section-title-s2">
-                            <small>Our Courses</small>
-                            <h2>Explore
+                            <small>{t("Our Courses")}</small>
+                            <h2>{t("Explore Courses By Category")}
                                 <span>
-                                    Courses
                                      <i className="shape">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 206 53" fill="none">
                                             <path
@@ -95,7 +95,6 @@ const CategorySection = (props) => {
                                         </svg>
                                     </i>
                                 </span> 
-                                By Category
                             </h2>
                         </div>
                     </div>
