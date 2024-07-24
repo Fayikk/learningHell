@@ -16,7 +16,6 @@ const HomePage =() => {
     const {data,isLoading} = useGetMostPopularCoursesQuery();
 
 
-    console.log("trigger home data",data)
 
     useEffect(()=>{
         if (data) {

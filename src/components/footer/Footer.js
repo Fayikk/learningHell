@@ -67,9 +67,7 @@ const Footer = (props) => {
                                 <ul>
                                     <li><Link onClick={ClickHandler} to="/contact">Contact Us</Link></li>
                                     <li><Link onClick={ClickHandler} to="/course">Courses</Link></li>
-                                    <li><Link onClick={ClickHandler} to="/lesson">Lesson</Link></li>
                                     <li><Link onClick={ClickHandler} to="/register">Sign Up</Link></li>
-                                    <li><Link onClick={ClickHandler} to="/testimonial">Testimonials</Link></li>
                                 </ul>
                             </div>
                         </div>
@@ -83,7 +81,7 @@ const Footer = (props) => {
                                         <li><i className="fi flaticon-email"></i>Eduko@gmail.com</li>
                                         <li><i className="fi flaticon-phone-call"></i>(208) 555-0112 <br/>
                                             (704) 555-0127</li>
-                                        <li><i className="fi flaticon-placeholder"></i>4517 Washington Ave. <br/> Manchter, Kentucky 495</li>
+                                        <li><i className="fi flaticon-placeholder"></i>Türkiye <br/> </li>
                                     </ul>
                                 </div>
                             </div>

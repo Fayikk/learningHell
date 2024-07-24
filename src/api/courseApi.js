@@ -1,18 +1,23 @@
 import {createApi,fetchBaseQuery} from '@reduxjs/toolkit/query/react'
 import { baseUrl } from './Base/baseApiModel'
 import { create } from '@mui/material/styles/createTransitions'
-
+import { useSelector } from 'react-redux'
 
 export const courseApi = createApi({
     reducerPath:"courseApi",
     baseQuery:fetchBaseQuery({
         baseUrl:baseUrl+"Course",
-        prepareHeaders:(headers,api) => {
+        prepareHeaders:(headers,{getState}) => {
+            const state = getState();
+            const country = state.locationStore; 
+            console.log("country",state.locationStore)
+
             const token = localStorage.getItem("token");
-            token && headers.append("Authorization","Bearer "+token);
+            token && headers.append("Authorization","Bearer "+token)
+            return headers;
         }
         
-    }),
+    }), 
     tagTypes:["course"],
     endpoints:(builder) => ({
         getCourseDetailById:builder.query({
@@ -23,7 +28,7 @@ export const courseApi = createApi({
         }),
         getSectionsByCourseId:builder.query({
             query:(courseId)=> ({
-                url:`s/${courseId}`,
+                url:`CourseSections/${courseId}`,
                 method:"GET"
             }),
             providesTags:["course"]

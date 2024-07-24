@@ -20,6 +20,7 @@ import { becomeTeacherApi } from "../api/becomeTeacherApi";
 import { newsLetterApi } from "../api/newsLetterApi";
 import { commentApi } from "../api/commentApi";
 import { ratingApi } from "../api/ratingApi";
+import { locationReducer } from "./reducers/locationSlice";
 const errorLoggerMiddleware = (store) => (next) => (action) => {
     if (action && action.payload && action.payload.status) {
         console.error("API error:", action.payload);
@@ -61,6 +62,7 @@ const store = configureStore({
 
         authStore:authenticationReducer,
         cartStore:cartReducer,
+        locationStore:locationReducer,
        
         [accountApi.reducerPath]:accountApi.reducer,
         [categoryApi.reducerPath]:categoryApi.reducer,

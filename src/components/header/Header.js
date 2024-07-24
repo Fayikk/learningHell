@@ -13,6 +13,9 @@ import { TbWorld } from "react-icons/tb";
 import { FaLock } from 'react-icons/fa'; 
 import {Button} from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
+import axios from 'axios'
+import OpenCage from '../../Environments/OpenCage'
+import { setLocationCountry } from '../../store/reducers/locationSlice'
 const Header = ({props,onAuthStateChange} ) => {
 
 
@@ -21,24 +24,69 @@ const Header = ({props,onAuthStateChange} ) => {
     const cartCounter = useSelector((state) => state.cartStore.cartCounter);
     const Navigate = useNavigate();
     const Dispatch = useDispatch();
- const { t, i18n } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [showDropdown, setShowDropdown] = useState(false);
     const [showLocalizationDropdown,setShowLocalizationDropdown] = useState(false);
+    const [location,setLocation] = useState(null);
+    const [error,setError] = useState(null);
+    const [country,setCountry] = useState('');
 
- 
+
+
+    useEffect(() => {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const { latitude, longitude } = position.coords;
+              setLocation({ latitude, longitude });
+            },
+            (error) => {
+              setError(error.message);
+            }
+          );
+        } else {
+          setError('Geolocation is not supported by this browser.');
+        }
+      }, []);
+
+      useEffect(() => {
+        if (location) {
+          const fetchCountry = async () => {
+            try {
+              const response = await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${location.latitude}+${location.longitude}&key=${OpenCage.apiKey}`);
+              const country = response.data.results[0].components.country;
+              setCountry(country);
+            } catch (error) {
+              setError('Error fetching country information');
+            }
+          };
+    
+          fetchCountry();
+        }
+      }, [location]);
+
+      useEffect(()=>{
+        if (country) {
+      console.log(country)
+            localStorage.setItem("Location",country)
+            Dispatch(setLocationCountry(country))
+        }
+      },[country])
+
+
+
+      console.log(location)
+
 
     const handleMouseEnter = (params) => {
         if (params === "localization") {
-            console.log("trigger localization")
             setShowLocalizationDropdown(true);
         }
         else {
             setShowDropdown(true);
 
         }
-        console.log(showLocalizationDropdown)
     };
-    console.log(showLocalizationDropdown)
   
     const handleMouseLeave = (params) => {
         if (params === "localization") {
@@ -63,7 +111,6 @@ const Header = ({props,onAuthStateChange} ) => {
 
 
     const changeLanguage = (lng) => {
-        console.log("trigger change language",lng)
         startTransition(() => {
           i18n.changeLanguage(lng);
         });

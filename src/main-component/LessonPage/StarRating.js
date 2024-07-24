@@ -26,14 +26,12 @@ const StarRating = ({ courseId }) => {
     );
   }
 
-  console.log("trigger rating", rating);
 
   const sendRate = async (newRating) => {
     const rateModel = {
       courseId: courseId,
       Rate: newRating
     };
-    console.log("trigger send rate", rateModel);
     if (rateModel.Rate === 0) {
       return;
     }

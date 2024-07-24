@@ -73,7 +73,6 @@ const CoursePage = () => {
         async function fetchData() {
             // You can await here
             await fetchAllDatas(filter).then((response) => {
-                console.log("trigger response fetch data",response)
 
                 setCourses(response.data.result != [] ? response.data.result.data : [])
                 // setCurrentPage(response.data.result.data)
