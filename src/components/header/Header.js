@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next'
 import axios from 'axios'
 import OpenCage from '../../Environments/OpenCage'
 import { setLocationCountry } from '../../store/reducers/locationSlice'
+import Cookies from 'js-cookie'
 const Header = ({props,onAuthStateChange} ) => {
 
 
@@ -68,7 +69,7 @@ const Header = ({props,onAuthStateChange} ) => {
       useEffect(()=>{
         if (country) {
       console.log(country)
-            localStorage.setItem("Location",country)
+            Cookies.set("LocationData", country, { sameSite:'None', secure: true });
             Dispatch(setLocationCountry(country))
         }
       },[country])

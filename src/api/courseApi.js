@@ -2,18 +2,27 @@ import {createApi,fetchBaseQuery} from '@reduxjs/toolkit/query/react'
 import { baseUrl } from './Base/baseApiModel'
 import { create } from '@mui/material/styles/createTransitions'
 import { useSelector } from 'react-redux'
-
+import Cookies from 'js-cookie';
 export const courseApi = createApi({
     reducerPath:"courseApi",
     baseQuery:fetchBaseQuery({
         baseUrl:baseUrl+"Course",
+        credentials:'include',
+        mode:"cors",
+        headers:{
+            'Content-Type': 'application/json'
+          },
         prepareHeaders:(headers,{getState}) => {
             const state = getState();
             const country = state.locationStore; 
-            console.log("country",state.locationStore)
+            console.log("country",country)
 
             const token = localStorage.getItem("token");
-            token && headers.append("Authorization","Bearer "+token)
+            const location = localStorage.getItem("Location");
+            // token && headers.append("Authorization","Bearer "+token)
+            console.log("country",country)  
+          
+            headers.append("LocationData",country)
             return headers;
         }
         
@@ -24,12 +33,15 @@ export const courseApi = createApi({
             query:(courseId) => ({
                 url:`GetCourse/${courseId}`,
                 method:"GET"
+
+                
             })
         }),
         getSectionsByCourseId:builder.query({
             query:(courseId)=> ({
                 url:`CourseSections/${courseId}`,
                 method:"GET"
+
             }),
             providesTags:["course"]
         }),
@@ -47,6 +59,7 @@ export const courseApi = createApi({
                     url:`GetAllCourses`,
                     method:"POST",
                     body:model
+
                 })
             },
             providesTags:["course"]
@@ -56,6 +69,7 @@ export const courseApi = createApi({
             query:(courseModel) => ({
                 method:"POST",
                 body:courseModel
+
             }),
             invalidatesTags:["course"]
         }),
@@ -64,6 +78,7 @@ export const courseApi = createApi({
             query:(courseId) =>({
                 method:"DELETE",
                 url:`${courseId}`
+
             }),
             invalidatesTags:["course"]
 
@@ -72,19 +87,19 @@ export const courseApi = createApi({
             query:(evaluateModel) => ({
                 method:"PUT",
                 body:evaluateModel,
-                url:"EvaluateCourse",
+                url:"EvaluateCourse"
             })
         }),
         getEvaluateCourses:builder.query({
             query:() => ({
                 method:"GET",
-                url:"GetEvaluationCourses"
+                url:"GetEvaluationCourses",
             })
         }),
         getMostPopularCourses:builder.query({
             query:()=>({
                 method:"GET",
-                url:"MostPopularCourses"
+                url:"MostPopularCourses",
             })
         })
        

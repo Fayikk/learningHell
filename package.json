@@ -17,6 +17,7 @@
     "i18next-browser-languagedetector": "^8.0.0",
     "i18next-http-backend": "^2.5.2",
     "ip-geolocation-api-javascript-sdk": "^1.0.9",
+    "js-cookie": "^3.0.5",
     "jszip": "^3.10.1",
     "jwt-decode": "^4.0.0",
     "memfs": "^4.6.0",
