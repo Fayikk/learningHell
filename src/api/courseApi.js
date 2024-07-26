@@ -18,11 +18,8 @@ export const courseApi = createApi({
             console.log("country",country)
 
             const token = localStorage.getItem("token");
-            const location = localStorage.getItem("Location");
-            // token && headers.append("Authorization","Bearer "+token)
-            console.log("country",country)  
+            token && headers.append("Authorization","Bearer "+token)
           
-            headers.append("LocationData",country)
             return headers;
         }
         
