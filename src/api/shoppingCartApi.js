@@ -8,6 +8,7 @@ export const shoppingCartApi = createApi({
     reducerPath:"shoppingCartApi",
     baseQuery:fetchBaseQuery({
         baseUrl:baseUrl+"ShoppingCart",
+        credentials:'include',
         prepareHeaders:(headers,api) => {
             const token = localStorage.getItem("token");
             token && headers.append("Authorization","Bearer "+token);

@@ -54,7 +54,7 @@ const Header = ({props,onAuthStateChange} ) => {
         if (location) {
           const fetchCountry = async () => {
             try {
-              const response = await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${location.latitude}+${location.longitude}&key=${OpenCage.apiKey}`);
+              const response = await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${location.latitude}+${location.longitude}&language=en&key=${OpenCage.apiKey}`);
               const country = response.data.results[0].components.country;
               setCountry(country);
             } catch (error) {
