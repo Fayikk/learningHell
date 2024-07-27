@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Link } from 'react-router-dom'
 import Courses from "../../api/Courses";
 import { calculateAverageRating } from "../../Helpers/calculateAverageRating";
+import { MatchLocationToCurrency } from "../../main-component/Extensions/MatchLocationToCurrency";
+import Cookies from 'js-cookie';
+
 const ClickHandler = () => {
     window.scrollTo(10, 0);
 }
@@ -9,14 +12,12 @@ const ClickHandler = () => {
 const CourseSectionS3 = (props) => {
 
     const [courses, setCourses] = useState([]);
-
     useEffect(() => {
         if (props.courses) {
             setCourses(props.courses);
         }
     }, [props.courses]);
 
- 
 
     return (
         <div className={`wpo-popular-area section-padding ${props.pClass} course-section`}>
@@ -30,7 +31,7 @@ const CourseSectionS3 = (props) => {
                                         <div className="wpo-popular-img">
                                             <img src={course.courseImage} alt="" />
                                             <div className="thumb">
-                                                <span>&#8378;{course.coursePrice}</span>
+                                                <span>{MatchLocationToCurrency()}{course.coursePrice}</span>
                                             </div>
                                         </div>
                                         <div className="wpo-popular-content">

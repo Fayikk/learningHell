@@ -2,7 +2,7 @@ import React, { useEffect, startTransition } from "react";
 import { Link } from 'react-router-dom';
 import { calculateAverageRating } from "../../Helpers/calculateAverageRating";
 import { useTranslation } from "react-i18next";
-
+import { MatchLocationToCurrency } from "../../main-component/Extensions/MatchLocationToCurrency";
 const ClickHandler = () => {
     window.scrollTo(10, 0);
 }
@@ -48,7 +48,7 @@ const CourseSection = (props) => {
                                         <div className="wpo-popular-img">
                                             <img src={course.courseImage} alt=""/>
                                             <div className="thumb">
-                                                <span>&#8378;{course.coursePrice}</span> {/* TL işareti */}
+                                                <span>{MatchLocationToCurrency()}{course.coursePrice}</span> {/* TL işareti */}
                                             </div>
                                         </div>
                                         <div className="wpo-popular-content">

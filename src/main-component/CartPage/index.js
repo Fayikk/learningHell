@@ -11,7 +11,7 @@ import { useSelector } from "react-redux";
 import {toast} from 'react-toastify'
 import IsLoading from "../../components/Loading/IsLoading";
 import { cartStateUpdate } from "../../store/reducers/cartSlice";
-
+import { MatchLocationToCurrency } from "../Extensions/MatchLocationToCurrency";
 const CartPage = (props) => {
 
   const {data,isLoading} = useGetShoppingCartQuery(useSelector((state) => state.authStore.nameIdentifier));
@@ -96,7 +96,7 @@ if (courses.length > 0) {
                                   <li>Size : {courseItem.courseName}</li>
                                 </ul>
                               </td>
-                              <td className="ptice">&#8378;{courseItem.coursePrice}</td>
+                              <td className="ptice"> {MatchLocationToCurrency()} {courseItem.coursePrice}</td>
                               <td></td>
                               <td className="action">
                                 <ul>

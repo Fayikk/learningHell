@@ -19,6 +19,7 @@ import TableCell from "@mui/material/TableCell";
 import {Link} from 'react-router-dom'
 import {totalPrice} from "../../utils";
 import {toast} from 'react-toastify'
+import { MatchLocationToCurrency } from '../../main-component/Extensions/MatchLocationToCurrency';
 // images
 import visa from '../../images/icon/visa.png';
 import mastercard from '../../images/icon/mastercard.png';
@@ -513,9 +514,9 @@ const CheckoutSection = ({cartList}) => {
                                             <TableBody>
                                                 {cartItems.map(item => (
                                                     <TableRow key={item.courseId}>
-                                                        <TableCell>{item.courseName} &#8378;{item.coursePrice} </TableCell>
+                                                        <TableCell>{item.courseName} {MatchLocationToCurrency()}{item.coursePrice} </TableCell>
                                                         <TableCell
-                                                            align="right">&#8378;{item.coursePrice}</TableCell>
+                                                            align="right">{MatchLocationToCurrency()}{item.coursePrice}</TableCell>
                                                     </TableRow>
                                                 ))}
                                                 <TableRow className="totalProduct">

@@ -6,6 +6,7 @@ import { useAddShoppingCartItemMutation } from '../../api/shoppingCartApi'
 import {toast} from 'react-toastify'
 import { useDispatch } from 'react-redux'
 import { cartStateUpdate } from '../../store/reducers/cartSlice'
+import { MatchLocationToCurrency } from '../Extensions/MatchLocationToCurrency'
 const Sidebar = (props) => {
 
     const [addBasketItem] = useAddShoppingCartItemMutation();
@@ -46,7 +47,7 @@ const Sidebar = (props) => {
                 <div className="widget features-widget">
                     <div className="features-top">
                         {/* <h4>$80.20 <del>$94.99</del></h4> */}
-                        <h4>&#8378; {props.CourseDetail.coursePrice} </h4>
+                        <h4> {MatchLocationToCurrency()} {props.CourseDetail.coursePrice} </h4>
                         {/* <span> 5 days left!</span> */}
                     </div>
                     <div className="cart-btn">
