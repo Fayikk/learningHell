@@ -15,7 +15,6 @@ export const courseApi = createApi({
         prepareHeaders:(headers,{getState}) => {
             const state = getState();
             const country = state.locationStore; 
-            console.log("country",country)
 
             const token = localStorage.getItem("token");
             token && headers.append("Authorization","Bearer "+token)
