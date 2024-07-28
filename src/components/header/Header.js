@@ -68,15 +68,12 @@ const Header = ({props,onAuthStateChange} ) => {
 
       useEffect(()=>{
         if (country) {
-      console.log(country)
             Cookies.set("LocationData", country, { sameSite:'None', secure: true });
             Dispatch(setLocationCountry(country))
         }
       },[country])
 
 
-
-      console.log(location)
 
 
     const handleMouseEnter = (params) => {

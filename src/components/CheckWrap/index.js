@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Grid from "@mui/material/Grid";
 import SimpleReactValidator from "simple-react-validator";
 import {toast} from "react-toastify";
@@ -6,18 +6,46 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import {useNavigate} from "react-router-dom";
 import { usePaymentCheckoutMutation } from '../../api/paymentApi';
-
+import Box from '@mui/material/Box';
+import Modal from '@mui/material/Modal';
+import Typography from '@mui/material/Typography';
+import SignalRService from '../../Services/SignalRService';
+import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import './style.scss';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { cartStateUpdate } from '../../store/reducers/cartSlice';
+import { TbBorderRadius } from 'react-icons/tb';
+
+
+const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '20%',
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    p: 4,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  };
 
 const CheckWrap = (props) => {
+    const [open, setOpen] = React.useState(false);
+    const [hubConnection,setHubConnection] = useState();
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
     const [CreatePayment] = usePaymentCheckoutMutation();
     const authenticationState = useSelector((state) => state.authStore)
+    const [isPaymentSuccess, setIsPaymentSuccess] = useState(false);
+    const [status, setStatus] = useState('');
+    const nameIdentifier = useSelector((state) => state.authStore.nameIdentifier);
+
     const push = useNavigate()
     const Dispatch = useDispatch();
-
+    const [html, setHtml] = useState(null);
     const [value, setValue] = useState({
         email: 'user@gmail.com',
         password: '123456',
@@ -28,30 +56,50 @@ const CheckWrap = (props) => {
         expire_year:'',
         remember: false,
     });
+    console.log("nameIdentifier",nameIdentifier)
+    const createHubConnection = async () => {
+        const hubConnection = new HubConnectionBuilder()
+            .withUrl("https://localhost:7042/PayHub", {
+                accessTokenFactory: () => nameIdentifier,
+            })
+            .configureLogging(LogLevel.Information)
+            .build();
+    
+        try {
+            await hubConnection.start();
+            console.log("Connection started");
+        } catch (error) {
+            console.error("Error while starting connection: ", error);
+        }
+    
+        setHubConnection(hubConnection);
+    };
 
 
-
-    // {
-    //     "cardHolderName": "string",
-    //     "cardNumber": "string",
-    //     "expireMonth": "string",
-    //     "expireYear": "string",
-    //     "cvc": "string",
-    //     "identityNumber": "string",
-    //     "registrationAddress": "string",
-    //     "city": "string",
-    //     "country": "string",
-    //     "zipCode": "string",
-    //     "userId": "string"
-    //   }
-
-
-
+    useEffect(()=>{
+        if (hubConnection) {
+                hubConnection.on("MessageForSocket",(res) => {
+                  if (res.item1 == "success") {
+                    push('/order_received');
+                    handleClose();
+                    Dispatch(cartStateUpdate(res.item2))
+                  }
+                  else{
+                    handleClose();
+                  }
+                })
+        }
+    },[hubConnection])
     const changeHandler = (e) => {
         setValue({...value, [e.target.name]: e.target.value});
         validator.showMessages();
     };
 
+
+    useEffect(()=>{
+        createHubConnection();
+
+    },[nameIdentifier])
 
 
     const [validator] = React.useState(new SimpleReactValidator({
@@ -98,11 +146,15 @@ const CheckWrap = (props) => {
             //     }
             // }
             const userRegex = /^user+.*/gm;
+            console.log("response",response)
             const email = value.email;
             if (email.match(userRegex) && response.data.isSuccess ) {
-                Dispatch(cartStateUpdate(response.data.result.item2))
-                toast.success(response.data.messages[0]);
-                push('/order_received');
+                const blob = new Blob([response.data.result.content], { type: "text/html" });
+                const objUrl = URL.createObjectURL(blob);
+                setHtml(objUrl);
+                handleOpen();
+                toast.success(response.data.messages[0]); 
+                // push('/order_received');
             }  else if(!response.data.isSuccess) {
                 toast.info(response.data.messages[0] + ".Please check your information again");
                 // alert('user not existed! credential is : user@*****.com | vendor@*****.com | admin@*****.com');
@@ -113,7 +165,9 @@ const CheckWrap = (props) => {
         }
     };
     return (
+        <>
         <Grid className="cardbp mt-20">
+     
             <Grid>
                 <form onSubmit={submitForm}>
                     <Grid container spacing={3}>
@@ -199,6 +253,27 @@ const CheckWrap = (props) => {
                 </form>
             </Grid>
         </Grid>
+
+
+<div>
+<Modal
+  keepMounted
+  open={open}
+  onClose={handleClose}
+  aria-labelledby="keep-mounted-modal-title"
+  aria-describedby="keep-mounted-modal-description"
+>
+  <Box sx={style}>
+    <Typography id="keep-mounted-modal-title" variant="h6" component="h2">
+      Iyzico 3d Secure
+    </Typography>
+    <Typography id="keep-mounted-modal-description" sx={{ mt: 2 }}>
+    {html && <iframe src={html} width="500" height="500" title="Payment"></iframe>}
+    </Typography>
+  </Box>
+</Modal>
+</div>
+</>
     )
 };
 

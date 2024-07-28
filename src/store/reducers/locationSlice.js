@@ -14,7 +14,6 @@ export const locationSlice = createSlice({
     reducers:{
         
         setLocationCountry:(state,action)=>{
-            console.log(action.payload)
             state.locationCountry = action.payload
         }
         
