@@ -15,11 +15,10 @@ const ChooseSection = (props) => {
           <div className="col col-lg-7">
             <div className="wpo-choose-wrap">
               <div className="wpo-section-title-s2">
-                <small>Why Choose Us</small>
+                <small>{t("Why Choose Us")}</small>
                 <h2>
-                  What Make Us
+                  {t("What Make Us Different")}
                   <span>
-                    Different
                     <i className="shape">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -55,9 +54,9 @@ const ChooseSection = (props) => {
                     <h3>{t("Dedicated Support")}</h3>
                     <p>
                       {t(
-                        "We are always here to help our students and solve problems for "
+                        "We are always here to help our students and solve problems for 24/7"
                       )}
-                      24/7.
+                      .
                     </p>
                   </div>
                 </div>
@@ -66,10 +65,10 @@ const ChooseSection = (props) => {
                     <i className="fi flaticon-e-learning"></i>
                   </div>
                   <div className="info">
-                    <h3>{t("Digital Learning ")}</h3>
+                    <h3>{t(" Digital Learning ")}</h3>
                     <p>
                       {t(
-                        "We have highly expert mentors for our student’s best support "
+                        "We have highly expert mentors for our student’s best support"
                       )}{" "}
                       .
                     </p>
@@ -84,8 +83,7 @@ const ChooseSection = (props) => {
                     <p>
                       {t(
                         "We have highly expert mentors for our student’s best support"
-                      )}{" "}
-                      .
+                      )}
                     </p>
                   </div>
                 </div>

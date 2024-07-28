@@ -29,9 +29,9 @@ const Footer = (props) => {
                   </Link>
                 </div>
                 <p>
-                  Mattis inelit neque quis donec eleifnd amet. Amet sed et
-                  cursus eu euismod. Egestas in morbi tristique ornare vulputate
-                  vitae enim.
+                  {t(
+                    "Mattis inelit neque quis donec eleifnd amet. Amet sed et cursus eu euismod. Egestas in morbi tristique ornare vulputate vitae enim."
+                  )}
                 </p>
                 <div className="social">
                   <ul>
