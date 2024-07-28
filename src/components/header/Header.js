@@ -73,7 +73,6 @@ const Header = ({ props, onAuthStateChange }) => {
     }
   }, [country]);
 
-  console.log(location);
 
   const handleMouseEnter = (params) => {
     if (params === "localization") {
