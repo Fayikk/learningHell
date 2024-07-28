@@ -1,0 +1,1 @@
+export const payHub = "https://localhost:7042/PayHub"

@@ -9,13 +9,13 @@ import { usePaymentCheckoutMutation } from '../../api/paymentApi';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
-import SignalRService from '../../Services/SignalRService';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import './style.scss';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { cartStateUpdate } from '../../store/reducers/cartSlice';
 import { TbBorderRadius } from 'react-icons/tb';
+import { payHub } from '../../api/Base/payHubModel';
 
 
 const style = {
@@ -59,7 +59,7 @@ const CheckWrap = (props) => {
     console.log("nameIdentifier",nameIdentifier)
     const createHubConnection = async () => {
         const hubConnection = new HubConnectionBuilder()
-            .withUrl("https://localhost:7042/PayHub", {
+            .withUrl(payHub, {
                 accessTokenFactory: () => nameIdentifier,
             })
             .configureLogging(LogLevel.Information)
