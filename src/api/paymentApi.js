@@ -17,10 +17,11 @@ export const paymentApi = createApi({
     // https://localhost:7042/api/Payment/PayCallBack
     endpoints:(builder) => ({
         paymentCheckout:builder.mutation({
-            query:(paymentModel) => {
+            query:(sendData) => {
                 return {
                     method:"POST",
-                    body:paymentModel
+                    body:sendData.paymentModel,
+                    url:`/?isActive3dSecure=${sendData.isActive3dSecure}`
                 }
             }
 

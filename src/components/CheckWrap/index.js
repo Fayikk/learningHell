@@ -16,7 +16,9 @@ import { useDispatch } from 'react-redux';
 import { cartStateUpdate } from '../../store/reducers/cartSlice';
 import { TbBorderRadius } from 'react-icons/tb';
 import { payHub } from '../../api/Base/payHubModel';
-
+import FormControlLabel from "@mui/material/FormControlLabel";
+import RadioGroup from "@mui/material/RadioGroup";
+import Radio from "@mui/material/Radio";
 
 const style = {
     position: 'absolute',
@@ -41,9 +43,10 @@ const CheckWrap = (props) => {
     const authenticationState = useSelector((state) => state.authStore)
     const [isPaymentSuccess, setIsPaymentSuccess] = useState(false);
     const [status, setStatus] = useState('');
+    const [isActive3dSecure,setIsActive3dSecure] = useState(false);
     const nameIdentifier = useSelector((state) => state.authStore.nameIdentifier);
-
     const push = useNavigate()
+    const [isRadio, setIsRadio] = useState(false);
     const Dispatch = useDispatch();
     const [html, setHtml] = useState(null);
     const [value, setValue] = useState({
@@ -56,7 +59,6 @@ const CheckWrap = (props) => {
         expire_year:'',
         remember: false,
     });
-    console.log("nameIdentifier",nameIdentifier)
     const createHubConnection = async () => {
         const hubConnection = new HubConnectionBuilder()
             .withUrl(payHub, {
@@ -67,7 +69,6 @@ const CheckWrap = (props) => {
     
         try {
             await hubConnection.start();
-            console.log("Connection started");
         } catch (error) {
             console.error("Error while starting connection: ", error);
         }
@@ -79,6 +80,7 @@ const CheckWrap = (props) => {
     useEffect(()=>{
         if (hubConnection) {
                 hubConnection.on("MessageForSocket",(res) => {
+                    console.log("res",res)
                   if (res.item1 == "success") {
                     push('/order_received');
                     handleClose();
@@ -105,6 +107,7 @@ const CheckWrap = (props) => {
     const [validator] = React.useState(new SimpleReactValidator({
         className: 'errorMessage'
     }));
+    console.log(isRadio)
 
     const submitForm = async (e) => {
         var formData = new FormData();
@@ -120,7 +123,6 @@ const CheckWrap = (props) => {
             //     expire_date: '',
             //     remember: false
             // });
-
        
 
             formData.append("CardHolderName",value.card_holder);
@@ -136,8 +138,12 @@ const CheckWrap = (props) => {
             formData.append("ZipCode",props.values.post_code);
             formData.append("UserId",authenticationState.nameIdentifier);
 
+            const sendData = {
+                paymentModel:formData,
+                isActive3dSecure:isRadio
+            }
 
-     var response = await CreatePayment(formData)
+     var response = await CreatePayment(sendData)
             validator.hideMessages();
             // if (response.error || !response.error.data.isSuccess) {
             //     toast.error(response.error.data.errorMessages[response.error.data.errorMessages.length - 1])
@@ -146,15 +152,23 @@ const CheckWrap = (props) => {
             //     }
             // }
             const userRegex = /^user+.*/gm;
-            console.log("response",response)
+            console.log("trigger response",response)
             const email = value.email;
             if (email.match(userRegex) && response.data.isSuccess ) {
-                const blob = new Blob([response.data.result.content], { type: "text/html" });
-                const objUrl = URL.createObjectURL(blob);
-                setHtml(objUrl);
-                handleOpen();
-                toast.success(response.data.messages[0]); 
-                // push('/order_received');
+                if (isRadio) {
+                    console.log(response.data.result.item1.content)
+                    const blob = new Blob([response.data.result.item1.content], { type: "text/html" });
+                    const objUrl = URL.createObjectURL(blob);
+                    setHtml(objUrl);
+                    handleOpen();    
+                }
+                else if (!isRadio) {
+                    if (response.data.isSuccess && response.data.result.item2.status == "success") {
+                        toast.success(response.data.messages[0]); 
+                        push('/order_received');        
+                    }
+                }
+                
             }  else if(!response.data.isSuccess) {
                 toast.info(response.data.messages[0] + ".Please check your information again");
                 // alert('user not existed! credential is : user@*****.com | vendor@*****.com | admin@*****.com');
@@ -167,7 +181,24 @@ const CheckWrap = (props) => {
     return (
         <>
         <Grid className="cardbp mt-20">
-     
+        <RadioGroup className="paymentMethod" aria-label="Payment Method"
+                                                    name="payment_method"
+                                                    onChange={(e) => setIsRadio(!isRadio)}>
+                                            <FormControlLabel value="cash" control={<Radio checked={isRadio==true} color="primary"/>}
+                                                    label="I want 3d secure"/>
+                                            {/* <FormControlLabel value="card" control={<Radio color="primary"/>}
+                                                            label="Cash On delivery"/> */}
+                                            
+                                        </RadioGroup>
+                                        <RadioGroup className="paymentMethod" aria-label="Payment Method"
+                                                    name="payment_method"
+                                                    onChange={(e) => setIsRadio(!isRadio)}>
+                                            <FormControlLabel value="cash" control={<Radio checked={isRadio==false} color="primary"/>}
+                                                    label="I dont want 3d secure "/>
+                                            {/* <FormControlLabel value="card" control={<Radio color="primary"/>}
+                                                            label="Cash On delivery"/> */}
+                                            
+                                        </RadioGroup>
             <Grid>
                 <form onSubmit={submitForm}>
                     <Grid container spacing={3}>

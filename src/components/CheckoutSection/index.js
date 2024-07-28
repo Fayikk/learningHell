@@ -59,7 +59,6 @@ const CheckoutSection = ({cartList}) => {
     const cartState = useSelector((state) => state.cartStore)
     const [cartLists,setCartLists] =useState([]);
     const basketItems = localStorage.getItem("basketItems")
-
     let cartItems = JSON.parse(basketItems)
 
     useEffect(()=>{
@@ -113,6 +112,7 @@ const CheckoutSection = ({cartList}) => {
         expire_date: '',
     });
 
+
     const [dif_ship, setDif_ship] = React.useState(false);
 
     // tabs handler
@@ -165,16 +165,7 @@ const CheckoutSection = ({cartList}) => {
                                 </Button>
                                 <Grid className="chCardBody">
                                     <Collapse in={tabs.payment} timeout="auto">
-                                        <RadioGroup className="paymentMethod" aria-label="Payment Method"
-                                                    name="payment_method"
-                                                    value={forms.payment_method}
-                                                    onChange={(e) => changeHandler(e)}>
-                                            <FormControlLabel value="cash" control={<Radio color="primary"/>}
-                                                    label="Payment By Card "/>
-                                            {/* <FormControlLabel value="card" control={<Radio color="primary"/>}
-                                                            label="Cash On delivery"/> */}
-                                            
-                                        </RadioGroup>
+                                       
                                         <Collapse in={forms.payment_method === 'cash'} timeout="auto">
                                             <Grid className="cardType">
                                                 {cardType.map((item, i) => (
