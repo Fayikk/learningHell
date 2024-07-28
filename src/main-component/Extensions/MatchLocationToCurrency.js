@@ -15,7 +15,6 @@ export const MatchLocationToCurrency = () => {
     };
 
     var location = Cookies.get("LocationData");
-    console.log("trigger location inner match location to curr", location);
 
     switch (location) {
         case "Turkey":

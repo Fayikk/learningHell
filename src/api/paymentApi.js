@@ -14,6 +14,7 @@ export const paymentApi = createApi({
             token && headers.append("Authorization","Bearer "+token);
         }
     }),
+    // https://localhost:7042/api/Payment/PayCallBack
     endpoints:(builder) => ({
         paymentCheckout:builder.mutation({
             query:(paymentModel) => {
@@ -23,6 +24,14 @@ export const paymentApi = createApi({
                 }
             }
 
+        }),
+        payCallBack:builder.mutation({
+            query:()=>{
+                return {
+                    method:"POST",
+                    url:'/PayCallBack'
+                }
+            }
         })
     })
 })
