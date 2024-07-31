@@ -178,7 +178,7 @@ const Header = ({ props, onAuthStateChange }) => {
                     </li>
                     <li className="menu-item-has-children">
                       <Link onClick={ClickHandler} to="">
-                        <FaLock></FaLock> {t("Collections")}
+                        <FaLock></FaLock> {t("Collections")}Deneme
                       </Link>
                     </li>
                     <li className="menu-item-has-children">
