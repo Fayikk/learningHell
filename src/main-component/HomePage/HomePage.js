@@ -42,6 +42,7 @@ const HomePage =() => {
     //     return <div>Veri yükleniyor...</div>;
     //   }
 
+    //
     return(
         <Fragment>
             <Navbar hclass={'wpo-header-style-4'}/>
