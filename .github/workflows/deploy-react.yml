@@ -37,8 +37,7 @@ jobs:
           npm list
 
       - name: Build project
-        run: | 
-          npm run build || exit 1
+        run: npm run build --if-present
 
       - name: Deploy to IIS
         run: |
