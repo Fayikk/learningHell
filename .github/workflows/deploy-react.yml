@@ -8,37 +8,6 @@ jobs:
   build:
     runs-on: self-hosted  
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20.14.0'
-
-      - name: Cache node modules
-        uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Install dependencies
-        run: npm install  # Global değil proje düzeyinde bağımlılıkları yükle
-
-      - name: Debug Info
-        run: |
-          echo "Node Version:"
-          node -v
-          echo "NPM Version:"
-          npm -v
-          echo "Installed Packages:"
-          npm list
-
-      - name: Build project
-        run: npm run build --if-present
-
       - name: Deploy to IIS
         run: |
           if ((Get-WebSiteState -Name courseClient).Value -eq "Started") {
