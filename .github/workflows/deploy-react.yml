@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted  # Kendi Windows server'ınızı kullanın
+    runs-on: self-hosted  
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -14,10 +14,10 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20.14.0'  # Sunucunuzdaki Node.js sürümünü kullanın
+          node-version: '20.14.0'  
 
       - name: Install dependencies
-        run: npm install
+        run: npm install -g
 
       - name: Build project
         run: npm run build
