@@ -1,0 +1,65 @@
+name: Deploy React App to IIS
+
+on:
+  push:
+    branches: [ "test" ]
+
+jobs:
+  build:
+    runs-on: self-hosted  
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.14.0'
+
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm install  # Global değil proje düzeyinde bağımlılıkları yükle
+
+      - name: Debug Info
+        run: |
+          echo "Node Version:"
+          node -v
+          echo "NPM Version:"
+          npm -v
+          echo "Installed Packages:"
+          npm list
+
+      - name: Build project
+        run: npm run build --if-present
+
+      - name: Deploy to IIS
+        run: |
+          if ((Get-WebSiteState -Name courseClient_test).Value -eq "Started") {
+            Stop-WebSite -Name courseClient_test
+            echo "Stopped Website courseClient_test"
+          }
+          if ((Get-WebAppPoolState -Name courseClient_test).Value -eq "Started") {
+            Stop-WebAppPool -Name courseClient_test
+            echo "Stopped Application Pool courseClient_test"
+          }
+
+          Start-Sleep -s 15
+          Copy-Item -Path "${{ github.workspace }}\build\*" -Destination "C:\inetpub\wwwroot\Course_Client_Test" -Recurse -Force
+
+          if ((Get-WebSiteState -Name courseClient_test).Value -eq "Stopped") {
+            Start-WebSite -Name courseClient_test
+            echo "Started Website courseClient_test"
+          }
+          if ((Get-WebAppPoolState -Name courseClient_test).Value -eq "Stopped") {
+            Start-WebAppPool -Name courseClient_test
+            echo "Started Application Pool courseClient_test"
+          }
+
+          if ($lastexitcode -lt 8) { $global:lastexitcode = 0 }
