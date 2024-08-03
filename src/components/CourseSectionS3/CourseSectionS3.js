@@ -4,7 +4,7 @@ import Courses from "../../api/Courses";
 import { calculateAverageRating } from "../../Helpers/calculateAverageRating";
 import { MatchLocationToCurrency } from "../../main-component/Extensions/MatchLocationToCurrency";
 import Cookies from 'js-cookie';
-
+import Search from "../Search/Search";
 const ClickHandler = () => {
     window.scrollTo(10, 0);
 }
@@ -18,10 +18,16 @@ const CourseSectionS3 = (props) => {
         }
     }, [props.courses]);
 
+    console.log("trigger props",props)
 
     return (
         <div className={`wpo-popular-area section-padding ${props.pClass} course-section`}>
+        <div style={{marginBottom:"50px"}}  >
+
+        </div>
+
             <div className="container">
+
                 <div className="wpo-popular-wrap">
                     <div className="row">
                         {courses.map((course, index) => (

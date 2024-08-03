@@ -11,7 +11,6 @@ import { Dropdown } from "react-bootstrap";
 import { CiShoppingCart } from "react-icons/ci";
 import { TbWorld } from "react-icons/tb";
 import { FaLock } from "react-icons/fa";
-import { Button } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import OpenCage from "../../Environments/OpenCage";
@@ -178,7 +177,7 @@ const Header = ({ props, onAuthStateChange }) => {
                     </li>
                     <li className="menu-item-has-children">
                       <Link onClick={ClickHandler} to="">
-                        <FaLock></FaLock> {t("Collections")} Deneme12
+                        <FaLock></FaLock> {t("Collections")}
                       </Link>
                     </li>
                     <li className="menu-item-has-children">
