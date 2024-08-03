@@ -9,7 +9,7 @@ import { useParams } from 'react-router-dom';
 import IsLoading from '../../components/Loading/IsLoading';
 import { useGetAllCoursesMutation } from '../../api/courseApi';
 import { Button } from 'reactstrap';
-
+import Search from '../../components/Search/Search';
 const CoursePage = () => {
 
     const {slug} = useParams();
@@ -20,6 +20,13 @@ const CoursePage = () => {
     const [currentPage,setCurrentPage] = useState(1)
     const [pageCounter,setPageCounter] = useState(0);
     const [categoryId,setCategoryId] = useState(slug)
+    const [query,setQuery] = useState("");
+    const [isClickedEnter,setIsClickedEnter] = useState(false)
+    const [newRule,setNewRule] = useState({
+        field:"CourseName",
+        op:3,
+        data:""
+    })
     const [filter,setFilter] = useState({
         isSearch:true,
         pageIndex:1,
@@ -42,6 +49,50 @@ const CoursePage = () => {
             ]
         }        
     })
+
+
+
+    const [initalState] = useState({
+        isSearch:true,
+        pageIndex:1,
+        pageSize:6,
+        sortColumn:"CourseName",
+        sortOrder:"desc",
+        filters:{
+            groupOp:"AND",
+            rules:[
+                {
+                    field:"CourseEvaluteStatus",
+                    op:1,
+                    data:"4"
+                },
+                {
+                    field:"CategoryId",
+                    op:1,
+                    data:slug.toString()
+                }
+            ]
+        }        
+    })
+
+
+    const addFilterRule = (newRule) => 
+    {
+        setFilter(prevFilter => ({
+            ...prevFilter,
+            filters:{
+                ...prevFilter.filters,
+                rules:[
+                    ...prevFilter.filters.rules,
+                    newRule
+                ]
+                    
+                
+            }
+        }))
+    }
+
+
 
     // filterProperty:"categoryId",
     // filterValue:categoryId,
@@ -84,7 +135,8 @@ const CoursePage = () => {
      
           
 
-    },[filter])
+    },[filter
+    ])
 
 
     const handleClickChangePageNumber = (clickedPageNumber) => {
@@ -94,6 +146,29 @@ const CoursePage = () => {
             pageIndex: clickedPageNumber 
         }));
     };
+
+    const handleDataFromChild = (data) => {
+        setQuery(data)
+
+        setNewRule(prevRule => ({
+            ...prevRule,
+            data:data
+        }))
+    }
+
+
+    const handleClickedEnter = (isClicked) => {
+        console.log(event.key)
+        setFilter(initalState)
+        if (event.key == "Enter") {
+        addFilterRule(newRule)
+
+            console.log("trigger is Enter ")
+         setIsClickedEnter(isClicked)
+
+        }
+    }
+
 
     if (courses.length <0 && pageCounter == 0) {
         
@@ -109,6 +184,8 @@ const CoursePage = () => {
         <Fragment>
             <Navbar />
             <PageTitle pageTitle={'Course'} pagesub={'Course'} />
+             <Search onData={handleDataFromChild} onChangeClick={handleClickedEnter} ></Search>
+
             <CourseSectionS3 courses={courses} component={"course"} />
             <div className="pagination-wrapper">
                         <ul className="pg-pagination">

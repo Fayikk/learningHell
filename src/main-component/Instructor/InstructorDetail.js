@@ -63,6 +63,9 @@ function InstructorDetail() {
   const handleCloseCourseModal = () => setOpenCourseModal(false);
 
 
+  console.log("trigger instructor course",courseModel)
+
+
 
 
   useEffect(() => {
@@ -97,6 +100,14 @@ function InstructorDetail() {
     formData.append("Image", image);
     formData.append("ImageUrl", courseModel.imageUrl);
     formData.append("CategoryId", courseModel.categoryId);
+
+    
+    console.log(formData.get("Image"))
+    console.log(formData.get("CourseName"))
+    console.log(formData.get("CourseLanguage"))
+    console.log(formData.get("CourseDescription"))
+    console.log(formData.get("IntroductionVideo"))
+
 
     await createCourseAsync(formData).then((response) => {
       if (response.data.isSuccess) {
