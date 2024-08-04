@@ -4,13 +4,14 @@ import BlogSidebar from '../BlogSidebar/BlogSidebar.js';
 import { useSelector } from 'react-redux';
 import { useState } from 'react';
 import { useIsCourseHaveStudentMutation } from '../../api/studentCourseApi.js';
+import { Button } from 'reactstrap';
 import  {calculateAverageRating}  from "../../Helpers/calculateAverageRating";
-import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 const ClickHandler = () => {
     window.scrollTo(10, 0);
 };
 
 const BlogList = (props) => {
+    const [pageCounter,setPageCounter] = useState(0);
 
     const [GetMyCourses] = useIsCourseHaveStudentMutation();
     const [myCourse, setMyCourse] = useState(); 
@@ -43,9 +44,9 @@ const BlogList = (props) => {
             
                 try {
                      await GetMyCourses(filter).then((response) => {
-                        console.log("get my courses",response.data.result.data[0].courses),
-                        setMyCourse(response.data.result.data[0].courses)
-
+                        console.log("get my courses",response),
+                        setMyCourse(response.data.result.data)
+                        setPageCounter(response.data.result.paginationCounter)
                     });
                 } catch (error) {
                     console.error("Error fetching courses:", error);
@@ -57,7 +58,13 @@ const BlogList = (props) => {
         getMyCourses();
     }, [filter]);
 
-
+    const handleClickChangePageNumber = (clickedPageNumber) => {
+  
+        setFilter((prevFilter) => ({
+            ...prevFilter,      
+            pageIndex: clickedPageNumber 
+        }));
+    };
 
     return (
         <section className="wpo-blog-pg-section section-padding">
@@ -118,6 +125,43 @@ const BlogList = (props) => {
                         </div> */}
                     </div>
                     <BlogSidebar blLeft={props.blLeft}/>
+                    <div className="pagination-wrapper">
+                        <ul className="pg-pagination">
+                            {
+                                filter.pageIndex != 1 ? (
+                                    <li>
+                                    <Button color='primary' aria-label="Previous" onClick={()=>handleClickChangePageNumber(filter.pageIndex-1)}>
+                                        <i className="fi ti-angle-left"></i>
+                                    </Button>
+                                   </li>
+
+                                ) : ("")
+                            }
+                          
+                            {
+                                [...Array(pageCounter)].map((_, index) => (
+                                    <li key={index} className={index === 0 ? "active" : ""}>
+                                        <li className="active"><Button color="primary" onClick={()=>handleClickChangePageNumber(index+1)} >{index + 1}</Button></li>
+                                    </li>
+                                ))
+                              
+                                //
+
+                             
+                            }
+                            {
+                                filter.pageIndex != pageCounter ? (
+                                    <li>
+                                    <Button color='primary' aria-label="Next" onClick={()=>handleClickChangePageNumber(filter.pageIndex+1)}>
+                                        <i className="fi ti-angle-right"></i>
+                                    </Button>
+                                </li>
+                                ) : ("")
+                            }
+
+                           
+                        </ul>
+                    </div>
                 </div>
             </div>
         </section>
