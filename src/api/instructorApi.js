@@ -14,9 +14,10 @@ export const instructorApi = createApi({
     }),
     tagTypes:["instructor"],
     endpoints:(builder) => ({
-        getAllInstructorCourses:builder.query({
-            query:()=>({
-                method:"GET"
+        getAllInstructorCourses:builder.mutation({
+            query:(filterModel)=>({
+                method:"POST",
+                body:filterModel
             }),
             providesTags:["instructor"]
         }),
@@ -33,4 +34,4 @@ export const instructorApi = createApi({
 })
 
 
-export const {useGetAllInstructorCoursesQuery,useGetCourseDetailQuery} = instructorApi
+export const {useGetAllInstructorCoursesMutation,useGetCourseDetailQuery} = instructorApi

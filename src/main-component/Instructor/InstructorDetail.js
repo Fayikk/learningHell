@@ -5,11 +5,12 @@ import Footer from '../../components/footer/Footer';
 import PageTitle from '../../components/pagetitle/PageTitle';
 import CourseSectionS3 from '../../components/CourseSectionS3/CourseSectionS3';
 import InstructorAuth from '../../Wrappers/HoC/InstructorAuth';
-import { useGetAllInstructorCoursesQuery } from '../../api/instructorApi';
+import { useGetAllInstructorCoursesMutation } from '../../api/instructorApi';
 import { useCreateCourseAsyncMutation, useRemoveCourseAsyncMutation } from '../../api/courseApi';
 import IsLoading from '../../components/Loading/IsLoading';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { Input } from 'reactstrap';
@@ -35,9 +36,10 @@ const style = {
 
 function InstructorDetail() {
   const dispatch = useDispatch();
-  const [courses, setCourses] = useState([]);
+    const [pageCounter,setPageCounter] = useState(0);
+    const [courses, setCourses] = useState([]);
   const [categories, setCategories] = useState([]);
-  const { data, isLoading: isCoursesLoading } = useGetAllInstructorCoursesQuery();
+  const [getAllStudentCourses] = useGetAllInstructorCoursesMutation();
   const [getAllCategories, { data: categoriesData, isLoading: isCategoriesLoading }] = useLazyGetAllCategoriesForSelectedQuery();
   const [createCourseAsync] = useCreateCourseAsyncMutation();
   const [removeCourseAsync] = useRemoveCourseAsyncMutation();
@@ -60,14 +62,37 @@ function InstructorDetail() {
   
   const handleOpenCourseModal = () => setOpenCourseModal(true);
   const handleCloseCourseModal = () => setOpenCourseModal(false);
-
-  console.log("trigger instructor course", courseModel)
-
+  const [filter,setFilter] = useState({
+    isSearch:true,
+    pageIndex:1,
+    pageSize:6,
+    sortColumn:"CourseName",
+    sortOrder:"desc",
+    filters:{
+        groupOp:"AND",
+        rules:[
+            {
+                field:"UserId",
+                op:1,
+                data:""
+            }
+        ]
+    }        
+})
   useEffect(() => {
-    if (data) {
-      setCourses(data.result);
+    async function fetchData() {
+      // You can await here
+      await getAllStudentCourses(filter).then((response) => {
+          console.log("trigger get all student Courses",response)
+          setCourses(response.data.result != [] ? response.data.result.data : [])
+          // setCurrentPage(response.data.result.data)
+          setPageCounter(response.data.result.paginationCounter)
+      })
+      // ...
     }
-  }, [data]);
+    fetchData();
+
+  }, [filter]);
 
   useEffect(() => {
     if (categoriesData) {
@@ -81,10 +106,16 @@ function InstructorDetail() {
     getAllCategories();
   }, []);
 
-  if (isCoursesLoading || isCategoriesLoading) {
-    return <IsLoading />;
-  }
-
+  // if (isCoursesLoading || isCategoriesLoading) {
+  //   return <IsLoading />;
+  // }
+  const handleClickChangePageNumber = (clickedPageNumber) => {
+  
+    setFilter((prevFilter) => ({
+        ...prevFilter,      
+        pageIndex: clickedPageNumber 
+    }));
+};
 
   const createCourse = async () => {
 
@@ -277,11 +308,48 @@ function InstructorDetail() {
 
               </Container>
             </Typography>
-          </Box>
+          </Box>  
           
         </Modal>
       </div>
       <CourseSectionS3 courses={courses} component={"instructor"} />
+      <div className="pagination-wrapper">
+                        <ul className="pg-pagination">
+                            {
+                                filter.pageIndex != 1 ? (
+                                    <li>
+                                    <Button color='secondary' aria-label="Previous" onClick={()=>handleClickChangePageNumber(filter.pageIndex-1)}>
+                                        <i className="fi ti-angle-left"></i>
+                                    </Button>
+                                   </li>
+
+                                ) : ("")
+                            }
+                          
+                            {
+                                [...Array(pageCounter)].map((_, index) => (
+                                    <li key={index} className={index === 0 ? "active" : ""}>
+                                        <li className="active"><Button color="secondary" onClick={()=>handleClickChangePageNumber(index+1)} >{index + 1}</Button></li>
+                                    </li>
+                                ))
+                              
+                                //
+
+                             
+                            }
+                            {
+                                filter.pageIndex != pageCounter ? (
+                                    <li>
+                                    <Button color='secondary' aria-label="Next" onClick={()=>handleClickChangePageNumber(filter.pageIndex+1)}>
+                                        <i className="fi ti-angle-right"></i>
+                                    </Button>
+                                </li>
+                                ) : ("")
+                            }
+
+                           
+                        </ul>
+                    </div>
       <Footer />
       <Scrollbar />
     </Fragment>

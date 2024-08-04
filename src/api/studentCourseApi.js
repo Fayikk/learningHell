@@ -33,8 +33,14 @@ export const studentCourseApi = createApi({
                     body:model
                 }
             }
-        })
+        }),
+        getStudentCoursesBySearch:builder.mutation({
+            query:(value)=>({
+                method:"POST",
+                url:`${value}`
+            })
+            })
     })
 })
 
-export const {useIsCourseHaveStudentMutation,useThisCourseEnrolledUserMutation} = studentCourseApi
+export const {useIsCourseHaveStudentMutation,useThisCourseEnrolledUserMutation,useGetStudentCoursesBySearchMutation} = studentCourseApi
