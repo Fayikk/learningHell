@@ -184,7 +184,12 @@ const CoursePage = () => {
         <Fragment>
             <Navbar />
             <PageTitle pageTitle={'Course'} pagesub={'Course'} />
+            {
+                courses.length>0 ? (
              <Search onData={handleDataFromChild} onChangeClick={handleClickedEnter} ></Search>
+
+                ) : ("")
+            }
 
             <CourseSectionS3 courses={courses} component={"course"} />
             <div className="pagination-wrapper">
