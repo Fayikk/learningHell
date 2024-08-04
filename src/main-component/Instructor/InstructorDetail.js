@@ -5,12 +5,12 @@ import Footer from '../../components/footer/Footer';
 import PageTitle from '../../components/pagetitle/PageTitle';
 import CourseSectionS3 from '../../components/CourseSectionS3/CourseSectionS3';
 import InstructorAuth from '../../Wrappers/HoC/InstructorAuth';
-import { useGetAllInstructorCoursesQuery } from '../../api/instructorApi';
+import { useGetAllInstructorCoursesMutation } from '../../api/instructorApi';
 import { useCreateCourseAsyncMutation, useRemoveCourseAsyncMutation } from '../../api/courseApi';
 import IsLoading from '../../components/Loading/IsLoading';
-import { Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { Input } from 'reactstrap';
@@ -21,7 +21,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { useLazyGetAllCategoriesForSelectedQuery } from '../../api/categoryApi';
-
+import Spinner from 'react-bootstrap/Spinner';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -36,9 +36,10 @@ const style = {
 
 function InstructorDetail() {
   const dispatch = useDispatch();
-  const [courses, setCourses] = useState([]);
+    const [pageCounter,setPageCounter] = useState(0);
+    const [courses, setCourses] = useState([]);
   const [categories, setCategories] = useState([]);
-  const { data, isLoading: isCoursesLoading } = useGetAllInstructorCoursesQuery();
+  const [getAllStudentCourses] = useGetAllInstructorCoursesMutation();
   const [getAllCategories, { data: categoriesData, isLoading: isCategoriesLoading }] = useLazyGetAllCategoriesForSelectedQuery();
   const [createCourseAsync] = useCreateCourseAsyncMutation();
   const [removeCourseAsync] = useRemoveCourseAsyncMutation();
@@ -55,21 +56,43 @@ function InstructorDetail() {
   const [image, setImage] = useState(null);
   const [open, setOpen] = useState(false);
   const [openCourseModal, setOpenCourseModal] = useState(false);
-  
+  const [isActiveButton,setIsActiveButton] = useState(true);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   
   const handleOpenCourseModal = () => setOpenCourseModal(true);
   const handleCloseCourseModal = () => setOpenCourseModal(false);
-
-
-
-
+  const [filter,setFilter] = useState({
+    isSearch:true,
+    pageIndex:1,
+    pageSize:6,
+    sortColumn:"CourseName",
+    sortOrder:"desc",
+    filters:{
+        groupOp:"AND",
+        rules:[
+            {
+                field:"UserId",
+                op:1,
+                data:""
+            }
+        ]
+    }        
+})
   useEffect(() => {
-    if (data) {
-      setCourses(data.result);
+    async function fetchData() {
+      // You can await here
+      await getAllStudentCourses(filter).then((response) => {
+          console.log("trigger get all student Courses",response)
+          setCourses(response.data.result != [] ? response.data.result.data : [])
+          // setCurrentPage(response.data.result.data)
+          setPageCounter(response.data.result.paginationCounter)
+      })
+      // ...
     }
-  }, [data]);
+    fetchData();
+
+  }, [filter]);
 
   useEffect(() => {
     if (categoriesData) {
@@ -77,9 +100,22 @@ function InstructorDetail() {
     }
   }, [categoriesData]);
 
-  if (isCoursesLoading || isCategoriesLoading) {
-    return <IsLoading />;
-  }
+  useEffect(() => {
+    console.log("trigger use effect")
+    alert("Please be carefull! while You are added  introduction video for create new course,video duration must is not duration 10 seconds than high")
+    getAllCategories();
+  }, []);
+
+  // if (isCoursesLoading || isCategoriesLoading) {
+  //   return <IsLoading />;
+  // }
+  const handleClickChangePageNumber = (clickedPageNumber) => {
+  
+    setFilter((prevFilter) => ({
+        ...prevFilter,      
+        pageIndex: clickedPageNumber 
+    }));
+};
 
   const createCourse = async () => {
 
@@ -87,7 +123,7 @@ function InstructorDetail() {
       alert("Please check your image dimension.Image dimension so high. Max dimension is 1170x867")
       return;
     }
-
+    setIsActiveButton(false)
     const formData = new FormData();
     formData.append("CourseName", courseModel.courseName);
     formData.append("CoursePrice", courseModel.coursePrice);
@@ -98,16 +134,28 @@ function InstructorDetail() {
     formData.append("ImageUrl", courseModel.imageUrl);
     formData.append("CategoryId", courseModel.categoryId);
 
+    console.log(formData.get("Image"))
+    console.log(formData.get("CourseName"))
+    console.log(formData.get("CourseLanguage"))
+    console.log(formData.get("CourseDescription"))
+    console.log(formData.get("IntroductionVideo"))
+
     await createCourseAsync(formData).then((response) => {
       if (response.data.isSuccess) {
+      setIsActiveButton(true)
+        
         handleClose();
         dispatch(instructorApi.util.invalidateTags(["instructor"]));
         toast.success(response.data.messages[0]);
       } else {
-        toast.error("Course creation failed");
+      setIsActiveButton(true)
+
+        toast.error(response.data.errorMessages[0]);
       }
     });
   };
+
+
 
   const handleRemoveCourse = async (courseId) => {
     const answer = window.confirm("Are you sure you want to delete this course?");
@@ -122,9 +170,6 @@ function InstructorDetail() {
     }
   };
 
-  const selectedCategory = async () => {
-    await getAllCategories();
-  };
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -202,7 +247,6 @@ function InstructorDetail() {
                   <Input
                     type='file'
                     placeholder='Image'
-                    // onChange={(e) => setImage(e.target.files[0])}
                     onChange={handleImageChange}
                   />
                 </div>
@@ -215,7 +259,6 @@ function InstructorDetail() {
                 </div>
                 <div className='row'>
                   <select
-                    onClick={selectedCategory}
                     onChange={(e) => setCourseModel({ ...courseModel, categoryId: e.target.value })}
                     placeholder='Choose category'
                     title='categories'
@@ -231,8 +274,15 @@ function InstructorDetail() {
               </div>
             </Typography>
             <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-              <Button onClick={createCourse}>Save Course</Button>
+              <Button disabled={!isActiveButton}  onClick={createCourse}>Save Course</Button>
             </Typography>
+            {
+              !isActiveButton ? (
+          <Spinner animation="border" />
+
+              ) : ""
+            }
+
           </Box>
         </Modal>
 
@@ -249,18 +299,57 @@ function InstructorDetail() {
                   {courses.map((course, key) => (
                     <Col style={{ marginTop: "6px" }} key={course.courseId}>
                       {course.courseName} - 
-                      <button className='btn btn-danger' onClick={() => handleRemoveCourse(course.courseId)}>
+                      <button  className='btn btn-danger' onClick={() => handleRemoveCourse(course.courseId)}>
                         Remove This Course
                       </button>
                     </Col>
                   ))}
                 </Row>
+
               </Container>
             </Typography>
-          </Box>
+          </Box>  
+          
         </Modal>
       </div>
       <CourseSectionS3 courses={courses} component={"instructor"} />
+      <div className="pagination-wrapper">
+                        <ul className="pg-pagination">
+                            {
+                                filter.pageIndex != 1 ? (
+                                    <li>
+                                    <Button color='secondary' aria-label="Previous" onClick={()=>handleClickChangePageNumber(filter.pageIndex-1)}>
+                                        <i className="fi ti-angle-left"></i>
+                                    </Button>
+                                   </li>
+
+                                ) : ("")
+                            }
+                          
+                            {
+                                [...Array(pageCounter)].map((_, index) => (
+                                    <li key={index} className={index === 0 ? "active" : ""}>
+                                        <li className="active"><Button color="secondary" onClick={()=>handleClickChangePageNumber(index+1)} >{index + 1}</Button></li>
+                                    </li>
+                                ))
+                              
+                                //
+
+                             
+                            }
+                            {
+                                filter.pageIndex != pageCounter ? (
+                                    <li>
+                                    <Button color='secondary' aria-label="Next" onClick={()=>handleClickChangePageNumber(filter.pageIndex+1)}>
+                                        <i className="fi ti-angle-right"></i>
+                                    </Button>
+                                </li>
+                                ) : ("")
+                            }
+
+                           
+                        </ul>
+                    </div>
       <Footer />
       <Scrollbar />
     </Fragment>

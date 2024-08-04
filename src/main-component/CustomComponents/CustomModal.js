@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import Spinner from 'react-bootstrap/Spinner';
 
 function CustomModal({ props,changeVideoObject,type, onData }) {
     const [closeModal, setCloseModal] = useState(props);
     const [file, setFile] = useState();
     const [title, setTitle] = useState(changeVideoObject.videoName || "");
     const [rowNumber, setRowNumber] = useState(changeVideoObject.rowNumber || "");
-
+    const [isActiveButton,setIsActiveButton] = useState(true);
     const [message,setMessage] = useState("");
     const sendDataToParent = () => {
         onData({file,title,rowNumber});
     };
+
+
 
 
     useEffect(()=>{
@@ -63,6 +66,7 @@ function CustomModal({ props,changeVideoObject,type, onData }) {
                     <Button variant="secondary" onClick={() => setCloseModal(false)}>Close</Button>
                     <Button variant="primary" onClick={sendDataToParent}>Save changes</Button>
                 </Modal.Footer>
+
             </Modal.Dialog>
         </div>
     );

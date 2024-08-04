@@ -74,6 +74,7 @@ function InstructorsCourseDetail() {
   const [selectedVideoId, setSelectedVideoId] = useState(null);
   const [handleClickedUpdateRows,setHandleClickedUpdateRows] = useState(false);
   const [rowNumber,setRowNumber] = useState();
+  const [isContinueProocess,setIsContinueProcess] = useState(false);
   const [videoDetail, setVideoDetail] = useState({
     publicVideoId: "",
     sectionId: ""
@@ -164,8 +165,8 @@ function InstructorsCourseDetail() {
   };
 
   const handleFromChildData = async (event) => {
-    setLoading(true);
-
+    isShowModal(false)
+    setIsContinueProcess(true);
     const formData = new FormData();
     const typeFile = event.file.target.files[0].type.split("/");
     if ((title == "ChangeVideo" || title == "NewVideo") && typeFile[1] !== 'mp4') {
@@ -190,14 +191,20 @@ function InstructorsCourseDetail() {
 
     if (title == "ChangeVideo") {
       await changeVideoAsync({ fileName, formData }).then((response) => {
+        setLoading(true);
+
         if (response.data.isSuccess) {
             toast.success("Change Video Succeded");
           dispatch(instructorApi.util.invalidateTags(["instructor"]));
           setLoading(false)
+          isShowModal(false);
+    setIsContinueProcess(false);
         
         }
         else {
             setLoading(false)
+    setIsContinueProcess(false);
+            
         }
       });
     } else if (title == "NewMaterial") {
@@ -206,6 +213,8 @@ function InstructorsCourseDetail() {
           toast.success(response.data.messages[0]);
           dispatch(instructorApi.util.invalidateTags(["instructor"]));
           isShowModal(false);
+    setIsContinueProcess(false);
+
         }
       });
     } else {
@@ -215,9 +224,13 @@ function InstructorsCourseDetail() {
           isShowModal(false);
           toast.success(response.data.messages[0]);
           setLoading(false);
+    setIsContinueProcess(false);
+
         }
         else {
             setLoading(false)
+    setIsContinueProcess(false);
+
         }
       });
     }
@@ -347,12 +360,15 @@ function InstructorsCourseDetail() {
         if (response.data.isSuccess) {
           toast.success("Video Updated Successfully")
           dispatch(instructorApi.util.invalidateTags(["instructor"]));
-
+          setHandleClickedUpdateRows(false)
         }
     })
 
 
   }
+
+
+
 
   const renderButton = () => {
    
@@ -398,16 +414,24 @@ function InstructorsCourseDetail() {
    
   }
 
+if (isContinueProocess) {
+  return (
+    isContinueProocess ? (
+      <div>
+         <IsLoading text={"Please waiting your while processing"} ></IsLoading>
+      </div>
+    ) : ""
+  
+  )
+}
+
+else {
+
 
 
   return (
     <div>
-      {loading == true ? (
-        <div>
-          <Spinner></Spinner>
-          <h1>Please Waiting While Uploading File</h1>
-        </div>
-      ) : ""}
+      {}
       
       <Fragment>
         <Navbar onAuthData={handleAuthForRoles} />
@@ -545,6 +569,12 @@ function InstructorsCourseDetail() {
       </Fragment>
     </div>
   );
+}
+
+  
+  
+  
+
 }
 
 export default InstructorAuth(InstructorsCourseDetail);

@@ -9,9 +9,6 @@ export const courseApi = createApi({
         baseUrl:baseUrl+"Course",
         credentials:'include',
         mode:"cors",
-        headers:{
-            'Content-Type': 'application/json'
-          },
         prepareHeaders:(headers,{getState}) => {
             const state = getState();
             const country = state.locationStore; 
@@ -97,6 +94,13 @@ export const courseApi = createApi({
                 method:"GET",
                 url:"MostPopularCourses",
             })
+        }),
+        // https://localhost:7042/api/Course/dene
+        getCoursesBySearch:builder.mutation({
+            query:(value)=>({
+                method:"POST",
+                url:`${value}`
+            })
         })
        
 
@@ -113,5 +117,6 @@ export const {useGetCourseDetailByIdQuery,
             useRemoveCourseAsyncMutation,
             useEvaluateUpdateCourseMutation,
             useGetEvaluateCoursesQuery,
-            useGetMostPopularCoursesQuery
+            useGetMostPopularCoursesQuery,
+            useGetCoursesBySearchMutation
             } = courseApi

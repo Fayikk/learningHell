@@ -4,36 +4,67 @@ import BlogSidebar from '../BlogSidebar/BlogSidebar.js';
 import { useSelector } from 'react-redux';
 import { useState } from 'react';
 import { useIsCourseHaveStudentMutation } from '../../api/studentCourseApi.js';
+import { Button } from 'reactstrap';
 import  {calculateAverageRating}  from "../../Helpers/calculateAverageRating";
-
 const ClickHandler = () => {
     window.scrollTo(10, 0);
 };
 
 const BlogList = (props) => {
+    const [pageCounter,setPageCounter] = useState(0);
 
-    const authenticationState = useSelector((state) => state.authStore);
     const [GetMyCourses] = useIsCourseHaveStudentMutation();
     const [myCourse, setMyCourse] = useState(); 
+    console.log("trigger blog list",props.nameIdentifier.nameIdentifier)
+    const [filter,setFilter] = useState({
+        isSearch:true,
+        pageIndex:1,
+        pageSize:6,
+        sortColumn:"CreatedDate",
+        sortOrder:"desc",
+        filters:{
+            groupOp:"AND",
+            rules:[
+                {
+                    field:"UserId",
+                    op:1,
+                    data:""
+                }
+            ]
+        }        
+    })
+
+
+
+
+    
 
     useEffect(() => {
         const getMyCourses = async () => {
-            if (authenticationState.nameIdentifier) {
+            
                 try {
-                    const response = await GetMyCourses(authenticationState.nameIdentifier);
-                    setMyCourse(response.data.result);
+                     await GetMyCourses(filter).then((response) => {
+                        console.log("get my courses",response),
+                        setMyCourse(response.data.result.data)
+                        setPageCounter(response.data.result.paginationCounter)
+                    });
                 } catch (error) {
                     console.error("Error fetching courses:", error);
                 }
-            }
+            
+                
         };
     
         getMyCourses();
-    }, [authenticationState]);
+    }, [filter]);
 
-
-
-
+    const handleClickChangePageNumber = (clickedPageNumber) => {
+  
+        setFilter((prevFilter) => ({
+            ...prevFilter,      
+            pageIndex: clickedPageNumber 
+        }));
+    };
 
     return (
         <section className="wpo-blog-pg-section section-padding">
@@ -41,7 +72,7 @@ const BlogList = (props) => {
                 <div className="container">
                     <div className="wpo-popular-wrap">
                         <div className="row" style={{ display: 'flex', flexWrap: 'wrap' }}>
-                            {myCourse && myCourse.courses.map((course, key) => (
+                            {myCourse && myCourse.map((course, key) => (
                                 <Link onClick={ClickHandler} to={`/course-single/${course.courseId}`} key={key} style={{ flex: '0 0 33.333333%', maxWidth: '33.333333%' }}>
                                     <div className="wpo-popular-single">
                                         <div className="wpo-popular-item">
@@ -94,6 +125,43 @@ const BlogList = (props) => {
                         </div> */}
                     </div>
                     <BlogSidebar blLeft={props.blLeft}/>
+                    <div className="pagination-wrapper">
+                        <ul className="pg-pagination">
+                            {
+                                filter.pageIndex != 1 ? (
+                                    <li>
+                                    <Button color='primary' aria-label="Previous" onClick={()=>handleClickChangePageNumber(filter.pageIndex-1)}>
+                                        <i className="fi ti-angle-left"></i>
+                                    </Button>
+                                   </li>
+
+                                ) : ("")
+                            }
+                          
+                            {
+                                [...Array(pageCounter)].map((_, index) => (
+                                    <li key={index} className={index === 0 ? "active" : ""}>
+                                        <li className="active"><Button color="primary" onClick={()=>handleClickChangePageNumber(index+1)} >{index + 1}</Button></li>
+                                    </li>
+                                ))
+                              
+                                //
+
+                             
+                            }
+                            {
+                                filter.pageIndex != pageCounter ? (
+                                    <li>
+                                    <Button color='primary' aria-label="Next" onClick={()=>handleClickChangePageNumber(filter.pageIndex+1)}>
+                                        <i className="fi ti-angle-right"></i>
+                                    </Button>
+                                </li>
+                                ) : ("")
+                            }
+
+                           
+                        </ul>
+                    </div>
                 </div>
             </div>
         </section>
