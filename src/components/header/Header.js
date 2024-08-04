@@ -93,7 +93,8 @@ const Header = ({ props, onAuthStateChange }) => {
   }, [authenticationState]);
 
   useEffect(() => {
-    changeLanguage("en");
+    var currentLanguage = localStorage.getItem("language")
+    changeLanguage(currentLanguage);
   }, []);
 
   const SubmitHandler = (e) => {
@@ -101,6 +102,7 @@ const Header = ({ props, onAuthStateChange }) => {
   };
 
   const changeLanguage = (lng) => {
+    localStorage.setItem("language",lng)
     startTransition(() => {
       i18n.changeLanguage(lng);
     });
@@ -186,27 +188,33 @@ const Header = ({ props, onAuthStateChange }) => {
                         {t("Pair Working Rooms")}
                       </Link>
                     </li>
-                    <li className="menu-item-has-children">
-                      <Link onClick={ClickHandler} to="/become-teacher">
-                        {t("Become Teacher")}
-                      </Link>
-                      {/* <ul className="sub-menu">
-                                                <li><Link onClick={ClickHandler} to="/blog">Blog right sidebar</Link></li>
-                                                <li><Link onClick={ClickHandler} to="/blog-left-sidebar">Blog left sidebar</Link></li> */}
-                      {/* <li><Link onClick={ClickHandler} to="/blog-fullwidth">Blog fullwidth</Link></li> */}
-                      {/* <li className="menu-item-has-children">
-                                                    <Link onClick={ClickHandler} to="/">Blog details</Link>
-                                                    <ul className="sub-menu">
-                                                        <li><Link onClick={ClickHandler} to="/blog-single/Become-a-great-WordPress-&-PHP-developer.">Blog details right sidebar</Link>
-                                                        </li>
-                                                        <li><Link onClick={ClickHandler} to="/blog-single-left-sidebar/Become-a-great-WordPress-&-PHP-developer.">Blog details left
-                                                            sidebar</Link></li>
-                                                        <li><Link onClick={ClickHandler} to="/blog-single-fullwidth/Become-a-great-WordPress-&-PHP-developer.">Blog details
-                                                            fullwidth</Link></li>
-                                                    </ul>
-                                                </li> */}
-                      {/* </ul> */}
-                    </li>
+{
+  authenticationState.role &&
+  authenticationState.role.includes("Instructor") ? ("") : (   <li className="menu-item-has-children">
+    <Link onClick={ClickHandler} to="/become-teacher">
+      {t("Become Teacher")}
+    </Link>
+    {/* <ul className="sub-menu">
+                              <li><Link onClick={ClickHandler} to="/blog">Blog right sidebar</Link></li>
+                              <li><Link onClick={ClickHandler} to="/blog-left-sidebar">Blog left sidebar</Link></li> */}
+    {/* <li><Link onClick={ClickHandler} to="/blog-fullwidth">Blog fullwidth</Link></li> */}
+    {/* <li className="menu-item-has-children">
+                                  <Link onClick={ClickHandler} to="/">Blog details</Link>
+                                  <ul className="sub-menu">
+                                      <li><Link onClick={ClickHandler} to="/blog-single/Become-a-great-WordPress-&-PHP-developer.">Blog details right sidebar</Link>
+                                      </li>
+                                      <li><Link onClick={ClickHandler} to="/blog-single-left-sidebar/Become-a-great-WordPress-&-PHP-developer.">Blog details left
+                                          sidebar</Link></li>
+                                      <li><Link onClick={ClickHandler} to="/blog-single-fullwidth/Become-a-great-WordPress-&-PHP-developer.">Blog details
+                                          fullwidth</Link></li>
+                                  </ul>
+                              </li> */}
+    {/* </ul> */}
+  </li>)
+}
+
+
+
                     {/* <li><Link onClick={ClickHandler} to="/contact">Contact</Link></li> */}
                     <li className="menu-item-has-children">
                       <Link onClick={ClickHandler} to="/cart">
@@ -326,7 +334,7 @@ const Header = ({ props, onAuthStateChange }) => {
                               <Dropdown.Item
                                 as={Link}
                                 to="/MyAccount"
-                                onClick={logout}
+                               
                               >
                                 {t("My Account")}
                               </Dropdown.Item>

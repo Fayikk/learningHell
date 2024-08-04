@@ -76,11 +76,6 @@ const Footer = (props) => {
                     </Link>
                   </li>
                   <li>
-                    <Link onClick={ClickHandler} to="/course">
-                      {t("Featured Courses")}
-                    </Link>
-                  </li>
-                  <li>
                     <Link onClick={ClickHandler} to="/teacher">
                       {t("Teachers")}
                     </Link>
@@ -104,16 +99,11 @@ const Footer = (props) => {
                       {t("Contact Us")}
                     </Link>
                   </li>
-                  <li>
-                    <Link onClick={ClickHandler} to="/course">
-                      {t("Courses")}
-                    </Link>
-                  </li>
-                  <li>
+                  {/* <li>
                     <Link onClick={ClickHandler} to="/register">
                       {t("Sign Up")}
                     </Link>
-                  </li>
+                  </li> */}
                 </ul>
               </div>
             </div>
@@ -174,11 +164,11 @@ const Footer = (props) => {
                       {t("About Us")}
                     </Link>
                   </li>
-                  <li>
+                  {/* <li>
                     <Link onClick={ClickHandler} to="/faq">
                       {t("FAQ")}
                     </Link>
-                  </li>
+                  </li> */}
                 </ul>
               </div>
             </div>

@@ -7,13 +7,22 @@ import { baseUrl } from "./Base/baseApiModel"
 export const studentCourseApi = createApi({
     reducerPath:"studentCourseApi",
     baseQuery:fetchBaseQuery({
-        baseUrl:baseUrl+"StudentsCourse"
+        baseUrl:baseUrl+"StudentsCourse",
+        prepareHeaders:(headers,{getState}) => {
+            const state = getState();
+            const country = state.locationStore; 
+
+            const token = localStorage.getItem("token");
+            token && headers.append("Authorization","Bearer "+token)
+          
+            return headers;
+        }
     }),
     endpoints:(builder) => ({
         isCourseHaveStudent:builder.mutation({
-            query:(studentId) => ({
-                url:`?userId=${studentId}`,
-                method:"POST"
+            query:(studentModel) => ({
+                method:"POST",
+                body:studentModel
             })
         }),
         thisCourseEnrolledUser:builder.mutation({

@@ -21,7 +21,9 @@ const Newslatter2 = (props) => {
 
         await sendEmail(model).then((response) => {
             if (response.data.isSuccess) {
+                console.log("trigger data")
                 toast.success(response.data.messages[0])
+                setEmail("")
                 
             }
             else {
@@ -42,7 +44,7 @@ const Newslatter2 = (props) => {
                     <div className="subscribe-form">
                         <form onSubmit={SubmitHandler}>
                             <div className="input-field">
-                                <input type="email" placeholder={t("Enter your email")} onChange={(e)=>setEmail(e.target.value)} required />
+                                <input type="email" value={email} placeholder={t("Enter your email")} onChange={(e)=>setEmail(e.target.value)} required />
                                 <button type="submit" onClick={handleSendClick} > {t("Subscribe")}</button>
                             </div>
                         </form>

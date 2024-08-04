@@ -8,7 +8,6 @@ import InstructorAuth from '../../Wrappers/HoC/InstructorAuth';
 import { useGetAllInstructorCoursesQuery } from '../../api/instructorApi';
 import { useCreateCourseAsyncMutation, useRemoveCourseAsyncMutation } from '../../api/courseApi';
 import IsLoading from '../../components/Loading/IsLoading';
-import { Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -21,7 +20,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { useLazyGetAllCategoriesForSelectedQuery } from '../../api/categoryApi';
-
+import Spinner from 'react-bootstrap/Spinner';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -55,18 +54,14 @@ function InstructorDetail() {
   const [image, setImage] = useState(null);
   const [open, setOpen] = useState(false);
   const [openCourseModal, setOpenCourseModal] = useState(false);
-  
+  const [isActiveButton,setIsActiveButton] = useState(true);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   
   const handleOpenCourseModal = () => setOpenCourseModal(true);
   const handleCloseCourseModal = () => setOpenCourseModal(false);
 
-
-  console.log("trigger instructor course",courseModel)
-
-
-
+  console.log("trigger instructor course", courseModel)
 
   useEffect(() => {
     if (data) {
@@ -80,9 +75,16 @@ function InstructorDetail() {
     }
   }, [categoriesData]);
 
+  useEffect(() => {
+    console.log("trigger use effect")
+    alert("Please be carefull! while You are added  introduction video for create new course,video duration must is not duration 10 seconds than high")
+    getAllCategories();
+  }, []);
+
   if (isCoursesLoading || isCategoriesLoading) {
     return <IsLoading />;
   }
+
 
   const createCourse = async () => {
 
@@ -90,7 +92,7 @@ function InstructorDetail() {
       alert("Please check your image dimension.Image dimension so high. Max dimension is 1170x867")
       return;
     }
-
+    setIsActiveButton(false)
     const formData = new FormData();
     formData.append("CourseName", courseModel.courseName);
     formData.append("CoursePrice", courseModel.coursePrice);
@@ -101,24 +103,28 @@ function InstructorDetail() {
     formData.append("ImageUrl", courseModel.imageUrl);
     formData.append("CategoryId", courseModel.categoryId);
 
-    
     console.log(formData.get("Image"))
     console.log(formData.get("CourseName"))
     console.log(formData.get("CourseLanguage"))
     console.log(formData.get("CourseDescription"))
     console.log(formData.get("IntroductionVideo"))
 
-
     await createCourseAsync(formData).then((response) => {
       if (response.data.isSuccess) {
+      setIsActiveButton(true)
+        
         handleClose();
         dispatch(instructorApi.util.invalidateTags(["instructor"]));
         toast.success(response.data.messages[0]);
       } else {
-        toast.error("Course creation failed");
+      setIsActiveButton(true)
+
+        toast.error(response.data.errorMessages[0]);
       }
     });
   };
+
+
 
   const handleRemoveCourse = async (courseId) => {
     const answer = window.confirm("Are you sure you want to delete this course?");
@@ -133,9 +139,6 @@ function InstructorDetail() {
     }
   };
 
-  const selectedCategory = async () => {
-    await getAllCategories();
-  };
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -213,7 +216,6 @@ function InstructorDetail() {
                   <Input
                     type='file'
                     placeholder='Image'
-                    // onChange={(e) => setImage(e.target.files[0])}
                     onChange={handleImageChange}
                   />
                 </div>
@@ -226,7 +228,6 @@ function InstructorDetail() {
                 </div>
                 <div className='row'>
                   <select
-                    onClick={selectedCategory}
                     onChange={(e) => setCourseModel({ ...courseModel, categoryId: e.target.value })}
                     placeholder='Choose category'
                     title='categories'
@@ -242,8 +243,15 @@ function InstructorDetail() {
               </div>
             </Typography>
             <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-              <Button onClick={createCourse}>Save Course</Button>
+              <Button disabled={!isActiveButton}  onClick={createCourse}>Save Course</Button>
             </Typography>
+            {
+              !isActiveButton ? (
+          <Spinner animation="border" />
+
+              ) : ""
+            }
+
           </Box>
         </Modal>
 
@@ -260,15 +268,17 @@ function InstructorDetail() {
                   {courses.map((course, key) => (
                     <Col style={{ marginTop: "6px" }} key={course.courseId}>
                       {course.courseName} - 
-                      <button className='btn btn-danger' onClick={() => handleRemoveCourse(course.courseId)}>
+                      <button  className='btn btn-danger' onClick={() => handleRemoveCourse(course.courseId)}>
                         Remove This Course
                       </button>
                     </Col>
                   ))}
                 </Row>
+
               </Container>
             </Typography>
           </Box>
+          
         </Modal>
       </div>
       <CourseSectionS3 courses={courses} component={"instructor"} />

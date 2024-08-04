@@ -5,33 +5,57 @@ import { useSelector } from 'react-redux';
 import { useState } from 'react';
 import { useIsCourseHaveStudentMutation } from '../../api/studentCourseApi.js';
 import  {calculateAverageRating}  from "../../Helpers/calculateAverageRating";
-
+import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 const ClickHandler = () => {
     window.scrollTo(10, 0);
 };
 
 const BlogList = (props) => {
 
-    const authenticationState = useSelector((state) => state.authStore);
     const [GetMyCourses] = useIsCourseHaveStudentMutation();
     const [myCourse, setMyCourse] = useState(); 
+    console.log("trigger blog list",props.nameIdentifier.nameIdentifier)
+    const [filter,setFilter] = useState({
+        isSearch:true,
+        pageIndex:1,
+        pageSize:6,
+        sortColumn:"CreatedDate",
+        sortOrder:"desc",
+        filters:{
+            groupOp:"AND",
+            rules:[
+                {
+                    field:"UserId",
+                    op:1,
+                    data:""
+                }
+            ]
+        }        
+    })
+
+
+
+
+    
 
     useEffect(() => {
         const getMyCourses = async () => {
-            if (authenticationState.nameIdentifier) {
+            
                 try {
-                    const response = await GetMyCourses(authenticationState.nameIdentifier);
-                    setMyCourse(response.data.result);
+                     await GetMyCourses(filter).then((response) => {
+                        console.log("get my courses",response.data.result.data[0].courses),
+                        setMyCourse(response.data.result.data[0].courses)
+
+                    });
                 } catch (error) {
                     console.error("Error fetching courses:", error);
                 }
-            }
+            
+                
         };
     
         getMyCourses();
-    }, [authenticationState]);
-
-
+    }, [filter]);
 
 
 
@@ -41,7 +65,7 @@ const BlogList = (props) => {
                 <div className="container">
                     <div className="wpo-popular-wrap">
                         <div className="row" style={{ display: 'flex', flexWrap: 'wrap' }}>
-                            {myCourse && myCourse.courses.map((course, key) => (
+                            {myCourse && myCourse.map((course, key) => (
                                 <Link onClick={ClickHandler} to={`/course-single/${course.courseId}`} key={key} style={{ flex: '0 0 33.333333%', maxWidth: '33.333333%' }}>
                                     <div className="wpo-popular-single">
                                         <div className="wpo-popular-item">
