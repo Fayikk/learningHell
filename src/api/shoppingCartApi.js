@@ -17,8 +17,8 @@ export const shoppingCartApi = createApi({
     tagTypes:["shoppingCart"],
     endpoints:(builder) => ({
         getShoppingCart:builder.query({
-            query:(userId) => ({
-                url:`GetShoppingCart?userId=${userId}`,
+            query:() => ({
+                url:`GetShoppingCart`,
                 method:"GET"
             }),
             providesTags:["shoppingCart"]
