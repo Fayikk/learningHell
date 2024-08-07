@@ -17,9 +17,7 @@ import { cartStateUpdate } from "../../store/reducers/cartSlice";
 import { MatchLocationToCurrency } from "../Extensions/MatchLocationToCurrency";
 import { useTranslation } from "react-i18next";
 const CartPage = (props) => {
-  const { data, isLoading } = useGetShoppingCartQuery(
-    useSelector((state) => state.authStore.nameIdentifier)
-  );
+  const { data, isLoading } = useGetShoppingCartQuery();
   const [removeCartItem] = useRemoveShoppingCartItemMutation();
   const [courses, setCourses] = useState([]);
   const Dispatch = useDispatch();
