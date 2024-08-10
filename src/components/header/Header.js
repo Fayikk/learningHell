@@ -40,7 +40,6 @@ const Header = ({ props, onAuthStateChange }) => {
  
   useEffect(()=>{
     if (data && data.result) {
-      console.log("data.result.courses.length",data.result.courses.length)
       Dispatch(cartStateUpdate(data.result.courses.length))
       
     }
@@ -85,7 +84,6 @@ const Header = ({ props, onAuthStateChange }) => {
 
   useEffect(() => {
     if (country) {
-      console.log(country);
       Cookies.set("LocationData", country, { sameSite: "None", secure: true });
       Dispatch(setLocationCountry(country));
     }

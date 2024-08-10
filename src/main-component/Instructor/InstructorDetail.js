@@ -6,7 +6,7 @@ import PageTitle from '../../components/pagetitle/PageTitle';
 import CourseSectionS3 from '../../components/CourseSectionS3/CourseSectionS3';
 import InstructorAuth from '../../Wrappers/HoC/InstructorAuth';
 import { useGetAllInstructorCoursesMutation } from '../../api/instructorApi';
-import { useCreateCourseAsyncMutation, useRemoveCourseAsyncMutation } from '../../api/courseApi';
+import { useCreateCourseAsyncMutation, useGetCourseByIdMutation, useRemoveCourseAsyncMutation, useUpdateCourseMutation } from '../../api/courseApi';
 import IsLoading from '../../components/Loading/IsLoading';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -22,6 +22,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { useLazyGetAllCategoriesForSelectedQuery } from '../../api/categoryApi';
 import Spinner from 'react-bootstrap/Spinner';
+import VideoPage from '../LessonPage/VideoPage';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -50,18 +51,33 @@ function InstructorDetail() {
     courseLanguage: "",
     courseDescription: "",
     imageUrl: "",
-    categoryId: ""
+    categoryId: "",
+    introductionVideo:"",
+    courseImage:""
   });
   const [introductionVideo, setIntroductionVideo] = useState(null);
   const [image, setImage] = useState(null);
   const [open, setOpen] = useState(false);
   const [openCourseModal, setOpenCourseModal] = useState(false);
   const [isActiveButton,setIsActiveButton] = useState(true);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [isUpdateProcess,setIsUpdateProcess] = useState(false);
+  const handleOpen = () =>  setOpen(true);
+  const handleClose = () => {setCourseModel({
+    courseName: "",
+    coursePrice: 0,
+    courseLanguage: "",
+    courseDescription: "",
+    imageUrl: "",
+    categoryId: "",
+    introductionVideo:"",
+    courseImage:""
+  }),setIsUpdateProcess(false),setOpen(false)};
   
   const handleOpenCourseModal = () => setOpenCourseModal(true);
   const handleCloseCourseModal = () => setOpenCourseModal(false);
+  const [getCourse] = useGetCourseByIdMutation();
+  const [handleUpdateCourse] = useUpdateCourseMutation();
+  const [courseId,setCourseId] = useState();
   const [filter,setFilter] = useState({
     isSearch:true,
     pageIndex:1,
@@ -83,7 +99,6 @@ function InstructorDetail() {
     async function fetchData() {
       // You can await here
       await getAllStudentCourses(filter).then((response) => {
-          console.log("trigger get all student Courses",response)
           setCourses(response.data.result != [] ? response.data.result.data : [])
           // setCurrentPage(response.data.result.data)
           setPageCounter(response.data.result.paginationCounter)
@@ -92,7 +107,7 @@ function InstructorDetail() {
     }
     fetchData();
 
-  }, [filter]);
+  }, [filter,open]);
 
   useEffect(() => {
     if (categoriesData) {
@@ -101,8 +116,7 @@ function InstructorDetail() {
   }, [categoriesData]);
 
   useEffect(() => {
-    console.log("trigger use effect")
-    alert("Please be carefull! while You are added  introduction video for create new course,video duration must is not duration 10 seconds than high")
+    // alert("Please be carefull! while You are added  introduction video for create new course,video duration must is not duration 10 seconds than high")
     getAllCategories();
   }, []);
 
@@ -119,6 +133,20 @@ function InstructorDetail() {
 
   const createCourse = async () => {
 
+    if (image == null) {
+      alert("Please Check Your Course Image")
+      return;
+      
+    }
+    var result = image.type.split("/");
+
+
+    if (result[0]!="image") {
+      alert("You must choosen only image")
+      return;
+    }
+
+
     if (imageDimensions.width > 1170 && imageDimensions.height > 860) {
       alert("Please check your image dimension.Image dimension so high. Max dimension is 1170x867")
       return;
@@ -134,11 +162,6 @@ function InstructorDetail() {
     formData.append("ImageUrl", courseModel.imageUrl);
     formData.append("CategoryId", courseModel.categoryId);
 
-    console.log(formData.get("Image"))
-    console.log(formData.get("CourseName"))
-    console.log(formData.get("CourseLanguage"))
-    console.log(formData.get("CourseDescription"))
-    console.log(formData.get("IntroductionVideo"))
 
     await createCourseAsync(formData).then((response) => {
       if (response.data.isSuccess) {
@@ -170,8 +193,105 @@ function InstructorDetail() {
     }
   };
 
+
+
+  const handleGetCourse = async (courseId) => {
+
+    // response.data.result.item1
+    setCourseId(courseId)
+    await getCourse(courseId).then((response) => 
+    
+    {
+      if (response.data.isSuccess) {
+        console.log(response.data.result.item1)
+        setIsUpdateProcess(true);
+        // setGetCourseModelState({
+        //   courseName:response.data.result.item1.courseName,
+        //   coursePrice:response.data.result.item1.coursePrice,
+        //   courseLanguage:response.data.result.item1.courseLanguage,
+        //   courseDescription:response.data.result.item1.courseDescription,
+        //   introductionVideoUrl:response.data.result.item1.introductionVideoUrl,
+        //   courseImage:response.data.result.item1.courseImage
+        // })
+        setCourseModel({
+          courseName:response.data.result.item1.courseName,
+       coursePrice:response.data.result.item1.coursePrice,
+       courseLanguage:response.data.result.item1.courseLanguage,
+       courseDescription:response.data.result.item1.courseDescription,
+       introductionVideo:response.data.result.item1.introductionVideoUrl,
+       courseImage:response.data.result.item1.courseImage,
+       categoryId:response.data.result.item1.categoryId
+        })
+     
+     
+        handleOpen()
+      }
+      else {
+        console.log("fail")
+      }
+    }
+    )
+  }
+
+
+  const updateCourse = async () => {
+
+    // formData.append("IntroductionVideo", introductionVideo);
+    // formData.append("Image", image);
+    console.log("Image",image)
+    console.log("introductionVideo",introductionVideo)
+      console.log("trigger update course process",courseModel)
+
+      const formData = new FormData();
+      formData.append("CourseName", courseModel.courseName);
+      formData.append("CoursePrice", courseModel.coursePrice);
+      formData.append("CourseLanguage", courseModel.courseLanguage);
+      formData.append("CourseDescription", courseModel.courseDescription);
+      formData.append("IntroductionVideo", introductionVideo);
+      formData.append("Image", image);
+      formData.append("ImageUrl", courseModel.imageUrl);
+      formData.append("CategoryId", courseModel.categoryId);
+
+      const courseUpdateModel = {
+        courseId:courseId,
+        formData:formData
+      }
+      setIsActiveButton(false)
+
+
+        await handleUpdateCourse(courseUpdateModel).then((response) => {
+          if (response.data.isSuccess) {
+            setImage(null)
+            setIsActiveButton(true)
+            setIntroductionVideo(null)
+            toast.success(response.data.messages[0])  
+           dispatch(instructorApi.util.invalidateTags(["instructor"]));
+            handleClose()
+          }
+
+          else {
+            setIsActiveButton(true)
+
+            toast.error(response.data.errorMessages[0]);
+          }
+
+          
+        })
+  }
+
+
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+
+    var fileResult = file.type.split("/");
+
+    if (fileResult[0]!="image") {
+      alert("You must choosen only image")
+    }
+
+
+
     if (file) {
       const reader = new FileReader();
       reader.onload = (event) => {
@@ -210,6 +330,7 @@ function InstructorDetail() {
                   <Input
                     type='text'
                     placeholder='Course Name'
+                    defaultValue={courseModel.courseName || ""}
                     onChange={(e) => setCourseModel({ ...courseModel, courseName: e.target.value })}
                   />
                 </div>
@@ -217,12 +338,15 @@ function InstructorDetail() {
                   <Input
                     type='number'
                     placeholder='Course Price'
+                    defaultValue={courseModel.coursePrice|| 0}
                     onChange={(e) => setCourseModel({ ...courseModel, coursePrice: e.target.value })}
                   />
                 </div>
                 <div className='row'>
                   <Input
                     type='text'
+                    defaultValue={courseModel.courseLanguage|| ""}
+
                     placeholder='Course Language'
                     onChange={(e) => setCourseModel({ ...courseModel, courseLanguage: e.target.value })}
                   />
@@ -230,22 +354,40 @@ function InstructorDetail() {
                 <div className='row'>
                   <Input
                     type='text'
+                    defaultValue={courseModel.courseDescription|| ""}
+
                     placeholder='Course Description'
                     onChange={(e) => setCourseModel({ ...courseModel, courseDescription: e.target.value })}
                   />
                 </div>
                 <div className='row'>
                   <span>Introduction Video</span>
+                  {
+                    courseModel.introductionVideo != "" ? (
+                      <video src={courseModel.introductionVideo} controls ></video>
+                    ):""
+                  }
                   <Input
                     type='file'
+
                     placeholder='Introduction Video'
                     onChange={(e) => setIntroductionVideo(e.target.files[0])}
                   />
                 </div>
                 <div className='row'>
                   <span>Course Image</span>
+                  {
+
+courseModel.courseImage != "" ? (
+  <img src={courseModel.courseImage} alt="" />
+) : ""
+
+                 
+
+                  }
                   <Input
                     type='file'
+
                     placeholder='Image'
                     onChange={handleImageChange}
                   />
@@ -256,6 +398,7 @@ function InstructorDetail() {
                     placeholder='Image Url(Optional)'
                     onChange={(e) => setCourseModel({ ...courseModel, imageUrl: e.target.value })}
                   />
+                
                 </div>
                 <div className='row'>
                   <select
@@ -274,7 +417,16 @@ function InstructorDetail() {
               </div>
             </Typography>
             <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-              <Button disabled={!isActiveButton}  onClick={createCourse}>Save Course</Button>
+
+            {
+              !isUpdateProcess ? (
+                <Button disabled={!isActiveButton}  onClick={createCourse}>Save Course</Button>
+
+              ) : (
+              <Button disabled={!isActiveButton}  onClick={updateCourse}>Update Course</Button>
+
+              )
+            }
             </Typography>
             {
               !isActiveButton ? (
@@ -312,7 +464,7 @@ function InstructorDetail() {
           
         </Modal>
       </div>
-      <CourseSectionS3 courses={courses} component={"instructor"} />
+      <CourseSectionS3 courses={courses} component={"instructor"} onData={handleGetCourse}  />
       <div className="pagination-wrapper">
                         <ul className="pg-pagination">
                             {

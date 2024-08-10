@@ -80,7 +80,6 @@ const CheckWrap = (props) => {
     useEffect(()=>{
         if (hubConnection) {
                 hubConnection.on("MessageForSocket",(res) => {
-                    console.log("res",res)
                   if (res.item1 == "success") {
                     push('/order_received');
                     handleClose();
@@ -107,7 +106,6 @@ const CheckWrap = (props) => {
     const [validator] = React.useState(new SimpleReactValidator({
         className: 'errorMessage'
     }));
-    console.log(isRadio)
 
     const submitForm = async (e) => {
         var formData = new FormData();
@@ -152,11 +150,9 @@ const CheckWrap = (props) => {
             //     }
             // }
             const userRegex = /^user+.*/gm;
-            console.log("trigger response",response)
             const email = value.email;
             if (email.match(userRegex) && response.data.isSuccess ) {
                 if (isRadio) {
-                    console.log(response.data.result.item1.content)
                     const blob = new Blob([response.data.result.item1.content], { type: "text/html" });
                     const objUrl = URL.createObjectURL(blob);
                     setHtml(objUrl);

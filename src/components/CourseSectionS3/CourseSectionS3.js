@@ -11,6 +11,18 @@ const ClickHandler = () => {
 
 const CourseSectionS3 = (props) => {
 
+
+    console.log("trigger props",props)
+
+
+
+    const handleClickedChildToParent = (courseId) => {
+        props.onData(courseId)
+    }
+
+
+
+
     const [courses, setCourses] = useState([]);
     useEffect(() => {
         if (props.courses) {
@@ -18,7 +30,6 @@ const CourseSectionS3 = (props) => {
         }
     }, [props.courses]);
 
-    console.log("trigger props",props)
 
     return (
         <div className={`wpo-popular-area section-padding ${props.pClass} course-section`}>
@@ -54,6 +65,13 @@ const CourseSectionS3 = (props) => {
                                                 <Link onClick={ClickHandler} to={props.component === "course" ? `/course-single/${course.courseId}` : `/Instructor/CourseDetail/${course.courseId}`}>
                                                     {course.courseName}
                                                 </Link>
+                                                {
+                                                    props.component == "instructor" ? (
+                                                <button className="btn btn-success" onClick={()=>handleClickedChildToParent(course.courseId)} >Düzenle</button>
+
+                                                    ) : ""
+                                                }
+
                                             </h2>
                                             <div className="wpo-popular-text-bottom">
                                                 <ul>
