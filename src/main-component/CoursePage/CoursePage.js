@@ -158,12 +158,10 @@ const CoursePage = () => {
 
 
     const handleClickedEnter = (isClicked) => {
-        console.log(event.key)
         setFilter(initalState)
         if (event.key == "Enter") {
         addFilterRule(newRule)
 
-            console.log("trigger is Enter ")
          setIsClickedEnter(isClicked)
 
         }

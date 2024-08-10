@@ -21,7 +21,6 @@ const Newslatter2 = (props) => {
 
         await sendEmail(model).then((response) => {
             if (response.data.isSuccess) {
-                console.log("trigger data")
                 toast.success(response.data.messages[0])
                 setEmail("")
                 

@@ -19,7 +19,7 @@ export const instructorApi = createApi({
                 method:"POST",
                 body:filterModel
             }),
-            providesTags:["instructor"]
+            invalidatesTags:["instructor"]
         }),
         getCourseDetail:builder.query({
             query:(courseId)=>{return (

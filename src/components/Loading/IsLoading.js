@@ -3,7 +3,6 @@ import Loading from 'react-loading-components';
 
 export default function IsLoading(text) {
 
-  console.log("trigger inner IsLoading",text)
 
 
 

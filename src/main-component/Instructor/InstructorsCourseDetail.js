@@ -357,10 +357,16 @@ function InstructorsCourseDetail() {
 
 
    await updateVideoAsync({videoId,updateVideoModel}).then((response) => {
-        if (response.data.isSuccess) {
+      console.log("trigger update video async",response)    
+    if (response.data.isSuccess) {
           toast.success("Video Updated Successfully")
           dispatch(instructorApi.util.invalidateTags(["instructor"]));
           setHandleClickedUpdateRows(false)
+        }
+        else {
+          toast.error(response.data.messages[0])
+          dispatch(instructorApi.util.invalidateTags(["instructor"]));
+
         }
     })
 

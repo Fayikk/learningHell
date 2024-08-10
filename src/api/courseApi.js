@@ -101,6 +101,22 @@ export const courseApi = createApi({
                 method:"POST",
                 url:`${value}`
             })
+        }),
+        // /GetById?courseId=e98d40a4-19d7-4552-ac5d-0b1be7f970c4
+        getCourseById:builder.mutation({
+            query:(value)=>({
+                method:"POST",
+                url:`GetById?courseId=${value}`
+            })
+        }),
+        updateCourse:builder.mutation({
+            query:(updateCourseModel) => ({
+                method:"PUT",
+                url:`UpdateCourse/${updateCourseModel.courseId}`,
+                body:updateCourseModel.formData
+            }),
+            invalidatesTags:["course"]
+            
         })
        
 
@@ -118,5 +134,7 @@ export const {useGetCourseDetailByIdQuery,
             useEvaluateUpdateCourseMutation,
             useGetEvaluateCoursesQuery,
             useGetMostPopularCoursesQuery,
-            useGetCoursesBySearchMutation
+            useGetCoursesBySearchMutation,
+            useGetCourseByIdMutation,
+            useUpdateCourseMutation
             } = courseApi

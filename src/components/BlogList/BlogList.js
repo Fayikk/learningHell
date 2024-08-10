@@ -15,7 +15,6 @@ const BlogList = (props) => {
 
     const [GetMyCourses] = useIsCourseHaveStudentMutation();
     const [myCourse, setMyCourse] = useState(); 
-    console.log("trigger blog list",props.nameIdentifier.nameIdentifier)
     const [filter,setFilter] = useState({
         isSearch:true,
         pageIndex:1,
