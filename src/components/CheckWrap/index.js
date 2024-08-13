@@ -141,34 +141,37 @@ const CheckWrap = (props) => {
                 isActive3dSecure:isRadio
             }
 
-     var response = await CreatePayment(sendData)
-            validator.hideMessages();
+      await CreatePayment(sendData).then((response) => {
+        validator.hideMessages();
+        const userRegex = /^user+.*/gm;
+        const email = value.email;
+        if (email.match(userRegex) && response.data.isSuccess ) {
+            if (isRadio) {
+                const blob = new Blob([response.data.result.item1.content], { type: "text/html" });
+                const objUrl = URL.createObjectURL(blob);
+                setHtml(objUrl);
+                handleOpen();    
+            }
+            else if (!isRadio) {
+                if (response.data.isSuccess && response.data.result.item2.status == "success") {
+                    toast.success(response.data.messages[0]); 
+                    push('/order_received');        
+                }
+            }
+            
+        }  else if(!response.data.isSuccess) {
+            toast.info(response.data.messages[0] + ".Please check your information again");
+            // alert('user not existed! credential is : user@*****.com | vendor@*****.com | admin@*****.com');
+        }
+
+     })
             // if (response.error || !response.error.data.isSuccess) {
             //     toast.error(response.error.data.errorMessages[response.error.data.errorMessages.length - 1])
             //     if (response.error.data.errorMessages == []) {
             //         toast.error("Payment is failed please check your information")
             //     }
             // }
-            const userRegex = /^user+.*/gm;
-            const email = value.email;
-            if (email.match(userRegex) && response.data.isSuccess ) {
-                if (isRadio) {
-                    const blob = new Blob([response.data.result.item1.content], { type: "text/html" });
-                    const objUrl = URL.createObjectURL(blob);
-                    setHtml(objUrl);
-                    handleOpen();    
-                }
-                else if (!isRadio) {
-                    if (response.data.isSuccess && response.data.result.item2.status == "success") {
-                        toast.success(response.data.messages[0]); 
-                        push('/order_received');        
-                    }
-                }
-                
-            }  else if(!response.data.isSuccess) {
-                toast.info(response.data.messages[0] + ".Please check your information again");
-                // alert('user not existed! credential is : user@*****.com | vendor@*****.com | admin@*****.com');
-            }
+           
         } else {
             validator.showMessages();
             toast.error('Empty field is not allowed!');
