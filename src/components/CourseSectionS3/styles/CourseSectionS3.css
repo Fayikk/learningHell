@@ -1,11 +1,30 @@
-/* styles.css */
-.course-card {
+.course-image {
     width: 100%;
-    max-width: 600px; /* İstediğiniz maksimum genişliği belirleyin */
-    height: 500px; /* İstediğiniz sabit yüksekliği belirleyin */
-    box-sizing: border-box;
-    flex-direction: column;
-    margin-top: 20px;
+    height: 200px; /* İhtiyaca göre değiştirilebilir */
+    object-fit: cover;
 }
 
+.course-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
 
+.wpo-popular-single {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.wpo-popular-img {
+    height: 200px;
+    width: 100%; /* Resim boyutuyla uyumlu olmalı */
+}
+
+.wpo-popular-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
