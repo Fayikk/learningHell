@@ -12,7 +12,7 @@ import JSZip from 'jszip';
 import { useAddVideoAsyncMutation, useChangeVideoAsncMutation, useGetWatchVideoUrlMutation, useRemoveVideoAsyncMutation, useUpdateVideoAsyncMutation } from '../../api/videoApi';
 import VideoPage from '../LessonPage/VideoPage';
 import { CiCircleRemove } from "react-icons/ci";
-import { useAddSectionAsyncMutation, useRemoveSectionAsyncMutation, useUpdateSectionAsyncMutation } from '../../api/sectionApi';
+import { useAddSectionAsyncMutation, useRemoveSectionAsyncMutation, useUpdateSectionAsyncMutation, useUpdateSectionRowsMutation } from '../../api/sectionApi';
 import { useDispatch } from 'react-redux';
 import CustomModal from '../CustomComponents/CustomModal';
 import InstructorAuth from '../../Wrappers/HoC/InstructorAuth';
@@ -29,6 +29,7 @@ import { courseEvaluateEnum } from '../../api/Enums/evaluateEnum';
 import { useSelector } from 'react-redux';
 import EvaluateModal from '../CustomComponents/EvaluateModal';
 import Roles from '../../Constants/Roles';
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 const style = {
   position: 'absolute',
   top: '50%',
@@ -60,6 +61,7 @@ function InstructorsCourseDetail() {
   const [removeMaterialAsync] = useRemoveMaterialAsyncMutation();
   const [updateVideoAsync] = useUpdateVideoAsyncMutation();
   const [updateEvaluate] = useEvaluateUpdateCourseMutation();
+  const [updateSectionRows] = useUpdateSectionRowsMutation();
   const [title, setTitle] = useState("");
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -73,6 +75,7 @@ function InstructorsCourseDetail() {
   const [loading, setLoading] = useState(false);
   const [selectedVideoId, setSelectedVideoId] = useState(null);
   const [handleClickedUpdateRows,setHandleClickedUpdateRows] = useState(false);
+  const [editingSectionId, setEditingSectionId] = useState(null);
   const [rowNumber,setRowNumber] = useState();
   const [isContinueProocess,setIsContinueProcess] = useState(false);
   const [videoDetail, setVideoDetail] = useState({
@@ -97,7 +100,14 @@ function InstructorsCourseDetail() {
   
 
   useEffect(() => {
+
+    console.log("trigger data use effect")
+
     if (data && data.result[0] && data.result[0].sections) {
+    console.log("trigger data use effect - 2")
+       
+      console.log(data.result[0].sections)
+      localStorage.setItem("sections",JSON.stringify(data.result[0].sections))
       setSections(data.result[0].sections);
     }
   }, [data]);
@@ -106,6 +116,7 @@ function InstructorsCourseDetail() {
     return <IsLoading />;
   }
 
+  
   const handleClickWatchingVideo = async (publicVideoId) => {
     await watchingVideo(publicVideoId).then((response) => {
       localStorage.setItem('willSelectedVideo', JSON.stringify(response.data.result));
@@ -130,9 +141,47 @@ function InstructorsCourseDetail() {
       dispatch(instructorApi.util.invalidateTags(["instructor"]));
     }
   };
+  const handleDragEnd = async (result) => {
+    if (!result.destination) {
+      return;
+    }
+
+    console.log("trigger handle drag end",result)
+
+
+  
+    const newSections = Array.from(sections);
+    const [movedSection] = newSections.splice(result.source.index, 1);
+    newSections.splice(result.destination.index, 0, movedSection);
+  
+    setSections(newSections);
+    localStorage.setItem("sections",JSON.stringify(newSections))
+
+    var storeSections = localStorage.getItem("sections")
+    var sectionDataList = []
+    console.log("trigger - storesections",typeof(storeSections))
+    console.log("trigger - storesections",JSON.parse(storeSections))  
+    for (let index = 0; index < JSON.parse(storeSections).length; index++) {
+      const element = JSON.parse(storeSections)[index];
+      console.log("element",element)
+        element.sequenceNumber = index;
+        sectionDataList.push(element)
+
+    }
 
 
 
+    console.log("trigger new Sections",newSections)
+    await updateSectionRows(sectionDataList).then((response) => {
+      console.log("trigger update section rows",response)
+      sectionDataList=[];
+    })
+  };
+
+  const handleClickEdit = (sectionId) => {
+    console.log("trigger handle click edit")
+    setEditingSectionId(editingSectionId === sectionId ? null : sectionId);
+  };
 
   const handleOpenCustomModal = (title) => {
     isShowModal(!modal);
@@ -236,10 +285,6 @@ function InstructorsCourseDetail() {
     }
   };
 
-  // const handleAuthForRoles =  (event) =>{
-  //   console.log("handleAuthForRoles",event)
-  // }
-
   const handleAuthForRoles = async (event) => {
     setUserRole(event.role)
   }
@@ -263,11 +308,26 @@ function InstructorsCourseDetail() {
       description: sectionModel.description
     };
 
+    var selectedSection = sections.filter(x=>x.sectionId==sectionId)
+
+
+    
+
+
+    console.log("trigger section update model",selectedSection)
+
+
     await updateSectionAsync({ sectionId, sectionUpdateModel }).then((response) => {
       if (response.data.isSuccess) {
         dispatch(instructorApi.util.invalidateTags(["instructor"]));
         toast.success("Section updated");
         setIsEnable(!isEnable);
+        setEditingSectionId(null  )
+        setSectionModel({
+          sectionName: "",
+    description: "",
+    courseId: slug
+        })
       }
     });
   };
@@ -374,6 +434,28 @@ function InstructorsCourseDetail() {
   }
 
 
+  const getListStyle = isDraggingOver => ({
+    background: isDraggingOver ? "lightblue" : "lightgrey",
+    padding: grid,
+    width: `calc(100% - ${grid * 2}px)`, // padding'i hesaba katıyoruz
+    boxSizing: "border-box"
+  });
+
+
+  const grid = 8;
+
+  const getItemStyle = (isDragging, draggableStyle) => ({
+    // some basic styles to make the items look a bit nicer
+    userSelect: "none",
+    padding: grid * 2,
+    margin: `0 0 ${grid}px 0`,
+  
+    // change background colour if dragging
+    background: isDragging ? "lightblue" : "grey",
+  
+    // styles we need to apply on draggables
+    ...draggableStyle
+  });
 
 
   const renderButton = () => {
@@ -432,6 +514,11 @@ if (isContinueProocess) {
 }
 
 else {
+
+
+
+
+
 
 
 
@@ -499,23 +586,75 @@ else {
             </Box>
           </Modal>
         </div>
-        
-        <Accordion>
-          {sections.length > 0 ? (
-            sections.map((section, key) => (
-              <Accordion.Item eventKey={key} key={key}>
+
+
+
+
+        <DragDropContext onDragEnd={handleDragEnd}>
+  <Droppable droppableId="droppable-sections">
+    {(provided, snapshot) => (
+      <div
+        {...provided.droppableProps}
+        ref={provided.innerRef}
+        style={getListStyle(snapshot.isDraggingOver)}
+      >
+        {sections.map((section, index) => (
+          <Draggable key={section.sectionId} draggableId={section.sectionId} index={index}>
+            {(provided, snapshot) => (
+              <div
+                ref={provided.innerRef}
+                {...provided.draggableProps}  
+                {...provided.dragHandleProps}
+                style={getItemStyle(
+                  snapshot.isDragging,
+                  provided.draggableProps.style
+                )}
+              >
+                <Accordion>
+                <Accordion.Item eventKey={section.sectionId} key={section.sectionId}>
                 <Accordion.Header style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                  <input defaultValue={section.sectionName} disabled={isEnable} onChange={(e) => setSectionModel({ ...sectionModel, sectionName: e.target.value })} /> - <input defaultValue={section.description} onChange={(e) => setSectionModel({ ...sectionModel, description: e.target.value })} disabled={isEnable} />
-                  <a onClick={() => setIsEnable(!isEnable)}><IoPencil /></a>
-                  {!isEnable ? (
-                    <button className='btn btn-success' onClick={() => { handleUpdateSection(section.sectionId) }}>update</button>
-                  ) : ""}
-                  <button style={{ marginLeft: 'auto' }} onClick={() => removeItem(section.sectionId, "section")} className='btn btn-danger'>Remove Section</button>
-                  <button style={{ marginLeft: 'auto' }} data-target={section.sectionId} onClick={() => {
-                    setVideoDetail({ publicVideoId: "", sectionId: section.sectionId });
-                    handleOpenCustomModal("NewVideo");
-                  }} className='btn btn-secondary'>Add Video</button>
-                </Accordion.Header>
+  <input 
+    defaultValue={section.sectionName} 
+    disabled={editingSectionId !== section.sectionId} 
+    onChange={(e) => setSectionModel({ ...sectionModel, sectionName: e.target.value })} 
+  /> - 
+  <input 
+    defaultValue={section.description} 
+    onChange={(e) => setSectionModel({ ...sectionModel, description: e.target.value })} 
+    disabled={editingSectionId !== section.sectionId} 
+  />
+  <a onClick={() => handleClickEdit(section.sectionId)}   
+    onMouseEnter={()=>{setSectionModel({...sectionModel,description:section.description,sectionName:section.sectionName}),console.log("on mouse enter trigger")}}
+  
+  
+  >
+    <IoPencil />
+  </a>
+  {editingSectionId === section.sectionId && (
+    <button className='btn btn-success' onClick={() => { handleUpdateSection(section.sectionId) }}>
+      update
+    </button>
+  )}
+  <button 
+    style={{ marginLeft: 'auto' }} 
+    onClick={() => removeItem(section.sectionId, "section")} 
+    className='btn btn-danger'
+  >
+    Remove Section
+  </button>
+  <button 
+    style={{ marginLeft: 'auto' }} 
+    data-target={section.sectionId} 
+    onClick={() => {
+      setVideoDetail({ publicVideoId: "", sectionId: section.sectionId });
+      handleOpenCustomModal("NewVideo");
+    }} 
+    className='btn btn-secondary'
+  >
+    Add Video
+  </button>
+</Accordion.Header>
+
                 {section.videos.map((video, key) => (
                   <Accordion.Body key={key}>
                     <div key={key} >
@@ -563,13 +702,19 @@ else {
                   </Accordion.Body>
                 ))}
               </Accordion.Item>
-            ))
-          ) : (
-            <>
-              <p>No sections available.</p>
-            </>
-          )}
-        </Accordion>
+                </Accordion>
+              </div>
+            )}
+          </Draggable>
+        ))}
+        {provided.placeholder}
+      </div>
+    )}
+  </Droppable>
+</DragDropContext>
+
+
+     
         <Footer />
         <Scrollbar />
       </Fragment>
