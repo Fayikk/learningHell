@@ -101,12 +101,8 @@ function InstructorsCourseDetail() {
 
   useEffect(() => {
 
-    console.log("trigger data use effect")
 
     if (data && data.result[0] && data.result[0].sections) {
-    console.log("trigger data use effect - 2")
-       
-      console.log(data.result[0].sections)
       localStorage.setItem("sections",JSON.stringify(data.result[0].sections))
       setSections(data.result[0].sections);
     }
@@ -146,7 +142,6 @@ function InstructorsCourseDetail() {
       return;
     }
 
-    console.log("trigger handle drag end",result)
 
 
   
@@ -159,11 +154,8 @@ function InstructorsCourseDetail() {
 
     var storeSections = localStorage.getItem("sections")
     var sectionDataList = []
-    console.log("trigger - storesections",typeof(storeSections))
-    console.log("trigger - storesections",JSON.parse(storeSections))  
     for (let index = 0; index < JSON.parse(storeSections).length; index++) {
       const element = JSON.parse(storeSections)[index];
-      console.log("element",element)
         element.sequenceNumber = index;
         sectionDataList.push(element)
 
@@ -171,9 +163,7 @@ function InstructorsCourseDetail() {
 
 
 
-    console.log("trigger new Sections",newSections)
     await updateSectionRows(sectionDataList).then((response) => {
-      console.log("trigger update section rows",response)
       sectionDataList=[];
     })
   };
@@ -414,6 +404,9 @@ function InstructorsCourseDetail() {
     const updateVideoModel = {
       rowNumberForSection:rowNumber
     }
+
+
+    console.log("trigger handle update video",videoId)
 
 
    await updateVideoAsync({videoId,updateVideoModel}).then((response) => {
