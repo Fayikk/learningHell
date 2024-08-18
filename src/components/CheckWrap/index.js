@@ -19,6 +19,7 @@ import { payHub } from '../../api/Base/payHubModel';
 import FormControlLabel from "@mui/material/FormControlLabel";
 import RadioGroup from "@mui/material/RadioGroup";
 import Radio from "@mui/material/Radio";
+import { shoppingCartApi } from '../../api/shoppingCartApi';
 
 const style = {
     position: 'absolute',
@@ -80,10 +81,15 @@ const CheckWrap = (props) => {
     useEffect(()=>{
         if (hubConnection) {
                 hubConnection.on("MessageForSocket",(res) => {
+                    console.log("trigger message for socket",res)
+
+
+
                   if (res.item1 == "success") {
                     push('/order_received');
                     handleClose();
                     Dispatch(cartStateUpdate(res.item2))
+                    dispatch(instructorApi.util.invalidateTags(["shoppingCart"]));
                   }
                   else{
                     handleClose();
@@ -142,19 +148,23 @@ const CheckWrap = (props) => {
             }
 
       await CreatePayment(sendData).then((response) => {
+
+        console.log("trigger response",response)
         validator.hideMessages();
         const userRegex = /^user+.*/gm;
         const email = value.email;
         if (email.match(userRegex) && response.data.isSuccess ) {
             if (isRadio) {
-                const blob = new Blob([response.data.result.item1.content], { type: "text/html" });
+                const blob = new Blob([response.data.result[0].item1.content], { type: "text/html" });
                 const objUrl = URL.createObjectURL(blob);
                 setHtml(objUrl);
                 handleOpen();    
             }
             else if (!isRadio) {
-                if (response.data.isSuccess && response.data.result.item2.status == "success") {
-                    toast.success(response.data.messages[0]); 
+                if (response.data.isSuccess && response.data.result[1].item2.status == "success") {
+                    console.log("response.data.result[0]",response.data.result[0])
+                    toast.success(response.data.messages[0]);
+                    Dispatch(cartStateUpdate(response.data.result[0]))
                     push('/order_received');        
                 }
             }

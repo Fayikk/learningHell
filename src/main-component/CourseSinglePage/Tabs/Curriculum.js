@@ -27,17 +27,23 @@ const Curriculum = ({sections,user,rate}) => {
 
     useEffect(()=>{
             async function CheckActiveCourse(){
-                const model = {
-                    userId:authenticationState.nameIdentifier,
-                    courseId:sections != undefined ? sections[0].courseId : null
+
+                console.log("sections",sections)
+                if (sections.Length > 0) {
+                    const model = {
+                        userId:authenticationState.nameIdentifier,
+                        courseId:sections != undefined ? sections[0].courseId : null
+                    }      
+
+                     await  CheckHasThisCourse(model).then((response) => setIsEnrolledCourse(response.response.data))
+                     if (user.id === authenticationState.nameIdentifier) {
+                        setOwnMyCourse(true)
+                    }
                 }
-                if (user.id === authenticationState.nameIdentifier) {
-                    setOwnMyCourse(true)
-                }
+              
+             
 
 
-                var response = await  CheckHasThisCourse(model)
-                 setIsEnrolledCourse(response.data)
               }
                 CheckActiveCourse();
                 
