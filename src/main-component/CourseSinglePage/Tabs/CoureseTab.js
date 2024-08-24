@@ -1,46 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from 'reactstrap';
-import classnames from 'classnames';
-import Overview from './Overview';
-import Instructor from './Instructor';
-import Review from './Review';
-import { useGetSectionsByCourseIdQuery } from '../../../api/courseApi';
-import IsLoading from '../../../components/Loading/IsLoading';
-import { useSelector } from 'react-redux';
-import Curriculum from './Curriculum'
+import React, { useEffect, useState } from "react";
+import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from "reactstrap";
+import classnames from "classnames";
+import Overview from "./Overview";
+import Instructor from "./Instructor";
+import Review from "./Review";
+import { useGetSectionsByCourseIdQuery } from "../../../api/courseApi";
+import IsLoading from "../../../components/Loading/IsLoading";
+import { useSelector } from "react-redux";
+import Curriculum from "./Curriculum";
 
-const CoureseTab = ({ EventsDetails,CoursesDetails,rate }) => {
-  const {data,isLoading} = useGetSectionsByCourseIdQuery(CoursesDetails.courseId)
+const CoureseTab = ({ EventsDetails, CoursesDetails, rate }) => {
+  const { data, isLoading } = useGetSectionsByCourseIdQuery(CoursesDetails.courseId);
   const authenticationState = useSelector((state) => state.authStore);
 
+  const [activeTab, setActiveTab] = useState("1");
+  const [sections, setSections] = useState([]);
+  const [user, setUser] = useState();
 
-
-
-  const [activeTab, setActiveTab] = useState('1');
-  const [sections,setSections] = useState([]);
-  const [user,setUser] = useState();
-
-  useEffect(()=>{
+  useEffect(() => {
     if (data) {
-     
-    setSections(data.result.sections)
-    setUser(data.result.user)
+      setSections(data.result.sections);
+      setUser(data.result.user);
     }
-  },[isLoading])
-
+  }, [isLoading]);
 
   if (isLoading) {
-    return (
-      <IsLoading></IsLoading>
-    )
+    return <IsLoading></IsLoading>;
   }
 
-
-
-  const toggle = tab => {
+  const toggle = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
-
-  }
+  };
 
   return (
     <div>
@@ -48,36 +38,41 @@ const CoureseTab = ({ EventsDetails,CoursesDetails,rate }) => {
         <Nav tabs>
           <NavItem>
             <NavLink
-              className={classnames({ active: activeTab === '1' })}
-              onClick={() => { toggle('1'); }}
+              className={classnames({ active: activeTab === "1" })}
+              onClick={() => {
+                toggle("1");
+              }}
             >
               Overview
             </NavLink>
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: activeTab === '2' })}
-              onClick={() => { toggle('2'); }}
+              className={classnames({ active: activeTab === "2" })}
+              onClick={() => {
+                toggle("2");
+              }}
             >
-
               Curriculum
             </NavLink>
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: activeTab === '3' })}
-              onClick={() => { toggle('3'); }}
+              className={classnames({ active: activeTab === "3" })}
+              onClick={() => {
+                toggle("3");
+              }}
             >
-
               instructor
             </NavLink>
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: activeTab === '4' })}
-              onClick={() => { toggle('4'); }}
+              className={classnames({ active: activeTab === "4" })}
+              onClick={() => {
+                toggle("4");
+              }}
             >
-
               reviews
             </NavLink>
           </NavItem>
@@ -113,11 +108,10 @@ const CoureseTab = ({ EventsDetails,CoursesDetails,rate }) => {
               </Col>
             </Row>
           </TabPane>
-
         </TabContent>
       </div>
     </div>
   );
-}
+};
 
 export default CoureseTab;

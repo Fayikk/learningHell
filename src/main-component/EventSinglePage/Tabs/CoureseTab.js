@@ -1,19 +1,20 @@
-import React, { useState } from 'react';
-import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from 'reactstrap';
-import classnames from 'classnames';
-import Overview from './Overview';
-import Curriculum from './Curriculum';
-import Instructor from './Instructor';
-import Review from './Review';
-
-
+import React, { useState } from "react";
+import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from "reactstrap";
+import classnames from "classnames";
+import Overview from "./Overview";
+import Curriculum from "./Curriculum";
+import Instructor from "./Instructor";
+import Review from "./Review";
+import { useTranslation } from "react-i18next";
 
 const CoureseTab = ({ EventsDetails }) => {
-  const [activeTab, setActiveTab] = useState('1');
+  const { t } = useTranslation();
+  const { i18 } = useTranslation();
+  const [activeTab, setActiveTab] = useState("1");
 
-  const toggle = tab => {
+  const toggle = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
-  }
+  };
 
   return (
     <div>
@@ -21,36 +22,41 @@ const CoureseTab = ({ EventsDetails }) => {
         <Nav tabs>
           <NavItem>
             <NavLink
-              className={classnames({ active: activeTab === '1' })}
-              onClick={() => { toggle('1'); }}
+              className={classnames({ active: activeTab === "1" })}
+              onClick={() => {
+                toggle("1");
+              }}
             >
               Overview
             </NavLink>
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: activeTab === '2' })}
-              onClick={() => { toggle('2'); }}
+              className={classnames({ active: activeTab === "2" })}
+              onClick={() => {
+                toggle("2");
+              }}
             >
-
               Curriculum
             </NavLink>
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: activeTab === '3' })}
-              onClick={() => { toggle('3'); }}
+              className={classnames({ active: activeTab === "3" })}
+              onClick={() => {
+                toggle("3");
+              }}
             >
-
               instructor
             </NavLink>
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: activeTab === '4' })}
-              onClick={() => { toggle('4'); }}
+              className={classnames({ active: activeTab === "4" })}
+              onClick={() => {
+                toggle("4");
+              }}
             >
-
               reviews
             </NavLink>
           </NavItem>
@@ -86,11 +92,10 @@ const CoureseTab = ({ EventsDetails }) => {
               </Col>
             </Row>
           </TabPane>
-
         </TabContent>
       </div>
     </div>
   );
-}
+};
 
 export default CoureseTab;
