@@ -44,6 +44,7 @@ const LessonPage = () => {
   const [decryptVideoUrl] = useGetWatchVideoUrlMutation();
   useEffect(() => {
     if (data) {
+      console.log("trigger data",data)
       setVideos(data.result.videos || []);
       setCourseId(data.result.courseId);
       if (videos == []) {
@@ -102,7 +103,7 @@ const LessonPage = () => {
   return (
     <Fragment>
       <section className="wpo-lesson-section container mx-auto p-4 gap-3 flex flex-col ">
-        <Breadcrumbs />
+        <Breadcrumbs courseId={courseId} />
         <div className="flex flex-col  gap-6 md:flex-row">
           <div className="flex flex-col  flex-1 gap-3 order-2 md:!order-none ">
             <div className=" rounded-2xl shadow-lg font-bold p-3 text-themeOrange">
