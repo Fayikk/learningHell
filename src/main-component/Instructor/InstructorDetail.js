@@ -6,7 +6,12 @@ import PageTitle from "../../components/pagetitle/PageTitle";
 import CourseSectionS3 from "../../components/CourseSectionS3/CourseSectionS3";
 import InstructorAuth from "../../Wrappers/HoC/InstructorAuth";
 import { useGetAllInstructorCoursesMutation } from "../../api/instructorApi";
-import { useCreateCourseAsyncMutation, useGetCourseByIdMutation, useRemoveCourseAsyncMutation, useUpdateCourseMutation } from "../../api/courseApi";
+import {
+  useCreateCourseAsyncMutation,
+  useGetCourseByIdMutation,
+  useRemoveCourseAsyncMutation,
+  useUpdateCourseMutation,
+} from "../../api/courseApi";
 import IsLoading from "../../components/Loading/IsLoading";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -42,10 +47,16 @@ function InstructorDetail() {
   const [courses, setCourses] = useState([]);
   const [categories, setCategories] = useState([]);
   const [getAllStudentCourses] = useGetAllInstructorCoursesMutation();
-  const [getAllCategories, { data: categoriesData, isLoading: isCategoriesLoading }] = useLazyGetAllCategoriesForSelectedQuery();
+  const [
+    getAllCategories,
+    { data: categoriesData, isLoading: isCategoriesLoading },
+  ] = useLazyGetAllCategoriesForSelectedQuery();
   const [createCourseAsync] = useCreateCourseAsyncMutation();
   const [removeCourseAsync] = useRemoveCourseAsyncMutation();
-  const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
+  const [imageDimensions, setImageDimensions] = useState({
+    width: 0,
+    height: 0,
+  });
   const [courseModel, setCourseModel] = useState({
     courseName: "",
     coursePrice: 0,
@@ -147,7 +158,9 @@ function InstructorDetail() {
     }
 
     if (imageDimensions.width > 1170 && imageDimensions.height > 860) {
-      alert("Please check your image dimension.Image dimension so high. Max dimension is 1170x867");
+      alert(
+        "Please check your image dimension.Image dimension so high. Max dimension is 1170x867"
+      );
       return;
     }
     setIsActiveButton(false);
@@ -177,7 +190,9 @@ function InstructorDetail() {
   };
 
   const handleRemoveCourse = async (courseId) => {
-    const answer = window.confirm("Are you sure you want to delete this course?");
+    const answer = window.confirm(
+      "Are you sure you want to delete this course?"
+    );
     if (answer) {
       await removeCourseAsync(courseId).then((response) => {
         if (response.data.isSuccess) {
@@ -297,42 +312,124 @@ function InstructorDetail() {
         <Button onClick={handleOpenCourseModal} style={{ color: "red" }}>
           {t("Remove Course")}
         </Button>
-        <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
           <Box sx={style}>
             <Typography id="modal-modal-title" variant="h6" component="h2">
               <div className="col">
                 <div className="row">
-                  <Input type="text" placeholder="Course Name" defaultValue={courseModel.courseName || ""} onChange={(e) => setCourseModel({ ...courseModel, courseName: e.target.value })} />
+                  <Input
+                    type="text"
+                    placeholder="Course Name"
+                    defaultValue={courseModel.courseName || ""}
+                    onChange={(e) =>
+                      setCourseModel({
+                        ...courseModel,
+                        courseName: e.target.value,
+                      })
+                    }
+                  />
                 </div>
                 <div className="row">
-                  <Input type="number" placeholder="Course Price" defaultValue={courseModel.coursePrice || 0} onChange={(e) => setCourseModel({ ...courseModel, coursePrice: e.target.value })} />
+                  <Input
+                    type="number"
+                    placeholder="Course Price"
+                    defaultValue={courseModel.coursePrice || 0}
+                    onChange={(e) =>
+                      setCourseModel({
+                        ...courseModel,
+                        coursePrice: e.target.value,
+                      })
+                    }
+                  />
                 </div>
                 <div className="row">
-                  <Input type="text" defaultValue={courseModel.courseLanguage || ""} placeholder="Course Language" onChange={(e) => setCourseModel({ ...courseModel, courseLanguage: e.target.value })} />
+                  <Input
+                    type="text"
+                    defaultValue={courseModel.courseLanguage || ""}
+                    placeholder="Course Language"
+                    onChange={(e) =>
+                      setCourseModel({
+                        ...courseModel,
+                        courseLanguage: e.target.value,
+                      })
+                    }
+                  />
                 </div>
                 <div className="row">
-                  <Input type="text" defaultValue={courseModel.courseDescription || ""} placeholder="Course Description" onChange={(e) => setCourseModel({ ...courseModel, courseDescription: e.target.value })} />
+                  <Input
+                    type="text"
+                    defaultValue={courseModel.courseDescription || ""}
+                    placeholder="Course Description"
+                    onChange={(e) =>
+                      setCourseModel({
+                        ...courseModel,
+                        courseDescription: e.target.value,
+                      })
+                    }
+                  />
                 </div>
                 <div className="row">
                   <span>Introduction Video</span>
-                  {courseModel.introductionVideo != "" ? <video src={courseModel.introductionVideo} controls></video> : ""}
-                  <Input type="file" placeholder="Introduction Video" onChange={(e) => setIntroductionVideo(e.target.files[0])} />
+                  {courseModel.introductionVideo != "" ? (
+                    <video src={courseModel.introductionVideo} controls></video>
+                  ) : (
+                    ""
+                  )}
+                  <Input
+                    type="file"
+                    placeholder="Introduction Video"
+                    onChange={(e) => setIntroductionVideo(e.target.files[0])}
+                  />
                 </div>
                 <div className="row">
                   <span>Course Image</span>
-                  {courseModel.courseImage != "" ? <img src={courseModel.courseImage} alt="" /> : ""}
-                  <Input type="file" placeholder="Image" onChange={handleImageChange} />
+                  {courseModel.courseImage != "" ? (
+                    <img src={courseModel.courseImage} alt="" />
+                  ) : (
+                    ""
+                  )}
+                  <Input
+                    type="file"
+                    placeholder="Image"
+                    onChange={handleImageChange}
+                  />
                 </div>
                 <div className="row">
-                  <Input type="text" placeholder="Image Url(Optional)" onChange={(e) => setCourseModel({ ...courseModel, imageUrl: e.target.value })} />
+                  <Input
+                    type="text"
+                    placeholder="Image Url(Optional)"
+                    onChange={(e) =>
+                      setCourseModel({
+                        ...courseModel,
+                        imageUrl: e.target.value,
+                      })
+                    }
+                  />
                 </div>
                 <div className="row">
-                  <select onChange={(e) => setCourseModel({ ...courseModel, categoryId: e.target.value })} placeholder="Choose category" title="categories">
+                  <select
+                    onChange={(e) =>
+                      setCourseModel({
+                        ...courseModel,
+                        categoryId: e.target.value,
+                      })
+                    }
+                    placeholder="Choose category"
+                    title="categories"
+                  >
                     <option value="" disabled selected>
                       Choose category
                     </option>
                     {categories.map((category) => (
-                      <option key={category.categoryId} value={category.categoryId}>
+                      <option
+                        key={category.categoryId}
+                        value={category.categoryId}
+                      >
                         {category.categoryName}
                       </option>
                     ))}
@@ -355,7 +452,12 @@ function InstructorDetail() {
           </Box>
         </Modal>
 
-        <Modal open={openCourseModal} onClose={handleCloseCourseModal} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+        <Modal
+          open={openCourseModal}
+          onClose={handleCloseCourseModal}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
           <Box sx={style}>
             <Typography id="modal-modal-title" variant="h6" component="h2">
               <Container>
@@ -363,7 +465,10 @@ function InstructorDetail() {
                   {courses.map((course, key) => (
                     <Col style={{ marginTop: "6px" }} key={course.courseId}>
                       {course.courseName} -
-                      <button className="btn btn-danger" onClick={() => handleRemoveCourse(course.courseId)}>
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => handleRemoveCourse(course.courseId)}
+                      >
                         Remove This Course
                       </button>
                     </Col>
@@ -374,12 +479,22 @@ function InstructorDetail() {
           </Box>
         </Modal>
       </div>
-      <CourseSectionS3 courses={courses} component={"instructor"} onData={handleGetCourse} />
+      <CourseSectionS3
+        courses={courses}
+        component={"instructor"}
+        onData={handleGetCourse}
+      />
       <div className="pagination-wrapper">
         <ul className="pg-pagination">
           {filter.pageIndex != 1 ? (
             <li>
-              <Button color="secondary" aria-label="Previous" onClick={() => handleClickChangePageNumber(filter.pageIndex - 1)}>
+              <Button
+                color="secondary"
+                aria-label="Previous"
+                onClick={() =>
+                  handleClickChangePageNumber(filter.pageIndex - 1)
+                }
+              >
                 <i className="fi ti-angle-left"></i>
               </Button>
             </li>
@@ -391,7 +506,10 @@ function InstructorDetail() {
             [...Array(pageCounter)].map((_, index) => (
               <li key={index} className={index === 0 ? "active" : ""}>
                 <li className="active">
-                  <Button color="secondary" onClick={() => handleClickChangePageNumber(index + 1)}>
+                  <Button
+                    color="secondary"
+                    onClick={() => handleClickChangePageNumber(index + 1)}
+                  >
                     {index + 1}
                   </Button>
                 </li>
@@ -402,7 +520,13 @@ function InstructorDetail() {
           }
           {filter.pageIndex != pageCounter ? (
             <li>
-              <Button color="secondary" aria-label="Next" onClick={() => handleClickChangePageNumber(filter.pageIndex + 1)}>
+              <Button
+                color="secondary"
+                aria-label="Next"
+                onClick={() =>
+                  handleClickChangePageNumber(filter.pageIndex + 1)
+                }
+              >
                 <i className="fi ti-angle-right"></i>
               </Button>
             </li>

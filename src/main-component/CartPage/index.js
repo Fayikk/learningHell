@@ -6,7 +6,10 @@ import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { totalPrice } from "../../utils";
 import Footer from "../../components/footer/Footer";
-import { useGetShoppingCartQuery, useRemoveShoppingCartItemMutation } from "../../api/shoppingCartApi";
+import {
+  useGetShoppingCartQuery,
+  useRemoveShoppingCartItemMutation,
+} from "../../api/shoppingCartApi";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import IsLoading from "../../components/Loading/IsLoading";
@@ -17,7 +20,9 @@ const CartPage = (props) => {
   const { t } = useTranslation();
   const { i18n } = useTranslation();
 
-  const { data, isLoading } = useGetShoppingCartQuery(useSelector((state) => state.authStore.nameIdentifier));
+  const { data, isLoading } = useGetShoppingCartQuery(
+    useSelector((state) => state.authStore.nameIdentifier)
+  );
   const [removeCartItem] = useRemoveShoppingCartItemMutation();
   const [courses, setCourses] = useState([]);
   const Dispatch = useDispatch();
@@ -55,7 +60,7 @@ const CartPage = (props) => {
     return (
       <Fragment>
         <Navbar />
-        <PageTitle pageTitle={"Cart"} pagesub={"Cart"} />
+        <PageTitle pageTitle={t("Cart")} pagesub={"Cart"} />
 
         <div className="cart-area section-padding">
           <div className="container">
@@ -84,19 +89,27 @@ const CartPage = (props) => {
                                 </td>
                                 <td className="product">
                                   <ul>
-                                    <li className="first-cart">{courseItem.courseName}</li>
+                                    <li className="first-cart">
+                                      {courseItem.courseName}
+                                    </li>
                                     <li>Brand : {courseItem.courseName}</li>
                                     <li>Size : {courseItem.courseName}</li>
                                   </ul>
                                 </td>
                                 <td className="ptice">
                                   {" "}
-                                  {MatchLocationToCurrency()} {courseItem.coursePrice}
+                                  {MatchLocationToCurrency()}{" "}
+                                  {courseItem.coursePrice}
                                 </td>
                                 <td></td>
                                 <td className="action">
                                   <ul>
-                                    <li className="w-btn" onClick={() => removeFromCart(courseItem.courseId)}>
+                                    <li
+                                      className="w-btn"
+                                      onClick={() =>
+                                        removeFromCart(courseItem.courseId)
+                                      }
+                                    >
                                       <i className="fi ti-trash"></i>
                                     </li>
                                   </ul>
@@ -124,7 +137,11 @@ const CartPage = (props) => {
                     <div className="submit-btn-area">
                       <ul>
                         <li>
-                          <Link onClick={ClickHandler} className="theme-btn" to="/checkout">
+                          <Link
+                            onClick={ClickHandler}
+                            className="theme-btn"
+                            to="/checkout"
+                          >
                             {t("Proceed to Checkout")}
                           </Link>
                         </li>
