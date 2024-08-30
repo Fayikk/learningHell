@@ -82,5 +82,15 @@
   "Course Is Published": "कोर्स प्रकाशित हो गया है",
   "Course Is Rejected": "कोर्स अस्वीकृत हो गया है",
   "Remove Section": "अनुभाग हटाएं",
-  "Add Video": "वीडियो जोड़ें"
+  "Add Video": "वीडियो जोड़ें",
+  "Course Name": "पाठ्यक्रम का नाम",
+  "Course Price": "पाठ्यक्रम की कीमत",
+  "Course Language": "पाठ्यक्रम की भाषा",
+  "Course Description": "पाठ्यक्रम विवरण",
+  "Image Url(Optional)": "छवि यूआरएल (वैकल्पिक)",
+  "Choose Category": "श्रेणी चुनें",
+  "Introduction Video": "परिचय वीडियो",
+  "Course Image": "पाठ्यक्रम छवि",
+  "Save Course": "पाठ्यक्रम सहेजें",
+  "Update Course": "पाठ्यक्रम अपडेट करें"
 }

@@ -3,6 +3,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import Scrollbar from "../../components/scrollbar/scrollbar";
 import Footer from "../../components/footer/Footer";
 import PageTitle from "../../components/pagetitle/PageTitle";
+import { useTranslation } from "react-i18next";
 import CourseSectionS3 from "../../components/CourseSectionS3/CourseSectionS3";
 import InstructorAuth from "../../Wrappers/HoC/InstructorAuth";
 import { useGetAllInstructorCoursesMutation } from "../../api/instructorApi";
@@ -28,7 +29,6 @@ import Col from "react-bootstrap/Col";
 import { useLazyGetAllCategoriesForSelectedQuery } from "../../api/categoryApi";
 import Spinner from "react-bootstrap/Spinner";
 import VideoPage from "../LessonPage/VideoPage";
-import { useTranslation } from "react-i18next";
 const style = {
   position: "absolute",
   top: "50%",
@@ -324,7 +324,7 @@ function InstructorDetail() {
                 <div className="row">
                   <Input
                     type="text"
-                    placeholder="Course Name"
+                    placeholder={t("Course Name")}
                     defaultValue={courseModel.courseName || ""}
                     onChange={(e) =>
                       setCourseModel({
@@ -337,7 +337,7 @@ function InstructorDetail() {
                 <div className="row">
                   <Input
                     type="number"
-                    placeholder="Course Price"
+                    placeholder={t("Course Price")}
                     defaultValue={courseModel.coursePrice || 0}
                     onChange={(e) =>
                       setCourseModel({
@@ -351,7 +351,7 @@ function InstructorDetail() {
                   <Input
                     type="text"
                     defaultValue={courseModel.courseLanguage || ""}
-                    placeholder="Course Language"
+                    placeholder={t("Course Language")}
                     onChange={(e) =>
                       setCourseModel({
                         ...courseModel,
@@ -364,7 +364,7 @@ function InstructorDetail() {
                   <Input
                     type="text"
                     defaultValue={courseModel.courseDescription || ""}
-                    placeholder="Course Description"
+                    placeholder={t("Course Description")}
                     onChange={(e) =>
                       setCourseModel({
                         ...courseModel,
@@ -382,12 +382,12 @@ function InstructorDetail() {
                   )}
                   <Input
                     type="file"
-                    placeholder="Introduction Video"
+                    placeholder={t("Introduction Video")}
                     onChange={(e) => setIntroductionVideo(e.target.files[0])}
                   />
                 </div>
                 <div className="row">
-                  <span>Course Image</span>
+                  <span>{t("Course Image")}</span>
                   {courseModel.courseImage != "" ? (
                     <img src={courseModel.courseImage} alt="" />
                   ) : (
@@ -395,14 +395,14 @@ function InstructorDetail() {
                   )}
                   <Input
                     type="file"
-                    placeholder="Image"
+                    placeholder={t("Image")}
                     onChange={handleImageChange}
                   />
                 </div>
                 <div className="row">
                   <Input
                     type="text"
-                    placeholder="Image Url(Optional)"
+                    placeholder={t("Image Url(Optional)")}
                     onChange={(e) =>
                       setCourseModel({
                         ...courseModel,
@@ -419,11 +419,11 @@ function InstructorDetail() {
                         categoryId: e.target.value,
                       })
                     }
-                    placeholder="Choose category"
+                    placeholder={t("Choose Category")}
                     title="categories"
                   >
                     <option value="" disabled selected>
-                      Choose category
+                      {t("Choose Category")}
                     </option>
                     {categories.map((category) => (
                       <option
@@ -440,11 +440,11 @@ function InstructorDetail() {
             <Typography id="modal-modal-description" sx={{ mt: 2 }}>
               {!isUpdateProcess ? (
                 <Button disabled={!isActiveButton} onClick={createCourse}>
-                  Save Course
+                  {t("Save Course")}
                 </Button>
               ) : (
                 <Button disabled={!isActiveButton} onClick={updateCourse}>
-                  Update Course
+                  {t("Update Course")}
                 </Button>
               )}
             </Typography>

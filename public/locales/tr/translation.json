@@ -82,5 +82,15 @@
   "Course Is Published": "Kurs Yayınlandı",
   "Course Is Rejected": "Kurs Reddedildi",
   "Remove Section": "Bölümü Kaldır",
-  "Add Video": "Video Ekle"
+  "Add Video": "Video Ekle",
+  "Course Name": "Kurs Adı",
+  "Course Price": "Kurs Fiyatı",
+  "Course Language": "Kurs Dili",
+  "Course Description": "Kurs Açıklaması",
+  "Image Url(Optional)": "Resim URL'i (Opsiyonel)",
+  "Choose Category": "Kategori Seç",
+  "Introduction Video": "Tanıtım Videosu",
+  "Course Image": "Kurs Görseli",
+  "Save Course": "Kursu Kaydet",
+  "Update Course": "Kursu Güncelle"
 }

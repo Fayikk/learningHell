@@ -82,5 +82,15 @@
   "Course Is Published": "Kurs Ist Veröffentlicht",
   "Course Is Rejected": "Kurs Wurde Abgelehnt",
   "Remove Section": "Abschnitt Entfernen",
-  "Add Video": "Video Hinzufügen"
+  "Add Video": "Video Hinzufügen",
+  "Course Name": "Kursname",
+  "Course Price": "Kurspreis",
+  "Course Language": "Kursprache",
+  "Course Description": "Kursbeschreibung",
+  "Image Url(Optional)": "Bild-URL (Optional)",
+  "Choose Category": "Kategorie Wählen",
+  "Introduction Video": "Einführungsvideo",
+  "Course Image": "Kursbild",
+  "Save Course": "Kurs Speichern",
+  "Update Course": "Kurs Aktualisieren"
 }

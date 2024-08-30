@@ -82,5 +82,15 @@
   "Course Is Published": "Курс Опубликован",
   "Course Is Rejected": "Курс Отклонен",
   "Remove Section": "Удалить Раздел",
-  "Add Video": "Добавить Видео"
+  "Add Video": "Добавить Видео",
+  "Course Name": "Название Курса",
+  "Course Price": "Цена Курса",
+  "Course Language": "Язык Курса",
+  "Course Description": "Описание Курса",
+  "Image Url(Optional)": "URL Изображения (Опционально)",
+  "Choose Category": "Выберите Категорию",
+  "Introduction Video": "Вводное Видео",
+  "Course Image": "Изображение Курса",
+  "Save Course": "Сохранить Курс",
+  "Update Course": "Обновить Курс"
 }
