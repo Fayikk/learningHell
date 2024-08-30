@@ -125,7 +125,7 @@ const CartPage = (props) => {
                       <ul>
                         <li>
                           <Link onClick={ClickHandler} className="theme-btn" to="/checkout">
-                            Proceed to Checkout{" "}
+                            {t("Proceed to Checkout")}
                           </Link>
                         </li>
                       </ul>

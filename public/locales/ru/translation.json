@@ -72,5 +72,13 @@
   "Event Organized": "Организованное событие",
   "Expert Mentor": "Эксперт-ментор",
   "About": "О",
-  "Lesson": "Урок"
+  "Lesson": "Урок",
+  "Edit": "Редактировать",
+  "Remove Course": "Удалить Курс",
+  "Create New Course": "Создать Новый Курс",
+  "Proceed to Checkout": "Перейти к Оформлению",
+  "Add to Cart": "Добавить в корзину",
+  "Create New Section": "Создать Новый Раздел",
+  "Course Is Published": "Курс Опубликован",
+  "Course Is Rejected": "Курс Отклонен"
 }

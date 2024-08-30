@@ -1,44 +1,45 @@
-import React, { Fragment, useState, useEffect } from 'react';
-import Navbar from '../../components/Navbar/Navbar';
-import Scrollbar from '../../components/scrollbar/scrollbar';
-import Footer from '../../components/footer/Footer';
-import PageTitle from '../../components/pagetitle/PageTitle';
-import CourseSectionS3 from '../../components/CourseSectionS3/CourseSectionS3';
-import InstructorAuth from '../../Wrappers/HoC/InstructorAuth';
-import { useGetAllInstructorCoursesMutation } from '../../api/instructorApi';
-import { useCreateCourseAsyncMutation, useGetCourseByIdMutation, useRemoveCourseAsyncMutation, useUpdateCourseMutation } from '../../api/courseApi';
-import IsLoading from '../../components/Loading/IsLoading';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+import React, { Fragment, useState, useEffect } from "react";
+import Navbar from "../../components/Navbar/Navbar";
+import Scrollbar from "../../components/scrollbar/scrollbar";
+import Footer from "../../components/footer/Footer";
+import PageTitle from "../../components/pagetitle/PageTitle";
+import CourseSectionS3 from "../../components/CourseSectionS3/CourseSectionS3";
+import InstructorAuth from "../../Wrappers/HoC/InstructorAuth";
+import { useGetAllInstructorCoursesMutation } from "../../api/instructorApi";
+import { useCreateCourseAsyncMutation, useGetCourseByIdMutation, useRemoveCourseAsyncMutation, useUpdateCourseMutation } from "../../api/courseApi";
+import IsLoading from "../../components/Loading/IsLoading";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
-import { Input } from 'reactstrap';
-import { instructorApi } from '../../api/instructorApi';
-import { useDispatch } from 'react-redux';
-import { toast } from 'react-toastify';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import { useLazyGetAllCategoriesForSelectedQuery } from '../../api/categoryApi';
-import Spinner from 'react-bootstrap/Spinner';
-import VideoPage from '../LessonPage/VideoPage';
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
+import { Input } from "reactstrap";
+import { instructorApi } from "../../api/instructorApi";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import { useLazyGetAllCategoriesForSelectedQuery } from "../../api/categoryApi";
+import Spinner from "react-bootstrap/Spinner";
+import VideoPage from "../LessonPage/VideoPage";
+import { useTranslation } from "react-i18next";
 const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
   width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
+  bgcolor: "background.paper",
+  border: "2px solid #000",
   boxShadow: 24,
   p: 4,
 };
 
 function InstructorDetail() {
   const dispatch = useDispatch();
-    const [pageCounter,setPageCounter] = useState(0);
-    const [courses, setCourses] = useState([]);
+  const [pageCounter, setPageCounter] = useState(0);
+  const [courses, setCourses] = useState([]);
   const [categories, setCategories] = useState([]);
   const [getAllStudentCourses] = useGetAllInstructorCoursesMutation();
   const [getAllCategories, { data: categoriesData, isLoading: isCategoriesLoading }] = useLazyGetAllCategoriesForSelectedQuery();
@@ -52,62 +53,65 @@ function InstructorDetail() {
     courseDescription: "",
     imageUrl: "",
     categoryId: "",
-    introductionVideo:"",
-    courseImage:""
+    introductionVideo: "",
+    courseImage: "",
   });
   const [introductionVideo, setIntroductionVideo] = useState(null);
   const [image, setImage] = useState(null);
   const [open, setOpen] = useState(false);
   const [openCourseModal, setOpenCourseModal] = useState(false);
-  const [isActiveButton,setIsActiveButton] = useState(true);
-  const [isUpdateProcess,setIsUpdateProcess] = useState(false);
-  const handleOpen = () =>  setOpen(true);
-  const handleClose = () => {setCourseModel({
-    courseName: "",
-    coursePrice: 0,
-    courseLanguage: "",
-    courseDescription: "",
-    imageUrl: "",
-    categoryId: "",
-    introductionVideo:"",
-    courseImage:""
-  }),setIsUpdateProcess(false),setOpen(false)};
-  
+  const [isActiveButton, setIsActiveButton] = useState(true);
+  const [isUpdateProcess, setIsUpdateProcess] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => {
+    setCourseModel({
+      courseName: "",
+      coursePrice: 0,
+      courseLanguage: "",
+      courseDescription: "",
+      imageUrl: "",
+      categoryId: "",
+      introductionVideo: "",
+      courseImage: "",
+    }),
+      setIsUpdateProcess(false),
+      setOpen(false);
+  };
+
   const handleOpenCourseModal = () => setOpenCourseModal(true);
   const handleCloseCourseModal = () => setOpenCourseModal(false);
   const [getCourse] = useGetCourseByIdMutation();
   const [handleUpdateCourse] = useUpdateCourseMutation();
-  const [courseId,setCourseId] = useState();
-  const [filter,setFilter] = useState({
-    isSearch:true,
-    pageIndex:1,
-    pageSize:6,
-    sortColumn:"CourseName",
-    sortOrder:"desc",
-    filters:{
-        groupOp:"AND",
-        rules:[
-            {
-                field:"UserId",
-                op:1,
-                data:""
-            }
-        ]
-    }        
-})
+  const [courseId, setCourseId] = useState();
+  const [filter, setFilter] = useState({
+    isSearch: true,
+    pageIndex: 1,
+    pageSize: 6,
+    sortColumn: "CourseName",
+    sortOrder: "desc",
+    filters: {
+      groupOp: "AND",
+      rules: [
+        {
+          field: "UserId",
+          op: 1,
+          data: "",
+        },
+      ],
+    },
+  });
   useEffect(() => {
     async function fetchData() {
       // You can await here
       await getAllStudentCourses(filter).then((response) => {
-          setCourses(response.data.result != [] ? response.data.result.data : [])
-          // setCurrentPage(response.data.result.data)
-          setPageCounter(response.data.result.paginationCounter)
-      })
+        setCourses(response.data.result != [] ? response.data.result.data : []);
+        // setCurrentPage(response.data.result.data)
+        setPageCounter(response.data.result.paginationCounter);
+      });
       // ...
     }
     fetchData();
-
-  }, [filter,open]);
+  }, [filter, open]);
 
   useEffect(() => {
     if (categoriesData) {
@@ -124,34 +128,29 @@ function InstructorDetail() {
   //   return <IsLoading />;
   // }
   const handleClickChangePageNumber = (clickedPageNumber) => {
-  
     setFilter((prevFilter) => ({
-        ...prevFilter,      
-        pageIndex: clickedPageNumber 
+      ...prevFilter,
+      pageIndex: clickedPageNumber,
     }));
-};
+  };
 
   const createCourse = async () => {
-
     if (image == null) {
-      alert("Please Check Your Course Image")
+      alert("Please Check Your Course Image");
       return;
-      
     }
     var result = image.type.split("/");
 
-
-    if (result[0]!="image") {
-      alert("You must choosen only image")
+    if (result[0] != "image") {
+      alert("You must choosen only image");
       return;
     }
-
 
     if (imageDimensions.width > 1170 && imageDimensions.height > 860) {
-      alert("Please check your image dimension.Image dimension so high. Max dimension is 1170x867")
+      alert("Please check your image dimension.Image dimension so high. Max dimension is 1170x867");
       return;
     }
-    setIsActiveButton(false)
+    setIsActiveButton(false);
     const formData = new FormData();
     formData.append("CourseName", courseModel.courseName);
     formData.append("CoursePrice", courseModel.coursePrice);
@@ -162,23 +161,20 @@ function InstructorDetail() {
     formData.append("ImageUrl", courseModel.imageUrl);
     formData.append("CategoryId", courseModel.categoryId);
 
-
     await createCourseAsync(formData).then((response) => {
       if (response.data.isSuccess) {
-      setIsActiveButton(true)
-        
+        setIsActiveButton(true);
+
         handleClose();
         dispatch(instructorApi.util.invalidateTags(["instructor"]));
         toast.success(response.data.messages[0]);
       } else {
-      setIsActiveButton(true)
+        setIsActiveButton(true);
 
         toast.error(response.data.errorMessages[0]);
       }
     });
   };
-
-
 
   const handleRemoveCourse = async (courseId) => {
     const answer = window.confirm("Are you sure you want to delete this course?");
@@ -193,17 +189,12 @@ function InstructorDetail() {
     }
   };
 
-
-
   const handleGetCourse = async (courseId) => {
-
     // response.data.result.item1
-    setCourseId(courseId)
-    await getCourse(courseId).then((response) => 
-    
-    {
+    setCourseId(courseId);
+    await getCourse(courseId).then((response) => {
       if (response.data.isSuccess) {
-        console.log(response.data.result.item1)
+        console.log(response.data.result.item1);
         setIsUpdateProcess(true);
         // setGetCourseModelState({
         //   courseName:response.data.result.item1.courseName,
@@ -214,83 +205,69 @@ function InstructorDetail() {
         //   courseImage:response.data.result.item1.courseImage
         // })
         setCourseModel({
-          courseName:response.data.result.item1.courseName,
-       coursePrice:response.data.result.item1.coursePrice,
-       courseLanguage:response.data.result.item1.courseLanguage,
-       courseDescription:response.data.result.item1.courseDescription,
-       introductionVideo:response.data.result.item1.introductionVideoUrl,
-       courseImage:response.data.result.item1.courseImage,
-       categoryId:response.data.result.item1.categoryId
-        })
-     
-     
-        handleOpen()
-      }
-      else {
-        console.log("fail")
-      }
-    }
-    )
-  }
+          courseName: response.data.result.item1.courseName,
+          coursePrice: response.data.result.item1.coursePrice,
+          courseLanguage: response.data.result.item1.courseLanguage,
+          courseDescription: response.data.result.item1.courseDescription,
+          introductionVideo: response.data.result.item1.introductionVideoUrl,
+          courseImage: response.data.result.item1.courseImage,
+          categoryId: response.data.result.item1.categoryId,
+        });
 
+        handleOpen();
+      } else {
+        console.log("fail");
+      }
+    });
+  };
 
   const updateCourse = async () => {
-
     // formData.append("IntroductionVideo", introductionVideo);
     // formData.append("Image", image);
-    console.log("Image",image)
-    console.log("introductionVideo",introductionVideo)
-      console.log("trigger update course process",courseModel)
+    console.log("Image", image);
+    console.log("introductionVideo", introductionVideo);
+    console.log("trigger update course process", courseModel);
 
-      const formData = new FormData();
-      formData.append("CourseName", courseModel.courseName);
-      formData.append("CoursePrice", courseModel.coursePrice);
-      formData.append("CourseLanguage", courseModel.courseLanguage);
-      formData.append("CourseDescription", courseModel.courseDescription);
-      formData.append("IntroductionVideo", introductionVideo);
-      formData.append("Image", image);
-      formData.append("ImageUrl", courseModel.imageUrl);
-      formData.append("CategoryId", courseModel.categoryId);
+    const formData = new FormData();
+    formData.append("CourseName", courseModel.courseName);
+    formData.append("CoursePrice", courseModel.coursePrice);
+    formData.append("CourseLanguage", courseModel.courseLanguage);
+    formData.append("CourseDescription", courseModel.courseDescription);
+    formData.append("IntroductionVideo", introductionVideo);
+    formData.append("Image", image);
+    formData.append("ImageUrl", courseModel.imageUrl);
+    formData.append("CategoryId", courseModel.categoryId);
 
-      const courseUpdateModel = {
-        courseId:courseId,
-        formData:formData
+    const courseUpdateModel = {
+      courseId: courseId,
+      formData: formData,
+    };
+    setIsActiveButton(false);
+
+    await handleUpdateCourse(courseUpdateModel).then((response) => {
+      if (response.data.isSuccess) {
+        setImage(null);
+        setIsActiveButton(true);
+        setIntroductionVideo(null);
+        toast.success(response.data.messages[0]);
+        dispatch(instructorApi.util.invalidateTags(["instructor"]));
+        handleClose();
+      } else {
+        setIsActiveButton(true);
+
+        toast.error(response.data.errorMessages[0]);
       }
-      setIsActiveButton(false)
-
-
-        await handleUpdateCourse(courseUpdateModel).then((response) => {
-          if (response.data.isSuccess) {
-            setImage(null)
-            setIsActiveButton(true)
-            setIntroductionVideo(null)
-            toast.success(response.data.messages[0])  
-           dispatch(instructorApi.util.invalidateTags(["instructor"]));
-            handleClose()
-          }
-
-          else {
-            setIsActiveButton(true)
-
-            toast.error(response.data.errorMessages[0]);
-          }
-
-          
-        })
-  }
-
-
+    });
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
 
     var fileResult = file.type.split("/");
 
-    if (fileResult[0]!="image") {
-      alert("You must choosen only image")
+    if (fileResult[0] != "image") {
+      alert("You must choosen only image");
     }
-
-
 
     if (file) {
       const reader = new FileReader();
@@ -309,104 +286,51 @@ function InstructorDetail() {
       reader.readAsDataURL(file);
     }
   };
+  const { t, i18n } = useTranslation();
 
   return (
     <Fragment>
       <Navbar />
-      <PageTitle pageTitle={'Instructor'} pagesub={'Instructor'} />
-      <div style={{ textAlign: 'right' }}>
-        <Button onClick={handleOpen}>Create New Course</Button>
-        <Button onClick={handleOpenCourseModal} style={{ color: "red" }}>Remove Course</Button>
-        <Modal
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
+      <PageTitle pageTitle={"Instructor"} pagesub={"Instructor"} />
+      <div style={{ textAlign: "right" }}>
+        <Button onClick={handleOpen}>{t("Create New Course")}</Button>
+        <Button onClick={handleOpenCourseModal} style={{ color: "red" }}>
+          {t("Remove Course")}
+        </Button>
+        <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
           <Box sx={style}>
             <Typography id="modal-modal-title" variant="h6" component="h2">
-              <div className='col'>
-                <div className='row'>
-                  <Input
-                    type='text'
-                    placeholder='Course Name'
-                    defaultValue={courseModel.courseName || ""}
-                    onChange={(e) => setCourseModel({ ...courseModel, courseName: e.target.value })}
-                  />
+              <div className="col">
+                <div className="row">
+                  <Input type="text" placeholder="Course Name" defaultValue={courseModel.courseName || ""} onChange={(e) => setCourseModel({ ...courseModel, courseName: e.target.value })} />
                 </div>
-                <div className='row'>
-                  <Input
-                    type='number'
-                    placeholder='Course Price'
-                    defaultValue={courseModel.coursePrice|| 0}
-                    onChange={(e) => setCourseModel({ ...courseModel, coursePrice: e.target.value })}
-                  />
+                <div className="row">
+                  <Input type="number" placeholder="Course Price" defaultValue={courseModel.coursePrice || 0} onChange={(e) => setCourseModel({ ...courseModel, coursePrice: e.target.value })} />
                 </div>
-                <div className='row'>
-                  <Input
-                    type='text'
-                    defaultValue={courseModel.courseLanguage|| ""}
-
-                    placeholder='Course Language'
-                    onChange={(e) => setCourseModel({ ...courseModel, courseLanguage: e.target.value })}
-                  />
+                <div className="row">
+                  <Input type="text" defaultValue={courseModel.courseLanguage || ""} placeholder="Course Language" onChange={(e) => setCourseModel({ ...courseModel, courseLanguage: e.target.value })} />
                 </div>
-                <div className='row'>
-                  <Input
-                    type='text'
-                    defaultValue={courseModel.courseDescription|| ""}
-
-                    placeholder='Course Description'
-                    onChange={(e) => setCourseModel({ ...courseModel, courseDescription: e.target.value })}
-                  />
+                <div className="row">
+                  <Input type="text" defaultValue={courseModel.courseDescription || ""} placeholder="Course Description" onChange={(e) => setCourseModel({ ...courseModel, courseDescription: e.target.value })} />
                 </div>
-                <div className='row'>
+                <div className="row">
                   <span>Introduction Video</span>
-                  {
-                    courseModel.introductionVideo != "" ? (
-                      <video src={courseModel.introductionVideo} controls ></video>
-                    ):""
-                  }
-                  <Input
-                    type='file'
-
-                    placeholder='Introduction Video'
-                    onChange={(e) => setIntroductionVideo(e.target.files[0])}
-                  />
+                  {courseModel.introductionVideo != "" ? <video src={courseModel.introductionVideo} controls></video> : ""}
+                  <Input type="file" placeholder="Introduction Video" onChange={(e) => setIntroductionVideo(e.target.files[0])} />
                 </div>
-                <div className='row'>
+                <div className="row">
                   <span>Course Image</span>
-                  {
-
-courseModel.courseImage != "" ? (
-  <img src={courseModel.courseImage} alt="" />
-) : ""
-
-                 
-
-                  }
-                  <Input
-                    type='file'
-
-                    placeholder='Image'
-                    onChange={handleImageChange}
-                  />
+                  {courseModel.courseImage != "" ? <img src={courseModel.courseImage} alt="" /> : ""}
+                  <Input type="file" placeholder="Image" onChange={handleImageChange} />
                 </div>
-                <div className='row'>
-                  <Input
-                    type='text'
-                    placeholder='Image Url(Optional)'
-                    onChange={(e) => setCourseModel({ ...courseModel, imageUrl: e.target.value })}
-                  />
-                
+                <div className="row">
+                  <Input type="text" placeholder="Image Url(Optional)" onChange={(e) => setCourseModel({ ...courseModel, imageUrl: e.target.value })} />
                 </div>
-                <div className='row'>
-                  <select
-                    onChange={(e) => setCourseModel({ ...courseModel, categoryId: e.target.value })}
-                    placeholder='Choose category'
-                    title='categories'
-                  >
-                    <option value="" disabled selected>Choose category</option>
+                <div className="row">
+                  <select onChange={(e) => setCourseModel({ ...courseModel, categoryId: e.target.value })} placeholder="Choose category" title="categories">
+                    <option value="" disabled selected>
+                      Choose category
+                    </option>
                     {categories.map((category) => (
                       <option key={category.categoryId} value={category.categoryId}>
                         {category.categoryName}
@@ -417,91 +341,76 @@ courseModel.courseImage != "" ? (
               </div>
             </Typography>
             <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-
-            {
-              !isUpdateProcess ? (
-                <Button disabled={!isActiveButton}  onClick={createCourse}>Save Course</Button>
-
+              {!isUpdateProcess ? (
+                <Button disabled={!isActiveButton} onClick={createCourse}>
+                  Save Course
+                </Button>
               ) : (
-              <Button disabled={!isActiveButton}  onClick={updateCourse}>Update Course</Button>
-
-              )
-            }
+                <Button disabled={!isActiveButton} onClick={updateCourse}>
+                  Update Course
+                </Button>
+              )}
             </Typography>
-            {
-              !isActiveButton ? (
-          <Spinner animation="border" />
-
-              ) : ""
-            }
-
+            {!isActiveButton ? <Spinner animation="border" /> : ""}
           </Box>
         </Modal>
 
-        <Modal
-          open={openCourseModal}
-          onClose={handleCloseCourseModal}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
+        <Modal open={openCourseModal} onClose={handleCloseCourseModal} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
           <Box sx={style}>
             <Typography id="modal-modal-title" variant="h6" component="h2">
               <Container>
                 <Row>
                   {courses.map((course, key) => (
                     <Col style={{ marginTop: "6px" }} key={course.courseId}>
-                      {course.courseName} - 
-                      <button  className='btn btn-danger' onClick={() => handleRemoveCourse(course.courseId)}>
+                      {course.courseName} -
+                      <button className="btn btn-danger" onClick={() => handleRemoveCourse(course.courseId)}>
                         Remove This Course
                       </button>
                     </Col>
                   ))}
                 </Row>
-
               </Container>
             </Typography>
-          </Box>  
-          
+          </Box>
         </Modal>
       </div>
-      <CourseSectionS3 courses={courses} component={"instructor"} onData={handleGetCourse}  />
+      <CourseSectionS3 courses={courses} component={"instructor"} onData={handleGetCourse} />
       <div className="pagination-wrapper">
-                        <ul className="pg-pagination">
-                            {
-                                filter.pageIndex != 1 ? (
-                                    <li>
-                                    <Button color='secondary' aria-label="Previous" onClick={()=>handleClickChangePageNumber(filter.pageIndex-1)}>
-                                        <i className="fi ti-angle-left"></i>
-                                    </Button>
-                                   </li>
+        <ul className="pg-pagination">
+          {filter.pageIndex != 1 ? (
+            <li>
+              <Button color="secondary" aria-label="Previous" onClick={() => handleClickChangePageNumber(filter.pageIndex - 1)}>
+                <i className="fi ti-angle-left"></i>
+              </Button>
+            </li>
+          ) : (
+            ""
+          )}
 
-                                ) : ("")
-                            }
-                          
-                            {
-                                [...Array(pageCounter)].map((_, index) => (
-                                    <li key={index} className={index === 0 ? "active" : ""}>
-                                        <li className="active"><Button color="secondary" onClick={()=>handleClickChangePageNumber(index+1)} >{index + 1}</Button></li>
-                                    </li>
-                                ))
-                              
-                                //
+          {
+            [...Array(pageCounter)].map((_, index) => (
+              <li key={index} className={index === 0 ? "active" : ""}>
+                <li className="active">
+                  <Button color="secondary" onClick={() => handleClickChangePageNumber(index + 1)}>
+                    {index + 1}
+                  </Button>
+                </li>
+              </li>
+            ))
 
-                             
-                            }
-                            {
-                                filter.pageIndex != pageCounter ? (
-                                    <li>
-                                    <Button color='secondary' aria-label="Next" onClick={()=>handleClickChangePageNumber(filter.pageIndex+1)}>
-                                        <i className="fi ti-angle-right"></i>
-                                    </Button>
-                                </li>
-                                ) : ("")
-                            }
-
-                           
-                        </ul>
-                    </div>
+            //
+          }
+          {filter.pageIndex != pageCounter ? (
+            <li>
+              <Button color="secondary" aria-label="Next" onClick={() => handleClickChangePageNumber(filter.pageIndex + 1)}>
+                <i className="fi ti-angle-right"></i>
+              </Button>
+            </li>
+          ) : (
+            ""
+          )}
+        </ul>
+      </div>
       <Footer />
       <Scrollbar />
     </Fragment>

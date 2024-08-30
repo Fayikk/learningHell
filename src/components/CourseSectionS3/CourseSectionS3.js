@@ -63,7 +63,7 @@ const CourseSectionS3 = (props) => {
                         </Link>
                         {props.component === "instructor" && (
                           <button className="btn btn-success" onClick={() => handleClickedChildToParent(course.courseId)}>
-                            Düzenle
+                            {t("Edit")}
                           </button>
                         )}
                       </h2>

@@ -1,11 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import blogs from "../../api/blogs";
+import { useTranslation } from "react-i18next";
 
 const Sidebar = (props) => {
   const ClickHandler = () => {
     window.scrollTo(10, 0);
   };
+
+  const { t, i18n } = useTranslation();
 
   return (
     <div className="col col-lg-4 col-12 course-sitebar">
@@ -19,7 +22,7 @@ const Sidebar = (props) => {
           </div>
           <div className="cart-btn">
             <Link onClick={ClickHandler} to="/cart" className="theme-btn-s3">
-              Add to Cart
+              {t("Add to Cart")}
             </Link>
           </div>
           <ul>

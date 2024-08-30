@@ -1,11 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const ShopProduct = ({ products, addToCartProduct }) => {
   const ClickHandler = () => {
     window.scrollTo(10, 0);
   };
 
+  const { t, i18n } = useTranslation();
   return (
     <section className="wpo-shop-section">
       <div className="container">
@@ -28,7 +30,7 @@ const ShopProduct = ({ products, addToCartProduct }) => {
                       <span>${product.price}</span>
                       <div className="add-to-cart">
                         <button data-bs-toggle="tooltip" data-bs-html="true" title="Add to Cart" onClick={() => addToCartProduct(product)}>
-                          Add to cart
+                          {t("Add to cart")}
                           <i className="ti-shopping-cart"></i>
                         </button>
                       </div>

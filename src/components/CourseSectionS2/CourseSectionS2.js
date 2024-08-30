@@ -22,7 +22,7 @@ const ClickHandler = () => {
 };
 
 const CourseSectionS2 = (props) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   return (
     <div className={`wpo-popular-area-s4 section-padding ${props.pClass}`}>
       <div className="container">
