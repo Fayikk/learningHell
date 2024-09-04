@@ -270,8 +270,8 @@ const Header = ({ props, onAuthStateChange }) => {
                         <div className="ml-2">
                           <Dropdown
                             show={showDropdown}
-                            onClick={() => handleMouseEnter()}
-                            onDoubleClick={() => handleMouseLeave()}
+                            onMouseEnter={() => handleMouseEnter()}
+                            onMouseLeave={() => handleMouseLeave()}
                           >
                             <Dropdown.Toggle
                               variant="primary"
