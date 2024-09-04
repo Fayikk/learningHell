@@ -493,7 +493,7 @@ img {
 
 .theme-btn, .view-cart-btn,
 .theme-btn-s2 {
-  color: #1A1729;
+  color: white;
   display: inline-block;
   font-weight: 500;
   padding: 15px 35px;
@@ -564,6 +564,7 @@ img {
 }
 
 .theme-btn-s2:before {
+  color:#000;
   position: absolute;
   right: 5px;
   top: 5px;
@@ -571,7 +572,7 @@ img {
   height: 46px;
   line-height: 46px;
   border-radius: 30px;
-  background: #fff;
+  background: #ffffff;
   content: "\e628";
   font-family: "themify";
   text-align: center;
@@ -10957,7 +10958,8 @@ img {
 .wpo-course-details-tab {
   padding: 15px 30px;
   border: 1px solid #ebebeb;
-  margin-top: 40px;
+  margin-top: 40px; 
+
 }
 
 .wpo-course-details-tab .nav li a {
@@ -10976,6 +10978,7 @@ img {
   margin-right: 10px;
   border: none;
   text-transform: capitalize;
+  
 }
 
 .wpo-course-details-tab .nav li a.active,
