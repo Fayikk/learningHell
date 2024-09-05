@@ -18,14 +18,20 @@
     height: 80px;
     margin-bottom: 10px;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 2px solid #ccc;
     border-radius: 5px;
+    border-radius: 10px;
+    
+}
+.comment-input:focus {
+    border-color: #e8b400; /* Mavi border rengi */
+    outline: none; /* Varsayılan outline'ı kaldırır */
 }
 
 .comment-submit-btn {
     align-self: flex-end;
     padding: 8px 16px;
-    background-color: #007bff;
+    background-color: #e8b400;
     color: white;
     border: none;
     border-radius: 5px;
