@@ -26,10 +26,11 @@ const CourseSinglePage = (props) => {
   const [isEnrolledCourse, setIsEnrolledCourse] = useState(false);
   const [course, setCourse] = useState();
   const [open, setOpen] = React.useState([]);
-  const [cart, setCart] = useState(false);
+  const [cart, setCart] = useState(true);
   const authenticationState = useSelector(
     (state) => state.authStore.nameIdentifier
   );
+  const courseData = data?.result?.item1;
 
   useEffect(() => {
     if (data) {
@@ -43,10 +44,6 @@ const CourseSinglePage = (props) => {
         userId: decode.nameid,
         courseId: data?.result?.item1?.courseId,
       };
-
-      // if (user.id === useSelector((state) => state.authStore)) {
-      //     setOwnMyCourse(true)
-      // }
 
       await CheckHasThisCourse(model).then((response) =>
         setIsEnrolledCourse(response.data)
@@ -75,51 +72,38 @@ const CourseSinglePage = (props) => {
     <Fragment>
       <Navbar />
       <div className="container mx-auto flex flex-col sm:gap-5 gap-3 sm:px-28 mb-10">
-        {/* <PageTitle
-          pageTitle={data.result.item1.courseName}
-          pagesub={"Course"}
-        /> */}
         <Breadcrumbs
           steps={[
             {
-              title: data?.result?.item1?.courseName,
+              title: courseData?.courseName,
               to: `/course-single/${slug}`,
             },
           ]}
         />
-        <div className="flex bg-gray-200 p-5 rounded-2xl sm:flex-row flex-col gap-4 ">
+        <div className="flex justify-between bg-gray-200 p-5 rounded-2xl sm:flex-row flex-col gap-4 ">
           {" "}
           <img
-            src={data.result.item1.courseImage}
+            src={courseData?.courseImage}
             alt=""
             className="rounded-md shadow-md sm:max-w-[550px] h-auto flex  order-1"
           />
-          <div className="flex flex-col sm:px-3 justify-center  gap-2 px-1 sm:p-1">
-            <h1 className="text-2xl font-bold">
-              {data.result.item1.courseName}
-            </h1>
-            <p className="text-black ">
-              Learn WordPress & Elementor for Beginners On the other hand, we
-              denounce with righteous indignation and dislike men who are so
-              beguiled and demoralized by the charms of pleasure of the moment,
-              so blinded by desire, that they cannot foresee the pain and
-              trouble that are bound to ensue and equal blame belongs to those
-              who fail in their duty through weaknes.
-            </p>
+          <div className="flex flex-col  justify-center  gap-2 px-1">
+            <h1 className="text-2xl font-bold">{courseData?.courseName}</h1>
+            <p className="text-black ">{courseData?.courseDescription}</p>
 
             {cart ? (
-              <div className="flex justify-end">
+              <div className="flex justify-end ">
                 <button className="theme-btn-s2">Derse Başla</button>
               </div>
             ) : (
               <div className="flex justify-between">
                 <div className="flex items-center  gap-2">
                   <span className="text-xl font-bold text-black rounded-full p-4 bg-themeOrange px-3 ">
-                    200 ₺
+                    {courseData?.coursePrice.toFixed(2)} ₺
                   </span>
                   <span className="text-black/75 text-[15px]">Language:</span>
                   <span className="text-black/75 font-bold text-[15px]">
-                    Turkish
+                    {courseData?.courseLanguage}
                   </span>
                 </div>
                 <div className="flex justify-end items-center">
@@ -134,7 +118,7 @@ const CourseSinglePage = (props) => {
             <CourseSingleAccardion />
             <Review />
           </div>
-          <InstructorDetails courseName={data.result.item1.courseName} />
+          <InstructorDetails courseName={courseData?.courseName} />
         </div>{" "}
         <CoureseTab CoursesDetails={course} rate={data.result.item2} />
         {!isEnrolledCourse ? <Sidebar CourseDetail={course} /> : ""}
