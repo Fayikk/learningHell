@@ -41,6 +41,7 @@ import VerifyDigitCode from '../Verification/VerifyDigitCode';
 import { AuthProvider } from '../Extensions/AuthProvider';
 import PrivateRoute from '../Extensions/PrivateRoute';
 import MyAccount from '../Account/MyAccount';
+import PrivateEnrolledCourseRoute from '../Extensions/PrivateEnrolledCourseRoute';
 const AllRoute = () => {
   return (
     <div className="App">
@@ -58,7 +59,7 @@ const AllRoute = () => {
           <Route path="course/:slug" element={<CoursePage />} />
           <Route path="course-2" element={<CoursePageS2 />} />
           {/* <Route path="course-3" element={<CoursePageS3 />} /> */}
-          <Route path="lessons/:courseId" element={<LessonPage />} />
+          <Route path="lessons/:courseId" element={<PrivateEnrolledCourseRoute><LessonPage /></PrivateEnrolledCourseRoute>} />
           <Route path='TeacherApplications' element={<TeacherApplications></TeacherApplications>} ></Route>
           <Route path="gallery" element={<GalleryPage />} />
           <Route path="testimonial" element={<TestimonialPage />} />
