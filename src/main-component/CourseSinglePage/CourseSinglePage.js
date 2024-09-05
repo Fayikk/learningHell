@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import Navbar from "../../components/Navbar/Navbar";
 import PageTitle from "../../components/pagetitle/PageTitle";
 import Scrollbar from "../../components/scrollbar/scrollbar";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Footer from "../../components/footer/Footer";
 import CoureseTab from "./Tabs/CoureseTab";
 import Sidebar from "./sidebar";
@@ -14,22 +14,24 @@ import { jwtDecode } from "jwt-decode";
 import CourseSingleAccardion from "./CourseSingleAccardion";
 import InstructorDetails from "./InstructorDetails";
 import Review from "./Tabs/Review";
-import RightArrowIcon from "../../icons/RightArrowIcon";
 import Breadcrumbs from "../../components/Breadcrumbs/Breadcrumbs";
 
 const CourseSinglePage = () => {
+  const navigate = useNavigate();
   const { slug } = useParams();
   const { data, isLoading } = useGetCourseDetailByIdQuery(slug);
   const [CheckHasThisCourse] = useThisCourseEnrolledUserMutation();
   const [ownMyCourse, setOwnMyCourse] = useState(false);
-  const [isEnrolledCourse, setIsEnrolledCourse] = useState(false);
+  const [isEnrolledCourse, setIsEnrolledCourse] = useState(true);
   const [course, setCourse] = useState();
-  const [cart, setCart] = useState(true);
+  const [cart, setCart] = useState(false);
   const authenticationState = useSelector(
     (state) => state.authStore.nameIdentifier
   );
   const courseData = data?.result?.item1;
 
+
+  console.log("trigger course data",courseData)
   useEffect(() => {
     if (data) {
       setCourse(data.result.item1);
@@ -46,8 +48,10 @@ const CourseSinglePage = () => {
 
       console.log("trigger model", model);
 
-      await CheckHasThisCourse(model).then((response) =>
-        setIsEnrolledCourse(false)
+      await CheckHasThisCourse(model).then((response) =>{
+        setIsEnrolledCourse(response.data)
+      
+      }
       );
     }
     CheckActiveCourse();
@@ -55,6 +59,13 @@ const CourseSinglePage = () => {
 
   if (isLoading || !course) {
     return <IsLoading />;
+  }
+
+
+
+  const triggerButton = () => {
+
+    navigate(`/lessons/${course.courseId}`)
   }
 
   return (
@@ -79,25 +90,12 @@ const CourseSinglePage = () => {
             <h1 className="text-2xl font-bold">{courseData?.courseName}</h1>
             <p className="text-black">{courseData?.courseDescription}</p>
 
-            {cart ? (
+            {isEnrolledCourse ? (
               <div className="flex justify-end">
-                <button className="theme-btn-s2">Derse Başla</button>
+                <button className="theme-btn-s2" onClick={triggerButton} >Derse Başla</button>
               </div>
             ) : (
-              <div className="flex justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl font-bold text-black rounded-full p-4 bg-themeOrange px-3 ">
-                    {courseData?.coursePrice.toFixed(2)} ₺
-                  </span>
-                  <span className="text-black/75 text-[15px]">Language:</span>
-                  <span className="text-black/75 font-bold text-[15px]">
-                    {courseData?.courseLanguage}
-                  </span>
-                </div>
-                <div className="flex justify-end items-center">
-                  <button className="theme-btn-s3">Add To Cart</button>
-                </div>
-              </div>
+              <Sidebar courseDetail={courseData} ></Sidebar>
             )}
           </div>
         </div>

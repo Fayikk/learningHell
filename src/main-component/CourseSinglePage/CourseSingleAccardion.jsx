@@ -52,12 +52,13 @@ const CourseSingleAccardion = (props) => {
                 }`}
               >
                 {courseDetail.videos.map((video, videoIndex) => (
-                  <div
+                  <Link
                     key={videoIndex}
                     className="p-4 text-sm leading-normal text-blue-gray-500/80"
+                    to={''}
                   >
                     {video.title}
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>

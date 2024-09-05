@@ -22,19 +22,20 @@ import PageTitle from "../../components/pagetitle/PageTitle";
 const LessonPage = () => {
   const location = useLocation();
   const { from } = location.state || 0;
-  const { sectionId } = useParams();
+  const { courseId } = useParams();
   const [expanded, setExpanded] = React.useState(false);
-  const { data, isLoading } = useGetSectionSubDetailsQuery(sectionId);
+  const { data, isLoading } = useGetCourseDetailByIdQuery(courseId);
+
+  // const { data, isLoading } = useGetSectionSubDetailsQuery(sectionId);
   const [videos, setVideos] = useState([]);
+  const [courseInsideDetail,setCourseInsideDetail] = useState([]);
   const [videoCounter, setVideoCounter] = useState(0);
   const [videoId, setVideoId] = useState();
   const [ownRating, setOwnRating] = useState();
-  const [courseId, setCourseId] = useState();
+  // const [courseId, setCourseId] = useState();
   const [open, setOpen] = React.useState([]);
   const [alwaysOpen, setAlwaysOpen] = React.useState(true);
   const { slug } = useParams();
-  const { data: courseDetailData, isLoading: courseDetailIsLoading } =
-    useGetCourseDetailByIdQuery(courseId);
 
   const handleOpen = (index) => {
     setOpen((prevOpen) => {
@@ -49,12 +50,11 @@ const LessonPage = () => {
   const [decryptVideoUrl] = useGetWatchVideoUrlMutation();
   useEffect(() => {
     if (data) {
-      console.log("trigger data", data);
-      setVideos(data.result.videos || []);
-      setCourseId(data.result.courseId);
-      if (videos == []) {
+      console.log("trigger data",data)
+      setCourseInsideDetail(data.result.item1.sections);
+
         localStorage.removeItem("willSelectedVideo");
-      }
+     
     }
   }, [data]);
 
@@ -70,19 +70,14 @@ const LessonPage = () => {
     }
   }, [videos]);
 
-  if (isLoading) {
-    return <IsLoading></IsLoading>;
-  }
 
-  const handleChange = (panel) => (event, isExpanded) => {
-    setExpanded(isExpanded ? panel : false);
-  };
-
-  const changeVideo = async (videoId) => {
+  const changeVideo = async (publicVideoId,videoId) => {
+    console.log("trigger change publicVideoId",publicVideoId)
+    console.log("trigger change videoId",videoId)
     setVideoId(videoId);
-    const videoUrl = videos.find((video) => video.videoId === videoId);
-    if (videoUrl) {
-      await decryptVideoUrl(videoUrl.publicVideoId)
+    // const videoUrl = videos.find((video) => video.videoId === videoId);
+      console.log("trigger video ıd")
+      await decryptVideoUrl(publicVideoId)
         .then((response) => {
           localStorage.setItem(
             "willSelectedVideo",
@@ -90,9 +85,6 @@ const LessonPage = () => {
           );
         })
         .catch((err) => console.error(err));
-    } else {
-      console.error("Video not found!");
-    }
   };
 
   const formatDuration = (duration) => {
@@ -104,7 +96,9 @@ const LessonPage = () => {
 
     return `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
   };
-
+  if (isLoading) {
+    return <IsLoading></IsLoading>;
+  }
   return (
     <Fragment>
       <section className="wpo-lesson-section container mx-auto p-4 gap-3 flex flex-col ">
@@ -115,8 +109,8 @@ const LessonPage = () => {
         <Breadcrumbs
           steps={[
             {
-              title: courseDetailData?.result?.item1?.courseName,
-              to: `/course-single/${courseDetailData?.result?.item1?.courseId}`,
+              title: data?.result?.item1?.courseName,
+              to: `/course-single/${data?.result?.item1?.courseId}`,
             },
             {
               title: data?.result?.sectionName,
@@ -126,46 +120,60 @@ const LessonPage = () => {
         />
         <div className="flex flex-col  gap-6 md:flex-row">
           <div className="flex flex-col  flex-1 gap-3 order-2 md:!order-none ">
-            <div className=" rounded-2xl shadow-lg font-bold p-3 text-themeOrange">
+            {/* <div className=" rounded-2xl shadow-lg font-bold p-3 text-themeOrange">
               {data?.result?.sectionName}
-            </div>
+            </div> */}
             <div className="p-2 rounded-2xl shadow-lg flex flex-col gap-0">
-              {videos.map((video, index) => (
+              
+{
+  courseInsideDetail.map((section,index) => (
                 <Accordion
                   key={index}
                   className="flex flex-col gap-2"
                   open={open.includes(index)}
                 >
-                  <AccordionHeader
-                    className="text-base text-gray-600 font-bold px-3 -my-1 flex items-center justify-between"
-                    onClick={() => handleOpen(index)}
-                  >
-                    <span className="flex items-center">
-                      <span className="">{video.title}</span>
-                      <ChevronDownIcon
-                        className={`h-5 w-5 transition-transform ml-2 flex items-center  ${
-                          open.includes(index) ? "rotate-180" : ""
-                        }`}
-                        id={index}
-                        open={open}
-                      />
-                    </span>
-                  </AccordionHeader>
-                  <AccordionBody className="text-base p-1 px-4">
-                    <a
-                      href={video.link}
-                      onClick={() => changeVideo(video.videoId)}
-                      className="  hover:underline none-underline cursor-pointer hover:text-themeOrange focus:text-themeOrange    "
-                    >
-                      {video.title}
-                    </a>
-                  </AccordionBody>
+
+    <AccordionHeader
+    className="text-base text-gray-600 font-bold px-3 -my-1 flex items-center justify-between"
+    onClick={() => handleOpen(index)}
+  >
+    <span className="flex items-center">
+      <span className="">{section.sectionName}</span>
+      <ChevronDownIcon
+        className={`h-5 w-5 transition-transform ml-2 flex items-center  ${
+          open.includes(index) ? "rotate-180" : ""
+        }`}
+        id={index}
+        open={open}
+      />
+    </span>
+  </AccordionHeader>
+  {
+    section.videos.map((video,key) => (
+      <AccordionBody className="text-base p-1 px-4">
+      <a
+        href={video.link}
+        onClick={() => changeVideo(video.publicVideoId,video.videoId)}
+        className="  hover:underline none-underline cursor-pointer hover:text-themeOrange focus:text-themeOrange    "
+      >
+        {video.title}
+      </a>
+    </AccordionBody>
+    ))
+  }
+ 
+
+
+
+
+                 
+             
                 </Accordion>
-              ))}
+                ))  }
             </div>
 
             <StarRating
-              courseId={data.result.courseId}
+              courseId={courseId}
               ownRating={ownRating}
             ></StarRating>
 
