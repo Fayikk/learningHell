@@ -122,7 +122,8 @@ const CoursePage = () => {
    
     useEffect(()=>{
         async function fetchData() {
-            // You can await here
+            
+            console.log("trigger page index",pageIndex)
             await fetchAllDatas(filter).then((response) => {
 
                 setCourses(response.data.result != [] ? response.data.result.data : [])
@@ -191,7 +192,7 @@ const CoursePage = () => {
                 ) : ("")
             }
 
-            <CourseSectionS3 courses={courses} component={"course"} />
+            <CourseSectionS3 courses={courses} paginationNumber={filter.pageIndex} component={"course"} />
             <div className="pagination-wrapper">
                         <ul className="pg-pagination">
                             {

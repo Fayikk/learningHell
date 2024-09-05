@@ -143,8 +143,7 @@ const Header = ({ props, onAuthStateChange }) => {
               </div>
               <div className="col-lg-6 col-md-1 col-1">
                 <div
-                  id="navbar"
-                  className="collapse navbar-collapse navigation-holder"
+                 
                 >
                   <button className="menu-close">
                     <i className="ti-close"></i>

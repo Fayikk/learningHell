@@ -19,6 +19,7 @@ import { payHub } from '../../api/Base/payHubModel';
 import FormControlLabel from "@mui/material/FormControlLabel";
 import RadioGroup from "@mui/material/RadioGroup";
 import Radio from "@mui/material/Radio";
+import { shoppingCartApi } from '../../api/shoppingCartApi';
 
 const style = {
     position: 'absolute',
@@ -143,36 +144,35 @@ const CheckWrap = (props) => {
                 isActive3dSecure:isRadio
             }
 
-     var response = await CreatePayment(sendData)
-            validator.hideMessages();
-            // if (response.error || !response.error.data.isSuccess) {
-            //     toast.error(response.error.data.errorMessages[response.error.data.errorMessages.length - 1])
-            //     if (response.error.data.errorMessages == []) {
-            //         toast.error("Payment is failed please check your information")
-            //     }
-            // }
-            const userRegex = /^user+.*/gm;
-            console.log("trigger response",response)
-            const email = value.email;
-            if (email.match(userRegex) && response.data.isSuccess ) {
-                if (isRadio) {
-                    console.log(response.data.result.item1.content)
-                    const blob = new Blob([response.data.result.item1.content], { type: "text/html" });
-                    const objUrl = URL.createObjectURL(blob);
-                    setHtml(objUrl);
-                    handleOpen();    
-                }
-                else if (!isRadio) {
-                    if (response.data.isSuccess && response.data.result.item2.status == "success") {
-                        toast.success(response.data.messages[0]); 
-                        push('/order_received');        
-                    }
-                }
-                
-            }  else if(!response.data.isSuccess) {
-                toast.info(response.data.messages[0] + ".Please check your information again");
-                // alert('user not existed! credential is : user@*****.com | vendor@*****.com | admin@*****.com');
+    await CreatePayment(sendData).then((response) => {
+        validator.hideMessages();
+        const userRegex = /^user+.*/gm;
+        console.log("trigger response payment",response)
+        const email = value.email;
+        if (email.match(userRegex) && response.data.isSuccess ) {
+            if (isRadio) {
+                console.log(response.data.result.item1.content)
+                console.log("response.data.result[0]",response.data.result[0])
+                const blob = new Blob([response.data.result.item1.content], { type: "text/html" });
+                const objUrl = URL.createObjectURL(blob);
+                setHtml(objUrl);
+                handleOpen();    
             }
+            else if (!isRadio) {
+                if (response.data.isSuccess && response.data.result[1].item2.status == "success") {
+                    toast.success(response.data.messages[0]); 
+                    push('/order_received');        
+                }
+            }
+
+            Dispatch(cartStateUpdate(response.data.result[0]))
+            
+        }  else if(!response.data.isSuccess) {
+            toast.info(response.data.messages[0] + ".Please check your information again");
+            // alert('user not existed! credential is : user@*****.com | vendor@*****.com | admin@*****.com');
+        }
+     })
+          
         } else {
             validator.showMessages();
             toast.error('Empty field is not allowed!');

@@ -21,6 +21,7 @@ import PageTitle from "../../components/pagetitle/PageTitle";
 
 const LessonPage = () => {
   const location = useLocation();
+  console.log("trigger location",location)
   const { from } = location.state || 0;
   const { courseId } = useParams();
   const [expanded, setExpanded] = React.useState(false);
@@ -113,8 +114,8 @@ const LessonPage = () => {
               to: `/course-single/${data?.result?.item1?.courseId}`,
             },
             {
-              title: data?.result?.sectionName,
-              to: `/lessons/${data?.result?.sectionId}`,
+              title: "lessons",
+              to: `/lessons/${data?.result?.item1?.courseId}`,
             },
           ]}
         />

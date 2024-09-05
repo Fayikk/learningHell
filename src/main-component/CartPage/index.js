@@ -13,48 +13,40 @@ import IsLoading from "../../components/Loading/IsLoading";
 import { cartStateUpdate } from "../../store/reducers/cartSlice";
 import { MatchLocationToCurrency } from "../Extensions/MatchLocationToCurrency";
 const CartPage = (props) => {
-
-  const {data,isLoading} = useGetShoppingCartQuery(useSelector((state) => state.authStore.nameIdentifier));
-  const [removeCartItem] = useRemoveShoppingCartItemMutation();
-  const [courses,setCourses] = useState([]);
-  const Dispatch = useDispatch();
-
-
-  useEffect(()=>{
-
-    if (data) {
-        setCourses(data.result?.courses || [])
-
-  let jsonSerializer = JSON.stringify(data.result?.courses)
-  localStorage.setItem("basketItems",jsonSerializer)
-
-
+  const { data, isLoading } = useGetShoppingCartQuery(
+    useSelector((state) => state.authStore.nameIdentifier),
+    {
+      refetchOnMountOrArgChange: true, // Forces the query to refetch data when the component mounts
     }
-  },[data])
+  );
+  
+  const [removeCartItem] = useRemoveShoppingCartItemMutation();
+  const [courses, setCourses] = useState([]);
+  const dispatch = useDispatch();
 
-
+  useEffect(() => {
+    if (data) {
+      setCourses(data.result?.courses || []);
+      let jsonSerializer = JSON.stringify(data.result?.courses);
+      localStorage.setItem("basketItems", jsonSerializer);
+    }
+  }, [data]);
 
   if (isLoading || !courses) {
-    return (
-      <IsLoading></IsLoading>
-    )
+    return <IsLoading />;
   }
 
   const removeFromCart = async (courseId) => {
     var response = await removeCartItem(courseId);
     if (response) {
-      Dispatch(cartStateUpdate(response.data.result.item2))
-      toast.success(response.data.messages[0])
+      dispatch(cartStateUpdate(response.data.result.item2));
+      toast.success(response.data.messages[0]);
     }
-  }
-
-
-  const ClickHandler = () => {
-   window.scrollTo(10, 0);
   };
 
-  const { carts } = props;
-
+  const ClickHandler = () => {
+    window.scrollTo(10, 0);
+  };
 if (courses.length > 0) {
  
   return (

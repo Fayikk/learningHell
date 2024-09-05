@@ -18,7 +18,7 @@ const CourseSectionS3 = (props) => {
         }
     }, [props.courses]);
 
-    console.log("trigger props",props)
+    console.log("trigger CourseSectionS3 props",props)
 
     return (
         <div className={`wpo-popular-area section-padding ${props.pClass} course-section`}>

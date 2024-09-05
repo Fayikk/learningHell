@@ -78,6 +78,7 @@ const CourseSinglePage = () => {
               title: courseData?.courseName,
               to: `/course-single/${slug}`,
             },
+            
           ]}
         />
         <div className="flex justify-between bg-gray-200 p-5 rounded-2xl sm:flex-row flex-col gap-4">
