@@ -95,7 +95,7 @@ const styles = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: '20px', // Sayfanın üst kısmından biraz boşluk bırakmak için
+    marginTop: '20px', 
   },
   input: {
     width: '300px',
@@ -114,13 +114,13 @@ const styles = {
     left: '50%',
     transform: 'translateX(-50%)',
     width: '300px',
-    maxHeight: '300px', // Maksimum yüksekliği belirleyin
-    overflowY: 'auto', // Yüksekliği aşan içerik için dikey kaydırma çubuğu ekleyin
+    maxHeight: '300px', 
+    overflowY: 'auto', 
     marginTop: '10px',
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     borderRadius: '10px',
     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-    zIndex: 10, // Sonuçları öne çıkarmak için z-index kullanın
+    zIndex: 10,
   },
   resultsList: {
     margin: '0',

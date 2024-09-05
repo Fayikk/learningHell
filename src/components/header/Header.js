@@ -161,7 +161,7 @@ const Header = ({ props, onAuthStateChange }) => {
                                             </ul>
                                         </li> */}
                     {/* <li><Link onClick={ClickHandler} to="/about">About</Link></li> */}
-                    <li className="menu-item-has-children">
+                    <li className="menu-item-has-children" style={{color:"black"}}>
                       <Link onClick={ClickHandler} to="/">
                         {t("Courses")}
                       </Link>
@@ -182,6 +182,7 @@ const Header = ({ props, onAuthStateChange }) => {
                       </Link>
                     </li>
                     <li className="menu-item-has-children">
+                      tesst
                       <Link onClick={ClickHandler} to="">
                         <FaLock></FaLock>
                         {t("Pair Working Rooms")}

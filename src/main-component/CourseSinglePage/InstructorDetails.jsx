@@ -5,7 +5,10 @@ import ClockIcon from "../../icons/ClockIcon";
 import InstructorIcon from "../../icons/InstructorIcon";
 import profiles from "../../images/profile-picture.jpg";
 
-const InstructorDetails = ({courseName}) => {
+const InstructorDetails = (props) => {
+  
+    console.log("trigger props",props)
+  
   return (
     <div className="flex rounded-2xl shadow-lg flex-col gap-5 p-5">
     <div className="flex flex-col  sm:gap-10 ">
@@ -15,7 +18,6 @@ const InstructorDetails = ({courseName}) => {
     </div>
     <div className="flex flex-col gap-4">
       <h1 className="text-black text-[22px] font-bold">
-      {courseName}
       </h1>
       <div className="flex gap-2 items-center">
         <span className="text-themeOrange">
@@ -50,7 +52,7 @@ const InstructorDetails = ({courseName}) => {
         <InstructorIcon />{" "}
         <span className="text-black font-bold">Eğitmen</span>
       </div>
-      <span className="text-black font-bold">Hakan Yalçınkaya</span>
+      <span className="text-black font-bold">{props.instructor.fullName}</span>
     </div>
     <img src={profiles} className="h-24 w-24" />
     <p className="sm:max-w-[400px] items-center justify-center">

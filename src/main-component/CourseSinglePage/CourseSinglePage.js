@@ -15,17 +15,15 @@ import CourseSingleAccardion from "./CourseSingleAccardion";
 import InstructorDetails from "./InstructorDetails";
 import Review from "./Tabs/Review";
 import RightArrowIcon from "../../icons/RightArrowIcon";
-
 import Breadcrumbs from "../../components/Breadcrumbs/Breadcrumbs";
 
-const CourseSinglePage = (props) => {
+const CourseSinglePage = () => {
   const { slug } = useParams();
   const { data, isLoading } = useGetCourseDetailByIdQuery(slug);
   const [CheckHasThisCourse] = useThisCourseEnrolledUserMutation();
   const [ownMyCourse, setOwnMyCourse] = useState(false);
   const [isEnrolledCourse, setIsEnrolledCourse] = useState(false);
   const [course, setCourse] = useState();
-  const [open, setOpen] = React.useState([]);
   const [cart, setCart] = useState(true);
   const authenticationState = useSelector(
     (state) => state.authStore.nameIdentifier
@@ -35,6 +33,7 @@ const CourseSinglePage = (props) => {
   useEffect(() => {
     if (data) {
       setCourse(data.result.item1);
+      console.log("trigger data bang", data);
     }
 
     async function CheckActiveCourse() {
@@ -45,28 +44,18 @@ const CourseSinglePage = (props) => {
         courseId: data?.result?.item1?.courseId,
       };
 
+      console.log("trigger model", model);
+
       await CheckHasThisCourse(model).then((response) =>
-        setIsEnrolledCourse(response.data)
+        setIsEnrolledCourse(false)
       );
     }
     CheckActiveCourse();
   }, [isLoading]);
 
   if (isLoading || !course) {
-    return <IsLoading></IsLoading>;
+    return <IsLoading />;
   }
-
-  document
-    .querySelectorAll("button[data-collapse-target]")
-    .forEach((button) => {
-      button.addEventListener("click", () => {
-        const target = document.querySelector(
-          `[data-collapse="${button.getAttribute("data-collapse-target")}"]`
-        );
-        target.style.height =
-          target.style.height === "0px" ? `${target.scrollHeight}px` : "0px";
-      });
-    });
 
   return (
     <Fragment>
@@ -80,24 +69,23 @@ const CourseSinglePage = (props) => {
             },
           ]}
         />
-        <div className="flex justify-between bg-gray-200 p-5 rounded-2xl sm:flex-row flex-col gap-4 ">
-          {" "}
+        <div className="flex justify-between bg-gray-200 p-5 rounded-2xl sm:flex-row flex-col gap-4">
           <img
             src={courseData?.courseImage}
             alt=""
-            className="rounded-md shadow-md sm:max-w-[550px] h-auto flex  order-1"
+            className="rounded-md shadow-md sm:max-w-[550px] h-auto flex order-1"
           />
-          <div className="flex flex-col  justify-center  gap-2 px-1">
+          <div className="flex flex-col justify-center gap-2 px-1">
             <h1 className="text-2xl font-bold">{courseData?.courseName}</h1>
-            <p className="text-black ">{courseData?.courseDescription}</p>
+            <p className="text-black">{courseData?.courseDescription}</p>
 
             {cart ? (
-              <div className="flex justify-end ">
+              <div className="flex justify-end">
                 <button className="theme-btn-s2">Derse Başla</button>
               </div>
             ) : (
               <div className="flex justify-between">
-                <div className="flex items-center  gap-2">
+                <div className="flex items-center gap-2">
                   <span className="text-xl font-bold text-black rounded-full p-4 bg-themeOrange px-3 ">
                     {courseData?.coursePrice.toFixed(2)} ₺
                   </span>
@@ -113,19 +101,18 @@ const CourseSinglePage = (props) => {
             )}
           </div>
         </div>
-        <div className="flex flex-col sm:flex-row gap-3  sm:gap-10 items-start  ">
-          <div className="flex sm:flex-col flex-1 flex-col justify-beetwen sm:gap-8 gap-4">
-            <CourseSingleAccardion />
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-10 items-start">
+          <div className="flex sm:flex-col flex-1 flex-col justify-between sm:gap-8 gap-4">
+            <CourseSingleAccardion courseDetail={course} />
             <Review />
           </div>
-          <InstructorDetails courseName={courseData?.courseName} />
-        </div>{" "}
-        <CoureseTab CoursesDetails={course} rate={data.result.item2} />
-        {!isEnrolledCourse ? <Sidebar CourseDetail={course} /> : ""}
+          <InstructorDetails instructor={data?.result?.item1?.user} />
+        </div>
       </div>
       <Footer />
       <Scrollbar />
     </Fragment>
   );
 };
+
 export default CourseSinglePage;
