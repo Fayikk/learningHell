@@ -9,9 +9,9 @@ const CourseSingleAccardion = () => {
     <div className=" rounded-2xl shadow-lg  p-5 flex flex-col flex-1 sm:gap-3  ">
       <div className="flex flex-col gap-4">
         <h1 className="font-bold text-2xl">Konular</h1>
-        <span className="text-base  text-black/55">4 Bölüm 5 konu</span>{" "}
+        <span className="text-base  text-black/55">4 Bölüm 5 konu</span>
+
         <div className="flex flex-col ">
-          {" "}
           <div class="relative mb-3">
             <h6 class="mb-0">
               <button

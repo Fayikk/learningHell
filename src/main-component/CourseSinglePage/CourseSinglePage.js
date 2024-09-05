@@ -14,6 +14,9 @@ import { jwtDecode } from "jwt-decode";
 import CourseSingleAccardion from "./CourseSingleAccardion";
 import InstructorDetails from "./InstructorDetails";
 import Review from "./Tabs/Review";
+import RightArrowIcon from "../../icons/RightArrowIcon";
+
+import Breadcrumbs from "../../components/Breadcrumbs/Breadcrumbs";
 
 const CourseSinglePage = (props) => {
   const { slug } = useParams();
@@ -23,6 +26,7 @@ const CourseSinglePage = (props) => {
   const [isEnrolledCourse, setIsEnrolledCourse] = useState(false);
   const [course, setCourse] = useState();
   const [open, setOpen] = React.useState([]);
+  const [cart, setCart] = useState(false);
   const authenticationState = useSelector(
     (state) => state.authStore.nameIdentifier
   );
@@ -71,9 +75,17 @@ const CourseSinglePage = (props) => {
     <Fragment>
       <Navbar />
       <div className="container mx-auto flex flex-col sm:gap-5 gap-3 sm:px-28 mb-10">
-        <PageTitle
+        {/* <PageTitle
           pageTitle={data.result.item1.courseName}
           pagesub={"Course"}
+        /> */}
+        <Breadcrumbs
+          steps={[
+            {
+              title: data?.result?.item1?.courseName,
+              to: `/course-single/${slug}`,
+            },
+          ]}
         />
         <div className="flex bg-gray-200 p-5 rounded-2xl sm:flex-row flex-col gap-4 ">
           {" "}
@@ -82,7 +94,7 @@ const CourseSinglePage = (props) => {
             alt=""
             className="rounded-md shadow-md sm:max-w-[550px] h-auto flex  order-1"
           />
-          <div className="flex flex-col sm:px-3 justify-center sm:gap-3 gap-1 px-1 sm:p-1">
+          <div className="flex flex-col sm:px-3 justify-center  gap-2 px-1 sm:p-1">
             <h1 className="text-2xl font-bold">
               {data.result.item1.courseName}
             </h1>
@@ -94,12 +106,27 @@ const CourseSinglePage = (props) => {
               trouble that are bound to ensue and equal blame belongs to those
               who fail in their duty through weaknes.
             </p>
-            <div className="flex justify-end">
-              {" "}
-              <button className="bg-themeOrange rounded-md w-32 text-white p-2 ">
-                Derse Başla{" "}
-              </button>
-            </div>
+
+            {cart ? (
+              <div className="flex justify-end">
+                <button className="theme-btn-s2">Derse Başla</button>
+              </div>
+            ) : (
+              <div className="flex justify-between">
+                <div className="flex items-center  gap-2">
+                  <span className="text-xl font-bold text-black rounded-full p-4 bg-themeOrange px-3 ">
+                    200 ₺
+                  </span>
+                  <span className="text-black/75 text-[15px]">Language:</span>
+                  <span className="text-black/75 font-bold text-[15px]">
+                    Turkish
+                  </span>
+                </div>
+                <div className="flex justify-end items-center">
+                  <button className="theme-btn-s3">Add To Cart</button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
         <div className="flex flex-col sm:flex-row gap-3  sm:gap-10 items-start  ">
