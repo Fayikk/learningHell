@@ -5,6 +5,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useGetSectionSubDetailsQuery } from "../../api/sectionApi";
 import { useGetWatchVideoUrlMutation } from "../../api/videoApi";
+import { useGetCourseDetailByIdQuery } from "../../api/courseApi";
 import VideoPage from "./VideoPage";
 import IsLoading from "../../components/Loading/IsLoading";
 import "./style/lessonPage.css";
@@ -16,6 +17,7 @@ import {
   AccordionHeader,
   AccordionBody,
 } from "@material-tailwind/react";
+import PageTitle from "../../components/pagetitle/PageTitle";
 
 const LessonPage = () => {
   const location = useLocation();
@@ -30,6 +32,9 @@ const LessonPage = () => {
   const [courseId, setCourseId] = useState();
   const [open, setOpen] = React.useState([]);
   const [alwaysOpen, setAlwaysOpen] = React.useState(true);
+  const { slug } = useParams();
+  const { data: courseDetailData, isLoading: courseDetailIsLoading } =
+    useGetCourseDetailByIdQuery(courseId);
 
   const handleOpen = (index) => {
     setOpen((prevOpen) => {
@@ -103,11 +108,26 @@ const LessonPage = () => {
   return (
     <Fragment>
       <section className="wpo-lesson-section container mx-auto p-4 gap-3 flex flex-col ">
-        <Breadcrumbs courseId={courseId} />
+        {/* <PageTitle
+          pageTitle={data.result.item1.courseName}
+          pagesub={"Course"}
+        /> */}
+        <Breadcrumbs
+          steps={[
+            {
+              title: courseDetailData?.result?.item1?.courseName,
+              to: `/course-single/${courseDetailData?.result?.item1?.courseId}`,
+            },
+            {
+              title: data?.result?.sectionName,
+              to: `/lessons/${data?.result?.sectionId}`,
+            },
+          ]}
+        />
         <div className="flex flex-col  gap-6 md:flex-row">
           <div className="flex flex-col  flex-1 gap-3 order-2 md:!order-none ">
             <div className=" rounded-2xl shadow-lg font-bold p-3 text-themeOrange">
-              React Native
+              {data?.result?.sectionName}
             </div>
             <div className="p-2 rounded-2xl shadow-lg flex flex-col gap-0">
               {videos.map((video, index) => (
