@@ -30,6 +30,7 @@ const CourseSinglePage = (props) => {
   useEffect(() => {
     if (data) {
       setCourse(data.result.item1);
+      console.log("trigger data bang",data)
     }
 
     async function CheckActiveCourse() {
@@ -44,8 +45,11 @@ const CourseSinglePage = (props) => {
       //     setOwnMyCourse(true)
       // }
 
+      console.log("trigger model",model)
+
+
       await CheckHasThisCourse(model).then((response) =>
-        setIsEnrolledCourse(response.data)
+        setIsEnrolledCourse(false)
       );
     }
     CheckActiveCourse();
@@ -96,21 +100,24 @@ const CourseSinglePage = (props) => {
             </p>
             <div className="flex justify-end">
               {" "}
-              <button className="bg-themeOrange rounded-md w-32 text-white p-2 ">
-                Derse Başla{" "}
-              </button>
+              {
+                !isEnrolledCourse ? ( <Sidebar CourseDetail={course}></Sidebar>) : ( <button className="bg-themeOrange rounded-md w-32 text-white p-2 ">
+                  Derse Başla{" "}
+                </button>)
+              }
+             
             </div>
           </div>
         </div>
         <div className="flex flex-col sm:flex-row gap-3  sm:gap-10 items-start  ">
           <div className="flex sm:flex-col flex-1 flex-col justify-beetwen sm:gap-8 gap-4">
-            <CourseSingleAccardion />
+            <CourseSingleAccardion courseDetail={course} />
             <Review />
           </div>
-          <InstructorDetails courseName={data.result.item1.courseName} />
+          <InstructorDetails instructor={data.result.item1.user} />
         </div>{" "}
-        <CoureseTab CoursesDetails={course} rate={data.result.item2} />
-        {!isEnrolledCourse ? <Sidebar CourseDetail={course} /> : ""}
+        {/* <CoureseTab CoursesDetails={course} rate={data.result.item2} /> */}
+        {/* {!isEnrolledCourse ? <Sidebar CourseDetail={course} /> : ""} */}
       </div>
       <Footer />
       <Scrollbar />
