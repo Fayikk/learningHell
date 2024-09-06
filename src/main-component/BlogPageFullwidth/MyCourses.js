@@ -13,7 +13,6 @@ const MyCourses = () => {
     const authState = useSelector((state) => state.authStore);
 
     useEffect(() => {
-        console.log("trigger my courses", authState);
     }, [authState]);
 
     if (!authState) {
