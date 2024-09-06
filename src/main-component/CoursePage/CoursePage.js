@@ -123,7 +123,6 @@ const CoursePage = () => {
     useEffect(()=>{
         async function fetchData() {
             
-            console.log("trigger page index",pageIndex)
             await fetchAllDatas(filter).then((response) => {
 
                 setCourses(response.data.result != [] ? response.data.result.data : [])
