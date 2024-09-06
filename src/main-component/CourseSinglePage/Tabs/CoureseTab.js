@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from "reactstrap";
+import {
+  TabContent,
+  TabPane,
+  Nav,
+  NavItem,
+  NavLink,
+  Row,
+  Col,
+} from "reactstrap";
 import classnames from "classnames";
 import Overview from "./Overview";
 import Instructor from "./Instructor";
@@ -10,7 +18,9 @@ import { useSelector } from "react-redux";
 import Curriculum from "./Curriculum";
 
 const CoureseTab = ({ EventsDetails, CoursesDetails, rate }) => {
-  const { data, isLoading } = useGetSectionsByCourseIdQuery(CoursesDetails.courseId);
+  const { data, isLoading } = useGetSectionsByCourseIdQuery(
+    CoursesDetails.courseId
+  );
   const authenticationState = useSelector((state) => state.authStore);
 
   const [activeTab, setActiveTab] = useState("1");

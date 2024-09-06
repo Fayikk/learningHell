@@ -81,15 +81,11 @@ const CheckWrap = (props) => {
     useEffect(()=>{
         if (hubConnection) {
                 hubConnection.on("MessageForSocket",(res) => {
-                    console.log("trigger message for socket",res)
-
-
-
+                    console.log("res",res)
                   if (res.item1 == "success") {
                     push('/order_received');
                     handleClose();
                     Dispatch(cartStateUpdate(res.item2))
-                    dispatch(instructorApi.util.invalidateTags(["shoppingCart"]));
                   }
                   else{
                     handleClose();
@@ -112,6 +108,7 @@ const CheckWrap = (props) => {
     const [validator] = React.useState(new SimpleReactValidator({
         className: 'errorMessage'
     }));
+    console.log(isRadio)
 
     const submitForm = async (e) => {
         var formData = new FormData();
@@ -147,41 +144,35 @@ const CheckWrap = (props) => {
                 isActive3dSecure:isRadio
             }
 
-      await CreatePayment(sendData).then((response) => {
-
-        console.log("trigger response",response)
+    await CreatePayment(sendData).then((response) => {
         validator.hideMessages();
         const userRegex = /^user+.*/gm;
+        console.log("trigger response payment",response)
         const email = value.email;
         if (email.match(userRegex) && response.data.isSuccess ) {
             if (isRadio) {
-                const blob = new Blob([response.data.result[0].item1.content], { type: "text/html" });
+                console.log(response.data.result.item1.content)
+                console.log("response.data.result[0]",response.data.result[0])
+                const blob = new Blob([response.data.result.item1.content], { type: "text/html" });
                 const objUrl = URL.createObjectURL(blob);
                 setHtml(objUrl);
                 handleOpen();    
             }
             else if (!isRadio) {
                 if (response.data.isSuccess && response.data.result[1].item2.status == "success") {
-                    console.log("response.data.result[0]",response.data.result[0])
-                    toast.success(response.data.messages[0]);
-                    Dispatch(cartStateUpdate(response.data.result[0]))
+                    toast.success(response.data.messages[0]); 
                     push('/order_received');        
                 }
             }
+
+            Dispatch(cartStateUpdate(response.data.result[0]))
             
         }  else if(!response.data.isSuccess) {
             toast.info(response.data.messages[0] + ".Please check your information again");
             // alert('user not existed! credential is : user@*****.com | vendor@*****.com | admin@*****.com');
         }
-
      })
-            // if (response.error || !response.error.data.isSuccess) {
-            //     toast.error(response.error.data.errorMessages[response.error.data.errorMessages.length - 1])
-            //     if (response.error.data.errorMessages == []) {
-            //         toast.error("Payment is failed please check your information")
-            //     }
-            // }
-           
+          
         } else {
             validator.showMessages();
             toast.error('Empty field is not allowed!');

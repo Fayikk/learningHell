@@ -152,8 +152,7 @@ const Header = ({ props, onAuthStateChange }) => {
               </div>
               <div className="col-lg-6 col-md-1 col-1">
                 <div
-                  id="navbar"
-                  className="collapse navbar-collapse navigation-holder"
+                 
                 >
                   <button className="menu-close">
                     <i className="ti-close"></i>
@@ -170,7 +169,7 @@ const Header = ({ props, onAuthStateChange }) => {
                                             </ul>
                                         </li> */}
                     {/* <li><Link onClick={ClickHandler} to="/about">About</Link></li> */}
-                    <li className="menu-item-has-children">
+                    <li className="menu-item-has-children" style={{color:"black"}}>
                       <Link onClick={ClickHandler} to="/">
                         {t("Courses")}
                       </Link>
@@ -191,6 +190,7 @@ const Header = ({ props, onAuthStateChange }) => {
                       </Link>
                     </li>
                     <li className="menu-item-has-children">
+                      tesst
                       <Link onClick={ClickHandler} to="">
                         <FaLock></FaLock>
                         {t("Pair Working Rooms")}
@@ -279,8 +279,8 @@ const Header = ({ props, onAuthStateChange }) => {
                         <div className="ml-2">
                           <Dropdown
                             show={showDropdown}
-                            onClick={() => handleMouseEnter()}
-                            onDoubleClick={() => handleMouseLeave()}
+                            onMouseEnter={() => handleMouseEnter()}
+                            onMouseLeave={() => handleMouseLeave()}
                           >
                             <Dropdown.Toggle
                               variant="primary"

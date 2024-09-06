@@ -1,19 +1,11 @@
 import React from "react";
-import sImg1 from "../../../images/shop/shop-single/review/img-1.jpg";
-import sImg2 from "../../../images/shop/shop-single/review/img-1.jpg";
 
-const SubmitHandler = (e) => {
-  e.preventDefault();
-};
-
-const Review = () => {
+const newReview = () => {
   return (
-    <div className="row">
+    <div className="flex rounded-2xl shadow-lg flex-col gap-5 p-5 ">
       <div className="col col-lg-10 col-12">
         <div className="client-rv">
-          <div className="client-pic">
-            <img src={sImg1} alt="" />
-          </div>
+          <div className="client-pic"></div>
           <div className="details">
             <div className="name-rating-time">
               <div className="name-rating">
@@ -153,4 +145,4 @@ const Review = () => {
   );
 };
 
-export default Review;
+export default newReview;

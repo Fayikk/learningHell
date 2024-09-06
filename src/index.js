@@ -8,6 +8,7 @@ import './css/themify-icons.css';
 import './css/animate.css';
 import './css/flaticon.css';
 import './sass/style.scss';
+import './index.css';
 
 import { PersistGate } from "redux-persist/integration/react";
 import {  persistor } from "./store/index";
@@ -15,12 +16,15 @@ import { Provider } from "react-redux";
 import store from './store/store'
 import { AuthProvider } from './main-component/Extensions/AuthProvider';
 import './Localization/i18n'
+import ErrorBoundary from './main-component/Extensions/Errors/ErrorBoundary';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
         <ParallaxProvider>
+            <ErrorBoundary>
                     <App />
+                    </ErrorBoundary>
             </ParallaxProvider>
         </PersistGate>
     </Provider>
