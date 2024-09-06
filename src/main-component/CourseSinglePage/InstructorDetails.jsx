@@ -52,7 +52,7 @@ const InstructorDetails = (props) => {
         <InstructorIcon />{" "}
         <span className="text-black font-bold">Eğitmen</span>
       </div>
-      <span className="text-black font-bold">{props.instructor.fullName}</span>
+      <span className="text-black font-bold">{props.instructor.fullName ? props.instructor.fullName : ""}</span>
     </div>
     <img src={profiles} className="h-24 w-24" />
     <p className="sm:max-w-[400px] items-center justify-center">
