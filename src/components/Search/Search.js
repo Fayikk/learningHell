@@ -17,11 +17,9 @@ function Search({onData,onChangeClick}) {
       if (query.length > 2) {
         try {
           await searchFetch(query).then((res) => {
-            console.log('trigger search fetch', res);
             setResults(res.data.result);
           });
         } catch (error) {
-          console.error('Error fetching search results:', error);
         }
       } else {
         setResults([]);
@@ -39,7 +37,6 @@ function Search({onData,onChangeClick}) {
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       // Enter tuşuna basıldığında yapılacak işlemler
-      console.log('Search query:', query);
       onChangeClick(event.key)
     }
   };

@@ -31,6 +31,15 @@ export const sectionApi = createApi({
             invalidatesTags:["section"]
 
         }),
+        updateSectionRows:builder.mutation({
+            query:(sectionList) => (
+                {
+                    method:"PUT",
+                    body:sectionList,
+                    url:"SectionRows"
+                }
+            )
+        }),
         updateSectionAsync:builder.mutation({
             query:(updateModel) => (
                         {
@@ -47,4 +56,9 @@ export const sectionApi = createApi({
 
 
 
-export const {useGetSectionSubDetailsQuery,useRemoveSectionAsyncMutation,useAddSectionAsyncMutation,useUpdateSectionAsyncMutation} = sectionApi
+export const {
+        useGetSectionSubDetailsQuery,
+        useRemoveSectionAsyncMutation,
+        useAddSectionAsyncMutation,
+        useUpdateSectionRowsMutation,
+        useUpdateSectionAsyncMutation} = sectionApi

@@ -123,7 +123,6 @@ const CoursePage = () => {
     useEffect(()=>{
         async function fetchData() {
             
-            console.log("trigger page index",pageIndex)
             await fetchAllDatas(filter).then((response) => {
 
                 setCourses(response.data.result != [] ? response.data.result.data : [])
@@ -159,12 +158,10 @@ const CoursePage = () => {
 
 
     const handleClickedEnter = (isClicked) => {
-        console.log(event.key)
         setFilter(initalState)
         if (event.key == "Enter") {
         addFilterRule(newRule)
 
-            console.log("trigger is Enter ")
          setIsClickedEnter(isClicked)
 
         }
