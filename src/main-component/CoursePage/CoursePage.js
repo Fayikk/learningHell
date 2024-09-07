@@ -17,9 +17,8 @@ const CoursePage = () => {
     // const {data,isLoading} = useGetCoursesByCategoryIdQuery(slug);
     const [fetchAllDatas] = useGetAllCoursesMutation();
     const [courses,setCourses] = useState([])
-    const [currentPage,setCurrentPage] = useState(1)
+    const [trick,setTrick] = useState(1);
     const [pageCounter,setPageCounter] = useState(0);
-    const [categoryId,setCategoryId] = useState(slug)
     const [query,setQuery] = useState("");
     const [isClickedEnter,setIsClickedEnter] = useState(false)
     const [newRule,setNewRule] = useState({
@@ -29,7 +28,7 @@ const CoursePage = () => {
     })
     const [filter,setFilter] = useState({
         isSearch:true,
-        pageIndex:1,
+        pageIndex:localStorage.getItem("currentPageNumber") ? parseInt(localStorage.getItem("currentPageNumber")) : 1,
         pageSize:6,
         sortColumn:"CourseName",
         sortOrder:"desc",
@@ -118,16 +117,30 @@ const CoursePage = () => {
     //   }
 
 
+    // useEffect(()=>{
+    //     var currentlyPageNumber = localStorage.getItem("currentPageNumber")
+    //     if (currentlyPageNumber) {
+    //       setFilter((prevState) => ({
+    //         ...prevState,pageIndex:currentlyPageNumber
+    //       }))
+    //     }
+    // },[])
+
+
 
    
     useEffect(()=>{
-        async function fetchData() {
-            
+        async function fetchData() {    
             await fetchAllDatas(filter).then((response) => {
 
                 setCourses(response.data.result != [] ? response.data.result.data : [])
                 // setCurrentPage(response.data.result.data)
                 setPageCounter(response.data.result.paginationCounter)
+                if (localStorage.getItem("currentPageNumber")) {
+                setTrick(parseInt(localStorage.getItem("currentPageNumber")))
+                    
+                }
+                localStorage.removeItem("currentPageNumber")
             })
             // ...
           }
@@ -135,8 +148,7 @@ const CoursePage = () => {
      
           
 
-    },[filter
-    ])
+    },[filter])
 
 
     const handleClickChangePageNumber = (clickedPageNumber) => {
@@ -175,6 +187,10 @@ const CoursePage = () => {
         )
     }
     
+
+    const triggerMethod = (test) => {
+console.log("trigger test method",test)
+    }
     
 
 
@@ -195,7 +211,10 @@ const CoursePage = () => {
                             {
                                 filter.pageIndex != 1 ? (
                                     <li>
-                                    <Button color='primary' aria-label="Previous" onClick={()=>handleClickChangePageNumber(filter.pageIndex-1)}>
+                                    <Button color='primary' aria-label="Previous" onClick={()=>{
+                                        handleClickChangePageNumber(filter.pageIndex-1),
+                                        setTrick()
+                                    }}>
                                         <i className="fi ti-angle-left"></i>
                                     </Button>
                                    </li>
@@ -206,18 +225,16 @@ const CoursePage = () => {
                             {
                                 [...Array(pageCounter)].map((_, index) => (
                                     <li key={index} className={index === 0 ? "active" : ""}>
-                                        <li className="active"><Button color="primary" onClick={()=>handleClickChangePageNumber(index+1)} >{index + 1}</Button></li>
+                                        <li className="active"><Button color={index === trick-1 ? "primary" : "warning"} onClick={()=>{
+                                                                                                handleClickChangePageNumber(index+1),
+                                                                                                setTrick(index+1)}} >{index + 1}</Button></li>
                                     </li>
                                 ))
-                              
-                                //
-
-                             
                             }
                             {
                                 filter.pageIndex != pageCounter ? (
                                     <li>
-                                    <Button color='primary' aria-label="Next" onClick={()=>handleClickChangePageNumber(filter.pageIndex+1)}>
+                                    <Button color='primary' aria-label="Next" onClick={()=>{handleClickChangePageNumber(filter.pageIndex+1),setTrick()}}>
                                         <i className="fi ti-angle-right"></i>
                                     </Button>
                                 </li>

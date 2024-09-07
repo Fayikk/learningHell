@@ -40,7 +40,6 @@ const BlogList = (props) => {
     const getMyCourses = async () => {
       try {
         await GetMyCourses(filter).then((response) => {
-          console.log("get my courses", response), setMyCourse(response.data.result.data);
           setPageCounter(response.data.result.paginationCounter);
         });
       } catch (error) {
@@ -130,7 +129,7 @@ const BlogList = (props) => {
             <ul className="pg-pagination">
               {filter.pageIndex != 1 ? (
                 <li>
-                  <Button color="primary" aria-label="Previous" onClick={() => handleClickChangePageNumber(filter.pageIndex - 1)}>
+                  <Button color="primary" aria-label="Previous" onClick={() => {handleClickChangePageNumber(filter.pageIndex - 1), window.scrollTo(0, 0)} }>
                     <i className="fi ti-angle-left"></i>
                   </Button>
                 </li>
@@ -142,7 +141,7 @@ const BlogList = (props) => {
                 [...Array(pageCounter)].map((_, index) => (
                   <li key={index} className={index === 0 ? "active" : ""}>
                     <li className="active">
-                      <Button color="primary" onClick={() => handleClickChangePageNumber(index + 1)}>
+                      <Button color="primary" onClick={() => {handleClickChangePageNumber(index + 1),window.scrollTo(15, 15)}}>
                         {index + 1}
                       </Button>
                     </li>
@@ -153,7 +152,7 @@ const BlogList = (props) => {
               }
               {filter.pageIndex != pageCounter ? (
                 <li>
-                  <Button color="primary" aria-label="Next" onClick={() => handleClickChangePageNumber(filter.pageIndex + 1)}>
+                  <Button color="primary" aria-label="Next" onClick={() =>{handleClickChangePageNumber(filter.pageIndex + 1),window.scrollTo(0, 0)}}>
                     <i className="fi ti-angle-right"></i>
                   </Button>
                 </li>

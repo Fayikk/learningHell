@@ -21,7 +21,6 @@ import PageTitle from "../../components/pagetitle/PageTitle";
 
 const LessonPage = () => {
   const location = useLocation();
-  console.log("trigger location",location)
   const { from } = location.state || 0;
   const { courseId } = useParams();
   const [expanded, setExpanded] = React.useState(false);
@@ -51,7 +50,6 @@ const LessonPage = () => {
   const [decryptVideoUrl] = useGetWatchVideoUrlMutation();
   useEffect(() => {
     if (data) {
-      console.log("trigger data",data)
       setCourseInsideDetail(data.result.item1.sections);
 
         localStorage.removeItem("willSelectedVideo");
@@ -73,11 +71,8 @@ const LessonPage = () => {
 
 
   const changeVideo = async (publicVideoId,videoId) => {
-    console.log("trigger change publicVideoId",publicVideoId)
-    console.log("trigger change videoId",videoId)
     setVideoId(videoId);
     // const videoUrl = videos.find((video) => video.videoId === videoId);
-      console.log("trigger video ıd")
       await decryptVideoUrl(publicVideoId)
         .then((response) => {
           localStorage.setItem(

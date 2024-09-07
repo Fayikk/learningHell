@@ -9,10 +9,8 @@ const Sidebar = (props) => {
   const [addBasketItem] = useAddShoppingCartItemMutation();
   const dispatch = useDispatch();
 
-  console.log("trigger props Sidebar", props);
 
   const addBasket = async () => {
-    console.log("trigger add basket")
 
 
 

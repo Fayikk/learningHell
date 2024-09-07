@@ -17,9 +17,8 @@ import OpenCage from "../../Environments/OpenCage";
 import { setLocationCountry } from "../../store/reducers/locationSlice";
 import Cookies from "js-cookie";
 import { useGetShoppingCartQuery } from "../../api/shoppingCartApi";
-import { cartStateUpdate } from "../../store/reducers/cartSlice";
 import IsLoading from "../Loading/IsLoading";
-import ShoppingCart from "./Cart/ShoppingCart";
+import { cartStateUpdate } from "../../store/reducers/cartSlice";
 const Header = ({ props, onAuthStateChange }) => {
   const [menuActive, setMenuState] = useState(false);
   const authenticationState = useSelector((state) => state.authStore);
@@ -33,6 +32,7 @@ const Header = ({ props, onAuthStateChange }) => {
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
   const [country, setCountry] = useState("");
+  const {data,isLoading} = useGetShoppingCartQuery();
 
   // useEffect(() => {
   //   if (data && data.result) {
@@ -42,6 +42,22 @@ const Header = ({ props, onAuthStateChange }) => {
   // }, [data]);
 
 
+
+  useEffect(()=>{
+    if (data) {
+      if (data.result != null) {
+        Dispatch(cartStateUpdate(data.result.courses.length))
+
+      }
+      else {
+    Dispatch(cartStateUpdate(0))
+
+      }
+     
+    } 
+
+
+  },[data])
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -126,6 +142,11 @@ const Header = ({ props, onAuthStateChange }) => {
     Navigate("/home");
   };
 
+  if (isLoading) {
+    return (
+      <IsLoading></IsLoading>
+    )
+  }
   const ClickHandler = () => {
     window.scrollTo(10, 0);
   };
@@ -154,86 +175,53 @@ const Header = ({ props, onAuthStateChange }) => {
                 </div>
               </div>
               <div className="col-lg-6 col-md-1 col-1">
-                <div
-                 
-                >
-                  <button className="menu-close">
-                    <i className="ti-close"></i>
-                  </button>
-                  <ul className="nav navbar-nav mb-2 mb-lg-0">
-                    {/* <li className="menu-item-has-children">
-                                            <Link onClick={ClickHandler} to="/">Home</Link>
-                                            <ul className="sub-menu">
-                                                <li><Link onClick={ClickHandler} to="/home">Home Style 1</Link></li>
-                                                <li><Link onClick={ClickHandler} to="/home-2">Home Style 2</Link></li>
-                                                <li><Link onClick={ClickHandler} to="/home-3">Home Style 3</Link></li>
-                                                <li><Link onClick={ClickHandler} to="/home-4">Home Style 4</Link></li>
-                                                <li><Link onClick={ClickHandler} to="/home-5">Home Style 5</Link></li>
-                                            </ul>
-                                        </li> */}
-                    {/* <li><Link onClick={ClickHandler} to="/about">About</Link></li> */}
-                    <li className="menu-item-has-children" style={{color:"black"}}>
-                      <Link onClick={ClickHandler} to="/">
-                        {t("Courses")}
-                      </Link>
-                      <ul className="sub-menu">
-                        {/* <li><Link onClick={ClickHandler} to="/course">Messed Up</Link></li> */}
-                        <li>
-                          <Link onClick={ClickHandler} to="/course-2">
-                            {t("Categories")}
-                          </Link>
-                        </li>
-                        {/* <li><Link onClick={ClickHandler} to="/course-3">Full Festivitiy</Link></li> */}
-                        {/* <li><Link onClick={ClickHandler} to="/course-single/Learn-WordPress-&-Elementor-for-Beginners">Beginner Levels</Link></li> */}
-                      </ul>
-                    </li>
-                    <li className="menu-item-has-children">
-                      <Link onClick={ClickHandler} to="">
-                        <FaLock></FaLock> {t("Collections")}
-                      </Link>
-                    </li>
-                    <li className="menu-item-has-children">
-                      tesst
-                      <Link onClick={ClickHandler} to="">
-                        <FaLock></FaLock>
-                        {t("Pair Working Rooms")}
-                      </Link>
-                    </li>
-                    {authenticationState.role &&
-                    authenticationState.role.includes("Instructor") ? (
-                      ""
-                    ) : (
-                      <li className="menu-item-has-children">
-                        <Link onClick={ClickHandler} to="/become-teacher">
-                          {t("Become Teacher")}
-                        </Link>
-                        {/* <ul className="sub-menu">
-                              <li><Link onClick={ClickHandler} to="/blog">Blog right sidebar</Link></li>
-                              <li><Link onClick={ClickHandler} to="/blog-left-sidebar">Blog left sidebar</Link></li> */}
-                        {/* <li><Link onClick={ClickHandler} to="/blog-fullwidth">Blog fullwidth</Link></li> */}
-                        {/* <li className="menu-item-has-children">
-                                  <Link onClick={ClickHandler} to="/">Blog details</Link>
-                                  <ul className="sub-menu">
-                                      <li><Link onClick={ClickHandler} to="/blog-single/Become-a-great-WordPress-&-PHP-developer.">Blog details right sidebar</Link>
-                                      </li>
-                                      <li><Link onClick={ClickHandler} to="/blog-single-left-sidebar/Become-a-great-WordPress-&-PHP-developer.">Blog details left
-                                          sidebar</Link></li>
-                                      <li><Link onClick={ClickHandler} to="/blog-single-fullwidth/Become-a-great-WordPress-&-PHP-developer.">Blog details
-                                          fullwidth</Link></li>
-                                  </ul>
-                              </li> */}
-                        {/* </ul> */}
-                      </li>
-                    )}
-
-                    {/* <li><Link onClick={ClickHandler} to="/contact">Contact</Link></li> */}
-                    <li className="menu-item-has-children">
-    <Link onClick={ClickHandler} to="/cart">
+              <div id="navbar" className="navbar-collapse">
+  <button className="menu-close">
+    <i className="ti-close"></i>
+  </button>
+  <ul className="nav navbar-nav">
+  <li className="menu-item">
+    <Link onClick={ClickHandler} to="/" style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+      {t("Courses")}
+    </Link>
+    <ul className="sub-menu">
+      <li>
+        <Link onClick={ClickHandler} to="/course-2" style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+          {t("Categories")}
+        </Link>
+      </li>
+    </ul>
+  </li>
+  
+  <li className="menu-item">
+    <Link onClick={ClickHandler} to="" style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+      <FaLock /> {t("Collections")}
+    </Link>
+  </li>
+  
+  <li className="menu-item">
+    <Link onClick={ClickHandler} to="" style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+      <FaLock /> {t("Pair Working Rooms")}
+    </Link>
+  </li>
+  
+  {authenticationState.role && authenticationState.role.includes("Instructor") ? "" : (
+    <li className="menu-item">
+      <Link onClick={ClickHandler} to="/become-teacher" style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+        {t("Become Teacher")}
+      </Link>
+    </li>
+  )}
+  
+  <li className="menu-item">
+    <Link onClick={ClickHandler} to="/cart" style={{ display: "flex", alignItems: "center", gap: "5px" }}>
       <CiShoppingCart /> ({cartCounter})
     </Link>
   </li>
-                  </ul>
-                </div>
+</ul>
+
+</div>
+
               </div>
               <div className="col-lg-3 col-md-3 col-2">
                 <div className="header-right">

@@ -34,8 +34,7 @@ const StarRating = ({ courseId }) => {
     if (rateModel.Rate === 0) {
       return;
     }
-    await applyRate(rateModel).then((response) =>
-      console.log(response.data.isSuccess)
+    await applyRate(rateModel).then((response) =>{}
     );
   };
 

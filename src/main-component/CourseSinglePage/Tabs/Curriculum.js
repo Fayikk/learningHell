@@ -28,7 +28,6 @@ const Curriculum = ({sections,user,rate}) => {
     useEffect(()=>{
             async function CheckActiveCourse(){
 
-                console.log("sections",sections)
                 if (sections.Length > 0) {
                     const model = {
                         userId:authenticationState.nameIdentifier,

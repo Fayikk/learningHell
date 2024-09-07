@@ -189,7 +189,6 @@ function InstructorsCourseDetail() {
   };
 
   const handleClickEdit = (sectionId) => {
-    console.log("trigger handle click edit");
     setEditingSectionId(editingSectionId === sectionId ? null : sectionId);
   };
 
@@ -313,7 +312,6 @@ function InstructorsCourseDetail() {
 
     var selectedSection = sections.filter((x) => x.sectionId == sectionId);
 
-    console.log("trigger section update model", selectedSection);
 
     await updateSectionAsync({ sectionId, sectionUpdateModel }).then(
       (response) => {
@@ -401,10 +399,8 @@ function InstructorsCourseDetail() {
       rowNumberForSection: rowNumber,
     };
 
-    console.log("trigger handle update video", videoId);
 
     await updateVideoAsync({ videoId, updateVideoModel }).then((response) => {
-      console.log("trigger update video async", response);
       if (response.data.isSuccess) {
         toast.success("Video Updated Successfully");
         dispatch(instructorApi.util.invalidateTags(["instructor"]));
@@ -687,8 +683,7 @@ function InstructorsCourseDetail() {
                                       ...sectionModel,
                                       description: section.description,
                                       sectionName: section.sectionName,
-                                    }),
-                                      console.log("on mouse enter trigger");
+                                    });
                                   }}
                                 >
                                   <IoPencil />
@@ -774,6 +769,7 @@ function InstructorsCourseDetail() {
                                             ""
                                           )}
                                           <button
+                                            className="btn border-t-indigo-800"
                                             onClick={() =>
                                               handleClickWatchingVideo(
                                                 video.publicVideoId

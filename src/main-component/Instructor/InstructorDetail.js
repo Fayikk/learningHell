@@ -209,7 +209,6 @@ function InstructorDetail() {
     setCourseId(courseId);
     await getCourse(courseId).then((response) => {
       if (response.data.isSuccess) {
-        console.log(response.data.result.item1);
         setIsUpdateProcess(true);
         // setGetCourseModelState({
         //   courseName:response.data.result.item1.courseName,
@@ -231,7 +230,6 @@ function InstructorDetail() {
 
         handleOpen();
       } else {
-        console.log("fail");
       }
     });
   };
@@ -239,9 +237,6 @@ function InstructorDetail() {
   const updateCourse = async () => {
     // formData.append("IntroductionVideo", introductionVideo);
     // formData.append("Image", image);
-    console.log("Image", image);
-    console.log("introductionVideo", introductionVideo);
-    console.log("trigger update course process", courseModel);
 
     const formData = new FormData();
     formData.append("CourseName", courseModel.courseName);

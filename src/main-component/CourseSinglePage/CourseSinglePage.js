@@ -31,11 +31,9 @@ const CourseSinglePage = () => {
   const courseData = data?.result?.item1;
 
 
-  console.log("trigger course data",courseData)
   useEffect(() => {
     if (data) {
       setCourse(data.result.item1);
-      console.log("trigger data bang", data);
     }
 
     async function CheckActiveCourse() {
@@ -46,7 +44,6 @@ const CourseSinglePage = () => {
         courseId: data?.result?.item1?.courseId,
       };
 
-      console.log("trigger model", model);
 
       await CheckHasThisCourse(model).then((response) =>{
         setIsEnrolledCourse(response.data)

@@ -9,7 +9,6 @@ const CourseSingleAccardion = (props) => {
   const [courseDetails, setCourseDetails] = useState([]);
   const [activeIndex, setActiveIndex] = useState(null); // Hangi bölümün açık olduğunu tutan state
 
-  console.log("trigger single accordion", props.courseDetail.sections);
 
   useEffect(() => {
     if (props.courseDetail && props.courseDetail.sections) {

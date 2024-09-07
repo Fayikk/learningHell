@@ -42,9 +42,6 @@ function Search({onData,onChangeClick}) {
   };
 
 
-  const handleClick = () => {
-    console.log("trigger handle click")
-  }
 
   return (
     <div style={styles.container}>

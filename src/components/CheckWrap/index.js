@@ -78,12 +78,10 @@ const CheckWrap = (props) => {
         setHubConnection(hubConnection);
     };
 
-    console.log("radio",radio)
 
     useEffect(()=>{
         if (hubConnection) {
                 hubConnection.on("MessageForSocket",(res) => {
-                    console.log("res",res)
                   if (res.item1 == "success") {
                     push('/order_received');
                     handleClose();
@@ -110,7 +108,6 @@ const CheckWrap = (props) => {
     const [validator] = React.useState(new SimpleReactValidator({
         className: 'errorMessage'
     }));
-    console.log(isRadio)
 
     const submitForm = async (e) => {
         var formData = new FormData();
@@ -149,12 +146,9 @@ const CheckWrap = (props) => {
     await CreatePayment(sendData).then((response) => {
         validator.hideMessages();
         const userRegex = /^user+.*/gm;
-        console.log("trigger response payment",response)
         const email = value.email;
         if (email.match(userRegex) && response.data.isSuccess ) {
             if (isRadio) {
-                console.log(response)
-                console.log("response.data.result[0]",response.data.result[0])
                 const blob = new Blob([response.data.result[0].item1.content], { type: "text/html" });
                 const objUrl = URL.createObjectURL(blob);
                 setHtml(objUrl);
@@ -164,7 +158,6 @@ const CheckWrap = (props) => {
                 if (response.data.isSuccess && response.data.result[1].item2.status == "success") {
                     toast.success(response.data.messages[0]); 
 
-                    console.log("trigger response is cart amount",response.data.result[0])
 
                     Dispatch(cartStateUpdate(response.data.result[0]))
 

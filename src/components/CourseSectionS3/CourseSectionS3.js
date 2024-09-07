@@ -11,9 +11,21 @@ const ClickHandler = () => {
 }
 
 const CourseSectionS3 = (props) => {
+
+
+
+
+
     const handleClickedChildToParent = (courseId) => {
         props.onData(courseId);
     }
+
+
+    const savePageNumber = () => {
+        console.log("trigger props.paginationNumber",props.paginationNumber)
+        localStorage.setItem("currentPageNumber",props.paginationNumber)
+    }
+
 
     const [courses, setCourses] = useState([]);
     useEffect(() => {
@@ -49,7 +61,12 @@ const CourseSectionS3 = (props) => {
                                                 </ul>
                                             </div>
                                             <h2>
-                                                <Link onClick={ClickHandler} to={props.component === "course" ? `/course-single/${course.courseId}` : `/Instructor/CourseDetail/${course.courseId}`}>
+                                                <Link onClick={()=>{
+                                                        savePageNumber(),
+
+                                                        ClickHandler()
+                                                }
+                                                        } to={props.component === "course" ? `/course-single/${course.courseId}` : `/Instructor/CourseDetail/${course.courseId}`}>
                                                     {course.courseName}
                                                 </Link>
                                                 {props.component === "instructor" && (
