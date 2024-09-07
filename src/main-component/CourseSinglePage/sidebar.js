@@ -4,15 +4,22 @@ import { useDispatch } from 'react-redux';
 import { useAddShoppingCartItemMutation } from '../../api/shoppingCartApi';
 import { cartStateUpdate } from '../../store/reducers/cartSlice';
 import { MatchLocationToCurrency } from '../Extensions/MatchLocationToCurrency';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const Sidebar = (props) => {
   const [addBasketItem] = useAddShoppingCartItemMutation();
   const dispatch = useDispatch();
+  const userDetail = useSelector((state) => state.authStore.nameIdentifier);
 
+  console.log("trigger inner user detail",userDetail)
 
   const addBasket = async () => {
 
-
+    if (userDetail==="") {
+      toast.warning("You Must SignIn For Before  Add The Basket Item")
+      return;
+    }
 
     const shoppingCartModel = {
       courseId: props.courseDetail.courseId,
