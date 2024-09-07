@@ -22,7 +22,7 @@ const CourseSinglePage = () => {
   const { data, isLoading } = useGetCourseDetailByIdQuery(slug);
   const [CheckHasThisCourse] = useThisCourseEnrolledUserMutation();
   const [ownMyCourse, setOwnMyCourse] = useState(false);
-  const [isEnrolledCourse, setIsEnrolledCourse] = useState(true);
+  const [isEnrolledCourse, setIsEnrolledCourse] = useState(false);
   const [course, setCourse] = useState();
   const [cart, setCart] = useState(false);
   const authenticationState = useSelector(
