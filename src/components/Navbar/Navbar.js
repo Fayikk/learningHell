@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setLoggedInUser, InitialState } from "../../store/reducers/authSlice";
 import { useNavigate } from "react-router-dom";
 
-export default function Navbar({ onAuthData }) {
+export default function   Navbar({ onAuthData }) {
   const [scroll, setScroll] = useState(0);
   const dispatch = useDispatch();
   const navigate = useNavigate();

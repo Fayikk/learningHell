@@ -9,15 +9,18 @@ import { usePaymentCheckoutMutation } from '../../api/paymentApi';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
-import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
+import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import './style.scss';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { cartStateUpdate } from '../../store/reducers/cartSlice';
+import { TbBorderRadius } from 'react-icons/tb';
 import { payHub } from '../../api/Base/payHubModel';
 import FormControlLabel from "@mui/material/FormControlLabel";
 import RadioGroup from "@mui/material/RadioGroup";
 import Radio from "@mui/material/Radio";
+import { shoppingCartApi } from '../../api/shoppingCartApi';
+import { radio } from '@material-tailwind/react';
 
 const style = {
     position: 'absolute',
@@ -58,28 +61,50 @@ const CheckWrap = (props) => {
         expire_year:'',
         remember: false,
     });
+    const createHubConnection = async () => {
+        const hubConnection = new HubConnectionBuilder()
+            .withUrl(payHub, {
+                accessTokenFactory: () => nameIdentifier,
+            })
+            .configureLogging(LogLevel.Information)
+            .build();
+    
+        try {
+            await hubConnection.start();
+        } catch (error) {
+            console.error("Error while starting connection: ", error);
+        }
+    
+        setHubConnection(hubConnection);
+    };
+
+    console.log("radio",radio)
 
     useEffect(()=>{
-        // if (hubConnection) {
-        //         hubConnection.on("MessageForSocket",(res) => {
-        //             console.log("res",res)
-        //           if (res.item1 == "success") {
-        //             push('/order_received');
-        //             handleClose();
-        //             Dispatch(cartStateUpdate(res.item2))
-        //           }
-        //           else{
-        //             handleClose();
-        //           }
-        //         })
-        // }
-    },[])
+        if (hubConnection) {
+                hubConnection.on("MessageForSocket",(res) => {
+                    console.log("res",res)
+                  if (res.item1 == "success") {
+                    push('/order_received');
+                    handleClose();
+                    Dispatch(cartStateUpdate(res.item2))
+                  }
+                  else{
+                    handleClose();
+                  }
+                })
+        }
+    },[hubConnection])
     const changeHandler = (e) => {
         setValue({...value, [e.target.name]: e.target.value});
         validator.showMessages();
     };
 
 
+    useEffect(()=>{
+        createHubConnection();
+
+    },[nameIdentifier])
 
 
     const [validator] = React.useState(new SimpleReactValidator({
@@ -118,6 +143,7 @@ const CheckWrap = (props) => {
 
             const sendData = {
                 paymentModel:formData,
+                isActive3dSecure:isRadio
             }
 
     await CreatePayment(sendData).then((response) => {
@@ -126,13 +152,26 @@ const CheckWrap = (props) => {
         console.log("trigger response payment",response)
         const email = value.email;
         if (email.match(userRegex) && response.data.isSuccess ) {
+            if (isRadio) {
+                console.log(response)
+                console.log("response.data.result[0]",response.data.result[0])
+                const blob = new Blob([response.data.result[0].item1.content], { type: "text/html" });
+                const objUrl = URL.createObjectURL(blob);
+                setHtml(objUrl);
+                handleOpen();    
+            }
+            else if (!isRadio) {
                 if (response.data.isSuccess && response.data.result[1].item2.status == "success") {
                     toast.success(response.data.messages[0]); 
+
+                    console.log("trigger response is cart amount",response.data.result[0])
+
+                    Dispatch(cartStateUpdate(response.data.result[0]))
+
                     push('/order_received');        
-                
+                }
             }
 
-            Dispatch(cartStateUpdate(response.data.result[0]))
             
         }  else if(!response.data.isSuccess) {
             toast.info(response.data.messages[0] + ".Please check your information again");
@@ -148,6 +187,15 @@ const CheckWrap = (props) => {
     return (
         <>
         <Grid className="cardbp mt-20">
+        <RadioGroup className="paymentMethod" aria-label="Payment Method"
+                                                    name="payment_method"
+                                                    onChange={(e) => setIsRadio(!isRadio)}>
+                                            <FormControlLabel value="cash" control={<Radio checked={isRadio==true} color="primary"/>}
+                                                    label="I want 3d secure"/>
+                                            {/* <FormControlLabel value="card" control={<Radio color="primary"/>}
+                                                            label="Cash On delivery"/> */}
+                                            
+                                        </RadioGroup>
                                         <RadioGroup className="paymentMethod" aria-label="Payment Method"
                                                     name="payment_method"
                                                     onChange={(e) => setIsRadio(!isRadio)}>

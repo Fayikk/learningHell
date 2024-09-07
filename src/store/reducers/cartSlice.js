@@ -13,6 +13,7 @@ export const cartSlice = createSlice({
     initialState:InitialState,
     reducers:{
         cartStateUpdate:(state,action) => {
+            console.log("triger cart state update",action.payload)
             state.cartCounter = action.payload
 
             // if (action.payload.items.length !== 0) {

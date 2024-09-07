@@ -21,6 +21,7 @@ export const paymentApi = createApi({
                 return {
                     method:"POST",
                     body:sendData.paymentModel,
+                    url:`?isActive3dSecure=${sendData.isActive3dSecure}`
                 }
             }
 

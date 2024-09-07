@@ -19,6 +19,7 @@ import Cookies from "js-cookie";
 import { useGetShoppingCartQuery } from "../../api/shoppingCartApi";
 import { cartStateUpdate } from "../../store/reducers/cartSlice";
 import IsLoading from "../Loading/IsLoading";
+import ShoppingCart from "./Cart/ShoppingCart";
 const Header = ({ props, onAuthStateChange }) => {
   const [menuActive, setMenuState] = useState(false);
   const authenticationState = useSelector((state) => state.authStore);
@@ -32,13 +33,15 @@ const Header = ({ props, onAuthStateChange }) => {
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
   const [country, setCountry] = useState("");
-  const { data, isLoading } = useGetShoppingCartQuery();
 
-  useEffect(() => {
-    if (data && data.result) {
-      Dispatch(cartStateUpdate(data.result.courses.length));
-    }
-  }, [data]);
+  // useEffect(() => {
+  //   if (data && data.result) {
+  //     console.log("trigger data result",data.result)
+  //     Dispatch(cartStateUpdate(data.result.courses.length));
+  //   }
+  // }, [data]);
+
+
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -225,10 +228,10 @@ const Header = ({ props, onAuthStateChange }) => {
 
                     {/* <li><Link onClick={ClickHandler} to="/contact">Contact</Link></li> */}
                     <li className="menu-item-has-children">
-                      <Link onClick={ClickHandler} to="/cart">
-                        <CiShoppingCart /> ({cartCounter})
-                      </Link>
-                    </li>
+    <Link onClick={ClickHandler} to="/cart">
+      <CiShoppingCart /> ({cartCounter})
+    </Link>
+  </li>
                   </ul>
                 </div>
               </div>
