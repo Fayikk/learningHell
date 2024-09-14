@@ -30,7 +30,6 @@ const CourseSinglePage = () => {
   );
   const courseData = data?.result?.item1;
 
-
   useEffect(() => {
     if (data) {
       setCourse(data.result.item1);
@@ -44,12 +43,9 @@ const CourseSinglePage = () => {
         courseId: data?.result?.item1?.courseId,
       };
 
-
-      await CheckHasThisCourse(model).then((response) =>{
-        setIsEnrolledCourse(response.data)
-      
-      }
-      );
+      await CheckHasThisCourse(model).then((response) => {
+        setIsEnrolledCourse(response.data);
+      });
     }
     CheckActiveCourse();
   }, [isLoading]);
@@ -58,12 +54,9 @@ const CourseSinglePage = () => {
     return <IsLoading />;
   }
 
-
-
   const triggerButton = () => {
-
-    navigate(`/lessons/${course.courseId}`)
-  }
+    navigate(`/lessons/${course.courseId}`);
+  };
 
   return (
     <Fragment>
@@ -75,7 +68,6 @@ const CourseSinglePage = () => {
               title: courseData?.courseName,
               to: `/course-single/${slug}`,
             },
-            
           ]}
         />
         <div className="flex justify-between bg-gray-200 p-5 rounded-2xl sm:flex-row flex-col gap-4">
@@ -84,16 +76,18 @@ const CourseSinglePage = () => {
             alt=""
             className="rounded-md shadow-md sm:max-w-[550px] h-auto flex order-1"
           />
-          <div className="flex flex-col justify-center gap-2 px-1">
+          <div className=" w-full gap-2 flex flex-col justify-center gap-2 px-1">
             <h1 className="text-2xl font-bold">{courseData?.courseName}</h1>
             <p className="text-black">{courseData?.courseDescription}</p>
 
             {isEnrolledCourse ? (
               <div className="flex justify-end">
-                <button className="theme-btn-s2" onClick={triggerButton} >Derse Başla</button>
+                <button className="theme-btn-s2" onClick={triggerButton}>
+                  Derse Başla
+                </button>
               </div>
             ) : (
-              <Sidebar courseDetail={courseData} ></Sidebar>
+              <Sidebar courseDetail={courseData}></Sidebar>
             )}
           </div>
         </div>

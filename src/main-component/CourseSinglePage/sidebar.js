@@ -1,23 +1,22 @@
-import React from 'react';
-import { toast } from 'react-toastify';
-import { useDispatch } from 'react-redux';
-import { useAddShoppingCartItemMutation } from '../../api/shoppingCartApi';
-import { cartStateUpdate } from '../../store/reducers/cartSlice';
-import { MatchLocationToCurrency } from '../Extensions/MatchLocationToCurrency';
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { useAddShoppingCartItemMutation } from "../../api/shoppingCartApi";
+import { cartStateUpdate } from "../../store/reducers/cartSlice";
+import { MatchLocationToCurrency } from "../Extensions/MatchLocationToCurrency";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = (props) => {
   const [addBasketItem] = useAddShoppingCartItemMutation();
   const dispatch = useDispatch();
   const userDetail = useSelector((state) => state.authStore.nameIdentifier);
 
-  console.log("trigger inner user detail",userDetail)
+  console.log("trigger inner user detail", userDetail);
 
   const addBasket = async () => {
-
-    if (userDetail==="") {
-      toast.warning("You Must SignIn For Before  Add The Basket Item")
+    if (userDetail === "") {
+      toast.warning("You Must SignIn For Before  Add The Basket Item");
       return;
     }
 
@@ -39,7 +38,7 @@ const Sidebar = (props) => {
   };
 
   return (
-    <div className="flex justify-between">
+    <div className=" flex justify-between">
       <div className="flex items-center gap-2">
         <span className="text-xl font-bold text-black rounded-full p-4 bg-themeOrange px-3">
           {MatchLocationToCurrency()} {props.courseDetail.coursePrice}
@@ -50,7 +49,9 @@ const Sidebar = (props) => {
         </span>
       </div>
       <div className="flex justify-end items-center">
-        <button className="theme-btn-s3" onClick={addBasket}>Add To Cart</button>
+        <button className="theme-btn-s3" onClick={addBasket}>
+          Add To Cart
+        </button>
       </div>
     </div>
   );
