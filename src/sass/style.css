@@ -509,6 +509,7 @@ img {
   font-weight: 600;
 }
 
+
 .theme-btn:after, .view-cart-btn:after,
 .theme-btn-s2:after {
   position: absolute;
@@ -530,11 +531,16 @@ img {
 .theme-btn-s2:focus,
 .theme-btn-s2:active {
   color: #1A1729;
+
+
+ 
 }
 
 .theme-btn:hover:after, .view-cart-btn:hover:after,
 .theme-btn-s2:hover:after {
   opacity: 1;
+
+
 }
 
 @media (max-width: 991px) {
