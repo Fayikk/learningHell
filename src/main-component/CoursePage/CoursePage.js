@@ -28,7 +28,7 @@ const CoursePage = () => {
     })
     const [filter,setFilter] = useState({
         isSearch:true,
-        pageIndex:localStorage.getItem("currentPageNumber") ? parseInt(localStorage.getItem("currentPageNumber")) : 1,
+        pageIndex:localStorage.getItem("currentPageNumber") && localStorage.getItem("currentPageNumber") !== "undefined" ? parseInt(localStorage.getItem("currentPageNumber")) : 1,
         pageSize:6,
         sortColumn:"CourseName",
         sortOrder:"desc",

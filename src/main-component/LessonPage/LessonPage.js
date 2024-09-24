@@ -1,30 +1,33 @@
 import React, { Fragment, useEffect, useState } from "react";
-import video from "../../images/video/html.mp4";
 import ChevronDownIcon from "../../icons/ChevronDownIcon";
 import { Link, useLocation } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import { useGetSectionSubDetailsQuery } from "../../api/sectionApi";
 import { useGetWatchVideoUrlMutation } from "../../api/videoApi";
-import { useGetCourseDetailByIdQuery } from "../../api/courseApi";
+// import { useGetEnrolledCourseIdQuery } from "../../api/courseApi";
+import { useGetEnrolledCourseIdQuery } from "../../api/courseApi";
 import VideoPage from "./VideoPage";
 import IsLoading from "../../components/Loading/IsLoading";
 import "./style/lessonPage.css";
 import Comments from "../Comment/Comments";
 import StarRating from "./StarRating";
 import Breadcrumbs from "../../components/Breadcrumbs/Breadcrumbs";
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import { useDownloadMaterialFileMutation } from "../../api/materialApi";
+import { toast } from "react-toastify";
 import {
   Accordion,
   AccordionHeader,
   AccordionBody,
 } from "@material-tailwind/react";
-import PageTitle from "../../components/pagetitle/PageTitle";
+import DocumentIcon from "../../icons/DocumentIcon";
 
 const LessonPage = () => {
   const location = useLocation();
   const { from } = location.state || 0;
   const { courseId } = useParams();
   const [expanded, setExpanded] = React.useState(false);
-  const { data, isLoading } = useGetCourseDetailByIdQuery(courseId);
+  const { data, isLoading } = useGetEnrolledCourseIdQuery(courseId);
 
   // const { data, isLoading } = useGetSectionSubDetailsQuery(sectionId);
   const [videos, setVideos] = useState([]);
@@ -36,7 +39,7 @@ const LessonPage = () => {
   const [open, setOpen] = React.useState([]);
   const [alwaysOpen, setAlwaysOpen] = React.useState(true);
   const { slug } = useParams();
-
+  const [downloadFile] = useDownloadMaterialFileMutation();
   const handleOpen = (index) => {
     setOpen((prevOpen) => {
       if (prevOpen.includes(index)) {
@@ -51,11 +54,71 @@ const LessonPage = () => {
   useEffect(() => {
     if (data) {
       setCourseInsideDetail(data.result.item1.sections);
-
         localStorage.removeItem("willSelectedVideo");
      
     }
   }, [data]);
+
+
+  useEffect(()=>{
+    if (courseInsideDetail && courseInsideDetail[0]) {
+      changeVideo(courseInsideDetail[0].videos[0].publicVideoId,courseInsideDetail[0].videos[0].videoId)
+    }
+  },[courseInsideDetail])
+
+ 
+  const clickDownloadFile = async (fileUrl) => {
+    console.log("trigger download file",fileUrl)
+    var materialModel = {
+      fileUrl: fileUrl,
+      type: 1,
+    };
+
+    await downloadFile(materialModel).then((response) => {
+      if (response.data.isSuccess) {
+        console.log("trigger data",response)
+        const fileName = fileUrl; 
+    const fileExtension = fileName.split('.').pop(); 
+    let mimeType = '';
+
+    switch (fileExtension) {
+      case 'pdf':
+        mimeType = 'application/pdf';
+        break;
+      case 'jpg':
+      case 'jpeg':
+        mimeType = 'image/jpeg';
+        break;
+      case 'png':
+        mimeType = 'image/png';
+        break;
+      case 'txt':
+        mimeType = 'text/plain';
+        break;
+      case 'doc':
+        mimeType = 'application/msword';
+        break;
+      case 'docx':
+        mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        break;
+      default:
+        mimeType = 'application/octet-stream'; 
+        break;
+    }
+
+        const linkSource = `data:${mimeType};base64,${response.data.result}`;
+        const downloadLink = document.createElement("a");
+        downloadLink.href = linkSource;
+        downloadLink.download = fileName;
+        downloadLink.click();
+        toast.success("Download process is success completed")
+      }
+    });
+  };
+
+
+
+
 
   useEffect(() => {
     if (from != 0) {
@@ -69,8 +132,10 @@ const LessonPage = () => {
     }
   }, [videos]);
 
+  console.log("trigger section.videos",courseInsideDetail)
 
   const changeVideo = async (publicVideoId,videoId) => {
+    console.log("trigger videoId",videoId)
     setVideoId(videoId);
     // const videoUrl = videos.find((video) => video.videoId === videoId);
       await decryptVideoUrl(publicVideoId)
@@ -147,24 +212,32 @@ const LessonPage = () => {
   {
     section.videos.map((video,key) => (
       <AccordionBody className="text-base p-1 px-4">
-      <a
+        <Row>
+          <Col>
+          <a
         href={video.link}
         onClick={() => changeVideo(video.publicVideoId,video.videoId)}
         className="  hover:underline none-underline cursor-pointer hover:text-themeOrange focus:text-themeOrange    "
       >
         {video.title}
-      </a>
+      </a></Col>
+      <Col>
+      {
+        video.materials.length>0 ? (
+          <Link onClick={()=>clickDownloadFile(video.materials[key].fileUrl)} to={""}>
+      
+          <DocumentIcon  ></DocumentIcon>
+          </Link>
+        ) : ("")
+      }
+    
+      </Col>
+     
+    
+      </Row>
     </AccordionBody>
     ))
-  }
- 
-
-
-
-
-                 
-             
-                </Accordion>
+  }</Accordion>
                 ))  }
             </div>
 

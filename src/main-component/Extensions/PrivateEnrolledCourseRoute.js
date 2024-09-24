@@ -19,27 +19,27 @@ const PrivateEnrolledCourseRoute = ({ children }) => {
           courseId: courseId,
         };
         await CheckHasThisCourse(model).then((response) => {
-            setIsEnrolledCourse(response?.data); // Assuming 'isSuccess' indicates course enrollment
+            setIsEnrolledCourse(response?.data);
 
         });
       } else {
-        setIsEnrolledCourse(false); // In case the token is missing, treat as not enrolled
+        setIsEnrolledCourse(false);
       }
     }
     CheckActiveCourse();
   }, [CheckHasThisCourse, courseId]);
 
-  // Handle cases before the state is determined (e.g., when `isEnrolledCourse` is null)
+  
   if (isEnrolledCourse === null) {
-    return null; // Render nothing (or a loading spinner) while checking enrollment status
+    return null;
   }
 
   return (
     <>
       {
         isEnrolledCourse
-          ? children // If enrolled, render the child components (e.g., course content)
-          : <Navigate to={`/course-single/${courseId}`} replace={true} /> // Redirect to course page if not enrolled
+          ? children
+          : <Navigate to={`/course-single/${courseId}`} replace={true} /> 
       }
     </>
   );

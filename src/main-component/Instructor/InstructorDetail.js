@@ -13,7 +13,6 @@ import {
   useRemoveCourseAsyncMutation,
   useUpdateCourseMutation,
 } from "../../api/courseApi";
-import IsLoading from "../../components/Loading/IsLoading";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 
@@ -28,7 +27,6 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { useLazyGetAllCategoriesForSelectedQuery } from "../../api/categoryApi";
 import Spinner from "react-bootstrap/Spinner";
-import VideoPage from "../LessonPage/VideoPage";
 const style = {
   position: "absolute",
   top: "50%",
