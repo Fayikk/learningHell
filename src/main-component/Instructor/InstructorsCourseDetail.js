@@ -198,6 +198,7 @@ function InstructorsCourseDetail() {
   };
 
   const clickDownloadFile = async (fileUrl) => {
+    console.log("trigger download file")
     var materialModel = {
       fileUrl: fileUrl,
       type: 1,
@@ -205,19 +206,43 @@ function InstructorsCourseDetail() {
 
     await downloadFile(materialModel).then((response) => {
       if (response.data.isSuccess) {
-        const zip = new JSZip();
-        zip.file("file.pdf", response.data.result);
+        console.log("trigger data",response)
+        const fileName = fileUrl; // Dosya ismi
+    const fileExtension = fileName.split('.').pop(); // Dosya uzantısını al
+    let mimeType = '';
 
-        zip.generateAsync({ type: "blob" }).then(function (zipBlob) {
-          const url = window.URL.createObjectURL(zipBlob);
-          const a = document.createElement("a");
-          a.style.display = "none";
-          a.href = url;
-          a.download = "download.zip";
-          document.body.appendChild(a);
-          a.click();
-          window.URL.revokeObjectURL(url);
-        });
+    switch (fileExtension) {
+      case 'pdf':
+        mimeType = 'application/pdf';
+        break;
+      case 'jpg':
+      case 'jpeg':
+        mimeType = 'image/jpeg';
+        break;
+      case 'png':
+        mimeType = 'image/png';
+        break;
+      case 'txt':
+        mimeType = 'text/plain';
+        break;
+      case 'doc':
+        mimeType = 'application/msword';
+        break;
+      case 'docx':
+        mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        break;
+      default:
+        mimeType = 'application/octet-stream'; // Genel bir binary dosya tipi
+        break;
+    }
+
+    // Dosya için base64 URI oluşturma
+    const linkSource = `data:${mimeType};base64,${response.data.result}`;
+    const downloadLink = document.createElement("a");
+    downloadLink.href = linkSource;
+    downloadLink.download = fileName;
+    downloadLink.click();
+                toast.success("Download process is success completed")
       }
     });
   };

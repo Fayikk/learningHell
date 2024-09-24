@@ -30,6 +30,14 @@ export const courseApi = createApi({
                 
             })
         }),
+        getEnrolledCourseId:builder.query({
+            query:(courseId) => ({
+                url:`GetEnrolledCourse/${courseId}`,
+                method:"GET"
+
+                
+            })
+        }),
         getSectionsByCourseId:builder.query({
             query:(courseId)=> ({
                 url:`CourseSections/${courseId}`,
@@ -136,5 +144,6 @@ export const {useGetCourseDetailByIdQuery,
             useGetMostPopularCoursesQuery,
             useGetCoursesBySearchMutation,
             useGetCourseByIdMutation,
-            useUpdateCourseMutation
+            useUpdateCourseMutation,
+            useGetEnrolledCourseIdQuery
             } = courseApi

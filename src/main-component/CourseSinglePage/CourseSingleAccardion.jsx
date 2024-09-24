@@ -7,6 +7,9 @@ const CourseSingleAccardion = (props) => {
     window.scrollTo(10, 0);
   };
 
+
+  
+
   const [courseDetails, setCourseDetails] = useState([]);
   const [activeIndex, setActiveIndex] = useState(null); // Hangi bölümün açık olduğunu tutan state
 
@@ -26,7 +29,6 @@ const CourseSingleAccardion = (props) => {
       <div className="flex flex-col gap-4">
         <h1 className="font-bold text-2xl">Konular</h1>
 
-        <span className="text-base text-black/55">4 Bölüm 5 konu</span>
         <div className="flex flex-col">
           {courseDetails.map((courseDetail, index) => (
             <div key={index} className="relative mb-3">
