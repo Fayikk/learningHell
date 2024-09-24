@@ -117,7 +117,7 @@ if (courses.length > 0) {
                         Total product<span>( {courses.length} )</span>
                       </li>
                       <li>
-                        Total Price<span>&#8378;{totalPrice(courses)}</span>
+                        Total Price<span>{MatchLocationToCurrency()}{totalPrice(courses)}</span>
                       </li>
                     </ul>
                   </div>
