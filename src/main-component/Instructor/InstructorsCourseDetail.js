@@ -198,7 +198,6 @@ function InstructorsCourseDetail() {
   };
 
   const clickDownloadFile = async (fileUrl) => {
-    console.log("trigger download file")
     var materialModel = {
       fileUrl: fileUrl,
       type: 1,
@@ -206,7 +205,6 @@ function InstructorsCourseDetail() {
 
     await downloadFile(materialModel).then((response) => {
       if (response.data.isSuccess) {
-        console.log("trigger data",response)
         const fileName = fileUrl; // Dosya ismi
     const fileExtension = fileName.split('.').pop(); // Dosya uzantısını al
     let mimeType = '';

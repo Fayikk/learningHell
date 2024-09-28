@@ -188,10 +188,7 @@ const CoursePage = () => {
     }
     
 
-    const triggerMethod = (test) => {
-console.log("trigger test method",test)
-    }
-    
+
 
 
     return (
