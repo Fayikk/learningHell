@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { InitialState, setLoggedInUser } from "../../store/reducers/authSlice";
 import { useSelector } from "react-redux";
-import { Dropdown } from "react-bootstrap";
+import {  Dropdown } from "react-bootstrap";
 import { CiShoppingCart } from "react-icons/ci";
 import { TbWorld } from "react-icons/tb";
 import { FaLock } from "react-icons/fa";
@@ -19,6 +19,8 @@ import Cookies from "js-cookie";
 import { useGetShoppingCartQuery } from "../../api/shoppingCartApi";
 import IsLoading from "../Loading/IsLoading";
 import { cartStateUpdate } from "../../store/reducers/cartSlice";
+import { ThemeProvider } from "../../main-component/Extensions/Theme/ThemeProvider";
+import ThemeToggle from "../../main-component/Extensions/Theme/ThemeToggle";
 const Header = ({ props, onAuthStateChange }) => {
   const [menuActive, setMenuState] = useState(false);
   const authenticationState = useSelector((state) => state.authStore);
@@ -154,14 +156,20 @@ const Header = ({ props, onAuthStateChange }) => {
   return (
     <header id="header">
       <HeaderTopbar />
+      
       <div className={`wpo-site-header`}>
+        
         <nav className="navigation navbar navbar-expand-lg navbar-light">
           <div className="container-fluid">
+            
             <div className="row align-items-center">
+              
               <div className="col-lg-3 col-md-4 col-3 d-lg-none dl-block">
+                
                 <div className="mobail-menu">
                   <MobileMenu />
                 </div>
+                
               </div>
               <div className="col-lg-3 col-md-4 col-6">
                 <div className="navbar-header">
@@ -174,6 +182,7 @@ const Header = ({ props, onAuthStateChange }) => {
                   </Link>
                 </div>
               </div>
+              
               <div className="col-lg-6 col-md-1 col-1">
               <div id="navbar" className="navbar-collapse">
   <button className="menu-close">
@@ -242,6 +251,11 @@ const Header = ({ props, onAuthStateChange }) => {
                                         </div>
                                     </div> */}
                   <div className="close-form">
+                  <div>
+                    <ThemeProvider>
+                      <ThemeToggle></ThemeToggle>
+                    </ThemeProvider>
+                  </div>
                     {authenticationState.userName === "" ? (
                       <>
                         <Link
@@ -258,6 +272,7 @@ const Header = ({ props, onAuthStateChange }) => {
                           onClick={ClickHandler}
                           className="theme-btn"
                           to="/register"
+                          style={{outline:"none"}}
                         >
                           <span className="text">{t("Sign Up")}</span>
                           <span className="mobile">
@@ -352,6 +367,7 @@ const Header = ({ props, onAuthStateChange }) => {
                       </>
                     )}
                   </div>
+                 
                   <div>
                     <Dropdown
                       show={showLocalizationDropdown}

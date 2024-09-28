@@ -164,6 +164,7 @@ const Footer = (props) => {
                       {t("About Us")}
                     </Link>
                   </li>
+                
                   {/* <li>
                     <Link onClick={ClickHandler} to="/faq">
                       {t("FAQ")}
