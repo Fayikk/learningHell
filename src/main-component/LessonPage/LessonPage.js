@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { createContext, Fragment, useContext, useEffect, useRef, useState } from "react";
 import ChevronDownIcon from "../../icons/ChevronDownIcon";
 import { Link, useLocation } from "react-router-dom";
 import { useParams } from "react-router-dom";
@@ -22,7 +22,13 @@ import {
 } from "@material-tailwind/react";
 import DocumentIcon from "../../icons/DocumentIcon";
 
+
+
+const RefContext = createContext();
+
+
 const LessonPage = () => {
+  const sharedRef = useRef();
   const location = useLocation();
   const { from } = location.state || 0;
   const { courseId } = useParams();
@@ -68,7 +74,6 @@ const LessonPage = () => {
 
  
   const clickDownloadFile = async (fileUrl) => {
-    console.log("trigger download file",fileUrl)
     var materialModel = {
       fileUrl: fileUrl,
       type: 1,
@@ -76,7 +81,6 @@ const LessonPage = () => {
 
     await downloadFile(materialModel).then((response) => {
       if (response.data.isSuccess) {
-        console.log("trigger data",response)
         const fileName = fileUrl; 
     const fileExtension = fileName.split('.').pop(); 
     let mimeType = '';
@@ -132,18 +136,20 @@ const LessonPage = () => {
     }
   }, [videos]);
 
-  console.log("trigger section.videos",courseInsideDetail)
 
   const changeVideo = async (publicVideoId,videoId) => {
-    console.log("trigger videoId",videoId)
     setVideoId(videoId);
     // const videoUrl = videos.find((video) => video.videoId === videoId);
       await decryptVideoUrl(publicVideoId)
         .then((response) => {
-          localStorage.setItem(
-            "willSelectedVideo",
-            JSON.stringify(response.data.result)
-          );
+          if (sharedRef.current) {
+          sharedRef.current.src = response.data.result
+          sharedRef.current.play()
+
+            
+          }
+
+    
         })
         .catch((err) => console.error(err));
   };
@@ -250,8 +256,10 @@ const LessonPage = () => {
               <Comments videoDetail={videoId} />
             </div>
           </div>
+<RefContext.Provider value={sharedRef} >
+<VideoPage videoId={videoId} videoRef={sharedRef} ></VideoPage>
 
-          <VideoPage videoId={videoId}></VideoPage>
+</RefContext.Provider>
         </div>
       </section>
     </Fragment>

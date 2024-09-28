@@ -30,13 +30,11 @@ const errorLoggerMiddleware = (store) => (next) => (action) => {
                 const refreshToken = localStorage.getItem("refreshToken");
                 const useGenerateJwtToken = async () => {
                     try {
-                        // Dispatch the action to refresh the token
 
                         const response = await axios.post( `${baseUrl}User/Refresh-Token`,{refreshToken})
                         if (!response.data.isSuccess) {
                             localStorage.removeItem("refreshToken");
                             localStorage.removeItem("token");
-                            // Redirect to login page
                            
                         }
                         else {
@@ -44,7 +42,6 @@ const errorLoggerMiddleware = (store) => (next) => (action) => {
                         }
                     } catch (error) {
                         console.error("Error refreshing token:", error);
-                        // Handle error
                     }
                 };
                 useGenerateJwtToken();
@@ -95,7 +92,7 @@ const store = configureStore({
             ,newsLetterApi.middleware
             ,commentApi.middleware
             ,ratingApi.middleware
-            // ,errorLoggerMiddleware
+            ,errorLoggerMiddleware
             )
 })
 

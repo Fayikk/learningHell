@@ -12,7 +12,6 @@ const Sidebar = (props) => {
   const dispatch = useDispatch();
   const userDetail = useSelector((state) => state.authStore.nameIdentifier);
 
-  console.log("trigger inner user detail", userDetail);
 
   const addBasket = async () => {
     if (userDetail === "") {

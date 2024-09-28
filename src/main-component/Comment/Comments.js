@@ -11,7 +11,6 @@ import CommentIcon from "../../icons/CommentIcon";
 
 export default function Comments({ videoDetail }) {
 
-  console.log("trigger comments",videoDetail)
 
   const dispatch = useDispatch();
   const [comments, setComments] = useState([]);
