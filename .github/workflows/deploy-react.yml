@@ -39,23 +39,25 @@ jobs:
           npm list
 
       - name: Build project
+        shell: powershell
         run: |
-          if [[ "${{ github.ref }}" == "refs/heads/test" ]]; then
+          if ("${{ github.ref }}" -eq "refs/heads/test") {
             npm run build:test  # Test için build işlemi
-          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          } elseif ("${{ github.ref }}" -eq "refs/heads/main") {
             npm run build:main  # Main için build işlemi
-          else
+          } else {
             echo "Unknown branch"
             exit 1
-          fi
+          }
 
       - name: Deploy to IIS
+        shell: powershell
         run: |
-          if [[ "${{ github.ref }}" == "refs/heads/test" ]]; then
+          if ("${{ github.ref }}" -eq "refs/heads/test") {
             $websiteName = "courseClient_test"
             $appPoolName = "courseClient"
             $destinationPath = "C:\inetpub\wwwroot\Course_Client_Test"
-          } elseif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          } elseif ("${{ github.ref }}" -eq "refs/heads/main") {
             $websiteName = "courseClient_main"
             $appPoolName = "courseClient"
             $destinationPath = "C:\inetpub\wwwroot\Course_Client_Main"
