@@ -3,17 +3,12 @@ name: Deploy React App to IIS
 on:
   push:
     branches:
-      - "local"
       - "test"
       - "main"
 
 jobs:
   build:
     runs-on: self-hosted  
-    strategy:
-      matrix:
-        environment: [local, test, main]
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -43,19 +38,23 @@ jobs:
           echo "Installed Packages:"
           npm list
 
-      - name: Build project for ${{ matrix.environment }}
+      - name: Set Environment
+        id: set_env
+        run: |
+          echo "ENVIRONMENT=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
+      - name: Build project for ${{ env.ENVIRONMENT }}
         shell: powershell
         run: |
-          switch ("${{ matrix.environment }}") {
-            "local" { npm run build:local }
+          switch ("${{ env.ENVIRONMENT }}") {
             "test"  { npm run build:test }
             "main"  { npm run build:main }
-            default { Write-Error "Unknown environment: $($env:matrix_environment)" }
+            default { Write-Error "Unknown environment: $($env:ENVIRONMENT)" }
           }
 
       - name: Deploy to IIS
         run: |
-          $envName = "${{ matrix.environment }}"
+          $envName = "${{ env.ENVIRONMENT }}"
           $websiteName = "courseClient_$envName"
           $appPoolName = "courseClient_$envName"
 
