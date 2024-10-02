@@ -9,10 +9,6 @@ on:
 jobs:
   build:
     runs-on: self-hosted  
-    strategy:
-      matrix:
-        environment: [test, main]
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -31,7 +27,7 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Install dependencies
-        run: npm install
+        run: npm install  # Global değil proje düzeyinde bağımlılıkları yükle
 
       - name: Debug Info
         run: |
@@ -42,20 +38,31 @@ jobs:
           echo "Installed Packages:"
           npm list
 
-      - name: Build project for ${{ matrix.environment }}
-        shell: powershell
+      - name: Build project
         run: |
-          switch ("${{ matrix.environment }}") {
-            "test"  { npm run build:test }
-            "main"  { npm run build:main }
-            default { Write-Error "Unknown environment: $($env:matrix_environment)" }
-          }
+          if [[ "${{ github.ref }}" == "refs/heads/test" ]]; then
+            npm run build:test  # Test için build işlemi
+          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            npm run build:main  # Main için build işlemi
+          else
+            echo "Unknown branch"
+            exit 1
+          fi
 
       - name: Deploy to IIS
         run: |
-          $envName = "${{ matrix.environment }}"
-          $websiteName = "courseClient_$envName"
-          $appPoolName = "courseClient_$envName"
+          if [[ "${{ github.ref }}" == "refs/heads/test" ]]; then
+            $websiteName = "courseClient_test"
+            $appPoolName = "courseClient"
+            $destinationPath = "C:\inetpub\wwwroot\Course_Client_Test"
+          } elseif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            $websiteName = "courseClient_main"
+            $appPoolName = "courseClient"
+            $destinationPath = "C:\inetpub\wwwroot\Course_Client_Main"
+          } else {
+            echo "Unknown branch"
+            exit 1
+          }
 
           if ((Get-WebSiteState -Name $websiteName).Value -eq "Started") {
             Stop-WebSite -Name $websiteName
@@ -67,7 +74,7 @@ jobs:
           }
 
           Start-Sleep -s 15
-          Copy-Item -Path "${{ github.workspace }}\build\*" -Destination "C:\inetpub\wwwroot\$websiteName" -Recurse -Force
+          Copy-Item -Path "${{ github.workspace }}\build\*" -Destination $destinationPath -Recurse -Force
 
           if ((Get-WebSiteState -Name $websiteName).Value -eq "Stopped") {
             Start-WebSite -Name $websiteName
