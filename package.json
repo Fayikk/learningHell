@@ -65,7 +65,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build:test": "env-cmd -f .env.test react-scripts build",
-    "build:dev": "env-cmd -f .env.dev react-scripts build",
+    "build:main": "env-cmd -f .env.dev react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
