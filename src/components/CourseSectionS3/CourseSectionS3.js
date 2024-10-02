@@ -12,7 +12,7 @@ const ClickHandler = () => {
 
 const CourseSectionS3 = (props) => {
 
-
+    console.log("trigger props",props)
 
 
 
