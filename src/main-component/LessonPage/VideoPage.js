@@ -7,8 +7,6 @@ export default function VideoPage({ videoId,videoRef }) {
 
 
 
-  console.log("trigger videoId",videoId)
-  console.log("trigger videoRef",videoRef)
 
 
 
