@@ -5,14 +5,14 @@ on:
     branches:
       - "local"
       - "test"
-      - "dev"
+      - "main"
 
 jobs:
   build:
     runs-on: self-hosted  
     strategy:
       matrix:
-        environment: [local, test, dev]
+        environment: [local, test, main]
 
     steps:
       - name: Checkout code
@@ -44,14 +44,14 @@ jobs:
           npm list
 
       - name: Build project for ${{ matrix.environment }}
+        shell: powershell
         run: |
-          if [ "${{ matrix.environment }}" == "local" ]; then
-            npm run build:local
-          elif [ "${{ matrix.environment }}" == "test" ]; then
-            npm run build:test
-          elif [ "${{ matrix.environment }}" == "dev" ]; then
-            npm run build:dev
-          fi
+          switch ("${{ matrix.environment }}") {
+            "local" { npm run build:local }
+            "test"  { npm run build:test }
+            "main"  { npm run build:main }
+            default { Write-Error "Unknown environment: $($env:matrix_environment)" }
+          }
 
       - name: Deploy to IIS
         run: |
@@ -61,23 +61,23 @@ jobs:
 
           if ((Get-WebSiteState -Name $websiteName).Value -eq "Started") {
             Stop-WebSite -Name $websiteName
-            echo "Stopped Website $websiteName"
+            Write-Output "Stopped Website $websiteName"
           }
           if ((Get-WebAppPoolState -Name $appPoolName).Value -eq "Started") {
             Stop-WebAppPool -Name $appPoolName
-            echo "Stopped Application Pool $appPoolName"
+            Write-Output "Stopped Application Pool $appPoolName"
           }
 
-          Start-Sleep -s 15
+          Start-Sleep -Seconds 15
           Copy-Item -Path "${{ github.workspace }}\build\*" -Destination "C:\inetpub\wwwroot\$websiteName" -Recurse -Force
 
           if ((Get-WebSiteState -Name $websiteName).Value -eq "Stopped") {
             Start-WebSite -Name $websiteName
-            echo "Started Website $websiteName"
+            Write-Output "Started Website $websiteName"
           }
           if ((Get-WebAppPoolState -Name $appPoolName).Value -eq "Stopped") {
             Start-WebAppPool -Name $appPoolName
-            echo "Started Application Pool $appPoolName"
+            Write-Output "Started Application Pool $appPoolName"
           }
 
           if ($lastexitcode -lt 8) { $global:lastexitcode = 0 }
