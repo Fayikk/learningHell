@@ -4,6 +4,14 @@ import Comments from "../Comment/Comments";
 import StarRating from "./StarRating";
 
 export default function VideoPage({ videoId,videoRef }) {
+
+
+
+  console.log("trigger videoId",videoId)
+  console.log("trigger videoRef",videoRef)
+
+
+
   const ClickHandler = () => {
     window.scrollTo(10, 0);
   };
@@ -43,7 +51,6 @@ export default function VideoPage({ videoId,videoRef }) {
             muted
             controls
             controlsList="nodownload"
-            key={localStorage.getItem("willSelectedVideo")}
           >
             <source
               type="video/mp4"

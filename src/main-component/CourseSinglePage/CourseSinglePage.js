@@ -19,6 +19,7 @@ import Breadcrumbs from "../../components/Breadcrumbs/Breadcrumbs";
 const CourseSinglePage = () => {
   const navigate = useNavigate();
   const { slug } = useParams();
+  console.log("trigger slug",slug)
   const { data, isLoading } = useGetCourseDetailByIdQuery(slug);
   const [CheckHasThisCourse] = useThisCourseEnrolledUserMutation();
   const [ownMyCourse, setOwnMyCourse] = useState(false);

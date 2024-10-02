@@ -55,6 +55,7 @@ import EvaluateModal from "../CustomComponents/EvaluateModal";
 import Roles from "../../Constants/Roles";
 import { useTranslation } from "react-i18next";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { createContext } from "react";
 const style = {
   position: "absolute",
   top: "50%",
@@ -66,8 +67,10 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
+const VideoRefContext = createContext();
 
 function InstructorsCourseDetail() {
+  const videoRef = useRef();
   const { t } = useTranslation();
   const { i18n } = useTranslation();
   const buttonRef = useRef(null);
@@ -138,16 +141,28 @@ function InstructorsCourseDetail() {
 
   const handleClickWatchingVideo = async (publicVideoId) => {
     await watchingVideo(publicVideoId).then((response) => {
-      localStorage.setItem(
-        "willSelectedVideo",
-        JSON.stringify(response.data.result)
-      );
+      console.log("trigger current - 1",response)
+
+      if (videoRef.current && response ) {
+        console.log("trigger current - 2",response)
+        videoRef.current.src = response.data.result
+        videoRef.current.play()
+
+        console.log("trigger chooseVideo")
+          
+        }
+        console.log("trigger chooseVideo")
       setChooseVideo(true);
+      console.log("trigger chooseVideo",chooseVideo)
+
     });
   };
 
   const closeVideo = () => {
+    console.log("trigger close  ",chooseVideo)
     setChooseVideo(false);
+    console.log("trigger close  ",chooseVideo)
+
   };
 
   const removeItem = async (itemId, itemName) => {
@@ -191,8 +206,10 @@ function InstructorsCourseDetail() {
   const handleClickEdit = (sectionId) => {
     setEditingSectionId(editingSectionId === sectionId ? null : sectionId);
   };
-
+console.log("chooseVideo",chooseVideo)
   const handleOpenCustomModal = (title) => {
+    console.log("trigger ")
+    console.log("trigger open custom title",title)
     isShowModal(!modal);
     setTitle(title);
   };
@@ -549,8 +566,9 @@ function InstructorsCourseDetail() {
         <Fragment>
           <Navbar onAuthData={handleAuthForRoles} />
           <PageTitle pageTitle={t("Instructor")} pageSub={"CourseDetail"} />
-          {chooseVideo ? (
+       
             <div
+                hidden= {!chooseVideo}
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -559,12 +577,26 @@ function InstructorsCourseDetail() {
                 margin: "0 auto",
               }}
             >
-              <VideoPage />
-              <button onClick={closeVideo}>Close Video</button>
+              <VideoRefContext.Provider value={videoRef} >
+            
+          <video
+         
+            className="w-100 rounded-2xl"
+            loop
+            autoPlay
+            ref={videoRef}
+            muted
+            controls
+            controlsList="nodownload"
+          >
+            <source
+              type="video/mp4"
+            />
+          </video>
+              </VideoRefContext.Provider>
+              <button onClick={()=>closeVideo()}>Close Video</button>
             </div>
-          ) : (
-            ""
-          )}
+    
 
           {modal ? (
             <CustomModal
