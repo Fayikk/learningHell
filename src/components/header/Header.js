@@ -1,3 +1,4 @@
+import './Styles/Header.css'
 import React, { useState, startTransition } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import MobileMenu from "../MobileMenu/MobileMenu";
@@ -257,6 +258,10 @@ const Header = ({ props, onAuthStateChange }) => {
                   </div>
                     {authenticationState.userName === "" ? (
                       <>
+
+
+
+                      
                         <Link
                           onClick={ClickHandler}
                           className="login"
@@ -282,7 +287,9 @@ const Header = ({ props, onAuthStateChange }) => {
                     ) : (
                       <>
                         <div className="ml-2">
-                          <Dropdown
+                        <Dropdown
+                            style={{display:"none !important"}}
+
                             show={showDropdown}
                             onMouseEnter={() => handleMouseEnter()}
                             onMouseLeave={() => handleMouseLeave()}
@@ -349,6 +356,7 @@ const Header = ({ props, onAuthStateChange }) => {
                               </Dropdown.Item>
                             </Dropdown.Menu>
                           </Dropdown>
+
                         </div>
 
                         <div>

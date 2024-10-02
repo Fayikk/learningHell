@@ -21,6 +21,10 @@ import { newsLetterApi } from "../api/newsLetterApi";
 import { commentApi } from "../api/commentApi";
 import { ratingApi } from "../api/ratingApi";
 import { locationReducer } from "./reducers/locationSlice";
+
+
+
+
 const errorLoggerMiddleware = (store) => (next) => (action) => {
     if (action && action.payload && action.payload.status) {
         console.error("API error:", action.payload);
@@ -53,6 +57,8 @@ const errorLoggerMiddleware = (store) => (next) => (action) => {
     }
     return next(action);
 };
+
+
 
 const store = configureStore({
     reducer:{
