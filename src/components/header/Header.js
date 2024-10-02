@@ -42,8 +42,7 @@ const Header = ({ props, onAuthStateChange }) => {
   //     Dispatch(cartStateUpdate(data.result.courses.length));
   //   }
   // }, [data]);
-
-
+  console.log("trigger in environment variable",process.env.REACT_APP_ENV)
 
   useEffect(()=>{
     if (data) {

@@ -12,7 +12,6 @@ const ClickHandler = () => {
 
 const CourseSectionS3 = (props) => {
 
-    console.log("trigger props",props)
 
 
 
@@ -22,7 +21,6 @@ const CourseSectionS3 = (props) => {
 
 
     const savePageNumber = () => {
-        console.log("trigger props.paginationNumber",props.paginationNumber)
         localStorage.setItem("currentPageNumber",props.paginationNumber)
     }
 

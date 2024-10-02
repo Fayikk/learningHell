@@ -141,27 +141,20 @@ function InstructorsCourseDetail() {
 
   const handleClickWatchingVideo = async (publicVideoId) => {
     await watchingVideo(publicVideoId).then((response) => {
-      console.log("trigger current - 1",response)
 
       if (videoRef.current && response ) {
-        console.log("trigger current - 2",response)
         videoRef.current.src = response.data.result
         videoRef.current.play()
 
-        console.log("trigger chooseVideo")
           
         }
-        console.log("trigger chooseVideo")
       setChooseVideo(true);
-      console.log("trigger chooseVideo",chooseVideo)
 
     });
   };
 
   const closeVideo = () => {
-    console.log("trigger close  ",chooseVideo)
     setChooseVideo(false);
-    console.log("trigger close  ",chooseVideo)
 
   };
 
@@ -206,10 +199,7 @@ function InstructorsCourseDetail() {
   const handleClickEdit = (sectionId) => {
     setEditingSectionId(editingSectionId === sectionId ? null : sectionId);
   };
-console.log("chooseVideo",chooseVideo)
   const handleOpenCustomModal = (title) => {
-    console.log("trigger ")
-    console.log("trigger open custom title",title)
     isShowModal(!modal);
     setTitle(title);
   };
