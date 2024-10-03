@@ -58,9 +58,9 @@ jobs:
             $appPoolName = "courseClient"
             $destinationPath = "C:\inetpub\wwwroot\Course_Client_Test"
           } elseif ("${{ github.ref }}" -eq "refs/heads/main") {
-            $websiteName = "courseClient_main"
+            $websiteName = "courseClient"
             $appPoolName = "courseClient"
-            $destinationPath = "C:\inetpub\wwwroot\Course_Client_Main"
+            $destinationPath = "C:\inetpub\wwwroot\Course_Client"
           } else {
             echo "Unknown branch"
             exit 1
