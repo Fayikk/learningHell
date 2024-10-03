@@ -12,6 +12,22 @@ import { Button } from 'reactstrap';
 import Search from '../../components/Search/Search';
 import MainPageFilter from '../../components/Filters/MainPageFilter';
 import { Languages } from '../Extensions/Languages';
+
+const butonStyle = {
+    padding: '10px 20px',        // Daha az iç boşluk
+    width: '150px',              // Buton genişliği
+    backgroundColor: '#4CAF50',  // Arka plan rengi
+    color: '#fff',               // Metin rengi
+    border: 'none',              // Kenar çizgisi
+    borderRadius: '8px',         // Yuvarlatılmış kenarlar
+    cursor: 'pointer',           // Fare imleci
+    fontSize: '16px',            // Metin boyutu
+    fontWeight: 'bold',          // Kalın metin
+    transition: 'background-color 0.3s ease',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Gölge efekti
+  }
+
+
 const CoursePage = () => {
 
     const {slug} = useParams();
@@ -22,6 +38,7 @@ const CoursePage = () => {
     const [trick,setTrick] = useState(1);
     const [pageCounter,setPageCounter] = useState(0);
     const [query,setQuery] = useState("");
+    const [openModal,setOpenModal] = useState(false);
     const [advanceFilter,setAdvanceFilter]= useState();
     const [isClickedEnter,setIsClickedEnter] = useState(false)
     const [newRule,setNewRule] = useState({
@@ -157,6 +174,14 @@ const CoursePage = () => {
     }
 
 
+    const handleOpenModal = (value) => {
+        console.log("trigger handle open modal",value)
+        setOpenModal(value)
+    }
+
+
+
+
     const handleDataFromChild = (data) => {
 
         if (data.type=="filter") {
@@ -255,12 +280,25 @@ const CoursePage = () => {
                     <div className='container' >
                         <div className='row' >
                         <Search onData={handleDataFromChild} onChangeClick={handleClickedEnter} ></Search>
+                        <button
+  onClick={() => setOpenModal(!openModal)}
+  style={butonStyle}
+  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#45a049'}
+  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#4CAF50'}
+>
+  Filter
+</button>
 
                         </div>
-                        <div className='row' >
-                        <MainPageFilter onData={handleDataFromChild} ></MainPageFilter>
-
-                        </div>
+                        {
+                            openModal ? (
+                                <div className='row' >
+                                <MainPageFilter onData={handleDataFromChild} openModal={handleOpenModal} ></MainPageFilter>
+        
+                                </div>
+                            ) : ""
+                        }
+                      
                     </div>
              </>
                 ) : ("")
