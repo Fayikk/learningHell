@@ -7,7 +7,6 @@ import profiles from "../../images/profile-picture.jpg";
 
 const InstructorDetails = (props) => {
   
-    console.log("trigger props",props)
   
   return (
     <div className="flex rounded-2xl shadow-lg flex-col gap-5 p-5">

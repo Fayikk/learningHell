@@ -36,15 +36,11 @@ function Search({onData,onChangeClick}) {
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
-      // Enter tuşuna basıldığında yapılacak işlemler
       onChangeClick(event.key)
     }
   };
 
 
-  const handleClick = () => {
-    console.log("trigger handle click")
-  }
 
   return (
     <div style={styles.container}>

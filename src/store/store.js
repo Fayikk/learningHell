@@ -21,41 +21,44 @@ import { newsLetterApi } from "../api/newsLetterApi";
 import { commentApi } from "../api/commentApi";
 import { ratingApi } from "../api/ratingApi";
 import { locationReducer } from "./reducers/locationSlice";
-// const errorLoggerMiddleware = (store) => (next) => (action) => {
-//     if (action && action.payload && action.payload.status) {
-//         console.error("API error:", action.payload);
-//         if (action.payload.status === 401) {
-//             const token = localStorage.getItem("token");
-//             if (token) {
-//                 const refreshToken = localStorage.getItem("refreshToken");
-//                 const useGenerateJwtToken = async () => {
-//                     try {
-//                         // Dispatch the action to refresh the token
 
-//                         const response = await axios.post( `${baseUrl}User/Refresh-Token`,{refreshToken})
-//                         if (!response.data.isSuccess) {
-//                             localStorage.removeItem("refreshToken");
-//                             localStorage.removeItem("token");
-//                             // Redirect to login page
+
+
+
+const errorLoggerMiddleware = (store) => (next) => (action) => {
+    if (action && action.payload && action.payload.status) {
+        console.error("API error:", action.payload);
+        if (action.payload.status === 401) {
+            const token = localStorage.getItem("token");
+            if (token) {
+                const refreshToken = localStorage.getItem("refreshToken");
+                const useGenerateJwtToken = async () => {
+                    try {
+
+                        const response = await axios.post( `${baseUrl}User/Refresh-Token`,{refreshToken})
+                        if (!response.data.isSuccess) {
+                            localStorage.removeItem("refreshToken");
+                            localStorage.removeItem("token");
                            
-//                         }
-//                         else {
-//                             localStorage.setItem("token",response.data.result.accessToken)
-//                         }
-//                     } catch (error) {
-//                         console.error("Error refreshing token:", error);
-//                         // Handle error
-//                     }
-//                 };
-//                 useGenerateJwtToken();
-//             }
-//             else {
-//                 window.location.href = "/login";
-//             }
-//         }
-//     }
-//     return next(action);
-// };
+                        }
+                        else {
+                            localStorage.setItem("token",response.data.result.accessToken)
+                        }
+                    } catch (error) {
+                        console.error("Error refreshing token:", error);
+                    }
+                };
+                useGenerateJwtToken();
+            }
+            else {
+                window.location.href = "/login";
+            }
+        }
+    }
+    return next(action);
+};
+
+
 
 const store = configureStore({
     reducer:{
@@ -95,7 +98,7 @@ const store = configureStore({
             ,newsLetterApi.middleware
             ,commentApi.middleware
             ,ratingApi.middleware
-            // ,errorLoggerMiddleware
+            ,errorLoggerMiddleware
             )
 })
 

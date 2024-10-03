@@ -20,6 +20,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import RadioGroup from "@mui/material/RadioGroup";
 import Radio from "@mui/material/Radio";
 import { shoppingCartApi } from '../../api/shoppingCartApi';
+import { radio } from '@material-tailwind/react';
 
 const style = {
     position: 'absolute',
@@ -81,7 +82,6 @@ const CheckWrap = (props) => {
     useEffect(()=>{
         if (hubConnection) {
                 hubConnection.on("MessageForSocket",(res) => {
-                    console.log("res",res)
                   if (res.item1 == "success") {
                     push('/order_received');
                     handleClose();
@@ -108,7 +108,6 @@ const CheckWrap = (props) => {
     const [validator] = React.useState(new SimpleReactValidator({
         className: 'errorMessage'
     }));
-    console.log(isRadio)
 
     const submitForm = async (e) => {
         var formData = new FormData();
@@ -147,13 +146,10 @@ const CheckWrap = (props) => {
     await CreatePayment(sendData).then((response) => {
         validator.hideMessages();
         const userRegex = /^user+.*/gm;
-        console.log("trigger response payment",response)
         const email = value.email;
         if (email.match(userRegex) && response.data.isSuccess ) {
             if (isRadio) {
-                console.log(response.data.result.item1.content)
-                console.log("response.data.result[0]",response.data.result[0])
-                const blob = new Blob([response.data.result.item1.content], { type: "text/html" });
+                const blob = new Blob([response.data.result[0].item1.content], { type: "text/html" });
                 const objUrl = URL.createObjectURL(blob);
                 setHtml(objUrl);
                 handleOpen();    
@@ -161,11 +157,14 @@ const CheckWrap = (props) => {
             else if (!isRadio) {
                 if (response.data.isSuccess && response.data.result[1].item2.status == "success") {
                     toast.success(response.data.messages[0]); 
+
+
+                    Dispatch(cartStateUpdate(response.data.result[0]))
+
                     push('/order_received');        
                 }
             }
 
-            Dispatch(cartStateUpdate(response.data.result[0]))
             
         }  else if(!response.data.isSuccess) {
             toast.info(response.data.messages[0] + ".Please check your information again");

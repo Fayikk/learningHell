@@ -15,6 +15,7 @@
     "@reduxjs/toolkit": "^2.2.1",
     "axios": "^1.7.2",
     "bootstrap": "^5.3.3",
+    "dotenv": "^16.4.5",
     "i18next": "^23.12.2",
     "i18next-browser-languagedetector": "^8.0.0",
     "i18next-http-backend": "^2.5.2",
@@ -63,8 +64,9 @@
     "yet-another-react-lightbox": "^3.12.3"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "env-cmd -f .env.local react-scripts start",
+    "build:test": "env-cmd -f .env.test react-scripts build",
+    "build:main": "env-cmd -f .env.dev react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -82,6 +84,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
+    "env-cmd": "^10.1.0",
     "postcss": "^8.4.41",
     "tailwindcss": "^3.4.10"
   }

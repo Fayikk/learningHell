@@ -11,7 +11,17 @@ export const MatchLocationToCurrency = () => {
         NOK: 'kr',
         IRR: '﷼',
         AUD: 'A$',
-        DKK: 'kr'
+        DKK: 'kr',
+        CAD: 'C$',     
+        SEK: 'kr',     
+        JPY: '¥',      
+        CNY: '¥',    
+        INR: '₹',      
+        KRW: '₩',     
+        BRL: 'R$',     
+        MXN: '$',     
+        ZAR: 'R',    
+        NZD: 'NZ$'    
     };
 
     var location = Cookies.get("LocationData");
@@ -24,7 +34,7 @@ export const MatchLocationToCurrency = () => {
         case "Spain":
         case "Italy":
         case "Portugal":
-        case "Holland":
+        case "Netherlands":  // Holland yerine Netherlands
         case "Greece":
         case "Belgium":
         case "Austria":
@@ -38,7 +48,6 @@ export const MatchLocationToCurrency = () => {
         case "Monaco":
         case "Montenegro":
         case "Luxembourg":
-        case "Chuang":
         case "Estonia":
         case "Latvia":
         case "San Marino":
@@ -46,14 +55,18 @@ export const MatchLocationToCurrency = () => {
             return currencySymbols.EUR;
         case "Switzerland":
             return currencySymbols.CHF;
-        case "England":
+        case "United States": 
+            return currencySymbols.USD;
+        case "Canada": 
+            return currencySymbols.CAD;
         case "United Kingdom":
+        case "England":
         case "Scotland":
         case "Wales":
             return currencySymbols.GBP;
         case "Norway":
             return currencySymbols.NOK;
-        case "Iranian":
+        case "Iran": 
             return currencySymbols.IRR;
         case "Australia":
             return currencySymbols.AUD;
@@ -61,7 +74,25 @@ export const MatchLocationToCurrency = () => {
             return currencySymbols.DKK;
         case "Russia":
             return currencySymbols.RUB;
+        case "Sweden":  
+            return currencySymbols.SEK;
+        case "Japan":  
+            return currencySymbols.JPY;
+        case "China":  
+            return currencySymbols.CNY;
+        case "India":
+            return currencySymbols.INR;
+        case "South Korea":
+            return currencySymbols.KRW;
+        case "Brazil": 
+            return currencySymbols.BRL;
+        case "Mexico": 
+            return currencySymbols.MXN;
+        case "South Africa":  
+            return currencySymbols.ZAR;
+        case "New Zealand": 
+            return currencySymbols.NZD;
         default:
-            return currencySymbols.TRY;
+            return currencySymbols.USD;  
     }
 };

@@ -1,0 +1,27 @@
+.filter-wrapper {
+    margin-bottom: 20px; /* Filtreleme bölümü ile kurslar arasında boşluk ekleyin */
+  }
+  
+  .course-section-wrapper {
+    margin-top: 20px;
+  }
+  
+  .pagination-wrapper {
+    margin-top: 30px; /* Sayfalandırma ile kurslar arasında boşluk ekleyin */
+    text-align: center; /* Sayfalandırma butonlarını ortalayın */
+  }
+  
+  .pg-pagination li {
+    display: inline-block;
+    margin-right: 5px;
+  }
+  
+  .pg-pagination li.active Button {
+    background-color: #4CAF50; /* Aktif sayfa için renklendirme */
+    color: white;
+  }
+  
+  .pg-pagination Button {
+    border-radius: 4px;
+  }
+  

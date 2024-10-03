@@ -10,6 +10,24 @@ import IsLoading from '../../components/Loading/IsLoading';
 import { useGetAllCoursesMutation } from '../../api/courseApi';
 import { Button } from 'reactstrap';
 import Search from '../../components/Search/Search';
+import MainPageFilter from '../../components/Filters/MainPageFilter';
+import { Languages } from '../Extensions/Languages';
+
+const butonStyle = {
+    padding: '10px 20px',        // Daha az iç boşluk
+    width: '150px',              // Buton genişliği
+    backgroundColor: '#4CAF50',  // Arka plan rengi
+    color: '#fff',               // Metin rengi
+    border: 'none',              // Kenar çizgisi
+    borderRadius: '8px',         // Yuvarlatılmış kenarlar
+    cursor: 'pointer',           // Fare imleci
+    fontSize: '16px',            // Metin boyutu
+    fontWeight: 'bold',          // Kalın metin
+    transition: 'background-color 0.3s ease',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Gölge efekti
+  }
+
+
 const CoursePage = () => {
 
     const {slug} = useParams();
@@ -17,19 +35,22 @@ const CoursePage = () => {
     // const {data,isLoading} = useGetCoursesByCategoryIdQuery(slug);
     const [fetchAllDatas] = useGetAllCoursesMutation();
     const [courses,setCourses] = useState([])
-    const [currentPage,setCurrentPage] = useState(1)
+    const [trick,setTrick] = useState(1);
     const [pageCounter,setPageCounter] = useState(0);
-    const [categoryId,setCategoryId] = useState(slug)
     const [query,setQuery] = useState("");
+    const [openModal,setOpenModal] = useState(false);
+    const [advanceFilter,setAdvanceFilter]= useState();
     const [isClickedEnter,setIsClickedEnter] = useState(false)
     const [newRule,setNewRule] = useState({
         field:"CourseName",
         op:3,
         data:""
     })
+
+    const [advanceNewRule,setAdvanceNewRule]=useState([])
     const [filter,setFilter] = useState({
         isSearch:true,
-        pageIndex:1,
+        pageIndex:localStorage.getItem("currentPageNumber") && localStorage.getItem("currentPageNumber") !== "undefined" ? parseInt(localStorage.getItem("currentPageNumber")) : 1,
         pageSize:6,
         sortColumn:"CourseName",
         sortOrder:"desc",
@@ -78,6 +99,7 @@ const CoursePage = () => {
 
     const addFilterRule = (newRule) => 
     {
+        console.log("trigger newRule",newRule)
         setFilter(prevFilter => ({
             ...prevFilter,
             filters:{
@@ -94,49 +116,31 @@ const CoursePage = () => {
 
 
 
-    // filterProperty:"categoryId",
-    // filterValue:categoryId,
-    // pageSize:6,
-    // pageNumber:1
-
-    // {
-    //     "isSearch": true,
-    //     "pageIndex": 0,
-    //     "pageSize": 0,
-    //     "sortColumn": "string",
-    //     "sortOrder": "string",
-    //     "filters": {
-    //       "groupOp": "string",
-    //       "rules": [
-    //         {
-    //           "field": "string",
-    //           "op": 0,
-    //           "data": "string"
-    //         }
-    //       ]
-    //     }
-    //   }
-
-
-
    
     useEffect(()=>{
-        async function fetchData() {
-            
+
+        console.log("trigger filter use effect",filter)
+
+        async function fetchData() {    
             await fetchAllDatas(filter).then((response) => {
 
                 setCourses(response.data.result != [] ? response.data.result.data : [])
                 // setCurrentPage(response.data.result.data)
                 setPageCounter(response.data.result.paginationCounter)
+                if (localStorage.getItem("currentPageNumber")) {
+                setTrick(parseInt(localStorage.getItem("currentPageNumber")))
+                    
+                }
+                localStorage.removeItem("currentPageNumber")
             })
+
             // ...
           }
           fetchData();
      
           
 
-    },[filter
-    ])
+    },[filter])
 
 
     const handleClickChangePageNumber = (clickedPageNumber) => {
@@ -147,20 +151,107 @@ const CoursePage = () => {
         }));
     };
 
-    const handleDataFromChild = (data) => {
-        setQuery(data)
+    function count(obj) {
 
-        setNewRule(prevRule => ({
-            ...prevRule,
-            data:data
-        }))
+        if (obj.__count__ !== undefined) { 
+            return obj.__count__;
+        }
+    
+        if (Object.keys) { 
+            return Object.keys(obj).length;
+        }
+    
+    
+        var c = 0, p;
+        for (p in obj) {
+            if (obj.hasOwnProperty(p)) {
+                c += 1;
+            }
+        }
+    
+        return c;
+    
     }
+
+
+    const handleOpenModal = (value) => {
+        console.log("trigger handle open modal",value)
+        setOpenModal(value)
+    }
+
+
+
+
+    const handleDataFromChild = (data) => {
+
+        if (data.type=="filter") {
+            console.log(typeof(data));
+            setFilter(initalState)
+    
+            setAdvanceNewRule([]);
+            if (typeof(data) == "object") {
+                setAdvanceFilter(data);
+            
+                console.log("data", count(data));
+            
+                let newRules = []; 
+            
+                for (let key in data) {
+                    if (data.hasOwnProperty(key) && key !== "rating"&& key !== "type" && data[key] !== "") {
+                        console.log("trigger new key", key);
+                        
+                        let newRule = {
+                            field: key === "lowPriceRange" || key === "highPriceRange" ? "CoursePrice" : key,
+                            op: 1,
+                            data: data[key]
+                        };
+        
+                        if (key === "CourseLanguage") {
+                            newRule.op = 1;
+                        } else if (key === "lowPriceRange") {
+                            console.log("trigger priceRange", data.lowPriceRange);
+                            newRule.op = 6;
+                        } else if (key === "highPriceRange") {
+                            console.log("trigger priceRange", data.highPriceRange);
+                            newRule.op = 7;
+                        } else if (key === "rating") {
+                            newRule.op = 6;
+                        }
+        
+                        newRules.push(newRule); 
+                    }
+                }
+            
+                newRules.forEach(rule => {
+                    setAdvanceNewRule(prevRule => [...prevRule, rule]);
+                    addFilterRule(rule);
+                });
+            } else {
+                setQuery(data);
+                setNewRule(prevRule => ({
+                    ...prevRule,
+                    data: data
+                }));
+            }
+        
+            console.log("trigger", advanceNewRule);
+        }
+        else{
+            setFilter(initalState)
+
+        }
+
+        console.log("trigger handleDataFromChild", data.type);
+      
+    };
+    
 
 
     const handleClickedEnter = (isClicked) => {
         setFilter(initalState)
         if (event.key == "Enter") {
         addFilterRule(newRule)
+        console.log("trigger new rule",newRule)
 
          setIsClickedEnter(isClicked)
 
@@ -175,7 +266,8 @@ const CoursePage = () => {
         )
     }
     
-    
+
+
 
 
     return (
@@ -184,8 +276,31 @@ const CoursePage = () => {
             <PageTitle pageTitle={'Course'} pagesub={'Course'} />
             {
                 courses.length>0 ? (
-             <Search onData={handleDataFromChild} onChangeClick={handleClickedEnter} ></Search>
+                    <>
+                    <div className='container' >
+                        <div className='row' >
+                        <Search onData={handleDataFromChild} onChangeClick={handleClickedEnter} ></Search>
+                        <button
+  onClick={() => setOpenModal(!openModal)}
+  style={butonStyle}
+  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#45a049'}
+  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#4CAF50'}
+>
+  Filter
+</button>
 
+                        </div>
+                        {
+                            openModal ? (
+                                <div className='row' >
+                                <MainPageFilter onData={handleDataFromChild} openModal={handleOpenModal} ></MainPageFilter>
+        
+                                </div>
+                            ) : ""
+                        }
+                      
+                    </div>
+             </>
                 ) : ("")
             }
 
@@ -195,7 +310,10 @@ const CoursePage = () => {
                             {
                                 filter.pageIndex != 1 ? (
                                     <li>
-                                    <Button color='primary' aria-label="Previous" onClick={()=>handleClickChangePageNumber(filter.pageIndex-1)}>
+                                    <Button color='primary' aria-label="Previous" onClick={()=>{
+                                        handleClickChangePageNumber(filter.pageIndex-1),
+                                        setTrick()
+                                    }}>
                                         <i className="fi ti-angle-left"></i>
                                     </Button>
                                    </li>
@@ -206,18 +324,16 @@ const CoursePage = () => {
                             {
                                 [...Array(pageCounter)].map((_, index) => (
                                     <li key={index} className={index === 0 ? "active" : ""}>
-                                        <li className="active"><Button color="primary" onClick={()=>handleClickChangePageNumber(index+1)} >{index + 1}</Button></li>
+                                        <li className="active"><Button color={index === trick-1 ? "primary" : "warning"} onClick={()=>{
+                                                                                                handleClickChangePageNumber(index+1),
+                                                                                                setTrick(index+1)}} >{index + 1}</Button></li>
                                     </li>
                                 ))
-                              
-                                //
-
-                             
                             }
                             {
                                 filter.pageIndex != pageCounter ? (
                                     <li>
-                                    <Button color='primary' aria-label="Next" onClick={()=>handleClickChangePageNumber(filter.pageIndex+1)}>
+                                    <Button color='primary' aria-label="Next" onClick={()=>{handleClickChangePageNumber(filter.pageIndex+1),setTrick()}}>
                                         <i className="fi ti-angle-right"></i>
                                     </Button>
                                 </li>

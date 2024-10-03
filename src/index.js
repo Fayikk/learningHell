@@ -9,7 +9,7 @@ import './css/animate.css';
 import './css/flaticon.css';
 import './sass/style.scss';
 import './index.css';
-
+import { ThemeProvider } from './main-component/Extensions/Theme/ThemeProvider'; 
 import { PersistGate } from "redux-persist/integration/react";
 import {  persistor } from "./store/index";
 import { Provider } from "react-redux";
@@ -23,7 +23,9 @@ root.render(
         <PersistGate loading={null} persistor={persistor}>
         <ParallaxProvider>
             <ErrorBoundary>
+                <ThemeProvider>
                     <App />
+                    </ThemeProvider>
                     </ErrorBoundary>
             </ParallaxProvider>
         </PersistGate>

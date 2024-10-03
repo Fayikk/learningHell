@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import DocumentIcon from "../../icons/DocumentIcon";
 
 const CourseSingleAccardion = (props) => {
   const ClickHandler = () => {
     window.scrollTo(10, 0);
   };
 
+
+  
+
   const [courseDetails, setCourseDetails] = useState([]);
   const [activeIndex, setActiveIndex] = useState(null); // Hangi bölümün açık olduğunu tutan state
-
-  console.log("trigger single accordion", props.courseDetail.sections);
 
   useEffect(() => {
     if (props.courseDetail && props.courseDetail.sections) {
@@ -27,7 +29,6 @@ const CourseSingleAccardion = (props) => {
       <div className="flex flex-col gap-4">
         <h1 className="font-bold text-2xl">Konular</h1>
 
-        <span className="text-base text-black/55">4 Bölüm 5 konu</span>
         <div className="flex flex-col">
           {courseDetails.map((courseDetail, index) => (
             <div key={index} className="relative mb-3">
@@ -38,7 +39,7 @@ const CourseSingleAccardion = (props) => {
                 >
                   <span>{courseDetail.sectionName}</span>
                   <i
-                    className={`absolute right-0 pt-1 text-base transition-transform fa fa-chevron-down ${
+                    className={`absolute  right-0 pt-1 text-base transition-transform fa fa-chevron-down ${
                       activeIndex === index ? "rotate-180" : ""
                     }`}
                   ></i>
@@ -52,13 +53,22 @@ const CourseSingleAccardion = (props) => {
                 }`}
               >
                 {courseDetail.videos.map((video, videoIndex) => (
-                  <Link
+                  <div
                     key={videoIndex}
-                    className="p-4 text-sm leading-normal text-blue-gray-500/80"
-                    to={''}
+                    className="p-6 text-sm flex flex-col leading-normal  text-blacck"
                   >
-                    {video.title}
-                  </Link>
+                    <div className="flex justify-between">
+                      <Link
+                        to={""}
+                        className="hover:text-themeOrange hover:font-bold focus:text-themeOrange"
+                      >
+                        {video.title}
+                      </Link>
+                      <Link to={""}>
+                        <DocumentIcon />
+                      </Link>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
