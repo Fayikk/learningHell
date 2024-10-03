@@ -36,7 +36,6 @@ function Search({onData,onChangeClick}) {
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
-      // Enter tuşuna basıldığında yapılacak işlemler
       onChangeClick(event.key)
     }
   };

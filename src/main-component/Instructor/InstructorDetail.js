@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import CourseSectionS3 from "../../components/CourseSectionS3/CourseSectionS3";
 import InstructorAuth from "../../Wrappers/HoC/InstructorAuth";
 import { useGetAllInstructorCoursesMutation } from "../../api/instructorApi";
+import { Languages } from "../Extensions/Languages";
 import {
   useCreateCourseAsyncMutation,
   useGetCourseByIdMutation,
@@ -38,6 +39,10 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
+
+
+
+
 
 function InstructorDetail() {
   const dispatch = useDispatch();
@@ -161,6 +166,11 @@ function InstructorDetail() {
       );
       return;
     }
+
+
+    console.log("trigger course model",courseModel.courseLanguage)
+
+
     setIsActiveButton(false);
     const formData = new FormData();
     formData.append("CourseName", courseModel.courseName);
@@ -372,18 +382,26 @@ function InstructorDetail() {
         </div>
 
         <div className="row" style={{ display: 'flex', flexDirection: 'column' }}>
-          <Input
-            type="text"
-            placeholder={t("Course Language")}
-            value={courseModel.courseLanguage || ""}
+          <select
             onChange={(e) =>
               setCourseModel({
                 ...courseModel,
                 courseLanguage: e.target.value,
               })
             }
+            placeholder={t("Course Language")}
+            title="languages"
             style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
-          />
+          >
+            <option value="" disabled selected>
+              {t("Course Language")}
+            </option>
+            {Languages.map((language,index) => (
+              <option key={language[index]} value={language}>
+                {language}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="row" style={{ display: 'flex', flexDirection: 'column' }}>

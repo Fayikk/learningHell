@@ -10,6 +10,8 @@ import IsLoading from '../../components/Loading/IsLoading';
 import { useGetAllCoursesMutation } from '../../api/courseApi';
 import { Button } from 'reactstrap';
 import Search from '../../components/Search/Search';
+import MainPageFilter from '../../components/Filters/MainPageFilter';
+import { Languages } from '../Extensions/Languages';
 const CoursePage = () => {
 
     const {slug} = useParams();
@@ -20,12 +22,15 @@ const CoursePage = () => {
     const [trick,setTrick] = useState(1);
     const [pageCounter,setPageCounter] = useState(0);
     const [query,setQuery] = useState("");
+    const [advanceFilter,setAdvanceFilter]= useState();
     const [isClickedEnter,setIsClickedEnter] = useState(false)
     const [newRule,setNewRule] = useState({
         field:"CourseName",
         op:3,
         data:""
     })
+
+    const [advanceNewRule,setAdvanceNewRule]=useState([])
     const [filter,setFilter] = useState({
         isSearch:true,
         pageIndex:localStorage.getItem("currentPageNumber") && localStorage.getItem("currentPageNumber") !== "undefined" ? parseInt(localStorage.getItem("currentPageNumber")) : 1,
@@ -77,6 +82,7 @@ const CoursePage = () => {
 
     const addFilterRule = (newRule) => 
     {
+        console.log("trigger newRule",newRule)
         setFilter(prevFilter => ({
             ...prevFilter,
             filters:{
@@ -93,43 +99,11 @@ const CoursePage = () => {
 
 
 
-    // filterProperty:"categoryId",
-    // filterValue:categoryId,
-    // pageSize:6,
-    // pageNumber:1
-
-    // {
-    //     "isSearch": true,
-    //     "pageIndex": 0,
-    //     "pageSize": 0,
-    //     "sortColumn": "string",
-    //     "sortOrder": "string",
-    //     "filters": {
-    //       "groupOp": "string",
-    //       "rules": [
-    //         {
-    //           "field": "string",
-    //           "op": 0,
-    //           "data": "string"
-    //         }
-    //       ]
-    //     }
-    //   }
-
-
-    // useEffect(()=>{
-    //     var currentlyPageNumber = localStorage.getItem("currentPageNumber")
-    //     if (currentlyPageNumber) {
-    //       setFilter((prevState) => ({
-    //         ...prevState,pageIndex:currentlyPageNumber
-    //       }))
-    //     }
-    // },[])
-
-
-
    
     useEffect(()=>{
+
+        console.log("trigger filter use effect",filter)
+
         async function fetchData() {    
             await fetchAllDatas(filter).then((response) => {
 
@@ -142,6 +116,7 @@ const CoursePage = () => {
                 }
                 localStorage.removeItem("currentPageNumber")
             })
+
             // ...
           }
           fetchData();
@@ -159,20 +134,99 @@ const CoursePage = () => {
         }));
     };
 
-    const handleDataFromChild = (data) => {
-        setQuery(data)
+    function count(obj) {
 
-        setNewRule(prevRule => ({
-            ...prevRule,
-            data:data
-        }))
+        if (obj.__count__ !== undefined) { 
+            return obj.__count__;
+        }
+    
+        if (Object.keys) { 
+            return Object.keys(obj).length;
+        }
+    
+    
+        var c = 0, p;
+        for (p in obj) {
+            if (obj.hasOwnProperty(p)) {
+                c += 1;
+            }
+        }
+    
+        return c;
+    
     }
+
+
+    const handleDataFromChild = (data) => {
+
+        if (data.type=="filter") {
+            console.log(typeof(data));
+            setFilter(initalState)
+    
+            setAdvanceNewRule([]);
+            if (typeof(data) == "object") {
+                setAdvanceFilter(data);
+            
+                console.log("data", count(data));
+            
+                let newRules = []; 
+            
+                for (let key in data) {
+                    if (data.hasOwnProperty(key) && key !== "rating"&& key !== "type" && data[key] !== "") {
+                        console.log("trigger new key", key);
+                        
+                        let newRule = {
+                            field: key === "lowPriceRange" || key === "highPriceRange" ? "CoursePrice" : key,
+                            op: 1,
+                            data: data[key]
+                        };
+        
+                        if (key === "CourseLanguage") {
+                            newRule.op = 1;
+                        } else if (key === "lowPriceRange") {
+                            console.log("trigger priceRange", data.lowPriceRange);
+                            newRule.op = 6;
+                        } else if (key === "highPriceRange") {
+                            console.log("trigger priceRange", data.highPriceRange);
+                            newRule.op = 7;
+                        } else if (key === "rating") {
+                            newRule.op = 6;
+                        }
+        
+                        newRules.push(newRule); 
+                    }
+                }
+            
+                newRules.forEach(rule => {
+                    setAdvanceNewRule(prevRule => [...prevRule, rule]);
+                    addFilterRule(rule);
+                });
+            } else {
+                setQuery(data);
+                setNewRule(prevRule => ({
+                    ...prevRule,
+                    data: data
+                }));
+            }
+        
+            console.log("trigger", advanceNewRule);
+        }
+        else{
+            setFilter(initalState)
+
+        }
+
+        console.log("trigger handleDataFromChild", data.type);
+      
+    };
+    
 
 
     const handleClickedEnter = (isClicked) => {
         setFilter(initalState)
         if (event.key == "Enter") {
         addFilterRule(newRule)
+        console.log("trigger new rule",newRule)
 
          setIsClickedEnter(isClicked)
 
@@ -197,8 +251,18 @@ const CoursePage = () => {
             <PageTitle pageTitle={'Course'} pagesub={'Course'} />
             {
                 courses.length>0 ? (
-             <Search onData={handleDataFromChild} onChangeClick={handleClickedEnter} ></Search>
+                    <>
+                    <div className='container' >
+                        <div className='row' >
+                        <Search onData={handleDataFromChild} onChangeClick={handleClickedEnter} ></Search>
 
+                        </div>
+                        <div className='row' >
+                        <MainPageFilter onData={handleDataFromChild} ></MainPageFilter>
+
+                        </div>
+                    </div>
+             </>
                 ) : ("")
             }
 
