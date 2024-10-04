@@ -622,7 +622,7 @@ function InstructorDetail() {
           ) : (
             ""
           )}
-        </ul>
+        </ul> 
       </div>
       <Footer />
       <Scrollbar />

@@ -12,7 +12,7 @@ const ChooseSection = (props) => {
     <section className="wpo-choose-section">
       <div className="container">
         <div className="row">
-          <div className="col col-lg-7">
+          {/* <div className="col col-lg-7">
             <div className="wpo-choose-wrap">
               <div className="wpo-section-title-s2">
                 <small>{t("Why Choose Us")}</small>
@@ -89,7 +89,7 @@ const ChooseSection = (props) => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
           <div className="col-lg-5">
             <div className="right-img">
               <img src={wImg} alt="" />
