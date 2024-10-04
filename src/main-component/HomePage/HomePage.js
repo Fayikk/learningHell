@@ -52,7 +52,7 @@ const HomePage =() => {
             <CourseSection popularCourses={mostPopularCourses} />
             {/* <Testimonial/> */}
             {/* <TeamSection pbClass={'pb-big'}/> */}
-            <ChooseSection/>
+            {/* <ChooseSection/> */}
             {/* <BlogSection/> */}
             <Newslatter2/>
             <Footer/> 

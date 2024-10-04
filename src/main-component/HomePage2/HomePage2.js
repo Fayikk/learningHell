@@ -22,7 +22,7 @@ const HomePage2 =() => {
             <CategorySection2/>
             <CourseSection/>
             <Testimonial/>
-            <ChooseSectionS2/>
+            {/* <ChooseSectionS2/> */}
             <Newslatter2/>
             <BlogSection/>
             <Footer/> 
