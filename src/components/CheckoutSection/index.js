@@ -4,33 +4,28 @@ import Collapse from "@mui/material/Collapse";
 import FontAwesome from "../../components/UiStyle/FontAwesome";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import RadioGroup from "@mui/material/RadioGroup";
-import Radio from "@mui/material/Radio";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
-import {Link} from 'react-router-dom'
 import {totalPrice} from "../../utils";
-import {toast} from 'react-toastify'
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import MesafeliSatis from '../../agrements/MesafeliSatis'
+import TeslimatVeIade from '../../agrements/TeslimatVeIade';
+import GizlilikPolitikasi from '../../agrements/GizlilikPolitikasi';
 import { MatchLocationToCurrency } from '../../main-component/Extensions/MatchLocationToCurrency';
 // images
 import visa from '../../images/icon/visa.png';
 import mastercard from '../../images/icon/mastercard.png';
-import skrill from '../../images/icon/skrill.png';
-import paypal from '../../images/icon/paypal.png';
+import iyzico from '../../images/icon/iyzico_ile_ode_colored_horizontal.png'
 
 import CheckWrap from '../CheckWrap'
 
 import './style.scss';
 import { useSelector } from 'react-redux';
-import { usePaymentCheckoutMutation } from '../../api/paymentApi';
 
 const cardType = [
     {
@@ -42,12 +37,8 @@ const cardType = [
         img: mastercard
     },
     {
-        title: 'skrill',
-        img: skrill
-    },
-    {
-        title: 'paypal',
-        img: paypal
+        title: 'iyzico',
+        img: iyzico
     },
 ];
 
@@ -60,6 +51,36 @@ const CheckoutSection = ({cartList}) => {
     const [cartLists,setCartLists] =useState([]);
     const basketItems = localStorage.getItem("basketItems")
     let cartItems = JSON.parse(basketItems)
+    const [isAgreementOpen, setIsAgreementOpen] = useState(false);
+    const [isRefundAgreementOpen, setIsRefundAgreementOpen] = useState(false);
+    const [isSecurityAgreementOpen, setIsSecurityAgreementOpen] = useState(false);
+
+    // Modal'ı açan ve kapatan fonksiyonlar
+    const handleOpenAgreement = () => {
+        setIsAgreementOpen(true);
+    };
+    
+    const handleCloseAgreement = () => {
+        setIsAgreementOpen(false);
+    };
+    
+
+    const handleCancelOpenAgreement = () => {
+        setIsRefundAgreementOpen(true);
+    };
+    
+    const handleCancelCloseAgreement = () => {
+        setIsRefundAgreementOpen(false);
+    };
+
+
+    const handleSecurityOpenAgreement = () => {
+        setIsSecurityAgreementOpen(true);
+    };
+    
+    const handleSecurityCloseAgreement = () => {
+        setIsSecurityAgreementOpen(false);
+    };
 
     useEffect(()=>{
             if (cartState.length > 0) {
@@ -129,6 +150,8 @@ const CheckoutSection = ({cartList}) => {
         setForms({...forms, [e.target.name]: e.target.value})
     };
 
+
+
     return (
         <Fragment>
             <Grid className="checkoutWrapper section-padding">
@@ -177,9 +200,82 @@ const CheckoutSection = ({cartList}) => {
                                                     </Grid>
                                                 ))}
                                             </Grid>
-                                            <Grid>
-                                                <CheckWrap values={forms} />
-                                            </Grid>
+                                                <Grid>
+                                                    <CheckWrap values={forms} />
+                                                    <Button variant="text" onClick={handleOpenAgreement}>
+                Mesafeli Satış Sözleşmesi
+            </Button>
+            <Button variant="text" onClick={handleSecurityOpenAgreement}>
+                Gizlilik Politikası
+            </Button>
+            <Button variant="text" onClick={handleCancelOpenAgreement}>
+                Teslimat ve İade
+            </Button>
+                                                    <Grid className="agreementLink">
+        </Grid>
+
+<div className='row' >
+
+<Dialog
+        open={isAgreementOpen}
+        onClose={handleCloseAgreement}
+        aria-labelledby="agreement-dialog-title"
+        aria-describedby="agreement-dialog-description"
+        fullWidth
+        maxWidth="md"
+    >
+        <DialogTitle id="agreement-dialog-title">Mesafeli Satış Sözleşmesi</DialogTitle>
+        <DialogContent dividers>
+            {/* <div dangerouslySetInnerHTML={{ __html: mesafelisatis.mesafelisatis }} /> */}
+            <MesafeliSatis></MesafeliSatis>
+        </DialogContent>
+        <DialogActions>
+            <Button onClick={handleCloseAgreement} color="primary">
+                Kapat
+            </Button>
+        </DialogActions>
+    </Dialog>
+    <Dialog
+        open={isSecurityAgreementOpen}
+        onClose={handleSecurityCloseAgreement}
+        aria-labelledby="agreement-dialog-title"
+        aria-describedby="agreement-dialog-description"
+        fullWidth
+        maxWidth="md"
+    >
+        <DialogTitle id="agreement-dialog-title">Gizlilik Politikası</DialogTitle>
+        <DialogContent dividers>
+            {/* <div dangerouslySetInnerHTML={{ __html: mesafelisatis.mesafelisatis }} /> */}
+            <GizlilikPolitikasi></GizlilikPolitikasi>
+        </DialogContent>
+        <DialogActions>
+            <Button onClick={handleSecurityCloseAgreement} color="primary">
+                Kapat
+            </Button>
+        </DialogActions>
+    </Dialog>
+    <Dialog
+        open={isRefundAgreementOpen}
+        onClose={handleCancelCloseAgreement}
+        aria-labelledby="agreement-dialog-title"
+        aria-describedby="agreement-dialog-description"
+        fullWidth
+        maxWidth="md"
+    >
+        <DialogTitle id="agreement-dialog-title">Mesafeli Satış Sözleşmesi</DialogTitle>
+        <DialogContent dividers>
+            {/* <div dangerouslySetInnerHTML={{ __html: mesafelisatis.mesafelisatis }} /> */}
+            <TeslimatVeIade></TeslimatVeIade>
+        </DialogContent>
+        <DialogActions>
+            <Button onClick={handleCancelCloseAgreement} color="primary">
+                Kapat
+            </Button>
+        </DialogActions>
+    </Dialog>
+                   
+</div>
+                             </Grid>
                                         </Collapse>
                                       
                                     </Collapse>
