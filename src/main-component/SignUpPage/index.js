@@ -5,14 +5,14 @@ import { toast } from "react-toastify";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { Link, useNavigate } from "react-router-dom";
-
+import { Spinner } from 'react-bootstrap';
 import './style.scss';
 import { useSignUpMutation } from '../../api/accountApi';
 
 const SignUpPage = (props) => {
     const navigate = useNavigate();
     const [register] = useSignUpMutation();
-
+    const [loader,setLoader] = useState(false);
     const [value, setValue] = useState({
         email: '',
         full_name: '',
@@ -52,7 +52,7 @@ const SignUpPage = (props) => {
                 return;
             }
 
-
+            setLoader(true);
 
             await register({
                 userName: value.userName,
@@ -63,20 +63,26 @@ const SignUpPage = (props) => {
                 confirmPassword: value.confirm_password,
                 role: value.role
             }).then((response) => {
+                setLoader(false)
 
                 if (response.data.isSuccess) {
+                    
                     validator.hideMessages();
-                    toast.success('Please Check Your Email Address For Verification');
+                    toast.success('Please Check Your Email Address For Verification If You Dont Found Check Your Spam');
                     navigate('/login');
                 }
                 else {
+
                     toast.error(response.data.errorMessages[0])
                 }
             });
         } else {
+
             validator.showMessages();
             toast.error('Empty field is not allowed!');
         }
+        setLoader(false)
+
     };
 
     return (
@@ -192,7 +198,13 @@ const SignUpPage = (props) => {
                         </Grid>
                         <Grid item xs={12}>
                             <Grid className="formFooter">
-                                <Button fullWidth className="cBtn cBtnLarge cBtnTheme" type="submit">Sign Up</Button>
+                                <Button fullWidth disabled={loader} className="cBtn cBtnLarge cBtnTheme" type="submit">
+                                    
+                                {loader ? <Spinner animation="border" sx={{ marginTop: '10px', textAlign: 'center' }} />: "Sign Up" }
+                                    
+                                    
+                                    
+                                    </Button>
                             </Grid>
                             <p className="noteHelp">Already have an account? <Link to="/login">Return to Sign In</Link></p>
                         </Grid>
