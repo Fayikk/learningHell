@@ -202,6 +202,10 @@ const CheckoutSection = ({cartList}) => {
                                             </Grid>
                                                 <Grid>
                                                     <CheckWrap values={forms} />
+
+<div className='row' >
+<Grid className="agreementLink">
+
                                                     <Button variant="text" onClick={handleOpenAgreement}>
                 Mesafeli Satış Sözleşmesi
             </Button>
@@ -211,10 +215,9 @@ const CheckoutSection = ({cartList}) => {
             <Button variant="text" onClick={handleCancelOpenAgreement}>
                 Teslimat ve İade
             </Button>
-                                                    <Grid className="agreementLink">
         </Grid>
-
-<div className='row' >
+        </div>
+<div className='text text-center' >
 
 <Dialog
         open={isAgreementOpen}
