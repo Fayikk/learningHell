@@ -79,9 +79,9 @@ const BeComeTeacherPage = (props) => {
 
     return (
         <div className="teacher-page">
-            <Navbar />
+           <Navbar hclass={'wpo-header-style-2'} topbarClass={'d-block'}/>
             <PageTitle pageTitle={t("Apply for Teacher")} pagesub={'Teacher'} />
-            <div className="teacher-area section-padding pb-0">
+            <div className="teacher-area section-padding pb-0 mt-80">
                 <div className="teacher-wrap">
                     <div className="container">
                         <div className="row justify-content-center">
