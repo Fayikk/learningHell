@@ -93,6 +93,6 @@ export const MatchLocationToCurrency = () => {
         case "New Zealand": 
             return currencySymbols.NZD;
         default:
-            return currencySymbols.USD;  
+            return currencySymbols.TRY;  
     }
 };
