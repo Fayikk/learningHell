@@ -8,6 +8,7 @@ import CourseSectionS3 from "../../components/CourseSectionS3/CourseSectionS3";
 import InstructorAuth from "../../Wrappers/HoC/InstructorAuth";
 import { useGetAllInstructorCoursesMutation } from "../../api/instructorApi";
 import { Languages } from "../Extensions/Languages";
+import BankInfoModal from "../CustomComponents/BankInfoModal";
 import {
   useCreateCourseAsyncMutation,
   useGetCourseByIdMutation,
@@ -16,18 +17,19 @@ import {
 } from "../../api/courseApi";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-
+import { useChechBankInformationMutation } from "../../api/accountApi";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { Input } from "reactstrap";
 import { instructorApi } from "../../api/instructorApi";
-import { useDispatch } from "react-redux";
+import { useDispatch,useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { useLazyGetAllCategoriesForSelectedQuery } from "../../api/categoryApi";
 import Spinner from "react-bootstrap/Spinner";
+import { useAddBankInfoMutation } from "../../api/InstructorSubApi";
 const style = {
   position: "absolute",
   top: "50%",
@@ -49,6 +51,8 @@ function InstructorDetail() {
   const [pageCounter, setPageCounter] = useState(0);
   const [courses, setCourses] = useState([]);
   const [categories, setCategories] = useState([]);
+  const userId = useSelector((state) => state.authStore.nameIdentifier);
+  console.log("userId",userId)
   const [getAllStudentCourses] = useGetAllInstructorCoursesMutation();
   const [
     getAllCategories,
@@ -56,6 +60,7 @@ function InstructorDetail() {
   ] = useLazyGetAllCategoriesForSelectedQuery();
   const [createCourseAsync] = useCreateCourseAsyncMutation();
   const [removeCourseAsync] = useRemoveCourseAsyncMutation();
+  const [checkBankInformation] = useChechBankInformationMutation();
   const [imageDimensions, setImageDimensions] = useState({
     width: 0,
     height: 0,
@@ -77,6 +82,19 @@ function InstructorDetail() {
   const [isActiveButton, setIsActiveButton] = useState(true);
   const [isUpdateProcess, setIsUpdateProcess] = useState(false);
   const handleOpen = () => setOpen(true);
+  const [openBankInfoModal, setOpenBankInfoModal] = useState(false);
+  const [disableDom,setDisableDom] = useState(false);
+  const [addBankInfo] = useAddBankInfoMutation();
+  const [bankInfo, setBankInfo] = useState({
+    InstructorName: '',
+    InstructorSurname: '',
+    IdentityNumber: '',
+    Address: '',
+    Iban: '',
+    BankName: '',
+    PaymentAccountId: '',
+    InstructorBankDetailId:''
+  });
   const handleClose = () => {
     setCourseModel({
       courseName: "",
@@ -135,9 +153,53 @@ function InstructorDetail() {
 
   useEffect(() => {
     // alert("Please be carefull! while You are added  introduction video for create new course,video duration must is not duration 10 seconds than high")
+    if (userId) {
+      checkBankInformation(userId).then((response) => {
+        console.log("trigger response bank information",response)
+        if(!response.data.isSuccess){
+          toast.warning(response.data.message)
+          setDisableDom(true);
+          setOpenBankInfoModal(true);
+        }
+      })
+    }
+   
+    
     getAllCategories();
-  }, []);
+  }, [userId]);
 
+
+
+  const checkUserBankDetail = () => {
+    if (userId) {
+      checkBankInformation(userId).then((response) => {
+        console.log("trigger response bank information",response)
+        if(!response.data.isSuccess){
+          toast.warning(response.data.message)
+          setDisableDom(true);
+
+          setOpenBankInfoModal(true);
+          setOpen(false)
+          return;
+        }
+      })
+    }
+  }
+
+
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    console.log("trigger handle input change",value)
+    setBankInfo((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleModalClose = () => {
+    setOpenBankInfoModal(false);
+  };
   // if (isCoursesLoading || isCategoriesLoading) {
   //   return <IsLoading />;
   // }
@@ -166,10 +228,6 @@ function InstructorDetail() {
       );
       return;
     }
-
-
-    console.log("trigger course model",courseModel.courseLanguage)
-
 
     setIsActiveButton(false);
     const formData = new FormData();
@@ -218,14 +276,6 @@ function InstructorDetail() {
     await getCourse(courseId).then((response) => {
       if (response.data.isSuccess) {
         setIsUpdateProcess(true);
-        // setGetCourseModelState({
-        //   courseName:response.data.result.item1.courseName,
-        //   coursePrice:response.data.result.item1.coursePrice,
-        //   courseLanguage:response.data.result.item1.courseLanguage,
-        //   courseDescription:response.data.result.item1.courseDescription,
-        //   introductionVideoUrl:response.data.result.item1.introductionVideoUrl,
-        //   courseImage:response.data.result.item1.courseImage
-        // })
         setCourseModel({
           courseName: response.data.result.item1.courseName,
           coursePrice: response.data.result.item1.coursePrice,
@@ -277,7 +327,35 @@ function InstructorDetail() {
       }
     });
   };
+  const handleSubmit = () => {
+    console.log("trigger bank info",bankInfo)
 
+    var formData = new FormData();
+    formData.append("InstructorName",bankInfo.InstructorName);
+    formData.append("InstructorSurname",bankInfo.InstructorSurname);
+    formData.append("IdentityNumber",bankInfo.IdentityNumber);
+    formData.append("Address",bankInfo.Address);
+    formData.append("Iban",bankInfo.Iban);
+    formData.append("BankName",bankInfo.BankName);
+    formData.append("InstructorBankDetailId",bankInfo.InstructorBankDetailId);
+
+
+    addBankInfo(
+      formData,
+     /* Generate or set this appropriately */
+    )
+      .then((response) => {
+        console.log("trigger response",response)
+        if (response.data.isSuccess) {
+          toast.success('Bank information saved successfully!');
+          setDisableDom(false);
+
+          handleModalClose();
+        } else {
+          toast.error(response.data.message);
+        }
+      });
+  };
   const handleImageChange = (e) => {
     const file = e.target.files[0];
 
@@ -309,12 +387,16 @@ function InstructorDetail() {
   return (
     <Fragment>
       <Navbar />
+      <div className="" id="disableId" style={{
+          pointerEvents: disableDom? "none":"auto",
+          opacity: disableDom? 0.5: ""}} >
       <PageTitle pageTitle={"Instructor"} pagesub={"Instructor"} />
       <div style={{ textAlign: "right" }}>
-        <Button onClick={handleOpen}>{t("Create New Course")}</Button>
+        <Button onClick={()=>{checkUserBankDetail(),handleOpen()}}>{t("Create New Course")}</Button>
         <Button onClick={handleOpenCourseModal} style={{ color: "red" }}>
           {t("Remove Course")}
         </Button>
+       
           <Modal
     open={open}
     onClose={handleClose}
@@ -540,7 +622,13 @@ function InstructorDetail() {
     </Box>
   </Modal>
 
-
+  <BankInfoModal
+        open={openBankInfoModal}
+        onClose={handleModalClose}
+        bankInfo={bankInfo}
+        onInputChange={handleInputChange}
+        onSubmit={handleSubmit}
+      />
         <Modal
           open={openCourseModal}
           onClose={handleCloseCourseModal}
@@ -623,6 +711,7 @@ function InstructorDetail() {
             ""
           )}
         </ul> 
+      </div>
       </div>
       <Footer />
       <Scrollbar />

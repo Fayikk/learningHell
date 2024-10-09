@@ -21,6 +21,7 @@ import { newsLetterApi } from "../api/newsLetterApi";
 import { commentApi } from "../api/commentApi";
 import { ratingApi } from "../api/ratingApi";
 import { locationReducer } from "./reducers/locationSlice";
+import { instructorSubApi } from "../api/InstructorSubApi";
 
 
 
@@ -81,6 +82,7 @@ const store = configureStore({
         [newsLetterApi.reducerPath]:newsLetterApi.reducer,
         [commentApi.reducerPath]:commentApi.reducer,
         [ratingApi.reducerPath]:ratingApi.reducer,
+        [instructorSubApi.reducerPath]:instructorSubApi.reducer,
 
     },middleware:(getDefaultMiddleware) => getDefaultMiddleware()
         .concat(
@@ -98,6 +100,7 @@ const store = configureStore({
             ,newsLetterApi.middleware
             ,commentApi.middleware
             ,ratingApi.middleware
+            ,instructorSubApi.middleware
             // ,errorLoggerMiddleware
             )
 })
