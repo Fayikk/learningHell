@@ -83,6 +83,7 @@ function InstructorDetail() {
   const [isUpdateProcess, setIsUpdateProcess] = useState(false);
   const handleOpen = () => setOpen(true);
   const [openBankInfoModal, setOpenBankInfoModal] = useState(false);
+  const [disableDom,setDisableDom] = useState(false);
   const [addBankInfo] = useAddBankInfoMutation();
   const [bankInfo, setBankInfo] = useState({
     InstructorName: '',
@@ -157,6 +158,7 @@ function InstructorDetail() {
         console.log("trigger response bank information",response)
         if(!response.data.isSuccess){
           toast.warning(response.data.message)
+          setDisableDom(true);
           setOpenBankInfoModal(true);
         }
       })
@@ -165,6 +167,27 @@ function InstructorDetail() {
     
     getAllCategories();
   }, [userId]);
+
+
+
+  const checkUserBankDetail = () => {
+    if (userId) {
+      checkBankInformation(userId).then((response) => {
+        console.log("trigger response bank information",response)
+        if(!response.data.isSuccess){
+          toast.warning(response.data.message)
+          setDisableDom(true);
+
+          setOpenBankInfoModal(true);
+          setOpen(false)
+          return;
+        }
+      })
+    }
+  }
+
+
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     console.log("trigger handle input change",value)
@@ -253,14 +276,6 @@ function InstructorDetail() {
     await getCourse(courseId).then((response) => {
       if (response.data.isSuccess) {
         setIsUpdateProcess(true);
-        // setGetCourseModelState({
-        //   courseName:response.data.result.item1.courseName,
-        //   coursePrice:response.data.result.item1.coursePrice,
-        //   courseLanguage:response.data.result.item1.courseLanguage,
-        //   courseDescription:response.data.result.item1.courseDescription,
-        //   introductionVideoUrl:response.data.result.item1.introductionVideoUrl,
-        //   courseImage:response.data.result.item1.courseImage
-        // })
         setCourseModel({
           courseName: response.data.result.item1.courseName,
           coursePrice: response.data.result.item1.coursePrice,
@@ -315,25 +330,6 @@ function InstructorDetail() {
   const handleSubmit = () => {
     console.log("trigger bank info",bankInfo)
 
-    // public string? UserId { get; set; }
-    
-    // [Required]
-    // public string InstructorName { get; set; }
-    // [Required]
-    // public string InstructorSurname { get; set; }
-
-    // [Required]
-    // public string IdentityNumber { get; set; }
-    // [Required]
-    // public string Address { get; set; }
-    // [Required]
-    // public string Iban { get; set; }
-    // [Required]
-    // public string BankName { get; set; }
-    
-    // public string? PaymentAccountId { get; set; }
-    // [Required]
-    // public Guid InstructorBankDetailId { get; set; }
     var formData = new FormData();
     formData.append("InstructorName",bankInfo.InstructorName);
     formData.append("InstructorSurname",bankInfo.InstructorSurname);
@@ -352,6 +348,8 @@ function InstructorDetail() {
         console.log("trigger response",response)
         if (response.data.isSuccess) {
           toast.success('Bank information saved successfully!');
+          setDisableDom(false);
+
           handleModalClose();
         } else {
           toast.error(response.data.message);
@@ -389,9 +387,12 @@ function InstructorDetail() {
   return (
     <Fragment>
       <Navbar />
+      <div className="" id="disableId" style={{
+          pointerEvents: disableDom? "none":"auto",
+          opacity: disableDom? 0.5: ""}} >
       <PageTitle pageTitle={"Instructor"} pagesub={"Instructor"} />
       <div style={{ textAlign: "right" }}>
-        <Button onClick={handleOpen}>{t("Create New Course")}</Button>
+        <Button onClick={()=>{checkUserBankDetail(),handleOpen()}}>{t("Create New Course")}</Button>
         <Button onClick={handleOpenCourseModal} style={{ color: "red" }}>
           {t("Remove Course")}
         </Button>
@@ -710,6 +711,7 @@ function InstructorDetail() {
             ""
           )}
         </ul> 
+      </div>
       </div>
       <Footer />
       <Scrollbar />
