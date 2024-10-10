@@ -24,6 +24,7 @@ export default function   Navbar({ onAuthData }) {
     const token = localStorage.getItem("token");
     if (token) {
       const decodedToken = jwtDecode(token);
+      console.log("trigger decoded token",decodedToken)
       dispatch(
         setLoggedInUser({
           nameIdentifier: decodedToken.nameid,
@@ -31,6 +32,7 @@ export default function   Navbar({ onAuthData }) {
           role: decodedToken.role,
           userName: decodedToken.unique_name,
           name: decodedToken.givenName,
+          InstructorSubId:decodedToken.InstructorSubId
         })
       );
     } else {

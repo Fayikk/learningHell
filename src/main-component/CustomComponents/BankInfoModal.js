@@ -17,7 +17,13 @@ const style = {
   p: 4,
 };
 
-const BankInfoModal = ({ open, onClose, bankInfo, onInputChange, onSubmit }) => {
+const BankInfoModal = ({ open, onClose, bankInfo, onInputChange, onSubmit,type}) => {
+
+
+  console.log("trigger bank info modal",type)
+
+
+
   return (
 <>
     <Modal
@@ -50,6 +56,7 @@ const BankInfoModal = ({ open, onClose, bankInfo, onInputChange, onSubmit }) => 
             placeholder='Instructor Name'
             name="InstructorName"
             value={bankInfo.InstructorName}
+            defaultValue={bankInfo.InstructorName}
             onChange={onInputChange}
             style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
           />
@@ -60,6 +67,7 @@ const BankInfoModal = ({ open, onClose, bankInfo, onInputChange, onSubmit }) => 
               placeholder='Instructor Surname'
             name="InstructorSurname"
             value={bankInfo.InstructorSurname}
+            defaultValue={bankInfo.InstructorSurname}
             onChange={onInputChange}
             style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
           />
@@ -70,6 +78,7 @@ const BankInfoModal = ({ open, onClose, bankInfo, onInputChange, onSubmit }) => 
              placeholder='Identity Number'
            name="IdentityNumber"
            value={bankInfo.IdentityNumber}
+           defaultValue={bankInfo.IdentityNumber}
            onChange={onInputChange}
             style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
           />
@@ -80,6 +89,7 @@ const BankInfoModal = ({ open, onClose, bankInfo, onInputChange, onSubmit }) => 
               placeholder='Address'
             name="Address"
             value={bankInfo.Address}
+            defaultValue={bankInfo.Address}
             onChange={onInputChange}
             style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
           />
@@ -90,6 +100,7 @@ const BankInfoModal = ({ open, onClose, bankInfo, onInputChange, onSubmit }) => 
           placeholder='Iban'
           name="Iban"
           value={bankInfo.Iban}
+          defaultValue={bankInfo.Iban}
           onChange={onInputChange}
             style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
           />
@@ -101,6 +112,7 @@ const BankInfoModal = ({ open, onClose, bankInfo, onInputChange, onSubmit }) => 
 
               name="BankName"
               value={bankInfo.BankName}
+              defaultValue={bankInfo.BankName}
               onChange={onInputChange}
             style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
           />
@@ -116,7 +128,9 @@ const BankInfoModal = ({ open, onClose, bankInfo, onInputChange, onSubmit }) => 
             color="primary" 
             sx={{ mt: 2, width: '100%' }}
           >
-            Save
+            {
+              type != "update" ? ("Save") : ("Update")
+            }
           </Button>
           <Button 
             onClick={onClose} 

@@ -3,6 +3,7 @@
 
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseUrl } from "./Base/baseApiModel";
+import { blue } from "@mui/material/colors";
 
 export const instructorSubApi = createApi({
     reducerPath:"instructorSubApi",
@@ -25,7 +26,20 @@ export const instructorSubApi = createApi({
                 method:"POST",
                 body:bankInfoModel 
             })
+        }),
+        instructorSubDetail:builder.mutation({
+            query:(userId) => ({
+                url:`GetInstructorSub?userId=${userId}`,
+                method:"POST"
+            })
+        }),
+        instructorUpdate:builder.mutation({
+            query:(instructorUpdateModel) => ({
+                url:"UpdateInstructor",
+                method:"PUT",
+                body:instructorUpdateModel
+            })
         })
     })
 })
-export const {useAddBankInfoMutation} = instructorSubApi
+export const {useAddBankInfoMutation,useInstructorSubDetailMutation,useInstructorUpdateMutation} = instructorSubApi
