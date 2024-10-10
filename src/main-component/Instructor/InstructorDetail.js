@@ -52,7 +52,6 @@ function InstructorDetail() {
   const [courses, setCourses] = useState([]);
   const [categories, setCategories] = useState([]);
   const userId = useSelector((state) => state.authStore.nameIdentifier);
-  console.log("userId",userId)
   const [getAllStudentCourses] = useGetAllInstructorCoursesMutation();
   const [
     getAllCategories,
@@ -155,7 +154,6 @@ function InstructorDetail() {
     // alert("Please be carefull! while You are added  introduction video for create new course,video duration must is not duration 10 seconds than high")
     if (userId) {
       checkBankInformation(userId).then((response) => {
-        console.log("trigger response bank information",response)
         if(!response.data.isSuccess){
           toast.warning(response.data.message)
           setDisableDom(true);
@@ -173,7 +171,6 @@ function InstructorDetail() {
   const checkUserBankDetail = () => {
     if (userId) {
       checkBankInformation(userId).then((response) => {
-        console.log("trigger response bank information",response)
         if(!response.data.isSuccess){
           toast.warning(response.data.message)
           setDisableDom(true);
@@ -190,7 +187,6 @@ function InstructorDetail() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    console.log("trigger handle input change",value)
     setBankInfo((prevState) => ({
       ...prevState,
       [name]: value,
@@ -261,10 +257,12 @@ function InstructorDetail() {
     );
     if (answer) {
       await removeCourseAsync(courseId).then((response) => {
+
         if (response.data.isSuccess) {
+          dispatch(instructorApi.util.invalidateTags(["instructor"]));
+          dispatch(instructorApi.util.invalidateTags(["instructor"]));
           toast.success("Course removed successfully");
           setOpenCourseModal(false);
-          dispatch(instructorApi.util.invalidateTags(["instructor"]));
         }
       });
     }
@@ -328,7 +326,6 @@ function InstructorDetail() {
     });
   };
   const handleSubmit = () => {
-    console.log("trigger bank info",bankInfo)
 
     var formData = new FormData();
     formData.append("InstructorName",bankInfo.InstructorName);
@@ -345,7 +342,6 @@ function InstructorDetail() {
      /* Generate or set this appropriately */
     )
       .then((response) => {
-        console.log("trigger response",response)
         if (response.data.isSuccess) {
           toast.success('Bank information saved successfully!');
           setDisableDom(false);

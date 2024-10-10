@@ -18,7 +18,6 @@ const style = {
 };
 
 const BankInfoModal = ({ open, onClose, bankInfo, onInputChange, onSubmit }) => {
-  console.log("trigger open modal",open)
   return (
 <>
     <Modal
@@ -42,7 +41,7 @@ const BankInfoModal = ({ open, onClose, bankInfo, onInputChange, onSubmit }) => 
       {/* <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ mb: 3, fontWeight: 'bold', textAlign: 'center' }}>
         {isUpdateProcess ? t("Update Course") : t("Create Course")}
       </Typography> */}
-      <form onSubmit={(e) => { e.preventDefault();console.log("trigger on submit"); onSubmit(); }}>
+      <form onSubmit={(e) => { e.preventDefault(); onSubmit(); }}>
 
       <div className="col" style={{ gap: '20px', display: 'flex', flexDirection: 'column' }}>
         <div className="row" style={{ display: 'flex', flexDirection: 'column' }}>
