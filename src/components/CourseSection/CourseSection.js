@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { calculateAverageRating } from "../../Helpers/calculateAverageRating";
 import { useTranslation } from "react-i18next";
 import { MatchLocationToCurrency } from "../../main-component/Extensions/MatchLocationToCurrency";
+import './Styles/CourseSection.css'
 const ClickHandler = () => {
   window.scrollTo(10, 0);
 };
