@@ -99,7 +99,6 @@ const CoursePage = () => {
 
     const addFilterRule = (newRule) => 
     {
-        console.log("trigger newRule",newRule)
         setFilter(prevFilter => ({
             ...prevFilter,
             filters:{
@@ -119,7 +118,6 @@ const CoursePage = () => {
    
     useEffect(()=>{
 
-        console.log("trigger filter use effect",filter)
 
         async function fetchData() {    
             await fetchAllDatas(filter).then((response) => {
@@ -175,7 +173,6 @@ const CoursePage = () => {
 
 
     const handleOpenModal = (value) => {
-        console.log("trigger handle open modal",value)
         setOpenModal(value)
     }
 
@@ -185,20 +182,17 @@ const CoursePage = () => {
     const handleDataFromChild = (data) => {
 
         if (data.type=="filter") {
-            console.log(typeof(data));
             setFilter(initalState)
     
             setAdvanceNewRule([]);
             if (typeof(data) == "object") {
                 setAdvanceFilter(data);
             
-                console.log("data", count(data));
             
                 let newRules = []; 
             
                 for (let key in data) {
                     if (data.hasOwnProperty(key) && key !== "rating"&& key !== "type" && data[key] !== "") {
-                        console.log("trigger new key", key);
                         
                         let newRule = {
                             field: key === "lowPriceRange" || key === "highPriceRange" ? "CoursePrice" : key,
@@ -209,10 +203,8 @@ const CoursePage = () => {
                         if (key === "CourseLanguage") {
                             newRule.op = 1;
                         } else if (key === "lowPriceRange") {
-                            console.log("trigger priceRange", data.lowPriceRange);
                             newRule.op = 6;
                         } else if (key === "highPriceRange") {
-                            console.log("trigger priceRange", data.highPriceRange);
                             newRule.op = 7;
                         } else if (key === "rating") {
                             newRule.op = 6;
@@ -234,14 +226,12 @@ const CoursePage = () => {
                 }));
             }
         
-            console.log("trigger", advanceNewRule);
         }
         else{
             setFilter(initalState)
 
         }
 
-        console.log("trigger handleDataFromChild", data.type);
       
     };
     
@@ -251,7 +241,6 @@ const CoursePage = () => {
         setFilter(initalState)
         if (event.key == "Enter") {
         addFilterRule(newRule)
-        console.log("trigger new rule",newRule)
 
          setIsClickedEnter(isClicked)
 

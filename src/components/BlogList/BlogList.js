@@ -42,7 +42,6 @@ const BlogList = (props) => {
         await GetMyCourses(filter).then((response) => {
           setPageCounter(response.data.result.paginationCounter);
           setMyCourse(response.data.result.data)
-          console.log("trigger responses",response)
         });
       } catch (error) {
         console.error("Error fetching courses:", error);
