@@ -50,7 +50,7 @@ const CourseSectionS3 = (props) => {
                                    {/* Resmi kendi div içerisine aldım */}
                                    <div className="wpo-popular-img-wrapper">
                                        <div className="wpo-popular-img">
-                                           <img src={course.courseImage} style={{height:"250px"}} alt="" className="course-image" />
+                                           <img src={course.courseImage} style={{height:"200px"}} alt="" className="course-image" />
                                            <div className="thumb">
                                                <span>{MatchLocationToCurrency()}{course.coursePrice}</span>
                                            </div>
