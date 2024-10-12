@@ -110,7 +110,7 @@ const CategorySection = (props) => {
         key={index + 1}
         style={{ '--hover-color': colors[index % colors.length] }} // Renkleri sıralı atar
     >
-        <Link onClick={ClickHandler} to={`/course/${index + 1}`}>
+        <Link onClick={ClickHandler} to={`/course/${category.categoryId}`}>
             <div className="wpo-courses-item">
                 <div className="wpo-courses-text">
                     <div className="courses-icon">
