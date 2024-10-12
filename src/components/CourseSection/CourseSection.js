@@ -52,7 +52,7 @@ const CourseSection = (props) => {
                   <div className="wpo-popular-single">
                     <div className="wpo-popular-item">
                       <div className="wpo-popular-img">
-                        <img style={{height:"250px"}} src={course.courseImage} alt="" />
+                        <img style={{height:"200px"}} src={course.courseImage} alt="" />
                         <div className="thumb">
                           <span>
                             {MatchLocationToCurrency()}
