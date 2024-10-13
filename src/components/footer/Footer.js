@@ -80,11 +80,7 @@ const Footer = (props) => {
                       {t("Teachers")}
                     </Link>
                   </li>
-                  <li>
-                    <Link onClick={ClickHandler} to="/blog">
-                      {t("Latest News")}
-                    </Link>
-                  </li>
+               
                 </ul>
               </div>
             </div>
@@ -115,12 +111,12 @@ const Footer = (props) => {
                 <div className="contact-ft">
                   <ul>
                     <li>
-                      <i className="fi flaticon-email"></i>Eduko@gmail.com
+                      <i className="fi flaticon-email"></i>mail@learninghell.com
                     </li>
                     <li>
-                      <i className="fi flaticon-phone-call"></i>(208) 555-0112{" "}
+                      <i className="fi flaticon-phone-call"></i>(+90) 531-014-9046{" "}
                       <br />
-                      (704) 555-0127
+                      (+90) 531-306-2567
                     </li>
                     <li>
                       <i className="fi flaticon-placeholder"></i>Türkiye <br />{" "}
@@ -138,9 +134,9 @@ const Footer = (props) => {
             <div className="col col-lg-6 col-md-12 col-12">
               <ul>
                 <li>
-                  &copy; 2023{" "}
+                  &copy; 2024{" "}
                   <Link onClick={ClickHandler} to="/">
-                    Eduko
+                    LearningHell - LH
                   </Link>
                   . {t("All rights reserved")} .
                 </li>

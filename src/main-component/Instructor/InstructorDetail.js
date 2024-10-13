@@ -8,6 +8,7 @@ import CourseSectionS3 from "../../components/CourseSectionS3/CourseSectionS3";
 import InstructorAuth from "../../Wrappers/HoC/InstructorAuth";
 import { useGetAllInstructorCoursesMutation } from "../../api/instructorApi";
 import { Languages } from "../Extensions/Languages";
+import BankInfoModal from "../CustomComponents/BankInfoModal";
 import {
   useCreateCourseAsyncMutation,
   useGetCourseByIdMutation,
@@ -16,18 +17,19 @@ import {
 } from "../../api/courseApi";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-
+import { useChechBankInformationMutation } from "../../api/accountApi";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { Input } from "reactstrap";
 import { instructorApi } from "../../api/instructorApi";
-import { useDispatch } from "react-redux";
+import { useDispatch,useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { useLazyGetAllCategoriesForSelectedQuery } from "../../api/categoryApi";
 import Spinner from "react-bootstrap/Spinner";
+import { useAddBankInfoMutation, useInstructorSubDetailMutation, useInstructorUpdateMutation } from "../../api/InstructorSubApi";
 const style = {
   position: "absolute",
   top: "50%",
@@ -42,13 +44,29 @@ const style = {
 
 
 
-
+const buttonStyle = {
+  backgroundColor: "#3f51b5", 
+  color: "#fff",
+  padding: "10px 20px", 
+  borderRadius: "8px", 
+  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", 
+  textTransform: "none", 
+  fontSize: "16px", 
+  margin: "10px", 
+  transition: "background-color 0.3s ease", 
+};
 
 function InstructorDetail() {
   const dispatch = useDispatch();
   const [pageCounter, setPageCounter] = useState(0);
   const [courses, setCourses] = useState([]);
+  const [instructorUpdate] = useInstructorUpdateMutation();
   const [categories, setCategories] = useState([]);
+  const userId = useSelector((state) => state.authStore.nameIdentifier);
+  const userEmail = useSelector((state) => state.authStore.email);
+  const user = useSelector((state) => state.authStore);
+  console.log("trigger user",user)
+  const [bankStateInfo,setBankStateInfo] = useState('')
   const [getAllStudentCourses] = useGetAllInstructorCoursesMutation();
   const [
     getAllCategories,
@@ -56,6 +74,7 @@ function InstructorDetail() {
   ] = useLazyGetAllCategoriesForSelectedQuery();
   const [createCourseAsync] = useCreateCourseAsyncMutation();
   const [removeCourseAsync] = useRemoveCourseAsyncMutation();
+  const [checkBankInformation] = useChechBankInformationMutation();
   const [imageDimensions, setImageDimensions] = useState({
     width: 0,
     height: 0,
@@ -70,6 +89,7 @@ function InstructorDetail() {
     introductionVideo: "",
     courseImage: "",
   });
+  const [instructorDetails] = useInstructorSubDetailMutation();
   const [introductionVideo, setIntroductionVideo] = useState(null);
   const [image, setImage] = useState(null);
   const [open, setOpen] = useState(false);
@@ -77,6 +97,19 @@ function InstructorDetail() {
   const [isActiveButton, setIsActiveButton] = useState(true);
   const [isUpdateProcess, setIsUpdateProcess] = useState(false);
   const handleOpen = () => setOpen(true);
+  const [openBankInfoModal, setOpenBankInfoModal] = useState(false);
+  const [disableDom,setDisableDom] = useState(false);
+  const [addBankInfo] = useAddBankInfoMutation();
+  const [bankInfo, setBankInfo] = useState({
+    InstructorName: '',
+    InstructorSurname: '',
+    IdentityNumber: '',
+    Address: '',
+    Iban: '',
+    BankName: '',
+    PaymentAccountId: '',
+    InstructorBankDetailId:''
+  });
   const handleClose = () => {
     setCourseModel({
       courseName: "",
@@ -91,7 +124,22 @@ function InstructorDetail() {
       setIsUpdateProcess(false),
       setOpen(false);
   };
+  const redButtonStyle = {
+    ...buttonStyle,
+    backgroundColor: "#ff1744",
+  };
+  const greenButtonStyle = {
+    ...buttonStyle,
+    backgroundColor: "#00FF00",
+  };
 
+  const handleMouseEnter = (e) => {
+    e.target.style.backgroundColor = "#303f9f";
+  };
+
+  const handleMouseLeave = (e) => {
+    e.target.style.backgroundColor = "#3f51b5";
+  };
   const handleOpenCourseModal = () => setOpenCourseModal(true);
   const handleCloseCourseModal = () => setOpenCourseModal(false);
   const [getCourse] = useGetCourseByIdMutation();
@@ -127,6 +175,33 @@ function InstructorDetail() {
     fetchData();
   }, [filter, open]);
 
+
+  const openManuelBankInfoModal = async  () => {
+
+
+    await instructorDetails(user.InstructorSubId).then((response) => {
+      console.log("response",response)
+      if (response.data.isSuccess) {
+        setBankInfo((prevState) =>({
+          ...prevState,
+          InstructorName:response.data.result.instructorName,
+          InstructorSurname:response.data.result.instructorSurname,
+          IdentityNumber:response.data.result.identityNumber,
+          Address:response.data.result.address,
+          Iban:response.data.result.instructorBankDetail.iban,
+          BankName:response.data.result.instructorBankDetail.bankName,
+        }))
+        setBankStateInfo("update")
+        setOpenBankInfoModal(true)
+        
+      }
+    })
+
+
+
+  }
+
+
   useEffect(() => {
     if (categoriesData) {
       setCategories(categoriesData.result);
@@ -135,9 +210,50 @@ function InstructorDetail() {
 
   useEffect(() => {
     // alert("Please be carefull! while You are added  introduction video for create new course,video duration must is not duration 10 seconds than high")
+    if (userId) {
+      checkBankInformation(userId).then((response) => {
+        if(!response.data.isSuccess){
+          toast.warning(response.data.message)
+          setDisableDom(true);
+          setOpenBankInfoModal(true);
+        }
+      })
+    }
+   
+    
     getAllCategories();
-  }, []);
+  }, [userId]);
 
+
+
+  const checkUserBankDetail = () => {
+    if (userId) {
+      checkBankInformation(userId).then((response) => {
+        if(!response.data.isSuccess){
+          toast.warning(response.data.message)
+          setDisableDom(true);
+
+          setOpenBankInfoModal(true);
+          setOpen(false)
+          return;
+        }
+      })
+    }
+  }
+
+
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setBankInfo((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleModalClose = () => {
+    setOpenBankInfoModal(false);
+  };
   // if (isCoursesLoading || isCategoriesLoading) {
   //   return <IsLoading />;
   // }
@@ -166,10 +282,6 @@ function InstructorDetail() {
       );
       return;
     }
-
-
-    console.log("trigger course model",courseModel.courseLanguage)
-
 
     setIsActiveButton(false);
     const formData = new FormData();
@@ -203,10 +315,12 @@ function InstructorDetail() {
     );
     if (answer) {
       await removeCourseAsync(courseId).then((response) => {
+
         if (response.data.isSuccess) {
+          dispatch(instructorApi.util.invalidateTags(["instructor"]));
+          dispatch(instructorApi.util.invalidateTags(["instructor"]));
           toast.success("Course removed successfully");
           setOpenCourseModal(false);
-          dispatch(instructorApi.util.invalidateTags(["instructor"]));
         }
       });
     }
@@ -218,14 +332,6 @@ function InstructorDetail() {
     await getCourse(courseId).then((response) => {
       if (response.data.isSuccess) {
         setIsUpdateProcess(true);
-        // setGetCourseModelState({
-        //   courseName:response.data.result.item1.courseName,
-        //   coursePrice:response.data.result.item1.coursePrice,
-        //   courseLanguage:response.data.result.item1.courseLanguage,
-        //   courseDescription:response.data.result.item1.courseDescription,
-        //   introductionVideoUrl:response.data.result.item1.introductionVideoUrl,
-        //   courseImage:response.data.result.item1.courseImage
-        // })
         setCourseModel({
           courseName: response.data.result.item1.courseName,
           coursePrice: response.data.result.item1.coursePrice,
@@ -278,6 +384,73 @@ function InstructorDetail() {
     });
   };
 
+
+
+  const handleSubmit = () => {
+      if (bankStateInfo != "update") {
+        console.log("trigger inner create")
+
+        var formData = new FormData();
+        formData.append("InstructorName",bankInfo.InstructorName);
+        formData.append("InstructorSurname",bankInfo.InstructorSurname);
+        formData.append("IdentityNumber",bankInfo.IdentityNumber);
+        formData.append("Address",bankInfo.Address);
+        formData.append("Iban",bankInfo.Iban);
+        formData.append("BankName",bankInfo.BankName);
+        formData.append("InstructorBankDetailId",bankInfo.InstructorBankDetailId);
+
+
+        addBankInfo(
+          formData,
+        /* Generate or set this appropriately */
+        )
+          .then((response) => {
+            if (response.data.isSuccess) {
+              toast.success('Bank information saved successfully!');
+              setDisableDom(false);
+
+              handleModalClose();
+            } else {
+              toast.error(response.data.message);
+            }
+          });
+      }
+      else {
+
+
+        console.log("trigger inner update")
+        var formData = new FormData();
+        formData.append("InstructorSubId",user.InstructorSubId)
+        formData.append("InstructorName",bankInfo.InstructorName);
+        formData.append("InstructorSurname",bankInfo.InstructorSurname);
+        formData.append("IdentityNumber",bankInfo.IdentityNumber);
+        formData.append("Address",bankInfo.Address);
+        formData.append("Iban",bankInfo.Iban);
+        formData.append("BankName",bankInfo.BankName);
+        formData.append("InstructorBankDetailId",bankInfo.InstructorBankDetailId);
+        formData.append("Email",userEmail);
+
+
+        instructorUpdate(
+          formData,
+        )
+          .then((response) => {
+            if (response.data.isSuccess) {
+              toast.success('Bank information saved successfully!');
+              setDisableDom(false);
+
+              handleModalClose();
+            } else {
+              toast.error(response.data.message);
+            }
+          });
+      }
+   
+  };
+
+
+
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
 
@@ -309,12 +482,35 @@ function InstructorDetail() {
   return (
     <Fragment>
       <Navbar />
+      <div className="" id="disableId" style={{
+          pointerEvents: disableDom? "none":"auto",
+          opacity: disableDom? 0.5: ""}} >
       <PageTitle pageTitle={"Instructor"} pagesub={"Instructor"} />
       <div style={{ textAlign: "right" }}>
-        <Button onClick={handleOpen}>{t("Create New Course")}</Button>
-        <Button onClick={handleOpenCourseModal} style={{ color: "red" }}>
-          {t("Remove Course")}
-        </Button>
+      <div>
+      <Button
+        onClick={() => { checkUserBankDetail(); handleOpen(); }}
+        style={buttonStyle}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        {t("Create New Course")}
+      </Button>
+
+      <Button
+        onClick={handleOpenCourseModal}
+        style={redButtonStyle}
+      >
+        {t("Remove Course")}
+      </Button>
+
+      <Button
+        onClick={openManuelBankInfoModal}
+        style={greenButtonStyle}
+      >
+        {t("Bank Detail")}
+      </Button>
+    </div>
           <Modal
     open={open}
     onClose={handleClose}
@@ -540,7 +736,14 @@ function InstructorDetail() {
     </Box>
   </Modal>
 
-
+  <BankInfoModal
+        open={openBankInfoModal}
+        onClose={handleModalClose}
+        bankInfo={bankInfo}
+        onInputChange={handleInputChange}
+        onSubmit={handleSubmit}
+        type={bankStateInfo}
+      />
         <Modal
           open={openCourseModal}
           onClose={handleCloseCourseModal}
@@ -623,6 +826,7 @@ function InstructorDetail() {
             ""
           )}
         </ul> 
+      </div>
       </div>
       <Footer />
       <Scrollbar />

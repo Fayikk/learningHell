@@ -1,9 +1,20 @@
 import React, { useState } from 'react'
 import SimpleReactValidator from 'simple-react-validator';
+import { useCreateSupportTicketMutation } from '../../api/supportApi';
+import { toast } from 'react-toastify';
+
+
+
+
+const supportTypes = [
+    "Technical Problem","Only Ask","Account Problem"
+]
 
 
 const ContactForm = () => {
 
+
+    const [createTicket] = useCreateSupportTicketMutation();
     const [forms, setForms] = useState({
         name: '',
         email: '',
@@ -14,6 +25,10 @@ const ContactForm = () => {
     const [validator] = useState(new SimpleReactValidator({
         className: 'errorMessage'
     }));
+
+    console.log("trigger forms",forms.subject)
+
+
     const changeHandler = e => {
         setForms({ ...forms, [e.target.name]: e.target.value })
         if (validator.allValid()) {
@@ -23,7 +38,7 @@ const ContactForm = () => {
         }
     };
 
-    const submitHandler = e => {
+    const submitHandler = async e => {
         e.preventDefault();
         if (validator.allValid()) {
             validator.hideMessages();
@@ -34,6 +49,40 @@ const ContactForm = () => {
                 phone: '',
                 message: ''
             })
+
+            // public string Name { get; set; }
+            // [Required]
+            // [EmailAddress]
+            // public string Email { get; set; }
+            // [Required]
+            // [Phone]
+            // public string PhoneNumber { get; set; }
+            // [Required]
+            // public string SupportType { get; set; }
+            // [Required]
+            // public string Message { get; set; }
+
+
+
+            var formObject = new FormData();
+            formObject.append("Name",forms.name),
+            formObject.append("Email",forms.email),
+            formObject.append("PhoneNumber",forms.phone),
+            formObject.append("Message",forms.message),
+            formObject.append("SupportType",forms.subject);
+            await createTicket(formObject).then((response)=> {
+                console.log("trigger create ticket",response)
+                if (response.data.isSuccess) {
+                    toast.success(response.data.message)
+                }
+                else {
+                    toast.warning(response.data.message)
+
+                }
+            })
+
+
+
         } else {
             validator.showMessages();
         }
@@ -86,9 +135,15 @@ const ContactForm = () => {
                             value={forms.subject}
                             type="text"
                             name="subject">
-                            <option>Web Design</option>
-                            <option>Web Development</option>
-                            <option>Ux/Ui Design</option>
+                            {
+                                supportTypes.map((support,index)=> (
+                                    <option value={support} >{support}</option>
+
+                                ))
+                            }
+
+
+
                         </select>
                         {validator.message('subject', forms.subject, 'required')}
                     </div>

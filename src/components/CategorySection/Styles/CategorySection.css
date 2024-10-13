@@ -1,0 +1,62 @@
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Her satırda 3 kategori */
+    gap: 20px; /* Kategoriler arasındaki boşluk */
+    margin-top: 30px; /* Başlık ile grid arasındaki boşluk */
+}
+
+.grid-item {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s ease;
+}
+
+.grid-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    background-color: var(--hover-color); /* Dinamik olarak atanan renk */
+}
+
+
+.wpo-courses-text {
+    text-align: center; /* Metni merkeze hizalama */
+}
+
+.courses-icon {
+    font-size: 40px; /* İkon boyutu */
+    color: #ff5722; /* İkon rengi */
+    margin-bottom: 15px; /* İkon ile başlık arasındaki boşluk */
+}
+
+.wpo-courses-text h2 {
+    font-size: 1.5rem; /* Başlık boyutu */
+    margin-bottom: 10px; /* Başlık ile açıklama arasındaki boşluk */
+    color: #333; /* Başlık rengi */
+}
+
+.wpo-courses-text p {
+    font-size: 1rem; /* Açıklama metni boyutu */
+    color: #666; /* Açıklama metni rengi */
+}
+
+/* Responsive Tasarım */
+
+@media (max-width: 1200px) {
+    .category-grid {
+        grid-template-columns: repeat(3, 1fr); /* 1200px altı ekranlarda 3 kategori */
+    }
+}
+
+@media (max-width: 991px) {
+    .category-grid {
+        grid-template-columns: repeat(2, 1fr); /* 991px altı ekranlarda 2 kategori */
+    }
+}
+
+@media (max-width: 767px) {
+    .category-grid {
+        grid-template-columns: 1fr; /* 767px altı ekranlarda 1 kategori */
+    }
+}

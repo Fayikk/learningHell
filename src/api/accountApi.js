@@ -96,6 +96,17 @@ export const accountApi = createApi({
                 url:"ChangePassword",
                 body:changePasswordModel
             })
+        }),
+        chechBankInformation:builder.mutation({
+            query:(userId) => {
+                return(
+
+                   {
+                        method:"POST",
+                        url:`CheckInfo/${userId}`,
+                    }
+                )
+            }
         })
 
     })
@@ -112,4 +123,5 @@ export const {
         useReSendVerifyEmailMutation,
         useForgotPasswordMutation,
         useCheckVerificationDigitCodeMutation,
+        useChechBankInformationMutation,
         useChangePasswordMutation} = accountApi

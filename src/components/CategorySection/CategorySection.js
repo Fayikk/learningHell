@@ -8,7 +8,7 @@ import cImag2 from '../../images/shape/2.svg'
 import cImag3 from '../../images/shape/3.svg'
 import cImag4 from '../../images/shape/4.svg'
 import { useTranslation } from "react-i18next";
-
+import './Styles/CategorySection.css'
 
 const ClickHandler = () => {
     window.scrollTo(10, 0);
@@ -66,7 +66,11 @@ const settings = {
         }
     ]
 };
+const colors = ["#FF6F61", "#6B5B95", "#88B04B", "#F7CAC9", "#92A8D1", "#955251", "#B565A7", "#009B77"]; 
 
+const flaticonObjecjs = ["flaticon-play","flaticon-customer-service","flaticon-medal","flaticon-responsible",
+    "flaticon-e-learning","flaticon-reading-book","flaticon-star","flaticon-code","flaticon-right-arrow-3","flaticon-training"
+    ,"flaticon-training-1","flaticon-award","flaticon-team"]
 
 const CategorySection = (props) => {
     const {t} = useTranslation();
@@ -74,10 +78,10 @@ const CategorySection = (props) => {
     const [categories,setCategories] = useState([]);
     useEffect(()=>{
         if (props.categories) {
+            console.log("trigger category  props",props.categories)
             setCategories(props.categories.result)
         }
     },[props])
-
         
     return (
         <section className={`wpo-courses-section section-padding ${props.cClass}`}>
@@ -99,24 +103,29 @@ const CategorySection = (props) => {
                         </div>
                     </div>
                 </div>
-                {categories.map((category) => ( 
-
-                <div className="row-grid wpo-courses-wrap wpo-courses-slider owl-carousel">
-                            <div className={`grid ${category.categoryId}`} key={category.categoryId}>
-                                <Link onClick={ClickHandler} to={`/course/${category.categoryId}`}>
-                                <div className="wpo-courses-item">
-                                    <div className="wpo-courses-text">
-                                        <div className="courses-icon">
-                                            <i className="fi flaticon-user-experience"></i>
-                                        </div>
-                                        <h2>{category.categoryName}</h2>
-                                        <p>{category.categoryDescription}</p>
-                                    </div>
-                                </div>
-                                </Link>
-                            </div>
+                <div className="category-grid">
+                {categories.map((category, index) => (
+    <div
+        className={`grid-item category-${index + 1}`}
+        key={index + 1}
+        style={{ '--hover-color': colors[index % colors.length] }} // Renkleri sıralı atar
+    >
+        <Link onClick={ClickHandler} to={`/course/${category.categoryId}`}>
+            <div className="wpo-courses-item">
+                <div className="wpo-courses-text">
+                    <div className="courses-icon">
+                        <i className={`fi ${flaticonObjecjs[index]}`} ></i>
+                    </div>
+                    <h2>{category.categoryName}</h2>
+                    <p>{category.categoryDescription}</p>
                 </div>
-                        ))}
+            </div>
+        </Link>
+    </div>
+))}
+
+
+                </div>
 
             </div>
             <div className="shape-1"><img src={cImag} alt="" /></div>
