@@ -8,7 +8,7 @@ function GizlilikPolitikasi() {
     <p>
     GİZLİLİK VE GÜVENLİK POLİTİKASI
  
- Mağazamızda verilen tüm servisler ve ,………… adresinde kayıtlı  ……………….Şti. firmamıza aittir ve firmamız tarafından işletilir. 
+ Mağazamızda verilen tüm servisler ve ,ÜÇKUYU MAH. ŞEHİT ALİ GAFFAR OKKAN BUL. C-BLOK NO: 9C İÇ KAPI NO: 24 YENİŞEHİR / DİYARBAKIR adresinde kayıtlı   TELEFERIC BİLİŞİM VE YAZILIM SANAYİ TİCARET LİMİTED Şti. firmamıza aittir ve firmamız tarafından işletilir. 
  
  Firmamız, çeşitli amaçlarla kişisel veriler toplayabilir. Aşağıda, toplanan kişisel verilerin nasıl ve ne şekilde toplandığı, bu verilerin nasıl ve ne şekilde korunduğu belirtilmiştir. 
  
@@ -61,12 +61,12 @@ function GizlilikPolitikasi() {
  
  Firmamız, işbu "Gizlilik Politikası" hükümlerini dilediği zaman sitede yayınlamak veya kullanıcılara elektronik posta göndermek veya sitesinde yayınlamak suretiyle değiştirebilir. Gizlilik Politikası hükümleri değiştiği takdirde, yayınlandığı tarihte yürürlük kazanır.
  
- Gizlilik politikamız ile ilgili her türlü soru ve önerileriniz için ……………….. adresine email gönderebilirsiniz. Firmamız’a ait aşağıdaki iletişim bilgilerinden ulaşabilirsiniz.
+ Gizlilik politikamız ile ilgili her türlü soru ve önerileriniz için education@learninghell.com  adresine email gönderebilirsiniz. Firmamız’a ait aşağıdaki iletişim bilgilerinden ulaşabilirsiniz.
  
- Firma Ünvanı: 
- Adres: 
- Eposta: 
- Tel:
+ Firma Ünvanı:TELEFERIC BİLİŞİM VE YAZILIM SANAYİ TİCARET LİMİTED ŞİRKETİ
+ Adres: ÜÇKUYU MAH. ŞEHİT ALİ GAFFAR OKKAN BUL. C-BLOK NO: 9C İÇ KAPI NO: 24 YENİŞEHİR / DİYARBAKIR
+ Eposta: education@learninghell.com
+ Tel: +90 5310149046
  Fax:
     </p>
     </>

@@ -1,0 +1,102 @@
+/* container-logo Stil Ayarları */
+.container-logo {
+    display: flex;
+    justify-content: center; /* Logoları yatayda ortalar */
+    align-items: center; /* Logoları dikeyde ortalar */
+    flex-wrap: wrap; /* Logoların taşmasını önler */
+    padding: 20px 0; /* Üst ve alt boşluk ekler */
+    background-color: #f9f9f9; /* Arka plan rengi (isteğe bağlı) */
+  }
+  
+  /* logo-row Stil Ayarları */
+  .logo-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  
+  /* cardItem Stil Ayarları */
+  .cardItem {
+    margin: 20px; /* Logolar arasında biraz daha fazla boşluk */
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  
+  .cardItem.active {
+    transform: scale(1.1);
+  }
+  
+  .cardItem img {
+    max-width: 200px; /* Logonun maksimum genişliğini artırdık */
+    height: auto;
+    display: block;
+  }
+  
+  /* Responsive Tasarım İçin */
+  @media (max-width: 1200px) {
+    .cardItem img {
+      max-width: 130px;
+    }
+  }
+  
+  @media (max-width: 992px) {
+    .cardItem img {
+      max-width: 110px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .cardItem img {
+      max-width: 100px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .cardItem img {
+      max-width: 80px;
+    }
+  }
+  
+  /* Alternatif: CSS Grid Kullanımı */
+  .container-logo.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Grid kolon genişliğini artırdık */
+    gap: 20px; /* Logolar arası boşluk */
+    justify-items: center;
+    align-items: center;
+    padding: 20px 0;
+    background-color: #f9f9f9;
+  }
+  
+  .cardItem.grid img {
+    max-width: 200px; /* Logonun maksimum genişliğini artırdık */
+    height: auto;
+    display: block;
+  }
+  
+  @media (max-width: 1200px) {
+    .cardItem.grid img {
+      max-width: 130px;
+    }
+  }
+  
+  @media (max-width: 992px) {
+    .cardItem.grid img {
+      max-width: 110px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .cardItem.grid img {
+      max-width: 100px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .cardItem.grid img {
+      max-width: 80px;
+    }
+  }
+  
