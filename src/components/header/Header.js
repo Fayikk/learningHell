@@ -202,7 +202,7 @@ const Header = ({ props, onAuthStateChange }) => {
     </ul>
   </li>
   
-  <li className="menu-item">
+  {/* <li className="menu-item">
     <Link onClick={ClickHandler} to="" style={{ display: "flex", alignItems: "center", gap: "5px" }}>
       <FaLock /> {t("Collections")}
     </Link>
@@ -212,7 +212,7 @@ const Header = ({ props, onAuthStateChange }) => {
     <Link onClick={ClickHandler} to="" style={{ display: "flex", alignItems: "center", gap: "5px" }}>
       <FaLock /> {t("Pair Working Rooms")}
     </Link>
-  </li>
+  </li> */}
   
   {authenticationState.role && authenticationState.role.includes("Instructor") ? "" : (
     <li className="menu-item">
