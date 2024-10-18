@@ -88,6 +88,7 @@ const CheckWrap = (props) => {
                     Dispatch(cartStateUpdate(res.item2))
                   }
                   else{
+                    toast.warning(res.item3)
                     handleClose();
                   }
                 })
