@@ -315,7 +315,7 @@ const handleSecurityCloseAgreement = () => {
               <li>
                 &copy; 2024{" "}
                 <Link onClick={ClickHandler} to="/">
-                  LearningHell - LH
+                  Teleferic ltd şti - LH
                 </Link>
                 . {t("All rights reserved")} .
               </li>
