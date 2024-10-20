@@ -3,7 +3,19 @@ body .container {
   margin-right: auto;
   margin-left: auto;
 }
+.old-price {
+  text-decoration: line-through;
+  color: red;
+}
 
+.discounted-price {
+  font-weight: bold;
+  color: green;
+}
+.current-price {
+  font-weight: bold;
+  color: rgb(2, 0, 130);
+}
 .check-form-area,
 .cartStatus{
   padding: 40px;

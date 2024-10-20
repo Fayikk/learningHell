@@ -65,7 +65,6 @@ function InstructorDetail() {
   const userId = useSelector((state) => state.authStore.nameIdentifier);
   const userEmail = useSelector((state) => state.authStore.email);
   const user = useSelector((state) => state.authStore);
-  console.log("trigger user",user)
   const [bankStateInfo,setBankStateInfo] = useState('')
   const [getAllStudentCourses] = useGetAllInstructorCoursesMutation();
   const [
@@ -180,7 +179,6 @@ function InstructorDetail() {
 
 
     await instructorDetails(user.InstructorSubId).then((response) => {
-      console.log("response",response)
       if (response.data.isSuccess) {
         setBankInfo((prevState) =>({
           ...prevState,
@@ -388,8 +386,6 @@ function InstructorDetail() {
 
   const handleSubmit = () => {
       if (bankStateInfo != "update") {
-        console.log("trigger inner create")
-
         var formData = new FormData();
         formData.append("InstructorName",bankInfo.InstructorName);
         formData.append("InstructorSurname",bankInfo.InstructorSurname);
@@ -418,7 +414,6 @@ function InstructorDetail() {
       else {
 
 
-        console.log("trigger inner update")
         var formData = new FormData();
         formData.append("InstructorSubId",user.InstructorSubId)
         formData.append("InstructorName",bankInfo.InstructorName);

@@ -2,7 +2,7 @@ import './Styles/Header.css'
 import React, { useState, startTransition } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import MobileMenu from "../MobileMenu/MobileMenu";
-import Logo from "../../images/logo.svg";
+import Logo from "../../images/logo/LH.png";
 import HeaderTopbar from "../HeaderTopbar/HeaderTopbar";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -43,7 +43,6 @@ const Header = ({ props, onAuthStateChange }) => {
   //     Dispatch(cartStateUpdate(data.result.courses.length));
   //   }
   // }, [data]);
-  console.log("trigger in environment variable",process.env.REACT_APP_ENV)
 
   useEffect(()=>{
     if (data) {
