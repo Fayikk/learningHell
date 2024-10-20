@@ -26,7 +26,6 @@ const ContactForm = () => {
         className: 'errorMessage'
     }));
 
-    console.log("trigger forms",forms.subject)
 
 
     const changeHandler = e => {
@@ -71,7 +70,6 @@ const ContactForm = () => {
             formObject.append("Message",forms.message),
             formObject.append("SupportType",forms.subject);
             await createTicket(formObject).then((response)=> {
-                console.log("trigger create ticket",response)
                 if (response.data.isSuccess) {
                     toast.success(response.data.message)
                 }

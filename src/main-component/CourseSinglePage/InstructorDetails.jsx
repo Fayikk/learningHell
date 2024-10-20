@@ -24,7 +24,7 @@ const InstructorDetails = (props) => {
           <ProfileIcon />
         </span>
         <span className="text-black/75 text-sm font-semibold">
-          97473 learners
+          {/* 97473 learners */}
         </span>
       </div>
       <div className="flex gap-2 items-center">
@@ -33,7 +33,7 @@ const InstructorDetails = (props) => {
           <PointIcon />
         </span>
         <span className="text-black/75 text-sm font-semibold">
-          15 points to earn
+          {/* 15 points to earn */}
         </span>
       </div>
       <div className="flex gap-2 items-center">
@@ -42,7 +42,7 @@ const InstructorDetails = (props) => {
           <ClockIcon />
         </span>
         <span className="text-black/75 text-sm font-semibold">
-          6 hour of content
+          12 hour of content
         </span>
       </div>
     </div>
@@ -55,11 +55,7 @@ const InstructorDetails = (props) => {
     </div>
     <img src={profiles} className="h-24 w-24" />
     <p className="sm:max-w-[400px] items-center justify-center">
-      1996'da BT alanında çalışmaya başlayan Hakan, sistem yöneticiliği,
-      BT uzmanlığı, network sistemleri yöneticiliği, güvenlik ve yazılım
-      alanlarında çalıştıktan sonra son 10 yıldır freelancer olarak
-      çalışıyor. PHP, Swift ve Python dilleriyle projeler geliştirdi ve
-      6 yıldır Python ve Django Framework'e yoğunlaştı.
+    
     </p>
   </div>
   )

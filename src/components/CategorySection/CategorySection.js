@@ -78,7 +78,6 @@ const CategorySection = (props) => {
     const [categories,setCategories] = useState([]);
     useEffect(()=>{
         if (props.categories) {
-            console.log("trigger category  props",props.categories)
             setCategories(props.categories.result)
         }
     },[props])

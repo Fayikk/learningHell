@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Logo from "../../images/logo-s2.svg";
+import Logo from "../../images/logo/LH.png";
 import { useTranslation } from "react-i18next";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -166,12 +166,12 @@ const handleSecurityCloseAgreement = () => {
             <div className="widget about-widget">
               <div className="logo widget-title">
                 <Link onClick={ClickHandler} className="navbar-brand" to="/home">
-                  {/* <img src={Logo} alt="LearningHell Logo" /> */}
+                  <img src={Logo} alt="LearningHell Logo" />
                 </Link>
               </div>
               <p>
                 {t(
-                  "Mattis inelit neque quis donec eleifnd amet. Amet sed et cursus eu euismod. Egestas in morbi tristique ornare vulputate vitae enim."
+                 
                 )}
               </p>
               <div className="social">
@@ -275,6 +275,9 @@ const handleSecurityCloseAgreement = () => {
                     <i className="fi flaticon-email"></i>mail@learninghell.com
                   </li>
                   <li>
+                    <i className="fi flaticon-email"></i>education@learninghell.com
+                  </li>
+                  <li>
                     <i className="fi flaticon-phone-call"></i>(+90) 531-014-9046 <br />
                     (+90) 531-306-2567
                   </li>
@@ -320,28 +323,7 @@ const handleSecurityCloseAgreement = () => {
           </div>
           <div className="col-lg-6 col-md-12 col-12">
             <div className="link">
-              <ul>
-                <li>
-                  <Link onClick={ClickHandler} to="/privacy">
-                    {t("Privacy & Policy")}
-                  </Link>
-                </li>
-                <li>
-                  <Link onClick={ClickHandler} to="/terms">
-                    {t("Terms")}
-                  </Link>
-                </li>
-                <li>
-                  <Link onClick={ClickHandler} to="/about">
-                    {t("About Us")}
-                  </Link>
-                </li>
-                {/* <li>
-                  <Link onClick={ClickHandler} to="/faq">
-                    {t("FAQ")}
-                  </Link>
-                </li> */}
-              </ul>
+             
             </div>
           </div>
         </div>
@@ -353,3 +335,28 @@ const handleSecurityCloseAgreement = () => {
 };
 
 export default Footer;
+
+
+
+// <ul>
+// <li>
+//   <Link onClick={ClickHandler} to="/privacy">
+//     {t("Privacy & Policy")}
+//   </Link>
+// </li>
+// <li>
+//   <Link onClick={ClickHandler} to="/terms">
+//     {t("Terms")}
+//   </Link>
+// </li>
+// <li>
+//   <Link onClick={ClickHandler} to="/about">
+//     {t("About Us")}
+//   </Link>
+// </li>
+// <li>
+//   <Link onClick={ClickHandler} to="/faq">
+//     {t("FAQ")}
+//   </Link>
+// </li>
+// </ul>

@@ -119,7 +119,6 @@ const CheckoutSection = ({cartList}) => {
     }
 
 
-    console.log("trigger coupon discount",couponDiscount)
 
     // forms handler
     const changeHandler = e => {
@@ -133,9 +132,7 @@ const CheckoutSection = ({cartList}) => {
             if (response.data.result) {
                 const discount = response.data.result.discountAmount; // İndirim yüzdesi veya miktarı
                 setCouponDiscount(discount); // İndirimi state'e atayın
-                console.log("Coupon applied, discount:", discount);
             } else {
-                console.log("Invalid coupon");
             }
         });
     };
