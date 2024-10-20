@@ -166,7 +166,7 @@ const handleSecurityCloseAgreement = () => {
             <div className="widget about-widget">
               <div className="logo widget-title">
                 <Link onClick={ClickHandler} className="navbar-brand" to="/home">
-                  <img src={Logo} alt="LearningHell Logo" />
+                  {/* <img src={Logo} alt="LearningHell Logo" /> */}
                 </Link>
               </div>
               <p>

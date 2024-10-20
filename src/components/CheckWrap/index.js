@@ -131,6 +131,7 @@ const CheckWrap = (props) => {
             formData.append("ExpireMonth",value.expire_month);
             formData.append("ExpireYear",value.expire_year);
             formData.append("CardHolderName",value.card_holder);
+            formData.append("CouponCode",props.values.cupon_key);
             formData.append("cvc",value.cvv);
             formData.append("IdentityNumber",props.values.identityNumber);
             formData.append("RegistrationAddress",props.values.address);

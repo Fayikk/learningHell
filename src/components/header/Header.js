@@ -178,7 +178,7 @@ const Header = ({ props, onAuthStateChange }) => {
                     className="navbar-brand"
                     to="/home"
                   >
-                    <img src={Logo} alt="logo" />
+                    {/* <img src={Logo} alt="logo" /> */}
                   </Link>
                 </div>
               </div>

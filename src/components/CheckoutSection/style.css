@@ -95,7 +95,10 @@ body .container {
       -ms-flex-direction: row;
           flex-direction: row;
 }
-
+.current-price {
+  font-weight: bold;
+  color: rgb(2, 0, 130);
+}
 .checkoutWrapper .checkoutCard .chCardBody .paymentMethod label span {
   font-size: 13px;
   font-weight: 500;
