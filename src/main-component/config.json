@@ -1,4 +1,4 @@
 {
-    "GOOGLE_CLIENT_ID": "1008566809726-4pfos7sncrbe3lqrlbilgss407m35528.apps.googleusercontent.com",
+    "GOOGLE_CLIENT_ID": "948200190332-13t1kqicvc5qgdf5ca996es5ucu6hrpc.apps.googleusercontent.com",
     "GOOGLE_AUTH_CALLBACK_URL": "https://learninghell.com:82/api/auth/google"
   }
