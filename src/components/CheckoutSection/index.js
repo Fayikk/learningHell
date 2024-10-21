@@ -26,6 +26,7 @@ import CheckWrap from '../CheckWrap'
 
 import './style.scss';
 import { useSelector } from 'react-redux';
+import { useGetCouponByCodeMutation } from '../../api/couponApi';
 
 const cardType = [
     {
@@ -46,7 +47,7 @@ const cardType = [
 const CheckoutSection = ({cartList}) => {
     // states
 
-
+    const [applyCode] = useGetCouponByCodeMutation();
     const cartState = useSelector((state) => state.cartStore)
     const [cartLists,setCartLists] =useState([]);
     const basketItems = localStorage.getItem("basketItems")
@@ -54,8 +55,8 @@ const CheckoutSection = ({cartList}) => {
     const [isAgreementOpen, setIsAgreementOpen] = useState(false);
     const [isRefundAgreementOpen, setIsRefundAgreementOpen] = useState(false);
     const [isSecurityAgreementOpen, setIsSecurityAgreementOpen] = useState(false);
+    const [couponDiscount, setCouponDiscount] = useState(0);
 
-    // Modal'ı açan ve kapatan fonksiyonlar
     const handleOpenAgreement = () => {
         setIsAgreementOpen(true);
     };
@@ -91,12 +92,6 @@ const CheckoutSection = ({cartList}) => {
         
     },[cartState])
 
-
-    
-
-
-
-
     const [tabs, setExpanded] = React.useState({
         cupon: false,
         billing_adress: false,
@@ -104,35 +99,13 @@ const CheckoutSection = ({cartList}) => {
     });
     const [forms, setForms] = React.useState({
         cupon_key: '',
-        // fname: '',
-        // lname: '',
-        // country: '',
-        // dristrict: '',
-        // identityNumber:'',
-        // address: '',
-        // post_code: '',
-        // email: '',
-        // phone: '',
-        // note: '',
-
         payment_method: 'cash',
         card_type: '',
-
-        // fname2: '',
-        // lname2: '',
-        // country2: '',
-        // dristrict2: '',
-        // address2: '',
-        // post_code2: '',
-        // email2: '',
-        // phone2: '',
-
         card_holder: '',
         card_number: '',
         cvv: '',
         expire_date: '',
     });
-
 
     const [dif_ship, setDif_ship] = React.useState(false);
 
@@ -145,19 +118,31 @@ const CheckoutSection = ({cartList}) => {
         });
     }
 
+
+
     // forms handler
     const changeHandler = e => {
         setForms({...forms, [e.target.name]: e.target.value})
     };
 
-
+    const checkCouponForApply = async (e) => {
+        e.preventDefault();
+    
+        await applyCode(forms.cupon_key).then((response) => {
+            if (response.data.result) {
+                const discount = response.data.result.discountAmount; // İndirim yüzdesi veya miktarı
+                setCouponDiscount(discount); // İndirimi state'e atayın
+            } else {
+            }
+        });
+    };
 
     return (
         <Fragment>
             <Grid className="checkoutWrapper section-padding">
                 <Grid className="container" container spacing={3}>
                     <Grid item md={6} xs={12}>
-                        <div className="check-form-area">
+                    <div className="check-form-area">
                             <Grid className="cuponWrap checkoutCard">
                                 <Button className="collapseBtn" fullWidth onClick={() => faqHandler('cupon')}>
                                     Have a coupon ? Click here to enter your code.
@@ -167,7 +152,7 @@ const CheckoutSection = ({cartList}) => {
                                         unmountOnExit>
                                     <Grid className="chCardBody">
                                         <p>If you have coupon code,please apply it</p>
-                                        <form className="cuponForm">
+                                        <form className="cuponForm" onSubmit={checkCouponForApply}>
                                             <TextField
                                                 fullWidth
                                                 type="text"
@@ -176,7 +161,7 @@ const CheckoutSection = ({cartList}) => {
                                                 name="cupon_key"
                                                 onChange={(e) => changeHandler(e)}
                                             />
-                                            <Button className="cBtn cBtnBlack">Apply</Button>
+                                            <Button type='submit' className="cBtn cBtnBlack" >Apply</Button>
                                         </form>
                                     </Grid>
                                 </Collapse>
@@ -307,12 +292,29 @@ const CheckoutSection = ({cartList}) => {
                                                 </TableRow>
                                                 <TableRow>
                                                     <TableCell>Sub Price</TableCell>
-                                                    <TableCell align="right">{MatchLocationToCurrency()}{totalPrice(cartItems)}</TableCell>
+                                                    <TableCell align="right">
+                                                        {couponDiscount === 0 ? (
+                                                            <span className="current-price">
+                                                                {MatchLocationToCurrency()}{totalPrice(cartItems, 0)} 
+                                                            </span>
+                                                        ) : (
+                                                            <>
+                                                                {/* Eski fiyat ve indirimli fiyat birlikte gösteriliyor */}
+                                                                <span className="old-price">
+                                                                    {MatchLocationToCurrency()}{totalPrice(cartItems, 0)}
+                                                                </span>
+                                                                &nbsp;{/* Boşluk için */}
+                                                                <span className="discounted-price">
+                                                                    {MatchLocationToCurrency()}{totalPrice(cartItems, couponDiscount)}
+                                                                </span>
+                                                            </>
+                                                        )}
+                                                    </TableCell>
                                                 </TableRow>
                                                 <TableRow>
                                                     <TableCell>Total Price</TableCell>
                                                      <TableCell 
-                                                        align="right">{MatchLocationToCurrency()}{totalPrice(cartItems)}</TableCell> 
+                                                        align="right">{MatchLocationToCurrency()}{totalPrice(cartItems,couponDiscount)}</TableCell> 
                                                 </TableRow>
                                             </TableBody>
                                         </Table>
@@ -326,6 +328,5 @@ const CheckoutSection = ({cartList}) => {
         </Fragment>
     )
 };
-
 
 export default CheckoutSection;

@@ -6,13 +6,16 @@ function getFeaturedProducts(products) {
     return products.filter(item => item.sale === true).slice(0, 12);
 }
 
-function totalPrice(items) {
-    var response = items.reduce((itemAcc, item) => {
+function totalPrice(items, couponDiscount = 0) {
+    let subtotal = items.reduce((itemAcc, item) => {
         return itemAcc += (item.coursePrice);
     }, 0);
 
-    return response
+    const discountAmount = (subtotal * couponDiscount) / 100;
+
+    return subtotal - discountAmount;
 }
+
 
 function isWishListed(productId, wishList) {
     return wishList.findIndex(product => product.id === productId) !== -1;

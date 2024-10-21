@@ -72,7 +72,7 @@ const CourseSection = (props) => {
                                 onClick={ClickHandler}
                                 to={`/course-single/${course.courseId}`}
                               >
-                                {course.authortitle }sdasdasda
+                                {course.authortitle }
                               </Link>
                             </li>
                           </ul>

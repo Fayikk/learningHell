@@ -20,10 +20,6 @@ const style = {
 const BankInfoModal = ({ open, onClose, bankInfo, onInputChange, onSubmit,type}) => {
 
 
-  console.log("trigger bank info modal",type)
-
-
-
   return (
 <>
     <Modal
