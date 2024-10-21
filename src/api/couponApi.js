@@ -8,7 +8,16 @@ import { baseUrl } from "./Base/baseApiModel";
 export const couponApi = createApi({
     reducerPath:"couponApi",
     baseQuery:fetchBaseQuery({
-        baseUrl:baseUrl+"Coupon"
+        baseUrl:baseUrl+"Coupon",
+        prepareHeaders:(headers,{getState}) => {
+          const state = getState();
+          const country = state.locationStore; 
+
+          const token = localStorage.getItem("token");
+          token && headers.append("Authorization","Bearer "+token)
+        
+          return headers;
+      }
     }),
     endpoints:(builder) => ({
         getCouponByCode:builder.mutation({

@@ -4,7 +4,16 @@ import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const videoApi = createApi({
     reducerPath:"videoApi",
     baseQuery:fetchBaseQuery({
-        baseUrl:baseUrl+"Video"
+        baseUrl:baseUrl+"Video",
+        prepareHeaders:(headers,{getState}) => {
+            const state = getState();
+            const country = state.locationStore; 
+
+            const token = localStorage.getItem("token");
+            token && headers.append("Authorization","Bearer "+token)
+          
+            return headers;
+        }
     }),
     endpoints:(builder) => ({
         getWatchVideoUrl:builder.mutation({
