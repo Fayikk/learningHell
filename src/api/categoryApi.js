@@ -4,7 +4,16 @@ import { baseUrl } from "./Base/baseApiModel";
 export const categoryApi = createApi({
     reducerPath:"categoryApi",
     baseQuery:fetchBaseQuery({
-        baseUrl:baseUrl+"Category"
+        baseUrl:baseUrl+"Category",
+        prepareHeaders:(headers,{getState}) => {
+            const state = getState();
+            const country = state.locationStore; 
+
+            const token = localStorage.getItem("token");
+            token && headers.append("Authorization","Bearer "+token)
+          
+            return headers;
+        }
     }),
     endpoints:(builder) => ({
         getAllCategoriesForSelected:builder.query({
