@@ -277,10 +277,10 @@ const handleSecurityCloseAgreement = () => {
                   <li>
                     <i className="fi flaticon-email"></i>education@learninghell.com
                   </li>
-                  <li>
+                  {/* <li>
                     <i className="fi flaticon-phone-call"></i>(+90) 531-014-9046 <br />
                     (+90) 531-306-2567
-                  </li>
+                  </li> */}
                   <li>
                     <i className="fi flaticon-placeholder"></i>Türkiye <br />
                   </li>
