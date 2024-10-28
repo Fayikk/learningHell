@@ -274,12 +274,12 @@ function InstructorDetail() {
       return;
     }
 
-    if (imageDimensions.width > 1170 && imageDimensions.height > 860) {
-      alert(
-        "Please check your image dimension.Image dimension so high. Max dimension is 1170x867"
-      );
-      return;
-    }
+    // if (imageDimensions.width > 2270 && imageDimensions.height > 860) {
+    //   alert(
+    //     "Please check your image dimension.Image dimension so high. Max dimension is 1170x867"
+    //   );
+    //   return;
+    // }
 
     setIsActiveButton(false);
     const formData = new FormData();

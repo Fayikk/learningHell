@@ -67,7 +67,7 @@ const LoginPage = (props) => {
             credential:response.credential
         });
         if (tokenResult && tokenResult.data && tokenResult.data.result && tokenResult.data.result.accessToken) {
-            localStorage.setItem("token", tokenResult.data.result.accessToken);
+            localStorage.setItem("token",tokenResult.data.result.accessToken);
             localStorage.setItem("refreshToken", tokenResult.data.result.refreshToken);
         // push('/home');
         push(from,{replace:true})
