@@ -70,7 +70,7 @@ const BlogList = (props) => {
                     <div className="wpo-popular-single">
                       <div className="wpo-popular-item">
                         <div className="wpo-popular-img">
-                          <img src={course.courseImage} alt="" />
+                          <img style={{height:"200px"}} src={course.courseImage} alt="" />
                           {/* <div className="thumb">
                                                     <span>${course.coursePrice}</span>
                                                 </div> */}
