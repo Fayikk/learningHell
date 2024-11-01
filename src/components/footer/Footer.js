@@ -291,7 +291,7 @@ const handleSecurityCloseAgreement = () => {
         </div>
   
         {/* Logo Konteyneri */}
-        <div className="container-logo">
+        {/* <div className="container-logo">
           <div className="logo-row">
             {cardType.map((item, i) => (
               <div
@@ -303,7 +303,7 @@ const handleSecurityCloseAgreement = () => {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   
