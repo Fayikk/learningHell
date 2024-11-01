@@ -296,12 +296,8 @@ const CheckWrap = (props) => {
   aria-describedby="keep-mounted-modal-description"
 >
   <Box sx={style}>
-    <Typography id="keep-mounted-modal-title" variant="h6" component="h2">
-      Iyzico 3d Secure
-    </Typography>
-    <Typography id="keep-mounted-modal-description" sx={{ mt: 2 }}>
+    
     {html && <iframe src={html} width="500" height="500" title="Payment"></iframe>}
-    </Typography>
   </Box>
 </Modal>
 </div>
