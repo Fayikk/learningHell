@@ -8,6 +8,15 @@ export const materialApi = createApi({
     reducerPath:"materialApi",
     baseQuery:fetchBaseQuery({
         baseUrl:baseUrl+"Material",
+        prepareHeaders:(headers,{getState}) => {
+            const state = getState();
+            const country = state.locationStore; 
+
+            const token = localStorage.getItem("token");
+            token && headers.append("Authorization","Bearer "+token)
+          
+            return headers;
+        }
     }),
     endpoints:(builder) => ({
         downloadMaterialFile:builder.mutation({
