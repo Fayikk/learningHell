@@ -40,9 +40,36 @@ export const courseProgressApi = createApi({
                 body:model
             })
         }
+      }),
+      checkAppropriateCertificate:builder.mutation({
+        query:(model)=>{
+            return ({
+                url:"/CheckCertificate",
+                method:"POST",
+                body:model
+            })
+        }
+      }),
+      checkAppropriateCertificate:builder.mutation({
+        query:(model)=>{
+            return ({
+                url:"/CheckCertificate",
+                method:"POST",
+                body:model
+            })
+        }
+      }),
+      downloadCertificate:builder.mutation({
+        query:(model)=>{
+            return ({
+                url:"/download-certificate",
+                method:"POST",
+                body:model
+            })
+        }
       })
     })
 })
 
-export const {useGetCourseProgressesMutation,useCreateCourseProgressMutation,useUpdateCourseProgressMutation} = courseProgressApi
+export const {useGetCourseProgressesMutation,useDownloadCertificateMutation,useCheckAppropriateCertificateMutation,useCreateCourseProgressMutation,useUpdateCourseProgressMutation} = courseProgressApi
 
