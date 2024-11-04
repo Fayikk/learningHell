@@ -1,0 +1,13 @@
+.course-card {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+    padding: 10px;
+  }
+  
+  @media (max-width: 768px) {
+    .course-card {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+  }
+  

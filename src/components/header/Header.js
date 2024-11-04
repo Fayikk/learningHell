@@ -22,6 +22,7 @@ import IsLoading from "../Loading/IsLoading";
 import { cartStateUpdate } from "../../store/reducers/cartSlice";
 import { ThemeProvider } from "../../main-component/Extensions/Theme/ThemeProvider";
 import ThemeToggle from "../../main-component/Extensions/Theme/ThemeToggle";
+import { useRef } from 'react';
 const Header = ({ props, onAuthStateChange }) => {
   const [menuActive, setMenuState] = useState(false);
   const authenticationState = useSelector((state) => state.authStore);
@@ -30,8 +31,7 @@ const Header = ({ props, onAuthStateChange }) => {
   const Dispatch = useDispatch();
   const { t, i18n } = useTranslation();
   const [showDropdown, setShowDropdown] = useState(false);
-  const [showLocalizationDropdown, setShowLocalizationDropdown] =
-    useState(false);
+  const [showLocalizationDropdown, setShowLocalizationDropdown] = useState(false);
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
   const [country, setCountry] = useState("");
@@ -75,7 +75,16 @@ const Header = ({ props, onAuthStateChange }) => {
       setError("Geolocation is not supported by this browser.");
     }
   }, []);
+  const timerRef = useRef(null);
 
+  const handleMouseDropdownEnter = () => {
+    clearTimeout(timerRef.current); 
+    setShowLocalizationDropdown(true); 
+  };
+
+  const handleMouseDropdownLeave = () => {
+    timerRef.current = setTimeout(() => setShowLocalizationDropdown(false), 200); 
+  };
   useEffect(() => {
     if (location) {
       const fetchCountry = async () => {
@@ -374,47 +383,51 @@ const Header = ({ props, onAuthStateChange }) => {
                     )}
                   </div>
                  
-                  <div>
-                    <Dropdown
-                      show={showLocalizationDropdown}
-                      onClick={() => handleMouseEnter("localization")}
-                      onDoubleClick={() => handleMouseLeave("localization")}
-                    >
-                      <Dropdown.Toggle
-                        variant="primary"
-                        id="dropdown-basic"
-                        style={{
-                          backgroundColor: "transparent",
-                          border: "none",
-                        }}
-                      >
-                        <a
-                          className="theme-btn"
-                          style={{ backgroundColor: "green" }}
-                        >
-                          {" "}
-                          <TbWorld></TbWorld>
-                        </a>
-                      </Dropdown.Toggle>
-                      <Dropdown.Menu style={{ borderRadius: "20px" }}>
-                        <Dropdown.Item onClick={() => changeLanguage("tr")}>
-                          Türkçe
-                        </Dropdown.Item>
-                        <Dropdown.Item onClick={() => changeLanguage("en")}>
-                          English
-                        </Dropdown.Item>
-                        <Dropdown.Item onClick={() => changeLanguage("de")}>
-                          Deutsch
-                        </Dropdown.Item>
-                        <Dropdown.Item onClick={() => changeLanguage("ru")}>
-                          РУССКИЙ
-                        </Dropdown.Item>
-                        <Dropdown.Item onClick={() => changeLanguage("hi")}>
-                          हिंदी
-                        </Dropdown.Item>
-                      </Dropdown.Menu>
-                    </Dropdown>
-                  </div>
+                  <div style={{ position: 'relative' }} onMouseEnter={handleMouseDropdownEnter} onMouseLeave={handleMouseDropdownLeave}>
+      <Dropdown show={showLocalizationDropdown}>
+        <Dropdown.Toggle
+          variant="primary"
+          id="dropdown-basic"
+          style={{
+            backgroundColor: 'transparent',
+            border: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            padding: '0',
+          }}
+        >
+          <a
+            className="theme-btn"
+            style={{
+              backgroundColor: 'green',
+              color: 'white',
+              borderRadius: '50%',
+              padding: '10px',
+              fontSize: '1.2rem',
+              transition: 'background-color 0.3s ease',
+            }}
+          >
+            <TbWorld />
+          </a>
+        </Dropdown.Toggle>
+
+        <Dropdown.Menu
+          style={{
+            borderRadius: '15px',
+            boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.15)',
+            minWidth: '150px',
+            marginTop: '8px',
+            padding: '10px 0',
+          }}
+        >
+          <Dropdown.Item onClick={() => changeLanguage("tr")}>Türkçe</Dropdown.Item>
+          <Dropdown.Item onClick={() => changeLanguage("en")}>English</Dropdown.Item>
+          <Dropdown.Item onClick={() => changeLanguage("de")}>Deutsch</Dropdown.Item>
+          <Dropdown.Item onClick={() => changeLanguage("ru")}>РУССКИЙ</Dropdown.Item>
+          <Dropdown.Item onClick={() => changeLanguage("hi")}>हिंदी</Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+    </div>
                 </div>
               </div>
             </div>
