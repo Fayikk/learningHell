@@ -50,7 +50,6 @@ export default function VideoPage({ videoId, videoRef, courseId, userId, onData}
 
   useEffect(() => {
 
-    console.log("trigger use effect")
 
     async function fetchData() {
       try {
@@ -58,33 +57,21 @@ export default function VideoPage({ videoId, videoRef, courseId, userId, onData}
         const getCourseModel = { UserId: userId, CourseId: courseId };
         if (userId.length !== 0) {
           const response = await getCourseProgress(getCourseModel);
-          console.log("trigger response",response)
           onData(response)
           if (response.data.result.completeResult) {
-            console.log("trigger has response -1")
             const videoProgress = response.data.result.completeResult.find((x) => x.videoId === videoId);
-            console.log("trigger videoProgress progress-0",videoProgress)
-
             if (videoProgress) {
-              console.log("trigger has progress-1",hasProgress)
               setHasProgress(true); 
             } else if (!hasProgress) { 
-              console.log("trigger has progress-2",hasProgress)
-
               const createModel = { UserId: userId, CourseId: courseId, VideoId: videoId };
-              console.log("trigger createModel",createModel)
               await createProgress(createModel);
               setHasProgress(true); 
             }
           } else {
-            console.log("trigger has response -2",videoId)
-
             const createModel = { UserId: userId, CourseId: courseId, VideoId: videoId };
             await createProgress(createModel);
             setHasProgress(true); 
           }
-          console.log("trigger has response -3",videoId)
-
         }
       } catch (error) {
         console.error("Error fetching course progress:", error);
@@ -115,7 +102,7 @@ export default function VideoPage({ videoId, videoRef, courseId, userId, onData}
         updateFormData.append("VideoId", videoId);
         updateFormData.append("LastWatchedTime", percentage.toFixed(2));
         await updateProgress(updateFormData);
-      }, 5000);
+      }, 30000);
 
       videoElement.addEventListener('ended', handleVideoEnd);
       return () => {
@@ -139,7 +126,6 @@ export default function VideoPage({ videoId, videoRef, courseId, userId, onData}
     };
     try {
       const response = await checkCertificate(model);
-      console.log("trigger response model", response);
       setIsCertificateReady(response.data.isSuccess); // Sertifikanın hazır olup olmadığını güncelle
     } catch (error) {
       console.error("Certificate control failed:", error);
@@ -157,7 +143,6 @@ export default function VideoPage({ videoId, videoRef, courseId, userId, onData}
   
 
     await downloadCertificate(model).then((response) => {
-      console.log(response.data)
         const fileName = fileUrl; // Dosya ismi
     // const fileExtension = fileName.split('.').pop(); // Dosya uzantısını al
     let mimeType = '';
