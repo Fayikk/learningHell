@@ -111,9 +111,14 @@ const CheckWrap = (props) => {
     }));
 
     const submitForm = async (e) => {
+        e.preventDefault();
+
+        if (!value.card_holder || !value.card_number || !value.cvv || !value.expire_month || !value.expire_year) {
+            toast.warning("Please fill out all required fields.")
+            return; 
+        }
         var formData = new FormData();
 
-        e.preventDefault();
         if (validator.allValid()) {
             // setValue({
             //     email: '',

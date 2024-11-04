@@ -44,7 +44,7 @@ export default function   Navbar({ onAuthData }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const className = scroll > 80 ? "fixed-navbar active" : "fixed-navbar";
+  const className = scroll > 80 ? "fixed-navbar" : "fixed-navbar";
 
   return (
     <div className={className}>
