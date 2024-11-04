@@ -20,7 +20,6 @@ import ErrorBoundary from './main-component/Extensions/Errors/ErrorBoundary';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
         <ParallaxProvider>
             <ErrorBoundary>
                 <ThemeProvider>
@@ -28,7 +27,6 @@ root.render(
                     </ThemeProvider>
                     </ErrorBoundary>
             </ParallaxProvider>
-        </PersistGate>
     </Provider>
 );
 

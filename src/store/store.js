@@ -23,6 +23,7 @@ import { ratingApi } from "../api/ratingApi";
 import { locationReducer } from "./reducers/locationSlice";
 import { instructorSubApi } from "../api/InstructorSubApi";
 import { couponApi } from "../api/couponApi";
+import { courseProgressApi } from "../api/courseProgressApi";
 
 
 
@@ -85,6 +86,7 @@ const store = configureStore({
         [ratingApi.reducerPath]:ratingApi.reducer,
         [instructorSubApi.reducerPath]:instructorSubApi.reducer,
         [couponApi.reducerPath]:couponApi.reducer,
+        [courseProgressApi.reducerPath]:courseProgressApi.reducer
 
     },middleware:(getDefaultMiddleware) => getDefaultMiddleware()
         .concat(
@@ -104,6 +106,7 @@ const store = configureStore({
             ,ratingApi.middleware
             ,instructorSubApi.middleware
             ,couponApi.middleware
+            ,courseProgressApi.middleware
             // ,errorLoggerMiddleware
             )
 })

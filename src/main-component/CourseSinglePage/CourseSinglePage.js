@@ -32,10 +32,6 @@ const CourseSinglePage = () => {
 
   useEffect(() => {
     if (data) {
-
-      console.log("trigger data",data)
-
-
       setCourse(data.result.item1);
     }
 
