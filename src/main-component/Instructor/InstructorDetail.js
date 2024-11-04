@@ -461,7 +461,7 @@ function InstructorDetail() {
         const img = new Image();
         img.onload = () => {
           setImageDimensions({ width: img.width, height: img.height });
-          if (img.width > 1170 && img.height > 867) {
+          if (img.width > 4170 && img.height > 2867) {
             toast.error("Image dimension so high. Max dimension is 1170x867");
           } else {
             setImage(file);

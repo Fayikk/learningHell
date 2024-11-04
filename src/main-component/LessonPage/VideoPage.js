@@ -148,56 +148,56 @@ export default function VideoPage({ videoId, videoRef, courseId, userId, onData}
 
 
 
-  
-  const downloadPdf = async () => {
+
+  const downloadPdf = async (fileUrl) => {
     const model = {
       UserId: userId,
       CourseId: courseId,
     };
   
-    
-    try {
 
-      const response = await downloadCertificate(model)
-      console.log("response",response)
-      // Backend'den PDF içeriğini almak için istek yap
-      // const response = await dispatch(downloadCertificate(model));
-  
-      // Eğer response bir hata içeriyorsa kontrol et
-      // if (!response || !response.data || !response.data.pdf) {
-      //   throw new Error('PDF indirme başarısız oldu.');
-      // }
-  
-      const pdfBase64 = response.data.pdf; // Base64 string
-  
-      // Base64 string'i byte dizisine çevir
-      const byteCharacters = atob(pdfBase64); // Base64 string'i çöz
-      const byteNumbers = new Array(byteCharacters.length);
-  
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-  
-      const pdfBlob = new Blob([new Uint8Array(byteNumbers)], { type: 'application/pdf' });
-      const pdfUrl = URL.createObjectURL(pdfBlob);
-  
-      // İndirme bağlantısını oluştur
-      const link = document.createElement('a');
-      link.href = pdfUrl;
-      link.download = 'certificate.pdf'; // İndirme ismi
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+    await downloadCertificate(model).then((response) => {
+      console.log(response.data)
+        const fileName = fileUrl; // Dosya ismi
+    // const fileExtension = fileName.split('.').pop(); // Dosya uzantısını al
+    let mimeType = '';
+      // console.log("trigger extension",fileExtension)
+        
+    // switch (fileExtension) {
+    //   case 'pdf':
+    //     mimeType = 'application/pdf';
+    //     break;
+    //   case 'jpg':
+    //   case 'jpeg':
+    //     mimeType = 'image/jpeg';
+    //     break;
+    //   case 'png':
+    //     mimeType = 'image/png';
+    //     break;
+    //   case 'txt':
+    //     mimeType = 'text/plain';
+    //     break;
+    //   case 'doc':
+    //     mimeType = 'application/msword';
+    //     break;
+    //   case 'docx':
+    //     mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    //     break;
+    //   default:
+    //     mimeType = 'application/octet-stream'; // Genel bir binary dosya tipi
+    //     break;
+    // }
+
+    // Dosya için base64 URI oluşturma
+    const linkSource = `data:application/pdf;base64,${response.data}`;
+    const downloadLink = document.createElement("a");
+    downloadLink.href = linkSource;
+    downloadLink.download = "LearningHell_EducationCompleteCertificate";
+    downloadLink.click();
+                toast.success("Download process is success completed")
       
-      // Oluşturulan URL'yi serbest bırak
-      URL.revokeObjectURL(pdfUrl);
-  
-    } catch (error) {
-      console.error('Hata:', error);
-    }
-  }
-  
-
+    });
+  };
 
 
 
