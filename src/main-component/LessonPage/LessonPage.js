@@ -84,13 +84,11 @@ const LessonPage = () => {
 
   const onData = (progressData) => {
 
-    console.log("trigger progressData",progressData)
 
 
     if (progressData ) {
 
       if (progressData.data.result.completeResult) {
-        console.log("trigger complete result",progressData.data.result.completeResult)
         setVideoProgress(progressData.data.result.completeResult)
         // changeVideo(progressData.data.result.firstIncompletePublicId,videoId)
       }
@@ -208,7 +206,6 @@ const LessonPage = () => {
     }
 
     if (videoProgress.length > 0) {
-      console.log("trigger video id",videoProgress)
       fetchData();
       
     }
@@ -216,7 +213,6 @@ const LessonPage = () => {
   }, [videoProgress]);
 
   const checkCompletionStatus = (videoId) => {
-    console.log("trigger videoId")
     return completionStatus[videoId] || null; 
   };
 
