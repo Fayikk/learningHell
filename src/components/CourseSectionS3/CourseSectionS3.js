@@ -28,7 +28,7 @@ const CourseSectionS3 = (props) => {
     const savePageNumber = () => {
         localStorage.setItem("currentPageNumber",props.paginationNumber)
     }
-
+    console.log("trigger props",props)
 
     const [courses, setCourses] = useState([]);
     useEffect(() => {
@@ -52,7 +52,18 @@ const CourseSectionS3 = (props) => {
                                        <div className="wpo-popular-img">
                                            <img src={course.courseImage} style={{height:"200px"}} alt="" className="course-image" />
                                            <div className="thumb">
-                                               <span>{MatchLocationToCurrency()}{course.coursePrice}</span>
+                                            
+                          {
+  course.coursePrice === 0 ? (
+    <span>free</span>
+  ) : (
+    <>
+      <span>{MatchLocationToCurrency()}{course.coursePrice}</span>
+    </>
+  )
+}
+
+                                             
                                            </div>
                                        </div>
                                    </div>

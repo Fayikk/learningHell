@@ -55,8 +55,20 @@ const CourseSection = (props) => {
                         <img style={{height:"200px"}} src={course.courseImage} alt="" />
                         <div className="thumb">
                           <span>
-                            {MatchLocationToCurrency()}
-                            {course.coursePrice}
+
+                          {
+  course.coursePrice === "0" ? (
+    "free"
+  ) : (
+    <>
+      {MatchLocationToCurrency()}
+      {course.coursePrice}
+    </>
+  )
+}
+
+
+                          
                           </span>{" "}
                           {/* TL işareti */}
                         </div>

@@ -100,6 +100,7 @@ const LessonPage = () => {
   useEffect(() => {
     if (data) {
       setCourseInsideDetail(data.result.item1.sections);
+      console.log("trigger course inside detail",data.result.item1.sections)
         localStorage.removeItem("willSelectedVideo");
      
     }

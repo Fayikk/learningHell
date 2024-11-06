@@ -39,8 +39,15 @@ export const studentCourseApi = createApi({
                 method:"POST",
                 url:`${value}`
             })
+        }),
+        giftCourse:builder.mutation({
+            query:(giftCourseModel) => ({
+                method:"POST",
+                url:'/GiftCourse',
+                body:giftCourseModel
             })
+        })
     })
 })
 
-export const {useIsCourseHaveStudentMutation,useThisCourseEnrolledUserMutation,useGetStudentCoursesBySearchMutation} = studentCourseApi
+export const {useIsCourseHaveStudentMutation,useGiftCourseMutation,useThisCourseEnrolledUserMutation,useGetStudentCoursesBySearchMutation} = studentCourseApi

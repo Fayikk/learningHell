@@ -40,7 +40,17 @@ const Sidebar = (props) => {
     <div className=" flex justify-between">
       <div className="flex items-center gap-2">
         <span className="text-xl font-bold text-black rounded-full p-4 bg-themeOrange px-3">
-          {MatchLocationToCurrency()} {props.courseDetail.coursePrice}
+                                                   
+        {
+  props.courseDetail.coursePrice === 0 ? (
+    <span>free</span>
+  ) : (
+    <>
+      <span>{MatchLocationToCurrency()}{props.courseDetail.coursePrice}</span>
+    </>
+  )
+}
+
         </span>
         <span className="text-black/75 text-[15px]">Language:</span>
         <span className="text-black/75 font-bold text-[15px]">

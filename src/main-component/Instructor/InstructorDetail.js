@@ -87,6 +87,7 @@ function InstructorDetail() {
     categoryId: "",
     introductionVideo: "",
     courseImage: "",
+    isFree:false,
   });
   const [instructorDetails] = useInstructorSubDetailMutation();
   const [introductionVideo, setIntroductionVideo] = useState(null);
@@ -239,7 +240,7 @@ function InstructorDetail() {
     }
   }
 
-
+  console.log("trigger course model",courseModel.isFree)
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -291,6 +292,7 @@ function InstructorDetail() {
     formData.append("Image", image);
     formData.append("ImageUrl", courseModel.imageUrl);
     formData.append("CategoryId", courseModel.categoryId);
+    formData.append("IsFree",courseModel.isFree)
 
     await createCourseAsync(formData).then((response) => {
       if (response.data.isSuccess) {
@@ -506,230 +508,264 @@ function InstructorDetail() {
         {t("Bank Detail")}
       </Button>
     </div>
-          <Modal
-    open={open}
-    onClose={handleClose}
-    aria-labelledby="modal-modal-title"
-    aria-describedby="modal-modal-description"
-  >
-    <Box sx={{
-      ...style, 
-      p: 4, 
-      bgcolor: 'background.paper', 
-      borderRadius: 3, 
-      boxShadow: 24, 
-      maxWidth: '600px', 
-      margin: '0 auto', 
-      position: 'relative',
-      maxHeight: '80vh', // Modal yüksekliğini sınırla
-    overflowY: 'auto'  // Uzun içerikler için dikey kaydırma  
-    }}>
-      <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ mb: 3, fontWeight: 'bold', textAlign: 'center' }}>
-        {isUpdateProcess ? t("Update Course") : t("Create Course")}
-      </Typography>
-
-      <div className="col" style={{ gap: '20px', display: 'flex', flexDirection: 'column' }}>
-        
-        <div className="row" style={{ display: 'flex', flexDirection: 'column' }}>
-          <Input
-            type="text"
-            placeholder={t("Course Name")}
-            value={courseModel.courseName || ""}
-            onChange={(e) =>
-              setCourseModel({
-                ...courseModel,
-                courseName: e.target.value,
-              })
-            }
-            style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
-          />
-        </div>
-        <span style={{
-    fontWeight: '600',
-    fontSize: '18px',
-    color: '#333',
-    display: 'inline-block',
-    marginBottom: '10px',
-    textTransform: 'uppercase',
-    letterSpacing: '1px',
-    borderBottom: '2px solid #4CAF50',
-    paddingBottom: '5px'
+    <Modal
+  open={open}
+  onClose={handleClose}
+  aria-labelledby="modal-modal-title"
+  aria-describedby="modal-modal-description"
+>
+  <Box sx={{
+    ...style,
+    p: 4,
+    bgcolor: 'background.paper',
+    borderRadius: 3,
+    boxShadow: 24,
+    maxWidth: '600px',
+    margin: '0 auto',
+    position: 'relative',
+    maxHeight: '80vh', // Modal yüksekliğini sınırla
+    overflowY: 'auto'  // Uzun içerikler için dikey kaydırma
   }}>
-    {t("Course Price - The amount of money must be entered in Turkish lira")}
-  </span>
-        <div className="row" style={{ display: 'flex', flexDirection: 'column' }}>
-          <Input
-            type="number"
-            placeholder={t("Course Price")}
-            value={courseModel.coursePrice || 0}
-            onChange={(e) =>
-              setCourseModel({
-                ...courseModel,
-                coursePrice: e.target.value,
-              })
-            }
-            style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
-          />
-        </div>
+    <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ mb: 3, fontWeight: 'bold', textAlign: 'center' }}>
+      {isUpdateProcess ? t("Update Course") : t("Create Course")}
+    </Typography>
 
-        <div className="row" style={{ display: 'flex', flexDirection: 'column' }}>
-          <select
-            onChange={(e) =>
-              setCourseModel({
-                ...courseModel,
-                courseLanguage: e.target.value,
-              })
-            }
-            placeholder={t("Course Language")}
-            title="languages"
-            style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
-          >
-            <option value="" disabled selected>
-              {t("Course Language")}
-            </option>
-            {Languages.map((language,index) => (
-              <option key={language[index]} value={language}>
-                {language}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="row" style={{ display: 'flex', flexDirection: 'column' }}>
-          <Input
-            type="text"
-            placeholder={t("Course Description")}
-            value={courseModel.courseDescription || ""}
-            onChange={(e) =>
-              setCourseModel({
-                ...courseModel,
-                courseDescription: e.target.value,
-              })
-            }
-            style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
-          />
-        </div>
-
-        <div className="row" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <span style={{
-    fontWeight: '600',
-    fontSize: '18px',
-    color: '#333',
-    display: 'inline-block',
-    marginBottom: '10px',
-    textTransform: 'uppercase',
-    letterSpacing: '1px',
-    borderBottom: '2px solid #4CAF50',
-    paddingBottom: '5px'
-  }}>
-    Introduction Video
-  </span>
-
-          {courseModel.introductionVideo ? (
-            <video src={courseModel.introductionVideo} controls style={{ width: '100%', borderRadius: '10px' }}></video>
-          ) : (
-            <p>No video uploaded</p>
-          )}
-          <Input
-            type="file"
-            placeholder={t("Introduction Video")}
-            onChange={(e) => setIntroductionVideo(e.target.files[0])}
-          />
-        </div>
-
-        <div className="row" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-
-
-        <span style={{
-    fontWeight: '600',
-    fontSize: '18px',
-    color: '#333',
-    display: 'inline-block',
-    marginBottom: '10px',
-    textTransform: 'uppercase',
-    letterSpacing: '1px',
-    borderBottom: '2px solid #4CAF50',
-    paddingBottom: '5px'
-  }}>
-    {t("Course Image")}
-  </span>
-          {courseModel.courseImage ? (
-            <img src={courseModel.courseImage} alt="Course" style={{ width: '100%', borderRadius: '10px' }} />
-          ) : (
-            <p>No image uploaded</p>
-          )}
-          <Input
-            type="file"
-            placeholder={t("Image")}
-            onChange={handleImageChange}
-          />
-        </div>
-
-        <div className="row" style={{ display: 'flex', flexDirection: 'column' }}>
-          <Input
-            type="text"
-            placeholder={t("Image Url (Optional)")}
-            onChange={(e) =>
-              setCourseModel({
-                ...courseModel,
-                imageUrl: e.target.value,
-              })
-            }
-            style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
-          />
-        </div>
-
-        <div className="row" style={{ display: 'flex', flexDirection: 'column' }}>
-          <select
-            onChange={(e) =>
-              setCourseModel({
-                ...courseModel,
-                categoryId: e.target.value,
-              })
-            }
-            placeholder={t("Choose Category")}
-            title="categories"
-            style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
-          >
-            <option value="" disabled selected>
-              {t("Choose Category")}
-            </option>
-            {categories.map((category) => (
-              <option key={category.categoryId} value={category.categoryId}>
-                {category.categoryName}
-              </option>
-            ))}
-          </select>
-        </div>
+    <div className="col" style={{ gap: '20px', display: 'flex', flexDirection: 'column' }}>
+      <div className="row" style={{ display: 'flex', flexDirection: 'column' }}>
+        <Input
+          type="text"
+          placeholder={t("Course Name")}
+          value={courseModel.courseName || ""}
+          onChange={(e) =>
+            setCourseModel({
+              ...courseModel,
+              courseName: e.target.value,
+            })
+          }
+          style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
+        />
       </div>
 
-      <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-        {!isUpdateProcess ? (
-          <Button 
-            disabled={!isActiveButton} 
-            onClick={createCourse} 
-            variant="contained" 
-            color="primary" 
-            sx={{ mt: 2, width: '100%' }}
-          >
-            {t("Save Course")}
-          </Button>
-        ) : (
-          <Button 
-            disabled={!isActiveButton} 
-            onClick={updateCourse} 
-            variant="contained" 
-            color="primary" 
-            sx={{ mt: 2, width: '100%' }}
-          >
-            {t("Update Course")}
-          </Button>
-        )}
-      </Typography>
+      <span style={{
+        fontWeight: '600',
+        fontSize: '18px',
+        color: '#333',
+        display: 'inline-block',
+        marginBottom: '10px',
+        textTransform: 'uppercase',
+        letterSpacing: '1px',
+        borderBottom: '2px solid #4CAF50',
+        paddingBottom: '5px'
+      }}>
+        {t("Course Price - The amount of money must be entered in Turkish lira")}
+      </span>
+      <div className="row" style={{ display: 'flex', flexDirection: 'column' }}>
+        <Input
+          type="number"
+          placeholder={t("Course Price")}
+          value={courseModel.isFree ? 0 : courseModel.coursePrice || 0} // Fiyat sıfır ve disable olur, eğer Ücretsiz seçildiyse
+          onChange={(e) =>
+            setCourseModel({
+              ...courseModel,
+              coursePrice: e.target.value,
+            })
+          }
+          disabled={courseModel.isFree} // Eğer Ücretsiz seçildiyse disable olacak
+          style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
+        />
+      </div>
 
-      {!isActiveButton && <Spinner animation="border" sx={{ marginTop: '10px', textAlign: 'center' }} />}
-    </Box>
-  </Modal>
+      {/* Yeni "Is Free" alanı eklendi */}
+      <div className="row" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <label style={{
+          fontWeight: '600',
+          fontSize: '18px',
+          color: '#333',
+          display: 'inline-block',
+          marginBottom: '10px',
+          textTransform: 'uppercase',
+          letterSpacing: '1px',
+          borderBottom: '2px solid #4CAF50',
+          paddingBottom: '5px'
+        }}>
+          {t("Is this course free?")}
+        </label>
+        <input
+          type="checkbox"
+          checked={courseModel.isFree}
+          onChange={(e) => {
+            console.log("trigger target checked",e.target.checked)
+            const value = e.target.checked;
+            // isFree durumunu güncelle
+            if (value) {
+              setCourseModel({ ...courseModel, coursePrice: 0 ,isFree:true}); // Ücretsiz seçildiyse fiyatı sıfırla
+            }
+            else {
+              setCourseModel({ ...courseModel ,isFree:false}); // Ücretsiz seçildiyse fiyatı sıfırla
+
+            }
+          }}
+          style={{ padding: '10px' }}
+        />
+      </div>
+
+      <div className="row" style={{ display: 'flex', flexDirection: 'column' }}>
+        <select
+          onChange={(e) =>
+            setCourseModel({
+              ...courseModel,
+              courseLanguage: e.target.value,
+            })
+          }
+          placeholder={t("Course Language")}
+          title="languages"
+          style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
+        >
+          <option value="" disabled selected>
+            {t("Course Language")}
+          </option>
+          {Languages.map((language, index) => (
+            <option key={language[index]} value={language}>
+              {language}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="row" style={{ display: 'flex', flexDirection: 'column' }}>
+        <Input
+          type="text"
+          placeholder={t("Course Description")}
+          value={courseModel.courseDescription || ""}
+          onChange={(e) =>
+            setCourseModel({
+              ...courseModel,
+              courseDescription: e.target.value,
+            })
+          }
+          style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
+        />
+      </div>
+
+      <div className="row" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <span style={{
+          fontWeight: '600',
+          fontSize: '18px',
+          color: '#333',
+          display: 'inline-block',
+          marginBottom: '10px',
+          textTransform: 'uppercase',
+          letterSpacing: '1px',
+          borderBottom: '2px solid #4CAF50',
+          paddingBottom: '5px'
+        }}>
+          Introduction Video
+        </span>
+
+        {courseModel.introductionVideo ? (
+          <video src={courseModel.introductionVideo} controls style={{ width: '100%', borderRadius: '10px' }}></video>
+        ) : (
+          <p>No video uploaded</p>
+        )}
+        <Input
+          type="file"
+          placeholder={t("Introduction Video")}
+          onChange={(e) => setIntroductionVideo(e.target.files[0])}
+        />
+      </div>
+
+      <div className="row" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <span style={{
+          fontWeight: '600',
+          fontSize: '18px',
+          color: '#333',
+          display: 'inline-block',
+          marginBottom: '10px',
+          textTransform: 'uppercase',
+          letterSpacing: '1px',
+          borderBottom: '2px solid #4CAF50',
+          paddingBottom: '5px'
+        }}>
+          {t("Course Image")}
+        </span>
+        {courseModel.courseImage ? (
+          <img src={courseModel.courseImage} alt="Course" style={{ width: '100%', borderRadius: '10px' }} />
+        ) : (
+          <p>No image uploaded</p>
+        )}
+        <Input
+          type="file"
+          placeholder={t("Image")}
+          onChange={handleImageChange}
+        />
+      </div>
+
+      <div className="row" style={{ display: 'flex', flexDirection: 'column' }}>
+        <Input
+          type="text"
+          placeholder={t("Image Url (Optional)")}
+          onChange={(e) =>
+            setCourseModel({
+              ...courseModel,
+              imageUrl: e.target.value,
+            })
+          }
+          style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
+        />
+      </div>
+
+      <div className="row" style={{ display: 'flex', flexDirection: 'column' }}>
+        <select
+          onChange={(e) =>
+            setCourseModel({
+              ...courseModel,
+              categoryId: e.target.value,
+            })
+          }
+          placeholder={t("Choose Category")}
+          title="categories"
+          style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }}
+        >
+          <option value="" disabled selected>
+            {t("Choose Category")}
+          </option>
+          {categories.map((category) => (
+            <option key={category.categoryId} value={category.categoryId}>
+              {category.categoryName}
+            </option>
+          ))}
+        </select>
+      </div>
+    </div>
+
+    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+      {!isUpdateProcess ? (
+        <Button 
+          disabled={!isActiveButton} 
+          onClick={createCourse} 
+          variant="contained" 
+          color="primary" 
+          sx={{ mt: 2, width: '100%' }}
+        >
+          {t("Save Course")}
+        </Button>
+      ) : (
+        <Button 
+          disabled={!isActiveButton} 
+          onClick={updateCourse} 
+          variant="contained" 
+          color="primary" 
+          sx={{ mt: 2, width: '100%' }}
+        >
+          {t("Update Course")}
+        </Button>
+      )}
+    </Typography>
+
+    {!isActiveButton && <Spinner animation="border" sx={{ marginTop: '10px', textAlign: 'center' }} />}
+  </Box>
+</Modal>
+
 
   <BankInfoModal
         open={openBankInfoModal}
