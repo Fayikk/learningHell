@@ -68,6 +68,8 @@ const CourseSinglePage = () => {
   
     var result = await giftCourse(courseModel).then((response) => {
       if (response.error && response.error.status === 401) {
+        navigate("/login", { state: { from: window.location.pathname } });
+
         toast.warning("Please login first");
         return;
       }
