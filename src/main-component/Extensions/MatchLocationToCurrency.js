@@ -25,7 +25,6 @@ export const MatchLocationToCurrency = () => {
     };
 
     var location = Cookies.get("LocationData");
-
     switch (location) {
         case "Turkey":
             return currencySymbols.TRY;

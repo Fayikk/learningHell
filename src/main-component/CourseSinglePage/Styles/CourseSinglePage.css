@@ -1,0 +1,6 @@
+video[poster]{
+    height:100%;
+width:100%;
+    object-fit: fill;
+    background:transparent no-repeat 0 0; 
+    }

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Comments from "../Comment/Comments";
 import { useCreateCourseProgressMutation, useDownloadCertificateMutation, useGetCourseProgressesMutation, useUpdateCourseProgressMutation } from "../../api/courseProgressApi";
 import { useCheckAppropriateCertificateMutation } from "../../api/courseProgressApi";
+import { Toast } from "react-bootstrap";
 export default function VideoPage({ videoId, videoRef, courseId, userId, onData}) {
 
 
@@ -179,7 +180,7 @@ export default function VideoPage({ videoId, videoRef, courseId, userId, onData}
     downloadLink.href = linkSource;
     downloadLink.download = "LearningHell_EducationCompleteCertificate";
     downloadLink.click();
-                toast.success("Download process is success completed")
+    Toast.success("Download process is success completed")
       
     });
   };
