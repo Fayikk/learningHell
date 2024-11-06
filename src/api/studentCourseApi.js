@@ -18,12 +18,14 @@ export const studentCourseApi = createApi({
             return headers;
         }
     }),
+    tagTypes:["studentCourse"],
     endpoints:(builder) => ({
         isCourseHaveStudent:builder.mutation({
             query:(studentModel) => ({
                 method:"POST",
                 body:studentModel
-            })
+            }),
+            invalidatesTags:["studentCourse"]
         }),
         thisCourseEnrolledUser:builder.mutation({
             query:(model) => {
@@ -32,20 +34,26 @@ export const studentCourseApi = createApi({
                     url:`IsEnrolledCourse`,
                     body:model
                 }
-            }
+            },
+            invalidatesTags:["studentCourse"]
+            
         }),
         getStudentCoursesBySearch:builder.mutation({
             query:(value)=>({
                 method:"POST",
                 url:`${value}`
-            })
+            }),
+            providesTags:["studentCourse"]
+
         }),
         giftCourse:builder.mutation({
             query:(giftCourseModel) => ({
                 method:"POST",
-                url:'/GiftCourse',
+                url:'/FreeCourse',
                 body:giftCourseModel
-            })
+            }),
+            invalidatesTags:["studentCourse"]
+
         })
     })
 })

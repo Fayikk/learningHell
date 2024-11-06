@@ -59,28 +59,31 @@ const CourseSinglePage = () => {
     console.log("trigge",course.courseId)
     navigate(`/lessons/${course.courseId}`);
   };
-  // public string Email { get; set; }   
-  // public string CourseId { get; set; }
-
   const giftCourseThisUser = async () => {
-
+    console.log("trigger");
     const courseModel = {
-      email:authenticationState.email,
-      courseId:slug
-    }
-
-
+      email: authenticationState.email,
+      courseId: slug
+    };
+  
     var result = await giftCourse(courseModel).then((response) => {
-      console.log("trigger response",response)
+      if (response.error && response.error.status === 401) {
+        toast.warning("Please login first");
+        return;
+      }
+  
       if (response.data.isSuccess) {
-        toast.success(response.data.message)
+        toast.success(response.data.message);
+  
+        setTimeout(() => {
+          navigate(0); 
+        }, 1000);
+      } else {
+        toast.warning(response.data.message);
       }
-      else{
-        toast.warning(response.data.message)
-      }
-    })  }
-
-
+    });
+  };
+  
 
 
   return (
