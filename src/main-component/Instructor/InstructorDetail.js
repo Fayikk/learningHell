@@ -361,7 +361,7 @@ function InstructorDetail() {
     formData.append("Image", image);
     formData.append("ImageUrl", courseModel.imageUrl);
     formData.append("CategoryId", courseModel.categoryId);
-    formData.append("IsFree", courseModel.isFree == undefined ? null : courseModel.isFree);
+    formData.append("IsFree", courseModel.isFree == undefined ? false : courseModel.isFree);
 
     const courseUpdateModel = {
       courseId: courseId,
