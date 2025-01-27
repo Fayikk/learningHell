@@ -134,7 +134,7 @@ const CourseSinglePage = () => {
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-10 items-start">
         <div className="flex sm:flex-col flex-1 flex-col justify-between sm:gap-8 gap-4">
           <CourseSingleAccardion courseDetail={course} />
-          <Review />
+          {/* <Review /> */}
         </div>
         <InstructorDetails instructor={data?.result?.item1?.user} />
       </div>
