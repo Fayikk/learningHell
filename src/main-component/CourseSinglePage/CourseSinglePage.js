@@ -140,9 +140,9 @@ const CourseSinglePage = () => {
       </div>
     </div>
     <Footer />
-    <Scrollbar />
+    <Scrollbar /> 
   </Fragment>
-  
+  //
   );
 };
 
