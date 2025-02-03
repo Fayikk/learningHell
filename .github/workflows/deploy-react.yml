@@ -54,13 +54,13 @@ jobs:
         shell: powershell
         run: |
           if ("${{ github.ref }}" -eq "refs/heads/test") {
-            $websiteName = "courseClient_test"
-            $appPoolName = "courseClient"
-            $destinationPath = "C:\inetpub\wwwroot\Course_Client_Test"
+            $websiteName = "LearningHell_Client"
+            $appPoolName = "LearningHell_Client"
+            $destinationPath = "C:\LearningHell_Client"
           } elseif ("${{ github.ref }}" -eq "refs/heads/main") {
-            $websiteName = "courseClient"
-            $appPoolName = "courseClient"
-            $destinationPath = "C:\inetpub\wwwroot\Course_Client"
+            $websiteName = "LearningHell_Client"
+            $appPoolName = "LearningHell_Client"
+            $destinationPath = "C:\LearningHell_Client"
           } else {
             echo "Unknown branch"
             exit 1
