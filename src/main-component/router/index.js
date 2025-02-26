@@ -42,6 +42,9 @@ import { AuthProvider } from '../Extensions/AuthProvider';
 import PrivateRoute from '../Extensions/PrivateRoute';
 import MyAccount from '../Account/MyAccount';
 import PrivateEnrolledCourseRoute from '../Extensions/PrivateEnrolledCourseRoute';
+import TagsManagement from '../../components/Tags/TagsManagement';
+import NewsManagement from '../../components/News/NewsManagement';
+import NewsPortal from '../../components/News/NewsPortal';
 const AllRoute = () => {
   return (
     <div className="App">
@@ -92,6 +95,13 @@ const AllRoute = () => {
           <Route path='verify-email/:slug' element={<VerifyEmail></VerifyEmail>} ></Route>
           <Route path='verify-digit/:slug' element={<VerifyDigitCode></VerifyDigitCode>} ></Route>
           <Route path='MyAccount' element={<MyAccount></MyAccount>} ></Route>
+          <Route path="/admin/tags" element={<TagsManagement />} />
+          <Route path="/admin/news" element={<NewsManagement />} />
+          <Route path="/news" element={<NewsPortal />} />
+      <Route path="/news/category/:category" element={<NewsPortal />} />
+      <Route path="/news/tag/:tagName" element={<NewsPortal />} />
+      <Route path="/news/search" element={<NewsPortal />} />
+      <Route path="/news/:slug" element={<NewsPortal />} />
         </Routes>
 
       </BrowserRouter>

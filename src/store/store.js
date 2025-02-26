@@ -24,6 +24,8 @@ import { locationReducer } from "./reducers/locationSlice";
 import { instructorSubApi } from "../api/InstructorSubApi";
 import { couponApi } from "../api/couponApi";
 import { courseProgressApi } from "../api/courseProgressApi";
+import { tagsApi } from "../api/tagsApi";
+import { newsApi } from "../api/newsApi";
 
 
 
@@ -86,7 +88,9 @@ const store = configureStore({
         [ratingApi.reducerPath]:ratingApi.reducer,
         [instructorSubApi.reducerPath]:instructorSubApi.reducer,
         [couponApi.reducerPath]:couponApi.reducer,
-        [courseProgressApi.reducerPath]:courseProgressApi.reducer
+        [courseProgressApi.reducerPath]:courseProgressApi.reducer,
+        [tagsApi.reducerPath]:tagsApi.reducer,
+        [newsApi.reducerPath]:newsApi.reducer
 
     },middleware:(getDefaultMiddleware) => getDefaultMiddleware()
         .concat(
@@ -107,6 +111,8 @@ const store = configureStore({
             ,instructorSubApi.middleware
             ,couponApi.middleware
             ,courseProgressApi.middleware
+            ,tagsApi.middleware
+            ,newsApi.middleware
             // ,errorLoggerMiddleware
             )
 })
