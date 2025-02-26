@@ -326,18 +326,26 @@ const Header = ({ props, onAuthStateChange }) => {
                                 </span>
                               </a>
                             </Dropdown.Toggle>
-
                             <Dropdown.Menu style={{ borderRadius: "20px" }}>
                               <Dropdown.Item as={Link} to="/MyCourse">
                                 {t("My Courses")}
                               </Dropdown.Item>
+                             
                               {authenticationState.role &&
                               authenticationState.role.includes(
                                 "Instructor"
                               ) ? (
+                                <>
                                 <Dropdown.Item as={Link} to="/Instructor">
                                   {t("Instructor")}
                                 </Dropdown.Item>
+                                <Dropdown.Item as={Link} to="/admin/tags">
+                                {t("Add Tags")}
+                              </Dropdown.Item>
+                              <Dropdown.Item as={Link} to="/admin/news">
+                                {t("Add News")}
+                              </Dropdown.Item>
+                                </>
                               ) : (
                                 ""
                               )}

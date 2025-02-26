@@ -25,6 +25,8 @@ import {
   Spinner
 } from 'react-bootstrap';
 import { FaPlus, FaEdit, FaTrash, FaLink, FaUnlink, FaSearch } from 'react-icons/fa';
+import MustBeAuthorize from '../../Wrappers/HoC/MustBeAuthorize';
+import InstructorAuth from '../../Wrappers/HoC/InstructorAuth';
 
 const TagsManagement = () => {
   // State for tag operations
@@ -414,4 +416,4 @@ const TagsManagement = () => {
   );
 };
 
-export default TagsManagement;
+export default InstructorAuth(TagsManagement);

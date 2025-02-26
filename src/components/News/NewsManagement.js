@@ -4,6 +4,8 @@ import { useGetAllNewsQuery, useCreateNewsMutation, useUpdateNewsMutation, useDe
 import { useGetAllTagsQuery } from '../../api/tagsApi';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import MustBeAuthorize from '../../Wrappers/HoC/MustBeAuthorize';
+import InstructorAuth from '../../Wrappers/HoC/InstructorAuth';
 
 const NewsManagement = () => {
   // States
@@ -361,4 +363,4 @@ const NewsManagement = () => {
   );
 };
 
-export default NewsManagement;
+export default InstructorAuth(NewsManagement);
