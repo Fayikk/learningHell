@@ -97,7 +97,7 @@ const AllRoute = () => {
           <Route path='MyAccount' element={<MyAccount></MyAccount>} ></Route>
           <Route path="/admin/tags" element={<TagsManagement />} />
           <Route path="/admin/news" element={<NewsManagement />} />
-          <Route path="/news" element={<NewsPortal />} />
+          <Route path="/blogs" element={<NewsPortal />} />
       <Route path="/news/category/:category" element={<NewsPortal />} />
       <Route path="/news/tag/:tagName" element={<NewsPortal />} />
       <Route path="/news/search" element={<NewsPortal />} />
