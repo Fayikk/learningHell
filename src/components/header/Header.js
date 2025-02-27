@@ -210,7 +210,7 @@ const Header = ({ props, onAuthStateChange }) => {
     </ul>
   </li>
   <li className="menu-item">
-    <Link onClick={ClickHandler} to="/news" style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+    <Link onClick={ClickHandler} to="/blogs" style={{ display: "flex", alignItems: "center", gap: "5px" }}>
       {t("Blog")}
     </Link>
   </li>
