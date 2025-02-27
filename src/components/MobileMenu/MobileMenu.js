@@ -52,6 +52,11 @@ const MobileMenu = () => {
       title: t("Cart"),
       link: "/cart",
     },
+    {
+      id: 3,
+      title: t("Blogs"),
+      link: "/blog",
+    }
   ];
 
   return (
