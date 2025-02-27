@@ -55,7 +55,7 @@ const MobileMenu = () => {
     {
       id: 3,
       title: t("Blogs"),
-      link: "/blog",
+      link: "/blogs",
     }
   ];
 
