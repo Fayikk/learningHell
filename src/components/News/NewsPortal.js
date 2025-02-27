@@ -14,7 +14,7 @@ import { FaSearch, FaEye, FaCalendarAlt, FaTag, FaChevronRight } from 'react-ico
 import './style/News.css'; // We'll create this later
 import Navbar from '../Navbar/Navbar';
 import Footer from '../footer/Footer';
-
+import DOMPurify from 'dompurify';
 const NewsPortal = () => {
   // Router hooks
   const { slug, category } = useParams();
@@ -52,6 +52,32 @@ const NewsPortal = () => {
       navigate(`/news/search?q=${encodeURIComponent(searchTerm)}`);
     }
   };
+
+
+  useEffect(() => {
+    // HTML etiketlerini ve özelliklerini güvenli hale getirmek için DOMPurify'ı yapılandırın
+    DOMPurify.addHook('afterSanitizeAttributes', function(node) {
+      // Tüm img etiketlerine sınıflar ekleyin
+      if (node.tagName === 'IMG') {
+        node.setAttribute('class', 'img-fluid rounded');
+      }
+      
+      // Tüm bağlantıları yeni sekmede açın ve güvenlik ekleyin
+      if (node.tagName === 'A') {
+        node.setAttribute('target', '_blank');
+        node.setAttribute('rel', 'noopener noreferrer');
+      }
+    });
+  }, []);
+
+  const sanitizeContent = (html) => {
+    return DOMPurify.sanitize(html, {
+      ADD_TAGS: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'p', 'br', 'a', 'img', 'strong', 'em', 'blockquote', 'table', 'tr', 'td', 'th', 'thead', 'tbody'],
+      ADD_ATTR: ['href', 'src', 'alt', 'class', 'target', 'rel']
+    });
+  };
+
+
 
   // Increment view count when reading an article
   useEffect(() => {
@@ -181,7 +207,7 @@ const NewsPortal = () => {
                   
                   <div 
                     className="article-content"
-                    dangerouslySetInnerHTML={{ __html: singleNews.content }}
+                    dangerouslySetInnerHTML={{ __html: sanitizeContent(singleNews.content) }}
                   />
                 </>
               )}
