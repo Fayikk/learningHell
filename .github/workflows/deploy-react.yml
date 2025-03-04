@@ -27,7 +27,7 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Install dependencies
-        run: npm install  # Global değil proje düzeyinde bağımlılıkları yükleasdasd
+        run: npm install  # Global değil proje düzeyinde bağımlılıkları yükleasdasdaasa
 
       - name: Debug Info
         run: |
