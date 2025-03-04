@@ -136,7 +136,7 @@ const NewsPortal = () => {
           </Link>
         </Card.Title>
         <div className="news-meta">
-          <span><FaCalendarAlt /> {formatDate(article.createdAt || new Date())}</span>
+          <span><FaCalendarAlt /> {formatDate(article.createdDate || new Date())}</span>
           <span><FaEye /> {article.viewCount || 0}</span>
         </div>
         <Card.Text className="news-summary">
@@ -180,7 +180,7 @@ const NewsPortal = () => {
                       {categories.find(c => c.value === singleNews.category)?.label || 'General'}
                     </span>
                     <span className="date">
-                      <FaCalendarAlt /> {formatDate(singleNews.createdAt || new Date())}
+                      <FaCalendarAlt /> {formatDate(singleNews.createdDate || new Date())}
                     </span>
                     <span className="views">
                       <FaEye /> {singleNews.viewCount || 0} views
