@@ -15,6 +15,7 @@ import './style/News.css'; // We'll create this later
 import Navbar from '../Navbar/Navbar';
 import Footer from '../footer/Footer';
 import DOMPurify from 'dompurify';
+import GoogleTag from '../../Extensions/GoogleTag';
 const NewsPortal = () => {
   // Router hooks
   const { slug, category } = useParams();
