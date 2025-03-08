@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 
 const GoogleConversionTracker = () => {
   useEffect(() => {
-    // Check if gtag is available
     if (window.gtag) {
+        console.log("trigger GoogleConversionTracker");
       window.gtag('event', 'conversion', {
         'send_to': 'AW-11217374262/aYX2CIG016caELaY7uQp',
         'transaction_id': ''
