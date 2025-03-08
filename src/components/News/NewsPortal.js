@@ -160,7 +160,9 @@ const NewsPortal = () => {
 
   return (
     <>
+    <GoogleTag/>
     <Navbar></Navbar>
+    
     <Container className="py-4 news-portal">
       <Row>
         <Col lg={8}>
