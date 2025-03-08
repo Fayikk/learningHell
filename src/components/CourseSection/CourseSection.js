@@ -4,6 +4,7 @@ import { calculateAverageRating } from "../../Helpers/calculateAverageRating";
 import { useTranslation } from "react-i18next";
 import { MatchLocationToCurrency } from "../../main-component/Extensions/MatchLocationToCurrency";
 import './Styles/CourseSection.css'
+import GoogleTag from "../../Extensions/GoogleTag";
 const ClickHandler = () => {
   window.scrollTo(10, 0);
 };
@@ -23,6 +24,10 @@ const CourseSection = (props) => {
   }, [props]);
 
   return (
+    <>
+
+<GoogleTag/>
+
     <div className={`wpo-popular-area section-padding ${props.pClass}`}>
       <div className="container">
         <div className="wpo-section-title-s2">
@@ -124,6 +129,7 @@ const CourseSection = (props) => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
