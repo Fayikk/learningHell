@@ -89,8 +89,6 @@ if (courses.length > 0) {
                                   <li className="first-cart">
                                     {courseItem.courseName}
                                   </li>
-                                  {/* <li>Brand : {courseItem.courseName}</li>
-                                  <li>Size : {courseItem.courseName}</li> */}
                                 </ul>
                               </td>
                               <td className="ptice"> {MatchLocationToCurrency()} {courseItem.coursePrice}</td>
