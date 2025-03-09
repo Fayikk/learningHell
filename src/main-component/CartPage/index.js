@@ -12,6 +12,8 @@ import {toast} from 'react-toastify'
 import IsLoading from "../../components/Loading/IsLoading";
 import { cartStateUpdate } from "../../store/reducers/cartSlice";
 import { MatchLocationToCurrency } from "../Extensions/MatchLocationToCurrency";
+import { Helmet } from "react-helmet";
+
 const CartPage = (props) => {
   const { data, isLoading } = useGetShoppingCartQuery(
     useSelector((state) => state.authStore.nameIdentifier),
@@ -51,6 +53,9 @@ if (courses.length > 0) {
  
   return (
     <Fragment>
+      <Helmet>
+        <meta name="robots" content="noindex" />
+      </Helmet>
       <Navbar />
       <PageTitle pageTitle={"Cart"} pagesub={"Cart"} />
     
@@ -151,6 +156,9 @@ if (courses.length > 0) {
 else{
   return (
     <Fragment>
+    <Helmet>
+      <meta name="robots" content="noindex" />
+    </Helmet>
     <Navbar />
     <PageTitle pageTitle={"Cart"} pagesub={"Cart"} />
   
