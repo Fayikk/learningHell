@@ -4,7 +4,11 @@ import { baseUrl } from "./Base/baseApiModel";
 export const bootcampApi = createApi({
     reducerPath:"bootcampApi",
     baseQuery:fetchBaseQuery({
-        baseUrl:baseUrl+"Bootcamp"
+        baseUrl:baseUrl+"Bootcamp",
+        prepareHeaders:(headers,api) => {
+            const token = localStorage.getItem("token");
+            token && headers.append("Authorization","Bearer "+token);
+        }
     }),
     endpoints:(builder) => ({
         createNewBootcamp:builder.mutation({
@@ -28,8 +32,13 @@ export const bootcampApi = createApi({
                 body:bootcampModel
             })
         }),
+        getAllBootcampByUser:builder.query({
+            query:() => ({
+                url:`GetAllBootcampsByUser`,
+                method:"GET"
+            })
+        })
     })
 })
 
-
-export const {useCreateNewBootcampMutation,useUpdateBootcampMutation,useGetAllBootcampsMutation} = bootcampApi
+export const {useGetAllBootcampByUserQuery,useCreateNewBootcampMutation,useUpdateBootcampMutation,useGetAllBootcampsMutation} = bootcampApi

@@ -9,7 +9,7 @@ export const bootcampTopicApi = createApi({
     endpoints:(builder) => ({
        createNewBootcampTopic:builder.mutation({
             query:(bootcampTopicModel) => ({
-                url:"CreateBootcampTopic",
+                url:"AddBootcampTopic",
                 method:"POST",
                 body:bootcampTopicModel
             })

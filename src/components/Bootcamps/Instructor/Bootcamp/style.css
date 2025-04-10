@@ -3,6 +3,8 @@
   margin: 0 auto;
   padding: 1.5rem;
   width: 100%;
+  background-color: #f8f9fa;
+  border-radius: 10px;
 }
 
 .nav-tabs {
@@ -80,8 +82,9 @@
 }
 
 .topic-list {
-  max-height: 400px;
+  max-height: 350px;
   overflow-y: auto;
+  padding-right: 5px;
 }
 
 .react-datepicker-wrapper {
@@ -95,4 +98,112 @@
 
 .table {
   font-size: 0.9rem;
+}
+
+.text-gradient {
+  background: linear-gradient(to right, #4a90e2, #63b3ed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+.animate-alert {
+  animation: fadeInOut 2.5s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.custom-tabs .nav-link {
+  color: #495057;
+  font-weight: 500;
+}
+
+.custom-tabs .nav-link.active {
+  color: #4a90e2;
+  font-weight: 600;
+  border-bottom: 3px solid #4a90e2;
+}
+
+.card-gradient {
+  background: linear-gradient(135deg, #ffffff, #f0f7ff);
+}
+
+.bootcamp-image {
+  transition: transform 0.3s ease;
+}
+
+.bootcamp-image:hover {
+  transform: scale(1.05);
+}
+
+.bootcamp-title {
+  color: #333;
+  font-weight: 600;
+}
+
+.bootcamp-description {
+  white-space: pre-wrap;
+  line-height: 1.6;
+}
+
+.bootcamp-short-description {
+  color: #666;
+  font-style: italic;
+}
+
+.topic-item {
+  background-color: #f8f9fa;
+  border-left: 3px solid #4a90e2;
+  transition: all 0.2s ease;
+}
+
+.topic-item:hover {
+  background-color: #e9f2ff;
+  transform: translateX(5px);
+}
+
+.topic-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background-color: #4a90e2;
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
+.schedule-table th {
+  background-color: #f0f7ff;
+}
+
+.stat-card {
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.selected-bootcamp-details {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.bootcamp-topics-section, .bootcamp-schedule-section {
+  min-height: 250px;
 }

@@ -26,6 +26,16 @@ export const paymentApi = createApi({
             }
 
         }),
+        paymentBootcampCheckout:builder.mutation({
+            query:(sendData) => {
+                return {
+                    method:"POST",
+                    body:sendData.paymentModel,
+                    url:`PayBootcamp?isActive3dSecure=${sendData.isActive3dSecure}`
+                }
+            }
+
+        }),
         payCallBack:builder.mutation({
             query:()=>{
                 return {
@@ -39,4 +49,4 @@ export const paymentApi = createApi({
 
 
 
-export const {usePaymentCheckoutMutation} = paymentApi
+export const {usePaymentCheckoutMutation,usePaymentBootcampCheckoutMutation} = paymentApi

@@ -20,13 +20,23 @@ import { v4 as uuidv4 } from 'uuid';
 import './style.css';
 import Navbar from '../../../Navbar/Navbar';
 import Footer from '../../../footer/Footer';
+import { useCreateNewBootcampMutation, useGetAllBootcampByUserQuery } from '../../../../api/bootcampApi';
+import { useCreateNewBootcampTopicMutation } from '../../../../api/bootcampTopicApi';
+import { useCreateNewBootcampScheduleMutation } from '../../../../api/bootcampScheduleApi';
+import {toast} from 'react-toastify';
+import InstructorAuth from '../../../../Wrappers/HoC/InstructorAuth';
 
 const InstructorBootcampManagement = () => {
   const [key, setKey] = useState('bootcamp');
   const [bootcampData, setBootcampData] = useState(null);
+  const [selectedBootcamp, setSelectedBootcamp] = useState(null);
   const [schedules, setSchedules] = useState([]);
   const [topics, setTopics] = useState([]);
   const [successMessage, setSuccessMessage] = useState('');
+  const {data:bootcampFetchData,error,isLoading} = useGetAllBootcampByUserQuery();
+  const [createNewBootcamp] = useCreateNewBootcampMutation();
+  const [createNewBootcampTopic] = useCreateNewBootcampTopicMutation();
+  const [createNewBootcampSchedule] = useCreateNewBootcampScheduleMutation();
 
   // Validation schemas
   const bootcampValidationSchema = Yup.object().shape({
@@ -44,57 +54,121 @@ const InstructorBootcampManagement = () => {
     isOnline: Yup.boolean().required('Online status is required')
   });
 
+  // Check if bootcamps are available from API response
+  const hasBootcamps = bootcampFetchData && 
+                       bootcampFetchData.isSuccess !== false && 
+                       bootcampFetchData.result && 
+                       bootcampFetchData.result.length > 0;
+
+  // Handle bootcamp selection
+  const handleBootcampSelect = (bootcamp) => {
+    setSelectedBootcamp(bootcamp);
+    // Reset local schedules and topics since we'll display from API
+    setSchedules([]);
+    setTopics([]);
+    toast.info(`Selected bootcamp: ${bootcamp.title}`);
+  };
+
+  // Handle bootcamp selection from dropdown
+  const handleBootcampDropdownChange = (e) => {
+    const selectedId = e.target.value;
+    if (selectedId) {
+      const bootcamp = bootcampFetchData.result.find(bootcamp => bootcamp.id === selectedId);
+      if (bootcamp) {
+        setSelectedBootcamp(bootcamp);
+        // Reset local schedules and topics since we'll display from API
+        setSchedules([]);
+        setTopics([]);
+        toast.info(`Selected bootcamp: ${bootcamp.title}`);
+      }
+    } else {
+      setSelectedBootcamp(null);
+    }
+  };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  console.log("trigger bootcamps data", bootcampFetchData);
+
+  // Format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
   // Handle bootcamp submission
-  const handleBootcampSubmit = (values, { resetForm }) => {
+  const handleBootcampSubmit = async (values, { resetForm }) => {
     const bootcampId = uuidv4();
     const newBootcamp = { ...values, id: bootcampId };
-    setBootcampData(newBootcamp);
+    // setBootcampData(newBootcamp);
+    await createNewBootcamp(newBootcamp).then((response) => {
+        console.log("trigger createNewBootcamp",response)
+        if (response.data.isSuccess) {
+            toast.success(response.data.message)
+        }
+    })
     setSuccessMessage('Bootcamp information has been saved successfully!');
     setTimeout(() => setSuccessMessage(''), 3000);
-    // In a real application, you would make an API call here to save the data
     console.log('Bootcamp data:', newBootcamp);
     resetForm();
   };
 
   // Handle schedule submission
-  const handleScheduleSubmit = (values, { resetForm }) => {
-    if (!bootcampData) {
-      alert('Please create a bootcamp first');
+  const handleScheduleSubmit = async (values, { resetForm }) => {
+    if (!selectedBootcamp) {
+      toast.error('Please select a bootcamp first');
       return;
     }
     
     const newSchedule = {
-      ...values,
-      id: uuidv4(),
-      bootCampId: bootcampData.id
+      startAndEndDate: values.startAndEndDate,
+      date: values.date,
+      topic: values.topic,
+      bootCampId: selectedBootcamp.id || selectedBootcamp.bootcampId
     };
     
-    setSchedules([...schedules, newSchedule]);
-    setSuccessMessage('Schedule has been added successfully!');
-    setTimeout(() => setSuccessMessage(''), 3000);
-    // In a real application, you would make an API call here
-    console.log('Schedule data:', newSchedule);
+    try {
+      const response = await createNewBootcampSchedule(newSchedule).unwrap();
+      if (response.isSuccess) {
+        toast.success('Schedule has been added successfully!');
+        setSchedules([...schedules, { ...newSchedule, id: uuidv4() }]);
+      } else {
+        toast.error(response.message || 'Failed to add schedule');
+      }
+    } catch (error) {
+      toast.error('Error adding schedule: ' + (error.message || 'Unknown error'));
+    }
     resetForm();
   };
 
-  // Handle topic submission
-  const handleTopicSubmit = (values, { resetForm }) => {
-    if (!bootcampData) {
-      alert('Please create a bootcamp first');
+  // Handle topic submission with API interaction
+  const handleTopicSubmit = async (values, { resetForm }) => {
+    if (!selectedBootcamp) {
+      toast.error('Please select a bootcamp first');
       return;
     }
-    
     const newTopic = {
-      ...values,
-      id: uuidv4(),
-      bootcampId: bootcampData.id
+      title: values.title,
+      bootcampId: selectedBootcamp.id || selectedBootcamp.bootcampId
     };
-    
-    setTopics([...topics, newTopic]);
-    setSuccessMessage('Topic has been added successfully!');
-    setTimeout(() => setSuccessMessage(''), 3000);
-    // In a real application, you would make an API call here
-    console.log('Topic data:', newTopic);
+    try {
+      const response = await createNewBootcampTopic(newTopic).unwrap();
+      if (response.isSuccess) {
+        toast.success('Topic has been added successfully!');
+        setTopics([...topics, { ...newTopic, id: uuidv4() }]);
+      } else {
+        toast.error(response.message || 'Failed to add topic');
+      }
+    } catch (error) {
+      toast.error('Error adding topic: ' + (error.message || 'Unknown error'));
+    }
     resetForm();
   };
 
@@ -113,13 +187,57 @@ const InstructorBootcampManagement = () => {
     <Navbar></Navbar>
     <Container className="bootcamp-management-container my-5 py-4 rounded">
       <h2 className="text-center mb-4 text-gradient">Bootcamp Management</h2>
-      
       {successMessage && (
         <Alert variant="success" className="text-center animate-alert">
           {successMessage}
         </Alert>
       )}
-      
+
+      {/* Bootcamp Selection Section */}
+      {hasBootcamps && (
+        <Card className="shadow-sm mb-4">
+          <Card.Header className="bg-info text-white">
+            <h5 className="mb-0">Select Bootcamp</h5>
+          </Card.Header>
+          <Card.Body>
+            <Row>
+              {bootcampFetchData.result.map((bootcamp, index) => (
+                <Col md={4} key={index} className="mb-3">
+                  <Card 
+                    className={`h-100 ${selectedBootcamp && selectedBootcamp.id === bootcamp.id ? 'border-primary' : ''}`}
+                    onClick={() => handleBootcampSelect(bootcamp)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <Card.Img 
+                      variant="top" 
+                      src={bootcamp.thumbnail_Url} 
+                      alt={bootcamp.title}
+                      style={{ height: '150px', objectFit: 'cover' }}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "https://via.placeholder.com/150?text=No+Image";
+                      }}
+                    />
+                    <Card.Body>
+                      <Card.Title>{bootcamp.title}</Card.Title>
+                      <Card.Text className="mb-1">{bootcamp.short_Description}</Card.Text>
+                      <Card.Text className="mb-1">
+                        <small className="text-muted">
+                          {formatDate(bootcamp.start_Date)} - {formatDate(bootcamp.end_Date)}
+                        </small>
+                      </Card.Text>
+                      <Badge bg={selectedBootcamp && selectedBootcamp.id === bootcamp.id ? "primary" : "secondary"}>
+                        {selectedBootcamp && selectedBootcamp.id === bootcamp.id ? "Selected" : "Click to select"}
+                      </Badge>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+          </Card.Body>
+        </Card>
+      )}
+
       <Tabs
         id="bootcamp-management-tabs"
         activeKey={key}
@@ -174,7 +292,6 @@ const InstructorBootcampManagement = () => {
                           </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
-                      
                       <Col md={6}>
                         <Form.Group className="mb-3">
                           <Form.Label>Slug</Form.Label>
@@ -256,7 +373,6 @@ const InstructorBootcampManagement = () => {
                           </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
-
                       <Col md={4}>
                         <Form.Group className="mb-3">
                           <Form.Label>Start Date</Form.Label>
@@ -273,7 +389,6 @@ const InstructorBootcampManagement = () => {
                           )}
                         </Form.Group>
                       </Col>
-
                       <Col md={4}>
                         <Form.Group className="mb-3">
                           <Form.Label>End Date</Form.Label>
@@ -389,24 +504,46 @@ const InstructorBootcampManagement = () => {
                             {errors.topic}
                           </Form.Control.Feedback>
                         </Form.Group>
-
+<Form.Group className="mb-4">
+            <Form.Label><strong>Select Bootcamp</strong></Form.Label>
+            <Form.Select 
+              onChange={handleBootcampDropdownChange}
+              value={selectedBootcamp ? selectedBootcamp.id : ''}
+              className="mb-3"
+            >
+              <option value="">-- Select a bootcamp --</option>
+              {bootcampFetchData && bootcampFetchData.result && bootcampFetchData.result.map((bootcamp) => (
+                <option key={bootcamp.id} value={bootcamp.id}>
+                  {bootcamp.title}
+                </option>
+              ))}
+            </Form.Select>
+            {selectedBootcamp && (
+              <div className="selected-bootcamp-info p-2 bg-light rounded mb-3">
+                <small>
+                  <strong>Selected:</strong> {selectedBootcamp.title}<br/>
+                  <strong>Period:</strong> {new Date(selectedBootcamp.start_Date).toLocaleDateString()} - {new Date(selectedBootcamp.end_Date).toLocaleDateString()}
+                </small>
+              </div>
+            )}
+          </Form.Group>
                         <Button
                           variant="primary"
                           type="submit"
-                          disabled={!bootcampData}
+                          disabled={!selectedBootcamp}
                         >
                           Add Schedule
                         </Button>
-                        {!bootcampData && (
+                        {!selectedBootcamp && (
                           <p className="text-danger mt-2">
-                            Please create a bootcamp first
+                            Please select a bootcamp first
                           </p>
                         )}
                       </Form>
                     )}
                   </Formik>
                 </Col>
-                
+
                 <Col md={6}>
                   <Card.Title>Schedule List</Card.Title>
                   {schedules.length > 0 ? (
@@ -453,6 +590,32 @@ const InstructorBootcampManagement = () => {
               <Row>
                 <Col md={6}>
                   <Card.Title>Add Topic</Card.Title>
+                  {/* Bootcamp Dropdown */}
+                  {hasBootcamps && (
+                    <Form.Group className="mb-4">
+                      <Form.Label><strong>Select Bootcamp</strong></Form.Label>
+                      <Form.Select 
+                        onChange={handleBootcampDropdownChange}
+                        value={selectedBootcamp ? selectedBootcamp.id : ''}
+                        className="mb-3"
+                      >
+                        <option value="">-- Select a bootcamp --</option>
+                        {bootcampFetchData.result.map((bootcamp) => (
+                          <option key={bootcamp.id} value={bootcamp.id}>
+                            {bootcamp.title} ({new Date(bootcamp.start_Date).toLocaleDateString()} - {new Date(bootcamp.end_Date).toLocaleDateString()})
+                          </option>
+                        ))}
+                      </Form.Select>
+                      {selectedBootcamp && (
+                        <div className="selected-bootcamp-info p-2 bg-light rounded mb-3">
+                          <small>
+                            <strong>Selected:</strong> {selectedBootcamp.title}<br/>
+                            <strong>Description:</strong> {selectedBootcamp.short_Description}
+                          </small>
+                        </div>
+                      )}
+                    </Form.Group>
+                  )}
                   <Formik
                     initialValues={{
                       title: ''
@@ -489,13 +652,13 @@ const InstructorBootcampManagement = () => {
                         <Button
                           variant="primary"
                           type="submit"
-                          disabled={!bootcampData}
+                          disabled={!selectedBootcamp}
                         >
                           Add Topic
                         </Button>
-                        {!bootcampData && (
+                        {!selectedBootcamp && (
                           <p className="text-danger mt-2">
-                            Please create a bootcamp first
+                            Please select a bootcamp first
                           </p>
                         )}
                       </Form>
@@ -535,31 +698,175 @@ const InstructorBootcampManagement = () => {
         </Tab>
       </Tabs>
 
-      {bootcampData && (
-        <Card className="mt-4 shadow-sm">
-          <Card.Body>
-            <Card.Title>Current Bootcamp</Card.Title>
-            <Row>
-              <Col md={8}>
-                <p><strong>Title:</strong> {bootcampData.title}</p>
-                <p><strong>Short Description:</strong> {bootcampData.short_Description}</p>
-                <p><strong>Duration:</strong> {bootcampData.start_Date.toLocaleDateString()} to {bootcampData.end_Date.toLocaleDateString()}</p>
-                <p><strong>Type:</strong> {bootcampData.isOnline ? 'Online' : 'In-person'}</p>
-                <p><strong>Price:</strong> ${bootcampData.price}</p>
-              </Col>
-              <Col md={4} className="text-center">
-                {bootcampData.thumbnail_Url && (
+      {/* Enhanced selected bootcamp details section */}
+      {selectedBootcamp && (
+        <div className="selected-bootcamp-details mt-4">
+          <Card className="shadow-sm mb-4">
+            <Card.Header className="bg-primary text-white d-flex justify-content-between align-items-center">
+              <h5 className="mb-0">Selected Bootcamp Details</h5>
+              <Badge bg={selectedBootcamp.isOnline ? "info" : "warning"}>
+                {selectedBootcamp.isOnline ? "Online" : "In-person"}
+              </Badge>
+            </Card.Header>
+            <Card.Body>
+              <Row>
+                <Col md={4} className="text-center mb-3 mb-md-0">
                   <img 
-                    src={bootcampData.thumbnail_Url} 
-                    alt={bootcampData.title}
-                    className="img-fluid rounded"
-                    style={{ maxHeight: '150px' }}
+                    src={selectedBootcamp.thumbnail_Url} 
+                    alt={selectedBootcamp.title}
+                    className="img-fluid rounded shadow bootcamp-image"
+                    style={{ maxHeight: '200px', objectFit: 'cover' }}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "https://via.placeholder.com/400x300?text=No+Image";
+                    }}
                   />
-                )}
-              </Col>
-            </Row>
-          </Card.Body>
-        </Card>
+                </Col>
+                <Col md={8}>
+                  <h3 className="bootcamp-title">{selectedBootcamp.title}</h3>
+                  <p className="text-muted mb-2">{selectedBootcamp.slug}</p>
+                  <hr />
+                  <Row>
+                    <Col md={6}>
+                      <p><strong>Start Date:</strong> {formatDate(selectedBootcamp.start_Date)}</p>
+                      <p><strong>End Date:</strong> {formatDate(selectedBootcamp.end_Date)}</p>
+                    </Col>
+                    <Col md={6}>
+                      <p><strong>Price:</strong> <span className="text-primary">${selectedBootcamp.price}</span></p>
+                      <p><strong>Format:</strong> {selectedBootcamp.isOnline ? 'Online' : 'In-person'}</p>
+                    </Col>
+                  </Row>
+                  <div className="mt-3">
+                    <h5>Description</h5>
+                    <p className="bootcamp-description">{selectedBootcamp.description}</p>
+                    <p className="bootcamp-short-description"><em>{selectedBootcamp.short_Description}</em></p>
+                  </div>
+                </Col>
+              </Row>
+            </Card.Body>
+          </Card>
+
+          <Row className="mb-4">
+            {/* Bootcamp Topics Section */}
+            <Col md={6} className="mb-4 mb-md-0">
+              <Card className="shadow-sm h-100">
+                <Card.Header className="bg-info text-white">
+                  <h5 className="mb-0">Bootcamp Topics</h5>
+                </Card.Header>
+                <Card.Body className="bootcamp-topics-section">
+                  {selectedBootcamp.bootcampTopics && selectedBootcamp.bootcampTopics.length > 0 ? (
+                    <div className="topic-list">
+                      {selectedBootcamp.bootcampTopics.map((topic, index) => (
+                        <div key={topic.id || index} className="topic-item p-3 mb-2 rounded">
+                          <div className="d-flex align-items-center">
+                            <span className="topic-number me-3">{index + 1}</span>
+                            <div>
+                              <h6 className="mb-0">{topic.title}</h6>
+                              <small className="text-muted">Added: {formatDate(topic.createdDate)}</small>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-4">
+                      <p className="text-muted mb-0">No topics have been added to this bootcamp yet.</p>
+                      <small>Add topics using the "Bootcamp Topics" tab above.</small>
+                    </div>
+                  )}
+                </Card.Body>
+              </Card>
+            </Col>
+
+            {/* Bootcamp Schedule Section */}
+            <Col md={6}>
+              <Card className="shadow-sm h-100">
+                <Card.Header className="bg-success text-white">
+                  <h5 className="mb-0">Bootcamp Schedule</h5>
+                </Card.Header>
+                <Card.Body className="bootcamp-schedule-section">
+                  {selectedBootcamp.bootcampSchedule && selectedBootcamp.bootcampSchedule.length > 0 ? (
+                    <div className="table-responsive">
+                      <Table striped hover className="schedule-table mb-0">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Topic</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {selectedBootcamp.bootcampSchedule.map((schedule, index) => (
+                            <tr key={schedule.id || index}>
+                              <td>{index + 1}</td>
+                              <td>{formatDate(schedule.date)}</td>
+                              <td>{schedule.startAndEndDate}</td>
+                              <td>{schedule.topic}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </Table>
+                    </div>
+                  ) : (
+                    <div className="text-center py-4">
+                      <p className="text-muted mb-0">No schedule items have been added to this bootcamp yet.</p>
+                      <small>Add schedule items using the "Bootcamp Schedule" tab above.</small>
+                    </div>
+                  )}
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+
+          <Card className="shadow-sm mb-4">
+            <Card.Header className="bg-dark text-white">
+              <h5 className="mb-0">Bootcamp Overview</h5>
+            </Card.Header>
+            <Card.Body>
+              <Row>
+                <Col md={4} className="text-center mb-3 mb-md-0">
+                  <div className="stat-card p-3 bg-light rounded">
+                    <h2 className="text-primary mb-0">{selectedBootcamp.bootcampTopics?.length || 0}</h2>
+                    <p className="text-muted mb-0">Topics</p>
+                  </div>
+                </Col>
+                <Col md={4} className="text-center mb-3 mb-md-0">
+                  <div className="stat-card p-3 bg-light rounded">
+                    <h2 className="text-success mb-0">{selectedBootcamp.bootcampSchedule?.length || 0}</h2>
+                    <p className="text-muted mb-0">Schedule Items</p>
+                  </div>
+                </Col>
+                <Col md={4} className="text-center">
+                  <div className="stat-card p-3 bg-light rounded">
+                    <h2 className="text-info mb-0">
+                      {
+                        Math.ceil(
+                          (new Date(selectedBootcamp.end_Date) - new Date(selectedBootcamp.start_Date)) / 
+                          (1000 * 60 * 60 * 24)
+                        ) || 0
+                      }
+                    </h2>
+                    <p className="text-muted mb-0">Days Duration</p>
+                  </div>
+                </Col>
+              </Row>
+            </Card.Body>
+          </Card>
+        </div>
+      )}
+
+      {!selectedBootcamp && !hasBootcamps && (
+        <Alert variant="info" className="text-center">
+          <p className="mb-2">You haven't created any bootcamps yet.</p>
+          <p className="mb-0">Use the "Bootcamp Information" tab to create your first bootcamp.</p>
+        </Alert>
+      )}
+
+      {!selectedBootcamp && hasBootcamps && (
+        <Alert variant="info" className="text-center">
+          <p className="mb-0">Please select a bootcamp from above to view and manage its details.</p>
+        </Alert>
       )}
     </Container>
     <Footer></Footer>
@@ -567,4 +874,4 @@ const InstructorBootcampManagement = () => {
   );
 };
 
-export default InstructorBootcampManagement;
+export default  InstructorAuth(InstructorBootcampManagement);
