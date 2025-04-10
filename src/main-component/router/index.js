@@ -48,6 +48,7 @@ import NewsPortal from '../../components/News/NewsPortal';
 import GoogleTag from '../../Extensions/GoogleTag'; // Import the GoogleTag component
 import Shopping from '../Shopping';
 import ShoppingDetail from '../Shopping/ShoppingDetail';
+import InstructorBootcampManagement from '../../components/Bootcamps/Instructor/Bootcamp';
 
 const AllRoute = () => {
   return (
@@ -108,6 +109,7 @@ const AllRoute = () => {
           <Route path="/news/:slug" element={<><GoogleTag /><NewsPortal /></>} />
           <Route path='Shopping' element={<> <GoogleTag></GoogleTag><Shopping></Shopping> </>} ></Route>
           <Route path='/Shopping/Detail/:slug' element={<> <GoogleTag></GoogleTag> <ShoppingDetail></ShoppingDetail> </>} />
+          <Route path='/Instructor/BootcampManagement' element={<><InstructorBootcampManagement></InstructorBootcampManagement></>}></Route>
         </Routes>
       </BrowserRouter>
     </div>
