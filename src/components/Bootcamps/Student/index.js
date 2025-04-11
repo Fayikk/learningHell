@@ -156,8 +156,8 @@ const StudentBootcampList = () => {
                 hubConnection.on("MessageForBootcampSocket",(res) => {
                   console.log("trigger socket response",res)
                   if (res.item1 == "success") {
-                    push('/order_received');
-                    handleClose();
+                    // push('/order_received');
+                    toast.success("Ödeme Başarı İle Alındı, Bootcamp Programına Kaydınız Alındı.")
                     handleSecurePopupClose(); // Also close the 3D Secure popup if open
                   }
                   else{
@@ -303,7 +303,7 @@ const StudentBootcampList = () => {
 
 
     // Here you would process the payment
-    alert('Ödeme işlemi tamamlandı! Bootcamp programına kaydınız alındı.');
+    // alert('Ödeme işlemi tamamlandı! Bootcamp programına kaydınız alındı.');
     setCheckoutModalOpen(false);
   };
   
