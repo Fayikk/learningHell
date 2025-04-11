@@ -345,7 +345,7 @@ const Header = ({ props, onAuthStateChange }) => {
                                 <Dropdown.Item as={Link} to="/Instructor">
                                   {t("Instructor")}
                                 </Dropdown.Item>
-                                <Dropdown.Item as={Link} to="/Bootcamps">
+                                <Dropdown.Item as={Link} to="/Instructor/BootcampManagement">
                                   {t("Bootcamps")}
                                 </Dropdown.Item>
                                 <Dropdown.Item as={Link} to="/admin/tags">

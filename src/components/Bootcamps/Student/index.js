@@ -59,6 +59,28 @@ const PeopleIcon = () => (
   </svg>
 );
 
+// Add a 3D Secure Popup component
+const SecurePaymentPopup = ({ htmlContent, onClose }) => {
+  return (
+    <div className="secure-payment-overlay">
+      <div className="secure-payment-popup">
+        <div className="secure-payment-header">
+          <h3>3D Secure Doğrulama</h3>
+          <button className="secure-close-button" onClick={onClose}>×</button>
+        </div>
+        <div className="secure-payment-content">
+          <iframe
+            srcDoc={htmlContent}
+            title="3D Secure Verification"
+            className="secure-payment-iframe"
+            sandbox="allow-forms allow-scripts allow-same-origin allow-top-navigation"
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const StudentBootcampList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedBootcamp, setSelectedBootcamp] = useState(null);
@@ -67,8 +89,9 @@ const StudentBootcampList = () => {
   const [createPayment] = usePaymentBootcampCheckoutMutation();
   const [hubConnection,setHubConnection] = useState();
   const nameIdentifier = useSelector((state) => state.authStore.nameIdentifier);
+    const [html, setHtml] = useState(null);
 
-
+ 
 
   
   // Add new state variables for form data and discount
@@ -79,8 +102,11 @@ const StudentBootcampList = () => {
     couponCode: '',
     cardName: '',
     cardNumber: '',
-    expiryDate: '',
-    cvv: ''
+    // expiryDate: '',//bunun expire month ve expire year olarak 2'ye ayrılması gerekiyor.
+    expireMonth: '',
+    expireYear: '',
+    cvv: '',
+    identityNumber: '', // For Turkish citizens
   });
   const [discount, setDiscount] = useState({
     applied: false,
@@ -101,6 +127,9 @@ const StudentBootcampList = () => {
   
   const [getAllBootcamps, { data, isLoading, error }] = useGetAllBootcampsMutation();
   
+  // Add state for 3D Secure popup
+  const [securePopupOpen, setSecurePopupOpen] = useState(false);
+  const [secureHtmlContent, setSecureHtmlContent] = useState('');
 
 
 
@@ -125,13 +154,16 @@ const StudentBootcampList = () => {
     useEffect(()=>{
         if (hubConnection) {
                 hubConnection.on("MessageForBootcampSocket",(res) => {
+                  console.log("trigger socket response",res)
                   if (res.item1 == "success") {
                     push('/order_received');
                     handleClose();
+                    handleSecurePopupClose(); // Also close the 3D Secure popup if open
                   }
                   else{
-                    toast.warning(res.item3)
-                    handleClose();
+                    toast.warning("İşlem Yürütülürken Bir Sorun Oluştu!!!")
+                    // handleClose();
+                    handleSecurePopupClose(); // Also close the 3D Secure popup if open
                   }
                 })
         }
@@ -145,6 +177,30 @@ const StudentBootcampList = () => {
     getAllBootcamps(requestBody);
   }, [getAllBootcamps, currentPage]);
   
+  // Add effect to handle HTML content when available
+  useEffect(() => {
+    if (html) {
+      // Fetch the HTML content from the blob URL
+      fetch(html)
+        .then(response => response.text())
+        .then(htmlContent => {
+          setSecureHtmlContent(htmlContent);
+          setSecurePopupOpen(true);
+        })
+        .catch(error => {
+          console.error("Error fetching 3D Secure content:", error);
+          toast.error("3D Secure doğrulama ekranı yüklenemedi.");
+        });
+    }
+  }, [html]);
+
+  // Add function to close the 3D Secure popup
+  const handleSecurePopupClose = () => {
+    setSecurePopupOpen(false);
+    setHtml(null);
+    setSecureHtmlContent('');
+  };
+
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -191,9 +247,61 @@ const StudentBootcampList = () => {
     }
   };
   
+
+ // public string FullName { get; set; }
+  // public string Email { get; set; }
+  // public string PhoneNumber { get; set; }
+  // public string CardHolderName { get; set; }
+  // public string CardNumber { get; set; }
+  // public string ExpireMonth { get; set; }
+  // public string ExpireYear { get; set; }
+  // public string cvc { get; set; }
+  // public string IdentityNumber { get; set; }
+  // public string UserId { get; set; }
+  // public Guid BootcampId { get; set; }
+
+
+
   // Add handler for form submission
-  const handlePaymentSubmit = (e) => {
+  const handlePaymentSubmit = async (e) => {
     e.preventDefault();
+
+    console.log("trigger form data",formData) 
+
+    console.log("trigger selected bootcamp",selectedBootcamp) 
+
+    var formDataToSend = new FormData();
+    formDataToSend.append("FullName", formData.fullName);
+    formDataToSend.append("Email", formData.email);
+    formDataToSend.append("PhoneNumber", formData.phone);
+    formDataToSend.append("CardHolderName", formData.cardName);
+    formDataToSend.append("CardNumber", formData.cardNumber);
+    formDataToSend.append("ExpireMonth", formData.expireMonth);
+    formDataToSend.append("ExpireYear", formData.expireYear);
+    formDataToSend.append("cvc", formData.cvv);
+    formDataToSend.append("IdentityNumber", formData.identityNumber);
+    formDataToSend.append("BootcampId", selectedBootcamp.id);
+
+    const sendData = {
+      paymentModel:formDataToSend,
+      isActive3dSecure:true
+  }
+    await createPayment(sendData).then((response) => {
+      console.log("trigger payment response",response)
+      if (response.data.isSuccess ) {
+                  if (true) {
+                      const blob = new Blob([response.data.result[0].item1.content], { type: "text/html" });
+                      const objUrl = URL.createObjectURL(blob);
+                      setHtml(objUrl);
+                      // handleOpen();    
+                  }
+              }  else if(!response.data.isSuccess) {
+                  toast.info(response.data.messages[0] + ".Please check your information again");
+                  // alert('user not existed! credential is : user@*****.com | vendor@*****.com | admin@*****.com');
+              }
+    })
+
+
     // Here you would process the payment
     alert('Ödeme işlemi tamamlandı! Bootcamp programına kaydınız alındı.');
     setCheckoutModalOpen(false);
@@ -498,6 +606,18 @@ const StudentBootcampList = () => {
                         required 
                       />
                     </div>
+                    <div className="form-group">
+                      <label>Kimlik No:</label>
+                      <input 
+                        type="text" 
+                        name="identityNumber" 
+                        value={formData.identityNumber}
+                        onChange={handleFormChange}
+                        placeholder="TC Kimlik Numaranız"
+                        pattern="\d{11}" 
+                        required 
+                      />
+                    </div>
                     <div className="form-row">
                       <div className="form-group">
                         <label>E-posta Adresi</label>
@@ -642,10 +762,18 @@ const StudentBootcampList = () => {
                           <label>Son Kullanma Tarihi</label>
                           <input 
                             type="text" 
-                            name="expiryDate" 
-                            value={formData.expiryDate}
+                            name="expireMonth"
+                            value={formData.expireMonth} 
                             onChange={handleFormChange}
-                            placeholder="AA/YY" 
+                            placeholder="AA" 
+                            required 
+                          />
+                           <input 
+                            type="text" 
+                            name="expireYear"
+                            value={formData.expireYear} 
+                            onChange={handleFormChange}
+                            placeholder="YY" 
                             required 
                           />
                         </div>
@@ -702,6 +830,15 @@ const StudentBootcampList = () => {
           </div>
         </div>
       )}
+      
+      {/* Add the 3D Secure popup */}
+      {securePopupOpen && secureHtmlContent && (
+        <SecurePaymentPopup 
+          htmlContent={secureHtmlContent} 
+          onClose={handleSecurePopupClose} 
+        />
+      )}
+      
     </div>
     <Footer />
     </>

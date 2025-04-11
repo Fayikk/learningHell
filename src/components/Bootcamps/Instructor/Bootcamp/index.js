@@ -164,7 +164,7 @@ const InstructorBootcampManagement = () => {
         toast.success('Topic has been added successfully!');
         setTopics([...topics, { ...newTopic, id: uuidv4() }]);
       } else {
-        toast.error(response.message || 'Failed to add topic');
+        toast.success(response.message || 'Failed to add topic');
       }
     } catch (error) {
       toast.error('Error adding topic: ' + (error.message || 'Unknown error'));
