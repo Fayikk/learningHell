@@ -433,7 +433,7 @@ const StudentBootcampList = () => {
                 
                 <div className="info-item">
                   <PeopleIcon />
-                  <span>Kontenjan: {bootcamp.maxAttendees || '25'}</span>
+                  <span>Kontenjan: {bootcamp.maxAttendees || '12'}</span>
                 </div>
                 
                 <div className="info-item price-item">
