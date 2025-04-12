@@ -396,7 +396,7 @@ const StudentBootcampList = () => {
             </div>
             <div className="card-image-container">
               <div className="card-overlay">
-                <span className="level-tag">{bootcamp.level || 'Başlangıç'} Seviye</span>
+                <span className="level-tag">{bootcamp.level || 'Genel'} Seviye</span>
               </div>
               <img 
                 className="bootcamp-image"
