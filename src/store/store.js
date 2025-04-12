@@ -26,6 +26,9 @@ import { couponApi } from "../api/couponApi";
 import { courseProgressApi } from "../api/courseProgressApi";
 import { tagsApi } from "../api/tagsApi";
 import { newsApi } from "../api/newsApi";
+import { bootcampApi } from "../api/bootcampApi";
+import { bootcampTopicApi } from "../api/bootcampTopicApi";
+import { bootcampScheduleApi } from "../api/bootcampScheduleApi";
 
 
 
@@ -90,7 +93,10 @@ const store = configureStore({
         [couponApi.reducerPath]:couponApi.reducer,
         [courseProgressApi.reducerPath]:courseProgressApi.reducer,
         [tagsApi.reducerPath]:tagsApi.reducer,
-        [newsApi.reducerPath]:newsApi.reducer
+        [newsApi.reducerPath]:newsApi.reducer,
+        [bootcampApi.reducerPath]:bootcampApi.reducer,
+        [bootcampTopicApi.reducerPath]:bootcampTopicApi.reducer,
+        [bootcampScheduleApi.reducerPath]:bootcampScheduleApi.reducer,
 
     },middleware:(getDefaultMiddleware) => getDefaultMiddleware()
         .concat(
@@ -113,6 +119,9 @@ const store = configureStore({
             ,courseProgressApi.middleware
             ,tagsApi.middleware
             ,newsApi.middleware
+            ,bootcampApi.middleware
+            ,bootcampTopicApi.middleware
+            ,bootcampScheduleApi.middleware
             // ,errorLoggerMiddleware
             )
 })

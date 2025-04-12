@@ -210,6 +210,11 @@ const Header = ({ props, onAuthStateChange }) => {
     </ul>
   </li>
   <li className="menu-item">
+    <Link onClick={ClickHandler} to="/Student/Bootcamps" style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+      {t("Bootcamps")}
+    </Link>
+  </li>
+  <li className="menu-item">
     <Link onClick={ClickHandler} to="/blogs" style={{ display: "flex", alignItems: "center", gap: "5px" }}>
       {t("Blog")}
     </Link>
@@ -339,6 +344,9 @@ const Header = ({ props, onAuthStateChange }) => {
                                 <>
                                 <Dropdown.Item as={Link} to="/Instructor">
                                   {t("Instructor")}
+                                </Dropdown.Item>
+                                <Dropdown.Item as={Link} to="/Instructor/BootcampManagement">
+                                  {t("Bootcamps")}
                                 </Dropdown.Item>
                                 <Dropdown.Item as={Link} to="/admin/tags">
                                 {t("Add Tags")}
