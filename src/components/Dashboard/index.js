@@ -3,13 +3,14 @@ import { useGetEnrollmentsBootcampsByUserQuery } from '../../api/enrollmentApi'
 import './Dashboard.css'
 import Navbar from '../Navbar/Navbar'
 import Footer from '../footer/Footer'
+import { useNavigate } from 'react-router-dom'
 
 function Dashboard() {
   const { data, isLoading, error } = useGetEnrollmentsBootcampsByUserQuery()
   const bootcamps = data?.result || []
   const [showModal, setShowModal] = useState(false)
   const [selectedBootcamp, setSelectedBootcamp] = useState(null)
-  
+  const navigate = useNavigate();
   const handleContinueClick = (bootcamp) => {
     setSelectedBootcamp(bootcamp)
     setShowModal(true)
@@ -20,6 +21,12 @@ function Dashboard() {
     setSelectedBootcamp(null)
   }
   
+
+  const handleExploreClick = () => {
+    navigate('/Student/Bootcamps')
+  }
+  
+
   return (
     <>
     <Navbar></Navbar>
@@ -47,7 +54,7 @@ function Dashboard() {
         <div className="empty-state">
           <h3>Henüz Bir Bootcamp'e Kayıt Olmadınız</h3>
           <p>İlginizi çekebilecek bootcampleri keşfedin ve eğitim yolculuğunuza başlayın.</p>
-          <button className="explore-button">Bootcampleri Keşfet</button>
+          <button className="explore-button" onClick={handleExploreClick}>Bootcampleri Keşfet</button>
         </div>
       )}
       
