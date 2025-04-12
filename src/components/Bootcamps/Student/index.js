@@ -227,6 +227,15 @@ const StudentBootcampList = () => {
 
   // Add handler for checkout button
   const handleCheckoutOpen = () => {
+
+    if (localStorage.getItem("token") == null) {
+      toast.warning("Ödeme işlemi için giriş yapmalısınız!");
+      navigate("/login")
+      return;
+      
+    }
+
+
     setCheckoutModalOpen(true);
     // Optionally, you might want to close the details dialog
     // setDialogOpen(false);
