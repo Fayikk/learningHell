@@ -50,6 +50,8 @@ import Shopping from '../Shopping';
 import ShoppingDetail from '../Shopping/ShoppingDetail';
 import InstructorBootcampManagement from '../../components/Bootcamps/Instructor/Bootcamp';
 import StudentBootcampList from '../../components/Bootcamps/Student';
+import PaymentSuccess from '../../components/Bootcamps/Student/Payments';
+import Dashboard from '../../components/Dashboard';
 
 const AllRoute = () => {
   return (
@@ -112,6 +114,8 @@ const AllRoute = () => {
           <Route path='/Shopping/Detail/:slug' element={<> <GoogleTag></GoogleTag> <ShoppingDetail></ShoppingDetail> </>} />
           <Route path='/Instructor/BootcampManagement' element={<><InstructorBootcampManagement></InstructorBootcampManagement></>}></Route>
           <Route path='/Student/Bootcamps' element={<><StudentBootcampList></StudentBootcampList></>}></Route>
+          <Route path='/Bootcamp/SuccessPay' element={<><GoogleTag></GoogleTag><PaymentSuccess></PaymentSuccess></>} ></Route>
+          <Route path='/Dashboard' element={<><GoogleTag></GoogleTag><Dashboard></Dashboard></>} ></Route>
         </Routes>
       </BrowserRouter>
     </div>

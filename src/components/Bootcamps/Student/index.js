@@ -9,6 +9,7 @@ import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signal
 import {toast} from 'react-toastify';
 import { useSelector } from 'react-redux';
 import { payHub } from '../../../api/Base/payHubModel';
+import { useNavigate } from 'react-router-dom';
 // SVG Icons as React components
 const CalendarIcon = () => (
   <svg className="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
@@ -91,8 +92,8 @@ const StudentBootcampList = () => {
   const nameIdentifier = useSelector((state) => state.authStore.nameIdentifier);
     const [html, setHtml] = useState(null);
 
- 
-
+  const navigate = useNavigate();
+  console.log("trigger nameIdentifier",nameIdentifier)
   
   // Add new state variables for form data and discount
   const [formData, setFormData] = useState({
@@ -159,6 +160,7 @@ const StudentBootcampList = () => {
                     // push('/order_received');
                     toast.success("Ödeme Başarı İle Alındı, Bootcamp Programına Kaydınız Alındı.")
                     handleSecurePopupClose(); // Also close the 3D Secure popup if open
+                    navigate("/Bootcamp/SuccessPay", { state: { userDetails: nameIdentifier,bootcampDetails:selectedBootcamp,orderDetails:res.item3} });
                   }
                   else{
                     toast.warning("İşlem Yürütülürken Bir Sorun Oluştu!!!")
@@ -194,6 +196,7 @@ const StudentBootcampList = () => {
     }
   }, [html]);
 
+  console.log("trigger selected bootcamps",selectedBootcamp)
   // Add function to close the 3D Secure popup
   const handleSecurePopupClose = () => {
     setSecurePopupOpen(false);

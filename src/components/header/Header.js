@@ -405,6 +405,45 @@ const Header = ({ props, onAuthStateChange }) => {
                     )}
                   </div>
                  
+                  {/* My Bootcamps Button - Dashboard Link */}
+                  <div className="dashboard-link">
+                    <Link 
+                      to="/Dashboard" 
+                      className="bootcamp-btn"
+                      style={{
+                        display: 'inline-block',
+                        backgroundColor: '#8e44ad',
+                        color: 'white',
+                        padding: '8px 15px',
+                        borderRadius: '20px',
+                        fontSize: '0.9rem',
+                        fontWeight: 'bold',
+                        textDecoration: 'none',
+                        boxShadow: '0 3px 10px rgba(0,0,0,0.2)',
+                        margin: '0 10px',
+                        transition: 'all 0.3s ease',
+                        border: '2px solid transparent',
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.backgroundColor = '#ffffff';
+                        e.currentTarget.style.color = '#8e44ad';
+                        e.currentTarget.style.borderColor = '#8e44ad';
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.backgroundColor = '#8e44ad';
+                        e.currentTarget.style.color = 'white';
+                        e.currentTarget.style.borderColor = 'transparent';
+                        e.currentTarget.style.transform = 'translateY(0)';
+                      }}
+                    >
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <i className="fi flaticon-online-learning" style={{ fontSize: '1rem' }}></i>
+                        {t("My Bootcamps")}
+                      </span>
+                    </Link>
+                  </div>
+                  
                   <div style={{ position: 'relative' }} onMouseEnter={handleMouseDropdownEnter} onMouseLeave={handleMouseDropdownLeave}>
       <Dropdown show={showLocalizationDropdown}>
         <Dropdown.Toggle
