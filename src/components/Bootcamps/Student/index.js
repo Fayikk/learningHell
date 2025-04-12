@@ -9,6 +9,7 @@ import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signal
 import {toast} from 'react-toastify';
 import { useSelector } from 'react-redux';
 import { payHub } from '../../../api/Base/payHubModel';
+import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 // SVG Icons as React components
 const CalendarIcon = () => (
@@ -354,6 +355,27 @@ const StudentBootcampList = () => {
   
   return (
     <>
+    <Helmet>
+      {/* Primary Meta Tags */}
+      <title>LearningHell - Limitless</title>
+      <meta name="description" content="The path to learning has no limits." />
+      
+      {/* Open Graph / Facebook */}
+      <meta property="og:url" content="https://www.learninghell.com/Student/Bootcamps" />
+      <meta property="og:type" content="website" />
+      <meta property="og:title" content="LearningHell - Limitless" />
+      <meta property="og:description" content="The path to learning has no limits." />
+      <meta property="og:image" content="" />
+
+      {/* Twitter */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta property="twitter:domain" content="learninghell.com" />
+      <meta property="twitter:url" content="https://www.learninghell.com/Student/Bootcamps" />
+      <meta name="twitter:title" content="LearningHell - Limitless" />
+      <meta name="twitter:description" content="The path to learning has no limits." />
+      <meta name="twitter:image" content="" />
+    </Helmet>
+    
     <Navbar />
     <div className="bootcamp-container">
       <h1 className="page-title">Bootcamp Programları</h1>
