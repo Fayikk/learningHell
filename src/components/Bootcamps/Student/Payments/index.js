@@ -58,32 +58,26 @@ const PaymentSuccess = () => {
       setOrderDetails(location.state.orderDetails);
       setUserDetails(location.state.userDetails);
       setBootcampDetails(location.state.bootcampDetails);
-    } else {
-      // Mock data for demonstration
-      setOrderDetails({
-        orderId: 'BTC-' + Math.floor(100000 + Math.random() * 900000),
-        bootcampName: 'Full-Stack Web Geliştirme Bootcamp',
-        orderDate: new Date().toISOString(),
-        price: 4999,
-        startDate: new Date(new Date().setDate(new Date().getDate() + 14)).toISOString(),
-        endDate: new Date(new Date().setDate(new Date().getDate() + 84)).toISOString(),
-        location: 'Online',
-        customerName: 'Ahmet Yılmaz',
-        customerEmail: 'ahmet.yilmaz@example.com'
-      });
-    }
+    } 
     
     // You might want to update some analytics or notify your backend
     // about the successful payment page visit
   }, [location]);
 
-  if (!orderDetails) {
-    return (
-      <div className="loading-container">
-        <div className="loader"></div>
-      </div>
-    );
-  }
+  // Facebook Pixel tracking code for purchase event
+  useEffect(() => {
+    console.log('Facebook Pixel tracking code executed');
+    // Check if fbq is available in the global window object
+    // Execute the Facebook Pixel tracking when component mounts
+    if (typeof window !== 'undefined' && window.fbq) {
+      // Replace 'YOUR_PIXEL_ID' with your actual Facebook Pixel ID
+      console.log('Facebook Pixel ID:', 'YOUR_PIXEL_ID');
+      window.fbq('track', 'Purchase', {
+        currency: '22500',
+      });
+      console.log('Facebook Pixel Purchase event triggered');
+    }
+  }, []);
 
   // Format dates to readable strings
   const formatDate = (dateString) => {
@@ -122,7 +116,7 @@ const PaymentSuccess = () => {
           <div className="order-summary">
             <div className="order-header">
               <h2>Sipariş Özeti</h2>
-              <span className="order-number">Sipariş No: {orderDetails}</span>
+              <span className="order-number">Sipariş No: {orderDetails && typeof orderDetails === 'object' ? orderDetails.orderId : ""}</span>
             </div>
             
             <div className="order-details-grid">

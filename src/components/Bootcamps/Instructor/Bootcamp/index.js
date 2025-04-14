@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Container,
   Tab,
@@ -10,7 +10,8 @@ import {
   Col,
   Table,
   Alert,
-  Badge
+  Badge,
+  Image
 } from 'react-bootstrap';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -25,7 +26,7 @@ import { useCreateNewBootcampTopicMutation } from '../../../../api/bootcampTopic
 import { useCreateNewBootcampScheduleMutation } from '../../../../api/bootcampScheduleApi';
 import {toast} from 'react-toastify';
 import InstructorAuth from '../../../../Wrappers/HoC/InstructorAuth';
-
+import { useAddBootcampInstructorDetailMutation } from '../../../../api/bootcampInstructorDetailApi';
 const InstructorBootcampManagement = () => {
   const [key, setKey] = useState('bootcamp');
   const [bootcampData, setBootcampData] = useState(null);
@@ -33,10 +34,13 @@ const InstructorBootcampManagement = () => {
   const [schedules, setSchedules] = useState([]);
   const [topics, setTopics] = useState([]);
   const [successMessage, setSuccessMessage] = useState('');
+  const [imagePreview, setImagePreview] = useState(null);
+  const fileInputRef = useRef(null);
   const {data:bootcampFetchData,error,isLoading} = useGetAllBootcampByUserQuery();
   const [createNewBootcamp] = useCreateNewBootcampMutation();
   const [createNewBootcampTopic] = useCreateNewBootcampTopicMutation();
   const [createNewBootcampSchedule] = useCreateNewBootcampScheduleMutation();
+  const [addBootcampInstructorDetail] = useAddBootcampInstructorDetailMutation();
 
   // Validation schemas
   const bootcampValidationSchema = Yup.object().shape({
@@ -52,6 +56,23 @@ const InstructorBootcampManagement = () => {
       'End date must be after start date'
     ).required('End date is required'),
     isOnline: Yup.boolean().required('Online status is required')
+  });
+
+  // New validation schema for instructor details
+  const instructorDetailValidationSchema = Yup.object().shape({
+    full_Name: Yup.string().required('Full name is required'),
+    short_Description: Yup.string(),
+    description: Yup.string(),
+    education: Yup.string().required('Education is required'),
+    experience: Yup.string().required('Experience is required'),
+    skills: Yup.string(),
+    image_Url: Yup.string().url('Must be a valid URL'),
+    linkedin_Url: Yup.string().url('Must be a valid URL'),
+    twitter_Url: Yup.string().url('Must be a valid URL'),
+    instagram_Url: Yup.string().url('Must be a valid URL'),
+    facebook_Url: Yup.string().url('Must be a valid URL'),
+    youtube_Url: Yup.string().url('Must be a valid URL'),
+    udemy_Url: Yup.string().url('Must be a valid URL')
   });
 
   // Check if bootcamps are available from API response
@@ -170,6 +191,70 @@ const InstructorBootcampManagement = () => {
       toast.error('Error adding topic: ' + (error.message || 'Unknown error'));
     }
     resetForm();
+  };
+
+  // Handle file change for instructor image
+  const handleFileChange = (event, setFieldValue) => {
+    const file = event.currentTarget.files[0];
+    if (file) {
+      setFieldValue('file', file);
+      
+      // Create preview for the image
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Handle instructor detail submission
+  const handleInstructorDetailSubmit = async (values, { resetForm }) => {
+    console.log("trigger values"  , values)
+
+    if (!selectedBootcamp) {
+      toast.error('Please select a bootcamp first');
+      return;
+    }
+
+    try {
+      // Create FormData for file upload
+      const formData = new FormData();
+      formData.append('full_Name', values.full_Name);
+      formData.append('short_Description', values.short_Description || '');
+      formData.append('description', values.description || '');
+      formData.append('education', values.education);
+      formData.append('experience', values.experience);
+      formData.append('skills', values.skills || '');
+      formData.append('image_Url', values.image_Url || '');
+      formData.append('linkedin_Url', values.linkedin_Url || '');
+      formData.append('twitter_Url', values.twitter_Url || '');
+      formData.append('instagram_Url', values.instagram_Url || '');
+      formData.append('facebook_Url', values.facebook_Url || '');
+      formData.append('youtube_Url', values.youtube_Url || '');
+      formData.append('udemy_Url', values.udemy_Url || '');
+      formData.append('bootcampId', selectedBootcamp.id || selectedBootcamp.bootcampId);
+      
+      // Append file if exists
+      if (values.file) {
+        formData.append('file', values.file);
+      }
+
+      // Send data to API
+      const response = await addBootcampInstructorDetail(formData).unwrap();
+      if (response.isSuccess) {
+        toast.success('Instructor details added successfully!');
+        resetForm();
+        setImagePreview(null);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+      } else {
+        toast.error(response.message || 'Failed to add instructor details');
+      }
+    } catch (error) {
+      toast.error('Error adding instructor details: ' + (error.message || 'Unknown error'));
+    }
   };
 
   // Handle schedule deletion
@@ -693,6 +778,343 @@ const InstructorBootcampManagement = () => {
                   )}
                 </Col>
               </Row>
+            </Card.Body>
+          </Card>
+        </Tab>
+
+        {/* New Tab for Instructor Details */}
+        <Tab eventKey="instructor" title="Instructor Details">
+          <Card className="shadow-sm">
+            <Card.Header className="bg-primary text-white">
+              <h5 className="mb-0">Add Instructor Details</h5>
+            </Card.Header>
+            <Card.Body>
+              {/* Bootcamp Dropdown */}
+              {hasBootcamps && (
+                <Form.Group className="mb-4">
+                  <Form.Label><strong>Select Bootcamp</strong></Form.Label>
+                  <Form.Select 
+                    onChange={handleBootcampDropdownChange}
+                    value={selectedBootcamp ? selectedBootcamp.id : ''}
+                    className="mb-3"
+                  >
+                    <option value="">-- Select a bootcamp --</option>
+                    {bootcampFetchData.result.map((bootcamp) => (
+                      <option key={bootcamp.id} value={bootcamp.id}>
+                        {bootcamp.title}
+                      </option>
+                    ))}
+                  </Form.Select>
+                  {selectedBootcamp && (
+                    <div className="selected-bootcamp-info p-2 bg-light rounded mb-3">
+                      <small>
+                        <strong>Selected:</strong> {selectedBootcamp.title}<br/>
+                        <strong>Period:</strong> {formatDate(selectedBootcamp.start_Date)} - {formatDate(selectedBootcamp.end_Date)}
+                      </small>
+                    </div>
+                  )}
+                </Form.Group>
+              )}
+
+              <Formik
+                initialValues={{
+                  full_Name: '',
+                  short_Description: '',
+                  description: '',
+                  education: '',
+                  experience: '',
+                  skills: '',
+                  image_Url: '',
+                  file: null,
+                  linkedin_Url: '',
+                  twitter_Url: '',
+                  instagram_Url: '',
+                  facebook_Url: '',
+                  youtube_Url: '',
+                  udemy_Url: ''
+                }}
+                validationSchema={instructorDetailValidationSchema}
+                onSubmit={handleInstructorDetailSubmit}
+              >
+                {({
+                  values,
+                  errors,
+                  touched,
+                  handleChange,
+                  handleBlur,
+                  handleSubmit,
+                  setFieldValue
+                }) => (
+                  <Form onSubmit={handleSubmit}>
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Full Name *</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="full_Name"
+                            value={values.full_Name}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            isInvalid={touched.full_Name && !!errors.full_Name}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.full_Name}
+                          </Form.Control.Feedback>
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Short Description</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="short_Description"
+                            value={values.short_Description}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            isInvalid={touched.short_Description && !!errors.short_Description}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.short_Description}
+                          </Form.Control.Feedback>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    <Form.Group className="mb-3">
+                      <Form.Label>Description</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        name="description"
+                        value={values.description}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        isInvalid={touched.description && !!errors.description}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {errors.description}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Education *</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="education"
+                            value={values.education}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            isInvalid={touched.education && !!errors.education}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.education}
+                          </Form.Control.Feedback>
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Experience *</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="experience"
+                            value={values.experience}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            isInvalid={touched.experience && !!errors.experience}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.experience}
+                          </Form.Control.Feedback>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    <Form.Group className="mb-3">
+                      <Form.Label>Skills (comma separated)</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="skills"
+                        value={values.skills}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        isInvalid={touched.skills && !!errors.skills}
+                        placeholder="React, Node.js, JavaScript, etc."
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {errors.skills}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Profile Image URL</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="image_Url"
+                            value={values.image_Url}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            isInvalid={touched.image_Url && !!errors.image_Url}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.image_Url}
+                          </Form.Control.Feedback>
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Upload Profile Image</Form.Label>
+                          <Form.Control
+                            type="file"
+                            onChange={(event) => handleFileChange(event, setFieldValue)}
+                            ref={fileInputRef}
+                            accept="image/*"
+                          />
+                          <Form.Text className="text-muted">
+                            Upload an image file (PNG, JPG, JPEG)
+                          </Form.Text>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    {imagePreview && (
+                      <div className="text-center mb-3">
+                        <p>Image Preview:</p>
+                        <Image 
+                          src={imagePreview} 
+                          alt="Preview" 
+                          thumbnail 
+                          style={{ maxHeight: "200px" }} 
+                        />
+                      </div>
+                    )}
+
+                    <h5 className="mt-4 mb-3">Social Media Links</h5>
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>LinkedIn URL</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="linkedin_Url"
+                            value={values.linkedin_Url}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            isInvalid={touched.linkedin_Url && !!errors.linkedin_Url}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.linkedin_Url}
+                          </Form.Control.Feedback>
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Twitter URL</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="twitter_Url"
+                            value={values.twitter_Url}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            isInvalid={touched.twitter_Url && !!errors.twitter_Url}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.twitter_Url}
+                          </Form.Control.Feedback>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Instagram URL</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="instagram_Url"
+                            value={values.instagram_Url}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            isInvalid={touched.instagram_Url && !!errors.instagram_Url}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.instagram_Url}
+                          </Form.Control.Feedback>
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Facebook URL</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="facebook_Url"
+                            value={values.facebook_Url}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            isInvalid={touched.facebook_Url && !!errors.facebook_Url}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.facebook_Url}
+                          </Form.Control.Feedback>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>YouTube URL</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="youtube_Url"
+                            value={values.youtube_Url}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            isInvalid={touched.youtube_Url && !!errors.youtube_Url}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.youtube_Url}
+                          </Form.Control.Feedback>
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Udemy URL</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="udemy_Url"
+                            value={values.udemy_Url}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            isInvalid={touched.udemy_Url && !!errors.udemy_Url}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.udemy_Url}
+                          </Form.Control.Feedback>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    <div className="text-center mt-4">
+                      <Button
+                        variant="primary"
+                        type="submit"
+                        disabled={!selectedBootcamp}
+                        className="px-5"
+                      >
+                        Save Instructor Details
+                      </Button>
+                      {!selectedBootcamp && (
+                        <p className="text-danger mt-2">
+                          Please select a bootcamp first
+                        </p>
+                      )}
+                    </div>
+                  </Form>
+                )}
+              </Formik>
             </Card.Body>
           </Card>
         </Tab>

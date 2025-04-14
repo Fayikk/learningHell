@@ -11,13 +11,15 @@ import { useSelector } from 'react-redux';
 import { payHub } from '../../../api/Base/payHubModel';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
+import { rootBaseUrl,baseUrl } from '../../../api/Base/baseApiModel';
 // SVG Icons as React components
 const CalendarIcon = () => (
   <svg className="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
     <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 002 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v5h-5v-5z"/>
   </svg>
 );
-
+console.log(baseUrl);
+console.log(rootBaseUrl);
 // Other icon components remain unchanged
 const LocationIcon = () => (
   <svg className="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
@@ -90,6 +92,13 @@ const SecurePaymentPopup = ({ htmlContent, onClose }) => {
   );
 };
 
+// Add new icon for instructor
+const InstructorIcon = () => (
+  <svg className="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+  </svg>
+);
+
 const StudentBootcampList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedBootcamp, setSelectedBootcamp] = useState(null);
@@ -99,6 +108,7 @@ const StudentBootcampList = () => {
   const [hubConnection,setHubConnection] = useState();
   const nameIdentifier = useSelector((state) => state.authStore.nameIdentifier);
     const [html, setHtml] = useState(null);
+  const [activeTab, setActiveTab] = useState('bootcamp'); // Add state for tab navigation
 
   const navigate = useNavigate();
   console.log("trigger nameIdentifier",nameIdentifier)
@@ -491,7 +501,7 @@ const StudentBootcampList = () => {
         ))}
       </div>
       
-      {/* Bootcamp Details Dialog */}
+      {/* Modified Bootcamp Details Dialog with Tabs */}
       {dialogOpen && selectedBootcamp && (
         <div className="dialog-overlay" onClick={closeDialog}>
           <div className="details-dialog" onClick={(e) => e.stopPropagation()}>
@@ -501,95 +511,206 @@ const StudentBootcampList = () => {
                 <CloseIcon />
               </button>
             </div>
+            
+            {/* Add Tab Navigation */}
+            <div className="detail-tabs">
+              <button 
+                className={`tab-button ${activeTab === 'bootcamp' ? 'active' : ''}`} 
+                onClick={() => setActiveTab('bootcamp')}
+              >
+                <CalendarIcon /> Bootcamp Detayları
+              </button>
+              <button 
+                className={`tab-button ${activeTab === 'instructor' ? 'active' : ''}`} 
+                onClick={() => setActiveTab('instructor')}
+              >
+                <InstructorIcon /> Eğitmen Detayları
+              </button>
+            </div>
+            
             <div className="dialog-content">
-              <div className="bootcamp-detail-container">
-                <img
-                  className="detail-image"
-                  src={selectedBootcamp.thumbnail_Url || 'https://via.placeholder.com/800x400?text=Bootcamp'}
-                  alt={selectedBootcamp.title}
-                />
-                
-                <div className="main-info">
-                  <div className="info-grid">
-                    <div className="info-col-main">
-                      <h3>Bootcamp Hakkında</h3>
-                      <p className="bootcamp-description">{selectedBootcamp.description}</p>
-                      
-                      <h3>Konular</h3>
-                      <div className="topics-container">
-                        {selectedBootcamp.bootcampTopics && selectedBootcamp.bootcampTopics.length > 0 ? (
-                          selectedBootcamp.bootcampTopics.map((topic) => (
-                            <span key={topic.id} className="detail-topic-chip">{topic.title}</span>
-                          ))
-                        ) : (
-                          <span className="no-topics">Konular belirtilmemiş</span>
-                        )}
+              {/* Bootcamp Details Tab */}
+              {activeTab === 'bootcamp' && (
+                <div className="bootcamp-detail-container">
+                  <img
+                    className="detail-image"
+                    src={selectedBootcamp.thumbnail_Url || 'https://via.placeholder.com/800x400?text=Bootcamp'}
+                    alt={selectedBootcamp.title}
+                  />
+                  
+                  <div className="main-info">
+                    <div className="info-grid">
+                      <div className="info-col-main">
+                        <h3>Bootcamp Hakkında</h3>
+                        <p className="bootcamp-description">{selectedBootcamp.description}</p>
+                        
+                        <h3>Konular</h3>
+                        <div className="topics-container">
+                          {selectedBootcamp.bootcampTopics && selectedBootcamp.bootcampTopics.length > 0 ? (
+                            selectedBootcamp.bootcampTopics.map((topic) => (
+                              <span key={topic.id} className="detail-topic-chip">{topic.title}</span>
+                            ))
+                          ) : (
+                            <span className="no-topics">Konular belirtilmemiş</span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    
-                    <div className="info-col-side">
-                      <div className="info-card">
-                        <h3>Bootcamp Bilgileri</h3>
-                        
-                        <div className="info-detail-item">
-                          <CalendarIcon />
-                          <div>
-                            <h4>Tarih</h4>
-                            <p>{formatDate(selectedBootcamp.start_Date)} - {formatDate(selectedBootcamp.end_Date)}</p>
+                      
+                      <div className="info-col-side">
+                        <div className="info-card">
+                          <h3>Bootcamp Bilgileri</h3>
+                          
+                          <div className="info-detail-item">
+                            <CalendarIcon />
+                            <div>
+                              <h4>Tarih</h4>
+                              <p>{formatDate(selectedBootcamp.start_Date)} - {formatDate(selectedBootcamp.end_Date)}</p>
+                            </div>
                           </div>
-                        </div>
-                        
-                        <div className="info-detail-item">
-                          <LocationIcon />
-                          <div>
-                            <h4>Konum</h4>
-                            <p>{selectedBootcamp.isOnline ? 'Online' : 'Yüz yüze'}</p>
+                          
+                          <div className="info-detail-item">
+                            <LocationIcon />
+                            <div>
+                              <h4>Konum</h4>
+                              <p>{selectedBootcamp.isOnline ? 'Online' : 'Yüz yüze'}</p>
+                            </div>
                           </div>
-                        </div>
-                        
-                        <div className="info-detail-item">
-                          <MoneyIcon />
-                          <div>
-                            <h4>Fiyat</h4>
-                            <p className="price-bold">{selectedBootcamp.price} TL</p>
+                          
+                          <div className="info-detail-item">
+                            <MoneyIcon />
+                            <div>
+                              <h4>Fiyat</h4>
+                              <p className="price-bold">{selectedBootcamp.price} TL</p>
+                            </div>
                           </div>
+                          
+                          <button className="enroll-button" onClick={handleCheckoutOpen}>
+                            Şimdi Katıl
+                          </button>
                         </div>
-                        
-                        <button className="enroll-button" onClick={handleCheckoutOpen}>
-                          Şimdi Katıl
-                        </button>
                       </div>
                     </div>
                   </div>
-                </div>
-                
-                {selectedBootcamp.bootcampSchedule && selectedBootcamp.bootcampSchedule.length > 0 && (
-                  <div className="schedule-section">
-                    <h3>Program Akışı</h3>
-                    
-                    <div className="schedule-timeline">
-                      {selectedBootcamp.bootcampSchedule.map((schedule) => (
-                        <div key={schedule.id} className="schedule-item">
-                          <div className="timeline-dot"></div>
-                          <div className="schedule-content">
-                            <h4>{schedule.topic}</h4>
-                            <div className="schedule-time-info">
-                              <div className="schedule-time-item">
-                                <CalendarIcon />
-                                <span>{formatDate(schedule.date)}</span>
-                              </div>
-                              <div className="schedule-time-item">
-                                <TimeIcon />
-                                <span>{schedule.startAndEndDate}</span>
+                  
+                  {selectedBootcamp.bootcampSchedule && selectedBootcamp.bootcampSchedule.length > 0 && (
+                    <div className="schedule-section">
+                      <h3>Program Akışı</h3>
+                      
+                      <div className="schedule-timeline">
+                        {selectedBootcamp.bootcampSchedule.map((schedule) => (
+                          <div key={schedule.id} className="schedule-item">
+                            <div className="timeline-dot"></div>
+                            <div className="schedule-content">
+                              <h4>{schedule.topic}</h4>
+                              <div className="schedule-time-info">
+                                <div className="schedule-time-item">
+                                  <CalendarIcon />
+                                  <span>{formatDate(schedule.date)}</span>
+                                </div>
+                                <div className="schedule-time-item">
+                                  <TimeIcon />
+                                  <span>{schedule.startAndEndDate}</span>
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              {/* Instructor Details Tab */}
+              {activeTab === 'instructor' && selectedBootcamp.bootcampInstructorDetail && (
+                <div className="instructor-detail-container">
+                  <div className="instructor-header">
+                    <div className="instructor-image-container">
+                      <img
+                        className="instructor-image"
+                        src={
+                          selectedBootcamp.bootcampInstructorDetail.image_Url
+                            ? `${rootBaseUrl}${selectedBootcamp.bootcampInstructorDetail.image_Url.replace(/\\/g, '/').replace(/^api\//, '')}`
+                            : 'https://via.placeholder.com/200x200?text=Instructor'
+                        }
+                        
+                        alt={selectedBootcamp.bootcampInstructorDetail.full_Name}
+                      />
+                    </div>
+                    <div className="instructor-headline">
+                      <h2>{selectedBootcamp.bootcampInstructorDetail.full_Name}</h2>
+                      <p className="instructor-title">{selectedBootcamp.bootcampInstructorDetail.short_Description || 'Eğitmen'}</p>
+                      
+                      <div className="social-links">
+                        {selectedBootcamp.bootcampInstructorDetail.linkedIn_Url && (
+                          <a href={selectedBootcamp.bootcampInstructorDetail.linkedIn_Url} target="_blank" rel="noopener noreferrer" className="social-link linkedin">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                              <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"></path>
+                            </svg>
+                          </a>
+                        )}
+                        {selectedBootcamp.bootcampInstructorDetail.twitter_Url && (
+                          <a href={selectedBootcamp.bootcampInstructorDetail.twitter_Url} target="_blank" rel="noopener noreferrer" className="social-link twitter">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                              <path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"></path>
+                            </svg>
+                          </a>
+                        )}
+                        {selectedBootcamp.bootcampInstructorDetail.instagram_Url && (
+                          <a href={selectedBootcamp.bootcampInstructorDetail.instagram_Url} target="_blank" rel="noopener noreferrer" className="social-link instagram">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                              <path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2zm-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6zm9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25zM12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z"></path>
+                            </svg>
+                          </a>
+                        )}
+                        {selectedBootcamp.bootcampInstructorDetail.udemy_Url && (
+                          <a href={selectedBootcamp.bootcampInstructorDetail.udemy_Url} target="_blank" rel="noopener noreferrer" className="social-link udemy">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                              <path d="M12 0L5.81 3.573v3.574l6.189-3.573 6.191 3.573V3.573zM5.81 10.148v8.144c0 1.85.589 3.243 1.741 4.234S10.177 24 11.973 24s3.269-.482 4.448-1.474c1.179-.991 1.768-2.439 1.768-4.234v-8.144l-6.216 3.622z"/>
+                            </svg>
+                          </a>
+                        )}
+                      </div>
                     </div>
                   </div>
-                )}
-              </div>
+                  
+                  <div className="instructor-details">
+                    <div className="detail-section">
+                      <h3>Hakkında</h3>
+                      <p>{selectedBootcamp.bootcampInstructorDetail.description || 'Eğitmen hakkında bilgi bulunmamaktadır.'}</p>
+                    </div>
+                    
+                    <div className="instructor-credentials">
+                      <div className="credential-section">
+                        <h3>Eğitim</h3>
+                        <p>{selectedBootcamp.bootcampInstructorDetail.education || 'Belirtilmemiş'}</p>
+                      </div>
+                      
+                      <div className="credential-section">
+                        <h3>Deneyim</h3>
+                        <p>{selectedBootcamp.bootcampInstructorDetail.experience || 'Belirtilmemiş'}</p>
+                      </div>
+                      
+                      {selectedBootcamp.bootcampInstructorDetail.skills && (
+                        <div className="credential-section">
+                          <h3>Yetenekler</h3>
+                          <div className="skills-container">
+                            {selectedBootcamp.bootcampInstructorDetail.skills.split(',').map((skill, index) => (
+                              <span key={index} className="skill-chip">{skill.trim()}</span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="instructor-footer">
+                      <button className="enroll-button" onClick={handleCheckoutOpen}>
+                        Bu Eğitmenin Bootcamp'ine Kaydol
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
