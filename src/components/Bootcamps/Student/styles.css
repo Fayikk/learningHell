@@ -891,6 +891,7 @@
   border-radius: 8px;
   overflow: hidden;
   transition: all 0.3s ease;
+  margin-bottom: 16px;
 }
 
 .collapsible-section.expanded {
@@ -937,6 +938,11 @@
   font-size: 20px;
   color: #5f6368;
   font-weight: bold;
+  transition: transform 0.3s ease;
+}
+
+.expanded .toggle-icon {
+  transform: rotate(180deg);
 }
 
 /* Section Content */
@@ -945,12 +951,17 @@
   overflow: hidden;
   transition: max-height 0.3s ease-in-out, padding 0.3s ease;
   padding: 0 16px;
+  opacity: 0;
+  visibility: hidden;
 }
 
 .expanded .section-content {
-  max-height: 500px;
+  max-height: 800px; /* Increased max height to accommodate more content */
   padding: 16px;
   border-top: 1px solid #dadce0;
+  opacity: 1;
+  visibility: visible;
+  transition: max-height 0.5s ease-in-out, padding 0.3s ease, opacity 0.3s ease;
 }
 
 /* Form Groups */
@@ -2439,4 +2450,118 @@
   border-color: #2ecc71;
   background-color: #eafaf1;
   box-shadow: 0 2px 8px rgba(46, 204, 113, 0.1);
+}
+
+/* Add or update these CSS classes for better visibility of payment options */
+
+/* Existing styles... */
+
+/* Make the form containers larger */
+.checkout-modal {
+  max-width: 800px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.section-content {
+  padding: 0 16px;
+  max-height: 0; /* Start collapsed */
+  overflow: hidden;
+  transition: max-height 0.5s ease-in-out, padding 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.expanded .section-content {
+  padding: 16px;
+  max-height: 800px; /* Increase max height */
+  opacity: 1;
+  visibility: visible;
+  overflow-y: auto;
+}
+
+/* Improve the card form layout */
+.card-input-container {
+  width: 100%;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+}
+
+.form-row .form-group {
+  flex: 1;
+  min-width: 120px; /* Ensure minimum width for inputs */
+}
+
+/* Fix CVV input visibility */
+.card-cvv {
+  min-width: 100px;
+  margin-left: 10px;
+}
+
+.cvv-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.cvv-input input {
+  width: 80px;
+}
+
+/* Improve installment options section */
+.installment-options-container {
+  max-height: 350px;
+  overflow-y: auto;
+  padding: 10px 0;
+}
+
+.installment-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.installment-option {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.installment-option.selected {
+  border-color: #4CAF50;
+  background-color: rgba(76, 175, 80, 0.05);
+}
+
+/* Make installment details more visible */
+.installment-details {
+  display: flex;
+  flex-direction: column;
+  margin-top: 5px;
+}
+
+.monthly-price {
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+/* Ensure the secure payment popup is large enough */
+.secure-payment-popup {
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+}
+
+.secure-payment-iframe {
+  width: 100%;
+  height: 500px;
+  border: none;
 }
