@@ -347,7 +347,9 @@ const StudentBootcampList = () => {
     if (name === 'cardNumber' && selectedBootcamp) {
       // Remove any non-digit characters
       const cleanCardNumber = value.replace(/\D/g, '');
-      checkInstallmentOptions(cleanCardNumber);
+      if (cleanCardNumber.length === 16 ) {
+        checkInstallmentOptions(cleanCardNumber);
+      }
     }
   };
   
