@@ -43,10 +43,19 @@ export const paymentApi = createApi({
                     url:'/PayCallBack'
                 }
             }
+        }),
+        checkInstallmentDebitCard:builder.mutation({
+            query:(sendData) => {
+                return {
+                    method:"POST",
+                    body:sendData,
+                    url:'/CheckInstallmentDebitCard'
+                }
+            }
         })
     })
 })
 
 
 
-export const {usePaymentCheckoutMutation,usePaymentBootcampCheckoutMutation} = paymentApi
+export const {usePaymentCheckoutMutation,usePaymentBootcampCheckoutMutation,useCheckInstallmentDebitCardMutation} = paymentApi

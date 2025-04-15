@@ -4,7 +4,7 @@ import './styles.css';
 import { useGetAllBootcampsMutation } from '../../../api/bootcampApi';
 import Navbar from '../../Navbar/Navbar';
 import Footer from '../../footer/Footer';
-import { usePaymentBootcampCheckoutMutation, usePaymentCheckoutMutation } from '../../../api/paymentApi';
+import { useCheckInstallmentDebitCardMutation, usePaymentBootcampCheckoutMutation, usePaymentCheckoutMutation } from '../../../api/paymentApi';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import {toast} from 'react-toastify';
 import { useSelector } from 'react-redux';
@@ -105,10 +105,22 @@ const StudentBootcampList = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [checkoutModalOpen, setCheckoutModalOpen] = useState(false);
   const [createPayment] = usePaymentBootcampCheckoutMutation();
+  const [checkInstallmentDebitCard] = useCheckInstallmentDebitCardMutation();
   const [hubConnection,setHubConnection] = useState();
   const nameIdentifier = useSelector((state) => state.authStore.nameIdentifier);
-    const [html, setHtml] = useState(null);
-  const [activeTab, setActiveTab] = useState('bootcamp'); // Add state for tab navigation
+  const [html, setHtml] = useState(null);
+  const [activeTab, setActiveTab] = useState('bootcamp');
+  
+  // Add new state variables for installment options
+  const [installmentOptions, setInstallmentOptions] = useState([]);
+  const [selectedInstallment, setSelectedInstallment] = useState(1); // Default to single payment
+  const [isCheckingInstallments, setIsCheckingInstallments] = useState(false);
+  const [cardDetails, setCardDetails] = useState({
+    cardType: '',
+    cardAssociation: '',
+    bankName: '',
+    cardFamilyName: ''
+  });
 
   const navigate = useNavigate();
   console.log("trigger nameIdentifier",nameIdentifier)
@@ -121,7 +133,6 @@ const StudentBootcampList = () => {
     couponCode: '',
     cardName: '',
     cardNumber: '',
-    // expiryDate: '',//bunun expire month ve expire year olarak 2'ye ayrılması gerekiyor.
     expireMonth: '',
     expireYear: '',
     cvv: '',
@@ -255,13 +266,91 @@ const StudentBootcampList = () => {
     setCheckoutModalOpen(false);
   };
 
+  // Updated function to check installment options when card number changes
+  const checkInstallmentOptions = async (cardNumber) => {
+    // Check if the card number is at least 6 digits to get the BIN number
+    if (cardNumber.length >= 6) {
+      const binNumber = cardNumber.substring(0, 6);
+      
+      setIsCheckingInstallments(true);
+      
+      try {
+        const requestBody = {
+          price: selectedBootcamp.price,
+          binNumber: binNumber,
+          locale: "tr",
+          conversationId: Date.now().toString() // Generate a unique conversation ID
+        };
+        
+        const response = await checkInstallmentDebitCard(requestBody);
+        
+        // Updated to handle the new response structure
+        if (response.data && 
+            response.data.isSuccess && 
+            response.data.result && 
+            response.data.result.installmentDetails && 
+            response.data.result.installmentDetails.length > 0) {
+          
+          const cardInfo = response.data.result.installmentDetails[0];
+          setInstallmentOptions(cardInfo.installmentPrices || []);
+          setCardDetails({
+            cardType: cardInfo.cardType,
+            cardAssociation: cardInfo.cardAssociation,
+            bankName: cardInfo.bankName,
+            cardFamilyName: cardInfo.cardFamilyName
+          });
+          
+          // When we get installment options, automatically expand a new section for them
+          if (cardInfo.installmentPrices && cardInfo.installmentPrices.length > 0) {
+            setExpandedSection('installment');
+          }
+        } else {
+          // Reset if no installment options found
+          setInstallmentOptions([]);
+          setCardDetails({
+            cardType: '',
+            cardAssociation: '',
+            bankName: '',
+            cardFamilyName: ''
+          });
+        }
+      } catch (error) {
+        console.error("Error checking installment options:", error);
+        toast.error("Taksit seçenekleri kontrol edilirken bir hata oluştu.");
+        setInstallmentOptions([]);
+      } finally {
+        setIsCheckingInstallments(false);
+      }
+    } else {
+      // Clear installment options if card number is too short
+      setInstallmentOptions([]);
+      setCardDetails({
+        cardType: '',
+        cardAssociation: '',
+        bankName: '',
+        cardFamilyName: ''
+      });
+    }
+  };
+
   // Add handler for form input changes
   const handleFormChange = (e) => {
     const { name, value } = e.target;
+    
+    // Update the form data
     setFormData({
       ...formData,
       [name]: value
     });
+    
+    // Check for installment options when card number changes
+    if (name === 'cardNumber' && selectedBootcamp) {
+      // Remove any non-digit characters
+      const cleanCardNumber = value.replace(/\D/g, '');
+      if (cleanCardNumber.length === 16 ) {
+        checkInstallmentOptions(cleanCardNumber);
+      }
+    }
   };
   
   // Add handler for applying discount coupon
@@ -292,6 +381,11 @@ const StudentBootcampList = () => {
 
 
 
+  // Add handler for installment selection
+  const handleInstallmentChange = (installmentNumber) => {
+    setSelectedInstallment(installmentNumber);
+  };
+
   // Add handler for form submission
   const handlePaymentSubmit = async (e) => {
     e.preventDefault();
@@ -311,6 +405,8 @@ const StudentBootcampList = () => {
     formDataToSend.append("cvc", formData.cvv);
     formDataToSend.append("IdentityNumber", formData.identityNumber);
     formDataToSend.append("BootcampId", selectedBootcamp.id);
+    // Add installment information
+    formDataToSend.append("InstallmentNumber", selectedInstallment);
 
     const sendData = {
       paymentModel:formDataToSend,
@@ -337,12 +433,34 @@ const StudentBootcampList = () => {
     setCheckoutModalOpen(false);
   };
   
-  // Calculate final price after discount
+  // Calculate final price after discount and with installment
   const calculateFinalPrice = () => {
     if (!selectedBootcamp) return 0;
-    return discount.applied 
+    
+    let price = discount.applied 
       ? selectedBootcamp.price - discount.amount 
       : selectedBootcamp.price;
+    
+    // If installment option is selected, use the total price from installment
+    if (selectedInstallment > 1 && installmentOptions.length > 0) {
+      const selectedOption = installmentOptions.find(option => option.installmentNumber === selectedInstallment);
+      if (selectedOption) {
+        price = parseFloat(selectedOption.totalPrice);
+      }
+    }
+    
+    return price;
+  };
+  
+  // Get monthly installment amount if installment selected
+  const getMonthlyInstallment = () => {
+    if (selectedInstallment > 1 && installmentOptions.length > 0) {
+      const selectedOption = installmentOptions.find(option => option.installmentNumber === selectedInstallment);
+      if (selectedOption) {
+        return parseFloat(selectedOption.price);
+      }
+    }
+    return null;
   };
 
   // Toggle collapsible sections
@@ -869,7 +987,7 @@ const StudentBootcampList = () => {
                   </div>
                 </div>
                 
-                {/* Collapsible Payment Details Section */}
+                {/* Updated payment details section with card detection */}
                 <div className={`collapsible-section ${expandedSection === 'payment' ? 'expanded' : ''}`}>
                   <div 
                     className="section-header" 
@@ -886,10 +1004,16 @@ const StudentBootcampList = () => {
                     <div className="card-input-container">
                       <div className="card-header">
                         <div className="card-types">
-                          <span className="card-type visa">Visa</span>
-                          <span className="card-type mastercard">MasterCard</span>
-                          <span className="card-type amex">Amex</span>
+                          <span className={`card-type visa ${cardDetails.cardAssociation === 'VISA' ? 'active' : ''}`}>Visa</span>
+                          <span className={`card-type mastercard ${cardDetails.cardAssociation === 'MASTER_CARD' ? 'active' : ''}`}>MasterCard</span>
+                          <span className={`card-type amex ${cardDetails.cardAssociation === 'AMERICAN_EXPRESS' ? 'active' : ''}`}>Amex</span>
                         </div>
+                        
+                        {cardDetails.bankName && (
+                          <div className="detected-card-info">
+                            <span>{cardDetails.bankName} {cardDetails.cardFamilyName}</span>
+                          </div>
+                        )}
                       </div>
                       
                       <div className="form-group">
@@ -915,8 +1039,17 @@ const StudentBootcampList = () => {
                             placeholder="XXXX XXXX XXXX XXXX" 
                             required 
                           />
-                          <span className="card-icon">💳</span>
+                          <span className="card-icon">
+                            {isCheckingInstallments ? 
+                              <span className="spinner">⟳</span> : 
+                              '💳'}
+                          </span>
                         </div>
+                        {isCheckingInstallments && (
+                          <div className="checking-message">
+                            Taksit seçenekleri kontrol ediliyor...
+                          </div>
+                        )}
                       </div>
                       
                       <div className="form-row">
@@ -930,7 +1063,7 @@ const StudentBootcampList = () => {
                             placeholder="AA" 
                             required 
                           />
-                           <input 
+                          <input 
                             type="text" 
                             name="expireYear"
                             value={formData.expireYear} 
@@ -958,33 +1091,125 @@ const StudentBootcampList = () => {
                   </div>
                 </div>
                 
-                {/* Price Summary Section */}
-                <div className="price-summary">
-                  <h4>Ödeme Özeti</h4>
-                  
-                  <div className="price-row">
-                    <span>Bootcamp Ücreti:</span>
-                    <span className="price-value">{selectedBootcamp?.price?.toFixed(2)} TL</span>
-                  </div>
-                  
-                  {discount.applied && (
-                    <div className="price-row discount">
-                      <span>İndirim:</span>
-                      <span className="price-value discount-value">-{discount.amount?.toFixed(2)} TL</span>
+                {/* Separate collapsible section for installment options */}
+                {installmentOptions.length > 0 && (
+                  <div className={`collapsible-section installment-section ${expandedSection === 'installment' ? 'expanded' : ''}`}>
+                    <div 
+                      className="section-header" 
+                      onClick={() => toggleSection('installment')}
+                    >
+                      <h4>
+                        <span className="section-number">4</span>
+                        Taksit Seçenekleri
+                        <span className="badge new-badge">Yeni</span>
+                      </h4>
+                      <span className="toggle-icon">{expandedSection === 'installment' ? '−' : '+'}</span>
                     </div>
-                  )}
-                  
-                  <div className="price-row total">
-                    <span>Toplam Ödenecek Tutar:</span>
-                    <span className="final-price">{calculateFinalPrice()?.toFixed(2)} TL</span>
+                    
+                    <div className="section-content">
+                      <div className="installment-options-container">
+                        {cardDetails.bankName && (
+                          <div className="card-info-banner">
+                            <span className="bank-logo">🏦</span>
+                            <span>{cardDetails.bankName} {cardDetails.cardFamilyName} kartınız için taksit seçenekleri</span>
+                          </div>
+                        )}
+                        
+                        <div className="installment-options">
+                          {/* Display all available installment options from the API response */}
+                          {installmentOptions.map((option) => (
+                            <div 
+                              key={option.installmentNumber} 
+                              className={`installment-option ${selectedInstallment === option.installmentNumber ? 'selected' : ''}`}
+                              onClick={() => handleInstallmentChange(option.installmentNumber)}
+                            >
+                              <div className="installment-radio">
+                                <input 
+                                  type="radio" 
+                                  id={`installment-${option.installmentNumber}`}
+                                  name="installment"
+                                  checked={selectedInstallment === option.installmentNumber}
+                                  onChange={() => handleInstallmentChange(option.installmentNumber)}
+                                />
+                                <label htmlFor={`installment-${option.installmentNumber}`}>
+                                  {option.installmentNumber === 1 ? 'Tek Çekim' : `${option.installmentNumber} Taksit`}
+                                </label>
+                              </div>
+                              <div className="installment-details">
+                                {option.installmentNumber === 1 ? (
+                                  <span className="total-price">{option.totalPrice} TL</span>
+                                ) : (
+                                  <>
+                                    <span className="monthly-price">{option.price} TL x {option.installmentNumber}</span>
+                                    <span className="total-price">Toplam: {option.totalPrice} TL</span>
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        
+                        <button 
+                          type="button" 
+                          className="continue-button"
+                          onClick={() => toggleSection('summary')}
+                        >
+                          Taksit Seçimini Tamamla
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Updated Price Summary Section with its own collapsible section */}
+                <div className={`collapsible-section summary-section ${expandedSection === 'summary' ? 'expanded' : ''}`}>
+                  <div 
+                    className="section-header" 
+                    onClick={() => toggleSection('summary')}
+                  >
+                    <h4>
+                      <span className="section-number">{installmentOptions.length > 0 ? '5' : '4'}</span>
+                      Ödeme Özeti
+                    </h4>
+                    <span className="toggle-icon">{expandedSection === 'summary' ? '−' : '+'}</span>
                   </div>
                   
-                  <div className="payment-actions">
-                    <button type="submit" className="payment-button">Ödemeyi Tamamla</button>
-                    <p className="secure-payment-notice">
-                      <span className="lock-icon">🔒</span> 
-                      Ödeme bilgileriniz güvenli bir şekilde işleniyor
-                    </p>
+                  <div className="section-content">
+                    <div className="price-summary">
+                      <div className="price-row">
+                        <span>Bootcamp Ücreti:</span>
+                        <span className="price-value">{selectedBootcamp?.price?.toFixed(2)} TL</span>
+                      </div>
+                      
+                      {discount.applied && (
+                        <div className="price-row discount">
+                          <span>İndirim:</span>
+                          <span className="price-value discount-value">-{discount.amount?.toFixed(2)} TL</span>
+                        </div>
+                      )}
+                      
+                      {selectedInstallment > 1 && getMonthlyInstallment() && (
+                        <div className="price-row installment-info">
+                          <span>Taksit:</span>
+                          <span className="price-value">{getMonthlyInstallment()?.toFixed(2)} TL x {selectedInstallment} ay</span>
+                        </div>
+                      )}
+                      
+                      <div className="price-row total">
+                        <span>Toplam Ödenecek Tutar:</span>
+                        <span className="final-price">{calculateFinalPrice()?.toFixed(2)} TL</span>
+                      </div>
+                      
+                      <div className="payment-actions">
+                        <button type="submit" className="payment-button">
+                          {selectedInstallment === 1 ? 'Ödemeyi Tamamla' : `${selectedInstallment} Taksitle Öde`}
+                        </button>
+                        <p className="secure-payment-notice">
+                          <span className="lock-icon">🔒</span> 
+                          Ödeme bilgileriniz güvenli bir şekilde işleniyor
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </form>
