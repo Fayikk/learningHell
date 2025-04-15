@@ -891,6 +891,7 @@
   border-radius: 8px;
   overflow: hidden;
   transition: all 0.3s ease;
+  margin-bottom: 16px;
 }
 
 .collapsible-section.expanded {
@@ -937,6 +938,11 @@
   font-size: 20px;
   color: #5f6368;
   font-weight: bold;
+  transition: transform 0.3s ease;
+}
+
+.expanded .toggle-icon {
+  transform: rotate(180deg);
 }
 
 /* Section Content */
@@ -945,12 +951,17 @@
   overflow: hidden;
   transition: max-height 0.3s ease-in-out, padding 0.3s ease;
   padding: 0 16px;
+  opacity: 0;
+  visibility: hidden;
 }
 
 .expanded .section-content {
-  max-height: 500px;
+  max-height: 800px; /* Increased max height to accommodate more content */
   padding: 16px;
   border-top: 1px solid #dadce0;
+  opacity: 1;
+  visibility: visible;
+  transition: max-height 0.5s ease-in-out, padding 0.3s ease, opacity 0.3s ease;
 }
 
 /* Form Groups */
@@ -2453,8 +2464,19 @@
 }
 
 .section-content {
-  padding: 20px;
-  max-height: 500px; /* Increase max height */
+  padding: 0 16px;
+  max-height: 0; /* Start collapsed */
+  overflow: hidden;
+  transition: max-height 0.5s ease-in-out, padding 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.expanded .section-content {
+  padding: 16px;
+  max-height: 800px; /* Increase max height */
+  opacity: 1;
+  visibility: visible;
   overflow-y: auto;
 }
 
