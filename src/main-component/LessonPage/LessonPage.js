@@ -3,7 +3,6 @@ import ChevronDownIcon from "../../icons/ChevronDownIcon";
 import { Link, useLocation } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useGetWatchVideoUrlMutation } from "../../api/videoApi";
-// import { useGetEnrolledCourseIdQuery } from "../../api/courseApi";
 import { useGetEnrolledCourseIdQuery } from "../../api/courseApi";
 import VideoPage from "./VideoPage";
 import IsLoading from "../../components/Loading/IsLoading";
@@ -16,19 +15,11 @@ import Col from 'react-bootstrap/Col';
 import { useDownloadMaterialFileMutation } from "../../api/materialApi";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
-import {
-  Accordion,
-  AccordionHeader,
-  AccordionBody,
-} from "@material-tailwind/react";
 import DocumentIcon from "../../icons/DocumentIcon";
 import { jwtDecode } from "jwt-decode";
 import { useCheckAppropriateCertificateMutation } from "../../api/courseProgressApi";
 
-
-
 const RefContext = createContext();
-
 
 const LessonPage = () => {
   const sharedRef = useRef();
@@ -39,21 +30,20 @@ const LessonPage = () => {
   const { data, isLoading } = useGetEnrolledCourseIdQuery(courseId);
   const userId = useSelector((state) => state.authStore.nameIdentifier)
   const[accountUserId,setAccountUserId] = useState();
-  // const { data, isLoading } = useGetSectionSubDetailsQuery(sectionId);
   const [videos, setVideos] = useState([]);
   const [courseInsideDetail,setCourseInsideDetail] = useState([]);
   const [videoCounter, setVideoCounter] = useState(0);
   const [videoId, setVideoId] = useState();
   const [ownRating, setOwnRating] = useState();
-  // const [courseId, setCourseId] = useState();
-  const [open, setOpen] = React.useState([]);
+  const [openSections, setOpenSections] = useState([]);
   const [alwaysOpen, setAlwaysOpen] = React.useState(true);
   const { slug } = useParams();
   const [videoProgress, setVideoProgress] = useState([]);
   const [downloadFile] = useDownloadMaterialFileMutation();
   const [completionStatus, setCompletionStatus] = useState({});
-  const handleOpen = (index) => {
-    setOpen((prevOpen) => {
+  
+  const toggleSection = (index) => {
+    setOpenSections((prevOpen) => {
       if (prevOpen.includes(index)) {
         return prevOpen.filter((item) => item !== index);
       } else {
@@ -61,7 +51,7 @@ const LessonPage = () => {
       }
     });
   };
-
+  
   useEffect(() => {
     if (userId === "") {
       const token = localStorage.getItem('token'); 
@@ -80,19 +70,11 @@ const LessonPage = () => {
     }
   }, [userId]);
 
-
-
   const onData = (progressData) => {
-
-
-
     if (progressData ) {
-
       if (progressData.data.result.completeResult) {
         setVideoProgress(progressData.data.result.completeResult)
-        // changeVideo(progressData.data.result.firstIncompletePublicId,videoId)
       }
-    
     }
   }
 
@@ -102,10 +84,8 @@ const LessonPage = () => {
       setCourseInsideDetail(data.result.item1.sections);
       console.log("trigger course inside detail",data.result.item1.sections)
         localStorage.removeItem("willSelectedVideo");
-     
     }
   }, [data]);
-
 
   useEffect(()=>{
     if (courseInsideDetail && courseInsideDetail[0]) {
@@ -113,7 +93,6 @@ const LessonPage = () => {
     }
   },[courseInsideDetail])
 
- 
   const clickDownloadFile = async (fileUrl) => {
     var materialModel = {
       fileUrl: fileUrl,
@@ -161,10 +140,6 @@ const LessonPage = () => {
     });
   };
 
-
-
-
-
   useEffect(() => {
     if (from != 0) {
       setOwnRating(from);
@@ -177,50 +152,34 @@ const LessonPage = () => {
     }
   }, [videos]);
 
-
   const changeVideo = async (publicVideoId,videoId) => {
     setVideoId(videoId);
       await decryptVideoUrl(publicVideoId)
         .then((response) => {
           if (sharedRef.current) {
           sharedRef.current.src = response.data.result
-          // sharedRef.current.play()
           }
-
-    
         })
         .catch((err) => console.error(err));
   };
 
-
-
   useEffect(() => {
-
     async function fetchData(){
-
       const updatedStatus = {};
       videoProgress.forEach((video) => {
         updatedStatus[video.videoId] = video.isCompleteVideo ? "✔️" : "❌";
       });
       setCompletionStatus(updatedStatus);
-    
     }
 
     if (videoProgress.length > 0) {
       fetchData();
-      
     }
-
   }, [videoProgress]);
 
   const checkCompletionStatus = (videoId) => {
     return completionStatus[videoId] || null; 
   };
-
-
-
-
-
 
   const formatDuration = (duration) => {
     const hours = Math.floor(duration / 3600);
@@ -231,9 +190,11 @@ const LessonPage = () => {
 
     return `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
   };
+
   if (isLoading) {
     return <IsLoading></IsLoading>;
   }
+
   return (
     <Fragment>
       <section className="wpo-lesson-section container mx-auto p-4 gap-3 flex flex-col ">
@@ -250,63 +211,66 @@ const LessonPage = () => {
           ]}
         />
        <div className="flex flex-col gap-6 md:flex-row">
-  <div className="flex flex-col flex-1 gap-3 order-2 md:!order-none">
-    <div className="p-2 rounded-2xl shadow-lg flex flex-col gap-0 overflow-y-auto max-h-[400px]">
-      {courseInsideDetail.map((section, index) => (
-        <Accordion
-          key={index}
-          className="flex flex-col gap-2"
-          open={open.includes(index)}
-        >
-          <AccordionHeader
-            className="text-base text-gray-600 font-bold px-3 -my-1 flex items-center justify-between"
-            onClick={() => handleOpen(index)}
-          >
-            <span className="flex items-center">
-              <span>{section.sectionName}</span>
-              <ChevronDownIcon
-                className={`h-5 w-5 transition-transform ml-2 flex items-center ${open.includes(index) ? "rotate-180" : ""}`}
-              />
-            </span>
-          </AccordionHeader>
-          {section.videos.map((video, key) => (
-            <AccordionBody className="text-base p-1 px-4" key={key}>
-              <Row>
-                <Col>
-                  <a
-                    href={video.link}
-                    onClick={() => changeVideo(video.publicVideoId, video.videoId)}
-                    className="hover:underline cursor-pointer hover:text-themeOrange focus:text-themeOrange"
-                  >
-                    {video.title}
-                  </a>
-                  {checkCompletionStatus(video.videoId) || ""}
-                </Col>
-                <Col>
-                  {video.materials.length > 0 && (
-                    <Link onClick={() => clickDownloadFile(video.materials[key].fileUrl)} to="">
-                      <DocumentIcon />
-                    </Link>
-                  )}
-                </Col>
-              </Row>
-            </AccordionBody>
-          ))}
-        </Accordion>
-      ))}
-    </div>
+         <div className="flex flex-col flex-1 gap-3 order-2 md:!order-none">
+           <div className="p-2 rounded-2xl shadow-lg flex flex-col gap-0 overflow-y-auto max-h-[400px]">
+             {courseInsideDetail.map((section, index) => (
+               <div key={index} className="border-b last:border-b-0 mb-2">
+                 <div 
+                   className="text-base text-gray-600 font-bold px-3 py-2 cursor-pointer flex items-center justify-between hover:bg-gray-50 rounded"
+                   onClick={() => toggleSection(index)}
+                 >
+                   <span className="flex items-center">
+                     <span>{section.sectionName}</span>
+                     <ChevronDownIcon
+                       className={`h-5 w-5 transition-transform ml-2 flex items-center ${openSections.includes(index) ? "rotate-180" : ""}`}
+                     />
+                   </span>
+                 </div>
+                 
+                 {openSections.includes(index) && (
+                   <div className="pl-6 pr-2 py-1">
+                     {section.videos.map((video, key) => (
+                       <div className="text-base p-1 px-2 hover:bg-gray-50 rounded" key={key}>
+                         <Row>
+                           <Col>
+                             <a
+                               href="#"
+                               onClick={(e) => {
+                                 e.preventDefault();
+                                 changeVideo(video.publicVideoId, video.videoId);
+                               }}
+                               className="hover:underline cursor-pointer hover:text-themeOrange focus:text-themeOrange"
+                             >
+                               {video.title}
+                             </a>
+                             {checkCompletionStatus(video.videoId) || ""}
+                           </Col>
+                           <Col>
+                             {video.materials.length > 0 && (
+                               <Link onClick={() => clickDownloadFile(video.materials[0].fileUrl)} to="#">
+                                 <DocumentIcon />
+                               </Link>
+                             )}
+                           </Col>
+                         </Row>
+                       </div>
+                     ))}
+                   </div>
+                 )}
+               </div>
+             ))}
+           </div>
 
-    <StarRating courseId={courseId} ownRating={ownRating} />
+           <StarRating courseId={courseId} ownRating={ownRating} />
 
-    <div className="rounded-2xl shadow-md bg-gray-200 order-3 md:!order-none md:hidden">
-      <Comments videoDetail={videoId} />
-    </div>
-  </div>
-  <RefContext.Provider value={sharedRef}>
-    <VideoPage videoId={videoId} videoRef={sharedRef} courseId={courseId} userId={userId !== "" ? userId : accountUserId} onData={onData}  />
-  </RefContext.Provider>
-</div>
-
+           <div className="rounded-2xl shadow-md bg-gray-200 order-3 md:!order-none md:hidden">
+             <Comments videoDetail={videoId} />
+           </div>
+         </div>
+         <RefContext.Provider value={sharedRef}>
+           <VideoPage videoId={videoId} videoRef={sharedRef} courseId={courseId} userId={userId !== "" ? userId : accountUserId} onData={onData}  />
+         </RefContext.Provider>
+       </div>
       </section>
     </Fragment>
   );
