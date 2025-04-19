@@ -12,6 +12,8 @@ import { payHub } from '../../../api/Base/payHubModel';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 import { rootBaseUrl,baseUrl } from '../../../api/Base/baseApiModel';
+import BootcampFAQ from '../FAQ/BootcampFAQ'; // Import the FAQ component
+
 // SVG Icons as React components
 const CalendarIcon = () => (
   <svg className="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
@@ -96,6 +98,13 @@ const SecurePaymentPopup = ({ htmlContent, onClose }) => {
 const InstructorIcon = () => (
   <svg className="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
     <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+  </svg>
+);
+
+// Add new icon for FAQ
+const FaqIcon = () => (
+  <svg className="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92c-.5.51-.86.97-1.04 1.69-.08.32-.13.68-.13 1.14h-2v-.5c0-.46.08-.9.22-1.31.2-.58.53-1.1.95-1.52l1.24-1.26c.46-.44.68-1.1.55-1.8-.13-.72-.69-1.33-1.39-1.53-.83-.24-1.75.1-2.29.85-.25.36-.4.79-.4 1.27h-2c0-1.1.31-1.94.84-2.59.83-1.03 2.15-1.52 3.44-1.36 1.41.17 2.63 1.17 3 2.53.27 1.02.05 2.02-.51 2.84z"/>
   </svg>
 );
 
@@ -630,7 +639,7 @@ const StudentBootcampList = () => {
               </button>
             </div>
             
-            {/* Add Tab Navigation */}
+            {/* Updated Tab Navigation with FAQ tab */}
             <div className="detail-tabs">
               <button 
                 className={`tab-button ${activeTab === 'bootcamp' ? 'active' : ''}`} 
@@ -643,6 +652,12 @@ const StudentBootcampList = () => {
                 onClick={() => setActiveTab('instructor')}
               >
                 <InstructorIcon /> Eğitmen Detayları
+              </button>
+              <button 
+                className={`tab-button ${activeTab === 'faq' ? 'active' : ''}`} 
+                onClick={() => setActiveTab('faq')}
+              >
+                <FaqIcon /> Sıkça Sorulan Sorular
               </button>
             </div>
             
@@ -828,6 +843,11 @@ const StudentBootcampList = () => {
                     </div>
                   </div>
                 </div>
+              )}
+
+              {/* New FAQ Tab */}
+              {activeTab === 'faq' && (
+                <BootcampFAQ bootcampTitle={selectedBootcamp.title} />
               )}
             </div>
           </div>
