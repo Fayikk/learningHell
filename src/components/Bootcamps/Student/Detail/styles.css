@@ -143,7 +143,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(38, 50, 56, 0.8), rgba(0, 0, 0, 0.6));
+  background: linear-gradient(135deg, rgba(88, 101, 109, 0.8), rgba(0, 0, 0, 0.6));
   transform: translateZ(-10px);
 }
 
@@ -161,7 +161,7 @@
   font-size: 3rem;
   font-weight: 700;
   margin-bottom: 1rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
   transform: translateZ(30px);
 }
 
@@ -172,6 +172,7 @@
   margin-left: auto;
   margin-right: auto;
   transform: translateZ(20px);
+  color: white;
 }
 
 .hero-badges {

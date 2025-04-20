@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import { useCheckInstallmentDebitCardMutation, usePaymentBootcampCheckoutMutation } from '../../../../api/paymentApi';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { payHub } from '../../../../api/Base/payHubModel';
+import { rootBaseUrl } from '../../../../api/Base/baseApiModel';
 
 // SVG Icons as React components
 const CalendarIcon = () => (
@@ -34,6 +35,31 @@ const TimeIcon = () => (
 const CloseIcon = () => (
   <svg className="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
     <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
+  </svg>
+);
+
+// Add social media icon components
+const LinkedInIcon = () => (
+  <svg className="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+    <path d="M19 0H5a5 5 0 00-5 5v14a5 5 0 005 5h14a5 5 0 005-5V5a5 5 0 00-5-5zM8 19H5V8h3v11zM6.5 6.732c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zM20 19h-3v-5.604c0-3.368-4-3.113-4 0V19h-3V8h3v1.765c1.396-2.586 7-2.777 7 2.476V19z"/>
+  </svg>
+);
+
+const TwitterIcon = () => (
+  <svg className="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+    <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+  </svg>
+);
+
+const YoutubeIcon = () => (
+  <svg className="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+    <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+  </svg>
+);
+
+const UdemyIcon = () => (
+  <svg className="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+    <path d="M12 0L5.81 3.573v3.574l6.19-3.573 6.19 3.573V3.573L12 0zm0 7.147l-4.328 2.5v9.075L12 21.22l4.328-2.498V9.647L12 7.147zm0 5.013l2.465 1.427-2.465 1.427-2.465-1.427L12 12.16z"/>
   </svg>
 );
 
@@ -485,9 +511,7 @@ function BootcampDetail() {
           <Badge bg="light" text="dark" className="hero-badge">
             <MoneyIcon /> ₺{bootcamp.price.toFixed(2)}
           </Badge>
-          <Badge bg="light" text="dark" className="hero-badge">
-            <UserIcon /> {studentCount} Öğrenci
-          </Badge>
+         
         </div>
       </div>
     </div>
@@ -507,7 +531,7 @@ function BootcampDetail() {
                         <img 
                           src={bootcamp.bootcampInstructorDetail.image_Url.startsWith('http') 
                             ? bootcamp.bootcampInstructorDetail.image_Url 
-                            : `https://api.kayit.eduko.net/${bootcamp.bootcampInstructorDetail.image_Url}`} 
+                            : `${rootBaseUrl}${bootcamp.bootcampInstructorDetail.image_Url}`} 
                           alt={bootcamp.bootcampInstructorDetail.full_Name} 
                           className="instructor-img"
                         />
@@ -526,22 +550,22 @@ function BootcampDetail() {
                       <div className="instructor-social">
                         {bootcamp.bootcampInstructorDetail.linkedIn_Url && (
                           <a href={bootcamp.bootcampInstructorDetail.linkedIn_Url} target="_blank" rel="noopener noreferrer" className="social-link linkedin">
-                            <i className="fab fa-linkedin"></i>
+                            <LinkedInIcon />
                           </a>
                         )}
                         {bootcamp.bootcampInstructorDetail.twitter_Url && (
                           <a href={bootcamp.bootcampInstructorDetail.twitter_Url} target="_blank" rel="noopener noreferrer" className="social-link twitter">
-                            <i className="fab fa-twitter"></i>
+                            <TwitterIcon />
                           </a>
                         )}
                         {bootcamp.bootcampInstructorDetail.youtube_Url && (
                           <a href={bootcamp.bootcampInstructorDetail.youtube_Url} target="_blank" rel="noopener noreferrer" className="social-link youtube">
-                            <i className="fab fa-youtube"></i>
+                            <YoutubeIcon />
                           </a>
                         )}
                         {bootcamp.bootcampInstructorDetail.udemy_Url && (
                           <a href={bootcamp.bootcampInstructorDetail.udemy_Url} target="_blank" rel="noopener noreferrer" className="social-link udemy">
-                            <i className="fas fa-chalkboard-teacher"></i>
+                            <UdemyIcon />
                           </a>
                         )}
                       </div>
@@ -713,7 +737,7 @@ function BootcampDetail() {
               </div>
               
               <h5 className="payment-title">Ödeme Seçenekleri</h5>
-              {paymentOptions.map((option, index) => (
+              {/* {paymentOptions.map((option, index) => (
                 <div className="payment-option-card" key={index}>
                   <div className="d-flex justify-content-between">
                     <span className="option-name">{option.method}</span>
@@ -725,7 +749,7 @@ function BootcampDetail() {
                     </div>
                   )}
                 </div>
-              ))}
+              ))} */}
               
               <Button 
                 variant="primary" 
@@ -748,7 +772,7 @@ function BootcampDetail() {
                       <img 
                         src={bootcamp.bootcampInstructorDetail.image_Url.startsWith('http') 
                           ? bootcamp.bootcampInstructorDetail.image_Url 
-                          : `https://api.kayit.eduko.net/${bootcamp.bootcampInstructorDetail.image_Url}`} 
+                          : `${rootBaseUrl}${bootcamp.bootcampInstructorDetail.image_Url}`} 
                         alt={bootcamp.bootcampInstructorDetail.full_Name} 
                       />
                     ) : (
