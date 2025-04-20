@@ -37,8 +37,35 @@ const CloseIcon = () => (
   </svg>
 );
 
-// Add a 3D Secure Popup component
+// Add a new icon component for Profile/User
+const UserIcon = () => (
+  <svg className="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+  </svg>
+);
+
+// Add education icon
+const EducationIcon = () => (
+  <svg className="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+    <path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/>
+  </svg>
+);
+
+// Improved 3D Secure Popup component
 const SecurePaymentPopup = ({ htmlContent, onClose }) => {
+  const [iframeLoaded, setIframeLoaded] = useState(false);
+  
+  useEffect(() => {
+    // Add a timeout to show loading state
+    const timer = setTimeout(() => {
+      if (!iframeLoaded) {
+        console.log("3D Secure iframe taking longer than expected to load");
+      }
+    }, 5000);
+    
+    return () => clearTimeout(timer);
+  }, [iframeLoaded]);
+
   return (
     <div className="secure-payment-overlay">
       <div className="secure-payment-popup">
@@ -47,11 +74,19 @@ const SecurePaymentPopup = ({ htmlContent, onClose }) => {
           <button className="secure-close-button" onClick={onClose}>×</button>
         </div>
         <div className="secure-payment-content">
+          {!iframeLoaded && (
+            <div className="secure-payment-loading">
+              <div className="loading-spinner"></div>
+              <p>3D Secure doğrulama yükleniyor...</p>
+            </div>
+          )}
           <iframe
             srcDoc={htmlContent}
             title="3D Secure Verification"
             className="secure-payment-iframe"
-            sandbox="allow-forms allow-scripts allow-same-origin allow-top-navigation"
+            sandbox="allow-forms allow-scripts allow-same-origin allow-top-navigation allow-popups"
+            onLoad={() => setIframeLoaded(true)}
+            style={{ opacity: iframeLoaded ? 1 : 0 }}
           />
         </div>
       </div>
@@ -164,7 +199,12 @@ function BootcampDetail() {
       fetch(html)
         .then(response => response.text())
         .then(htmlContent => {
-          setSecureHtmlContent(htmlContent);
+          // Clean or prepare HTML if needed
+          const preparedHtml = htmlContent
+            .replace(/<meta[^>]*>/g, '') // Remove meta tags that might cause issues
+            .replace(/<base[^>]*>/g, ''); // Remove base tags
+          
+          setSecureHtmlContent(preparedHtml);
           setSecurePopupOpen(true);
         })
         .catch(error => {
@@ -197,7 +237,13 @@ function BootcampDetail() {
   // Function to close the 3D Secure popup
   const handleSecurePopupClose = () => {
     setSecurePopupOpen(false);
-    setHtml(null);
+    
+    // Clean up blob URL to avoid memory leaks
+    if (html) {
+      URL.revokeObjectURL(html);
+      setHtml(null);
+    }
+    
     setSecureHtmlContent('');
   };
 
@@ -320,6 +366,9 @@ function BootcampDetail() {
       return;
     }
 
+    // Show loading state
+    toast.info("Ödeme işlemi başlatılıyor...", { autoClose: false, toastId: "payment-process" });
+
     var formDataToSend = new FormData();
     formDataToSend.append("FullName", formData.fullName);
     formDataToSend.append("Email", formData.email);
@@ -341,18 +390,24 @@ function BootcampDetail() {
 
     try {
       const response = await createPayment(sendData);
-      console.log("trigger payment response", response);
-
+      toast.dismiss("payment-process");
+      
       if (response.data.isSuccess) {
         if (response.data.result && response.data.result[0]?.item1?.content) {
           const blob = new Blob([response.data.result[0].item1.content], { type: "text/html" });
           const objUrl = URL.createObjectURL(blob);
           setHtml(objUrl);
+        } else {
+          toast.error("3D Secure için gerekli içerik alınamadı.");
         }
       } else {
-        toast.info(response.data.messages[0] + ". Lütfen bilgilerinizi kontrol edin.");
+        const errorMessage = response.data.messages && response.data.messages.length > 0 
+          ? response.data.messages[0] 
+          : "Ödeme işlemi başlatılamadı.";
+        toast.error(`${errorMessage} Lütfen bilgilerinizi kontrol edin.`);
       }
     } catch (error) {
+      toast.dismiss("payment-process");
       console.error("Payment error:", error);
       toast.error("Ödeme işlemi sırasında bir hata oluştu.");
     }
@@ -388,6 +443,16 @@ function BootcampDetail() {
     return null;
   };
 
+  // Add state to track student count
+  const [studentCount, setStudentCount] = useState(0);
+  
+  // Update useEffect to calculate student count
+  useEffect(() => {
+    if (data?.result?.enrollments) {
+      setStudentCount(data.result.enrollments.length);
+    }
+  }, [data]);
+
   if (isLoading) {
     return <div className="loading-container"><div className="loading-spinner"></div></div>;
   }
@@ -412,13 +477,16 @@ function BootcampDetail() {
         <p className="hero-subtitle">{bootcamp.short_Description}</p>
         <div className="hero-badges">
           <Badge bg="light" text="dark" className="hero-badge">
-            {new Date(bootcamp.start_Date).toLocaleDateString('tr-TR')} - {new Date(bootcamp.end_Date).toLocaleDateString('tr-TR')}
+            <CalendarIcon /> {new Date(bootcamp.start_Date).toLocaleDateString('tr-TR')} - {new Date(bootcamp.end_Date).toLocaleDateString('tr-TR')}
           </Badge>
           <Badge bg="light" text="dark" className="hero-badge">
             {bootcamp.isOnline ? 'Online' : 'Yüz Yüze'}
           </Badge>
           <Badge bg="light" text="dark" className="hero-badge">
-            Fiyat: ₺{bootcamp.price}
+            <MoneyIcon /> ₺{bootcamp.price.toFixed(2)}
+          </Badge>
+          <Badge bg="light" text="dark" className="hero-badge">
+            <UserIcon /> {studentCount} Öğrenci
           </Badge>
         </div>
       </div>
@@ -427,6 +495,114 @@ function BootcampDetail() {
     <Container className="bootcamp-detail-container py-5">
       <Row>
         <Col lg={8}>
+          {/* Add Instructor Info Section */}
+          {bootcamp.bootcampInstructorDetail && (
+            <Card className="detail-card mb-4">
+              <div className="instructor-section">
+                <h3 className="section-title">Eğitmen</h3>
+                <div className="instructor-profile">
+                  <div className="instructor-header">
+                    <div className="instructor-avatar">
+                      {bootcamp.bootcampInstructorDetail.image_Url ? (
+                        <img 
+                          src={bootcamp.bootcampInstructorDetail.image_Url.startsWith('http') 
+                            ? bootcamp.bootcampInstructorDetail.image_Url 
+                            : `https://api.kayit.eduko.net/${bootcamp.bootcampInstructorDetail.image_Url}`} 
+                          alt={bootcamp.bootcampInstructorDetail.full_Name} 
+                          className="instructor-img"
+                        />
+                      ) : (
+                        <div className="instructor-placeholder">
+                          <UserIcon />
+                        </div>
+                      )}
+                    </div>
+                    <div className="instructor-info">
+                      <h4 className="instructor-name">{bootcamp.bootcampInstructorDetail.full_Name}</h4>
+                      {bootcamp.bootcampInstructorDetail.short_Description && (
+                        <p className="instructor-title">{bootcamp.bootcampInstructorDetail.short_Description}</p>
+                      )}
+                      
+                      <div className="instructor-social">
+                        {bootcamp.bootcampInstructorDetail.linkedIn_Url && (
+                          <a href={bootcamp.bootcampInstructorDetail.linkedIn_Url} target="_blank" rel="noopener noreferrer" className="social-link linkedin">
+                            <i className="fab fa-linkedin"></i>
+                          </a>
+                        )}
+                        {bootcamp.bootcampInstructorDetail.twitter_Url && (
+                          <a href={bootcamp.bootcampInstructorDetail.twitter_Url} target="_blank" rel="noopener noreferrer" className="social-link twitter">
+                            <i className="fab fa-twitter"></i>
+                          </a>
+                        )}
+                        {bootcamp.bootcampInstructorDetail.youtube_Url && (
+                          <a href={bootcamp.bootcampInstructorDetail.youtube_Url} target="_blank" rel="noopener noreferrer" className="social-link youtube">
+                            <i className="fab fa-youtube"></i>
+                          </a>
+                        )}
+                        {bootcamp.bootcampInstructorDetail.udemy_Url && (
+                          <a href={bootcamp.bootcampInstructorDetail.udemy_Url} target="_blank" rel="noopener noreferrer" className="social-link udemy">
+                            <i className="fas fa-chalkboard-teacher"></i>
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="instructor-details">
+                    {bootcamp.bootcampInstructorDetail.description && (
+                      <div className="instructor-bio">
+                        <h5>Hakkında</h5>
+                        <p>{bootcamp.bootcampInstructorDetail.description}</p>
+                      </div>
+                    )}
+                    
+                    <div className="instructor-qualifications">
+                      {bootcamp.bootcampInstructorDetail.education && (
+                        <div className="qualification-item">
+                          <div className="qualification-icon">
+                            <EducationIcon />
+                          </div>
+                          <div className="qualification-content">
+                            <h5>Eğitim</h5>
+                            <p>{bootcamp.bootcampInstructorDetail.education}</p>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {bootcamp.bootcampInstructorDetail.experience && (
+                        <div className="qualification-item">
+                          <div className="qualification-icon">
+                            <TimeIcon />
+                          </div>
+                          <div className="qualification-content">
+                            <h5>Deneyim</h5>
+                            <p>{bootcamp.bootcampInstructorDetail.experience}</p>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {bootcamp.bootcampInstructorDetail.skills && (
+                        <div className="qualification-item">
+                          <div className="qualification-icon">
+                            <i className="fas fa-code"></i>
+                          </div>
+                          <div className="qualification-content">
+                            <h5>Yetenekler</h5>
+                            <div className="skills-container">
+                              {bootcamp.bootcampInstructorDetail.skills.split(',').map((skill, index) => (
+                                <span key={index} className="skill-badge">{skill.trim()}</span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          )}
+
           <Card className="detail-card mb-4">
             <div className="card-3d-container">
               <h3 className="section-title">Neler Öğreneceksiniz</h3>
@@ -460,7 +636,9 @@ function BootcampDetail() {
                 <Col md={4}>
                   <div className="stat-card">
                     <div className="stat-icon">👨‍🏫</div>
-                    <div className="stat-value">{bootcamp.instructor || 'Belirtilmedi'}</div>
+                    <div className="stat-value">
+                      {bootcamp.bootcampInstructorDetail?.full_Name || 'Belirtilmedi'}
+                    </div>
                     <div className="stat-label">Eğitmen</div>
                   </div>
                 </Col>
@@ -504,6 +682,22 @@ function BootcampDetail() {
                 </div>
               </div>
             </div>
+
+            {/* Add Student Count Section */}
+            {/* <div className="students-section mt-4">
+              <h3 className="section-title">Katılımcılar</h3>
+              <div className="student-stats">
+                <div className="student-count-card">
+                  <div className="count-icon">
+                    <UserIcon />
+                  </div>
+                  <div className="count-details">
+                    <span className="count-number">{studentCount}</span>
+                    <span className="count-label">Kayıtlı Öğrenci</span>
+                  </div>
+                </div>
+              </div>
+            </div> */}
           </Card>
         </Col>
         
@@ -515,7 +709,7 @@ function BootcampDetail() {
             <Card.Body>
               <div className="price-container">
                 <span className="currency">₺</span>
-                <span className="price">{bootcamp.price}</span>
+                <span className="price">{bootcamp.price.toFixed(2)}</span>
               </div>
               
               <h5 className="payment-title">Ödeme Seçenekleri</h5>
@@ -545,6 +739,30 @@ function BootcampDetail() {
                 <div className="guarantee-icon">✓</div>
                 <div className="guarantee-text">7 gün para iade garantisi</div>
               </div>
+
+              {/* Add instructor badge in sidebar */}
+              {bootcamp.bootcampInstructorDetail && (
+                <div className="instructor-badge">
+                  <div className="instructor-badge-image">
+                    {bootcamp.bootcampInstructorDetail.image_Url ? (
+                      <img 
+                        src={bootcamp.bootcampInstructorDetail.image_Url.startsWith('http') 
+                          ? bootcamp.bootcampInstructorDetail.image_Url 
+                          : `https://api.kayit.eduko.net/${bootcamp.bootcampInstructorDetail.image_Url}`} 
+                        alt={bootcamp.bootcampInstructorDetail.full_Name} 
+                      />
+                    ) : (
+                      <div className="instructor-icon">
+                        <UserIcon />
+                      </div>
+                    )}
+                  </div>
+                  <div className="instructor-badge-info">
+                    <div className="instructor-badge-label">Eğitmen</div>
+                    <div className="instructor-badge-name">{bootcamp.bootcampInstructorDetail.full_Name}</div>
+                  </div>
+                </div>
+              )}
             </Card.Body>
           </Card>
           
@@ -557,389 +775,389 @@ function BootcampDetail() {
 
     {/* Checkout Modal - copied from StudentBootcampList */}
     {checkoutModalOpen && (
-      <div className="modal-overlay" onClick={handleCheckoutClose}>
-        <div className="checkout-modal" onClick={(e) => e.stopPropagation()}>
-          <div className="modal-header">
-            <h2>Bootcamp Kayıt ve Ödeme</h2>
-            <button className="close-button" onClick={handleCheckoutClose}>
-              <CloseIcon />
-            </button>
+  <div className="modal-overlay" onClick={handleCheckoutClose}>
+    <div className="checkout-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-header">
+        <h2>Bootcamp Kayıt ve Ödeme</h2>
+        <button className="close-button" onClick={handleCheckoutClose}>
+          <CloseIcon />
+        </button>
+      </div>
+      
+      <div className="modal-body">
+        <div className="checkout-bootcamp-info">
+          <img 
+            src={bootcamp.thumbnail_Url || 'https://via.placeholder.com/120x80?text=Bootcamp'} 
+            alt={bootcamp.title}
+            className="checkout-thumbnail" 
+          />
+          <div className="checkout-bootcamp-details">
+            <h3>{bootcamp.title}</h3>
+            <p className="checkout-bootcamp-dates">
+              <CalendarIcon /> {formatDate(bootcamp.start_Date)} - {formatDate(bootcamp.end_Date)}
+            </p>
+          </div>
+        </div>
+
+        <form className="checkout-form" onSubmit={handlePaymentSubmit}>
+          {/* Collapsible Personal Information Section */}
+          <div className={`collapsible-section ${expandedSection === 'personal' ? 'expanded' : ''}`}>
+            <div 
+              className="section-header" 
+              onClick={() => toggleSection('personal')}
+            >
+              <h4>
+                <span className="section-number">1</span>
+                Kişisel Bilgiler
+              </h4>
+              <span className="toggle-icon">{expandedSection === 'personal' ? '−' : '+'}</span>
+            </div>
+            
+            <div className="section-content">
+              <div className="form-group">
+                <label>Ad Soyad</label>
+                <input 
+                  type="text" 
+                  name="fullName" 
+                  value={formData.fullName}
+                  onChange={handleFormChange}
+                  placeholder="Adınız ve soyadınız" 
+                  required 
+                />
+              </div>
+              <div className="form-group">
+                <label>Kimlik No:</label>
+                <input 
+                  type="text" 
+                  name="identityNumber" 
+                  value={formData.identityNumber}
+                  onChange={handleFormChange}
+                  placeholder="TC Kimlik Numaranız"
+                  pattern="\d{11}" 
+                  required 
+                />
+              </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>E-posta Adresi</label>
+                  <input 
+                    type="email" 
+                    name="email" 
+                    value={formData.email}
+                    onChange={handleFormChange}
+                    placeholder="örnek@mail.com" 
+                    required 
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Telefon</label>
+                  <input 
+                    type="tel" 
+                    name="phone" 
+                    value={formData.phone}
+                    onChange={handleFormChange}
+                    placeholder="0 5XX XXX XX XX" 
+                    required 
+                  />
+                </div>
+              </div>
+              <button 
+                type="button" 
+                className="continue-button"
+                onClick={() => toggleSection('coupon')}
+              >
+                Devam Et
+              </button>
+            </div>
           </div>
           
-          <div className="modal-body">
-            <div className="checkout-bootcamp-info">
-              <img 
-                src={bootcamp.thumbnail_Url || 'https://via.placeholder.com/120x80?text=Bootcamp'} 
-                alt={bootcamp.title}
-                className="checkout-thumbnail" 
-              />
-              <div className="checkout-bootcamp-details">
-                <h3>{bootcamp.title}</h3>
-                <p className="checkout-bootcamp-dates">
-                  <CalendarIcon /> {formatDate(bootcamp.start_Date)} - {formatDate(bootcamp.end_Date)}
-                </p>
-              </div>
+          {/* Collapsible Discount Coupon Section */}
+          <div className={`collapsible-section ${expandedSection === 'coupon' ? 'expanded' : ''}`}>
+            <div 
+              className="section-header" 
+              onClick={() => toggleSection('coupon')}
+            >
+              <h4>
+                <span className="section-number">2</span>
+                İndirim Kuponu
+              </h4>
+              <span className="toggle-icon">{expandedSection === 'coupon' ? '−' : '+'}</span>
             </div>
-
-            <form className="checkout-form" onSubmit={handlePaymentSubmit}>
-              {/* Collapsible Personal Information Section */}
-              <div className={`collapsible-section ${expandedSection === 'personal' ? 'expanded' : ''}`}>
-                <div 
-                  className="section-header" 
-                  onClick={() => toggleSection('personal')}
-                >
-                  <h4>
-                    <span className="section-number">1</span>
-                    Kişisel Bilgiler
-                  </h4>
-                  <span className="toggle-icon">{expandedSection === 'personal' ? '−' : '+'}</span>
+            
+            <div className="section-content">
+              <div className="coupon-container">
+                <label>Kupon Kodu (Opsiyonel)</label>
+                <div className="coupon-input-group">
+                  <input 
+                    type="text" 
+                    name="couponCode" 
+                    value={formData.couponCode}
+                    onChange={handleFormChange}
+                    placeholder="İndirim kuponu kodunuz varsa buraya girin" 
+                    disabled={discount.applied}
+                  />
+                  <button 
+                    type="button" 
+                    className="coupon-button" 
+                    onClick={handleApplyCoupon}
+                    disabled={discount.applied || !formData.couponCode.trim()}
+                  >
+                    Uygula
+                  </button>
                 </div>
                 
-                <div className="section-content">
-                  <div className="form-group">
-                    <label>Ad Soyad</label>
+                {discount.applied && (
+                  <div className="discount-applied">
+                    <div className="coupon-badge">
+                      <span className="coupon-code">{discount.code}</span>
+                      <span className="discount-amount">{discount.amount.toFixed(2)} TL indirim</span>
+                    </div>
+                  </div>
+                )}
+                
+                <button 
+                  type="button" 
+                  className="continue-button"
+                  onClick={() => toggleSection('payment')}
+                >
+                  {discount.applied ? 'İndirim Uygulandı, Devam Et' : 'Kupon Kullanmadan Devam Et'}
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          {/* Updated payment details section with card detection */}
+          <div className={`collapsible-section ${expandedSection === 'payment' ? 'expanded' : ''}`}>
+            <div 
+              className="section-header" 
+              onClick={() => toggleSection('payment')}
+            >
+              <h4>
+                <span className="section-number">3</span>
+                Ödeme Bilgileri
+              </h4>
+              <span className="toggle-icon">{expandedSection === 'payment' ? '−' : '+'}</span>
+            </div>
+            
+            <div className="section-content">
+              <div className="card-input-container">
+                <div className="card-header">
+                  <div className="card-types">
+                    <span className={`card-type visa ${cardDetails.cardAssociation === 'VISA' ? 'active' : ''}`}>Visa</span>
+                    <span className={`card-type mastercard ${cardDetails.cardAssociation === 'MASTER_CARD' ? 'active' : ''}`}>MasterCard</span>
+                    <span className={`card-type amex ${cardDetails.cardAssociation === 'AMERICAN_EXPRESS' ? 'active' : ''}`}>Amex</span>
+                  </div>
+                  
+                  {cardDetails.bankName && (
+                    <div className="detected-card-info">
+                      <span>{cardDetails.bankName} {cardDetails.cardFamilyName}</span>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="form-group">
+                  <label>Kart Sahibinin Adı</label>
+                  <input 
+                    type="text" 
+                    name="cardName" 
+                    value={formData.cardName}
+                    onChange={handleFormChange}
+                    placeholder="Kart üzerindeki isim" 
+                    required 
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label>Kart Numarası</label>
+                  <div className="card-number-input">
                     <input 
                       type="text" 
-                      name="fullName" 
-                      value={formData.fullName}
+                      name="cardNumber" 
+                      value={formData.cardNumber}
                       onChange={handleFormChange}
-                      placeholder="Adınız ve soyadınız" 
+                      placeholder="XXXX XXXX XXXX XXXX" 
+                      required 
+                    />
+                    <span className="card-icon">
+                      {isCheckingInstallments ? 
+                        <span className="spinner">⟳</span> : 
+                        '💳'}
+                    </span>
+                  </div>
+                  {isCheckingInstallments && (
+                    <div className="checking-message">
+                      Taksit seçenekleri kontrol ediliyor...
+                    </div>
+                  )}
+                </div>
+                
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Son Kullanma Tarihi</label>
+                    <input 
+                      type="text" 
+                      name="expireMonth"
+                      value={formData.expireMonth} 
+                      onChange={handleFormChange}
+                      placeholder="AA" 
+                      required 
+                    />
+                    <input 
+                      type="text" 
+                      name="expireYear"
+                      value={formData.expireYear} 
+                      onChange={handleFormChange}
+                      placeholder="YY" 
                       required 
                     />
                   </div>
-                  <div className="form-group">
-                    <label>Kimlik No:</label>
-                    <input 
-                      type="text" 
-                      name="identityNumber" 
-                      value={formData.identityNumber}
-                      onChange={handleFormChange}
-                      placeholder="TC Kimlik Numaranız"
-                      pattern="\d{11}" 
-                      required 
-                    />
-                  </div>
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label>E-posta Adresi</label>
+                  <div className="form-group card-cvv">
+                    <label>CVC/CVV</label>
+                    <div className="cvv-input">
                       <input 
-                        type="email" 
-                        name="email" 
-                        value={formData.email}
+                        type="text" 
+                        name="cvv" 
+                        value={formData.cvv}
                         onChange={handleFormChange}
-                        placeholder="örnek@mail.com" 
+                        placeholder="123" 
                         required 
                       />
-                    </div>
-                    <div className="form-group">
-                      <label>Telefon</label>
-                      <input 
-                        type="tel" 
-                        name="phone" 
-                        value={formData.phone}
-                        onChange={handleFormChange}
-                        placeholder="0 5XX XXX XX XX" 
-                        required 
-                      />
+                      <span className="cvv-info" title="Kartınızın arkasındaki 3 haneli güvenlik kodu">?</span>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Separate collapsible section for installment options */}
+          {installmentOptions.length > 0 && (
+            <div className={`collapsible-section installment-section ${expandedSection === 'installment' ? 'expanded' : ''}`}>
+              <div 
+                className="section-header" 
+                onClick={() => toggleSection('installment')}
+              >
+                <h4>
+                  <span className="section-number">4</span>
+                  Taksit Seçenekleri
+                  <span className="badge new-badge">Yeni</span>
+                </h4>
+                <span className="toggle-icon">{expandedSection === 'installment' ? '−' : '+'}</span>
+              </div>
+              
+              <div className="section-content">
+                <div className="installment-options-container">
+                  {cardDetails.bankName && (
+                    <div className="card-info-banner">
+                      <span className="bank-logo">🏦</span>
+                      <span>{cardDetails.bankName} {cardDetails.cardFamilyName} kartınız için taksit seçenekleri</span>
+                    </div>
+                  )}
+                  
+                  <div className="installment-options">
+                    {/* Display all available installment options from the API response */}
+                    {installmentOptions.map((option) => (
+                      <div 
+                        key={option.installmentNumber} 
+                        className={`installment-option ${selectedInstallment === option.installmentNumber ? 'selected' : ''}`}
+                        onClick={() => handleInstallmentChange(option.installmentNumber)}
+                      >
+                        <div className="installment-radio">
+                          <input 
+                            type="radio" 
+                            id={`installment-${option.installmentNumber}`}
+                            name="installment"
+                            checked={selectedInstallment === option.installmentNumber}
+                            onChange={() => handleInstallmentChange(option.installmentNumber)}
+                          />
+                          <label htmlFor={`installment-${option.installmentNumber}`}>
+                            {option.installmentNumber === 1 ? 'Tek Çekim' : `${option.installmentNumber} Taksit`}
+                          </label>
+                        </div>
+                        <div className="installment-details">
+                          {option.installmentNumber === 1 ? (
+                            <span className="total-price">{option.totalPrice} TL</span>
+                          ) : (
+                            <>
+                              <span className="monthly-price">{option.price} TL x {option.installmentNumber}</span>
+                              <span className="total-price">Toplam: {option.totalPrice} TL</span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
                   <button 
                     type="button" 
                     className="continue-button"
-                    onClick={() => toggleSection('coupon')}
+                    onClick={() => toggleSection('summary')}
                   >
-                    Devam Et
+                    Taksit Seçimini Tamamla
                   </button>
                 </div>
               </div>
-              
-              {/* Collapsible Discount Coupon Section */}
-              <div className={`collapsible-section ${expandedSection === 'coupon' ? 'expanded' : ''}`}>
-                <div 
-                  className="section-header" 
-                  onClick={() => toggleSection('coupon')}
-                >
-                  <h4>
-                    <span className="section-number">2</span>
-                    İndirim Kuponu
-                  </h4>
-                  <span className="toggle-icon">{expandedSection === 'coupon' ? '−' : '+'}</span>
+            </div>
+          )}
+          
+          {/* Updated Price Summary Section with its own collapsible section */}
+          <div className={`collapsible-section summary-section ${expandedSection === 'summary' ? 'expanded' : ''}`}>
+            <div 
+              className="section-header" 
+              onClick={() => toggleSection('summary')}
+            >
+              <h4>
+                <span className="section-number">{installmentOptions.length > 0 ? '5' : '4'}</span>
+                Ödeme Özeti
+              </h4>
+              <span className="toggle-icon">{expandedSection === 'summary' ? '−' : '+'}</span>
+            </div>
+            
+            <div className="section-content">
+              <div className="price-summary">
+                <div className="price-row">
+                  <span>Bootcamp Ücreti:</span>
+                  <span className="price-value">{bootcamp.price?.toFixed(2)} TL</span>
                 </div>
                 
-                <div className="section-content">
-                  <div className="coupon-container">
-                    <label>Kupon Kodu (Opsiyonel)</label>
-                    <div className="coupon-input-group">
-                      <input 
-                        type="text" 
-                        name="couponCode" 
-                        value={formData.couponCode}
-                        onChange={handleFormChange}
-                        placeholder="İndirim kuponu kodunuz varsa buraya girin" 
-                        disabled={discount.applied}
-                      />
-                      <button 
-                        type="button" 
-                        className="coupon-button" 
-                        onClick={handleApplyCoupon}
-                        disabled={discount.applied || !formData.couponCode.trim()}
-                      >
-                        Uygula
-                      </button>
-                    </div>
-                    
-                    {discount.applied && (
-                      <div className="discount-applied">
-                        <div className="coupon-badge">
-                          <span className="coupon-code">{discount.code}</span>
-                          <span className="discount-amount">{discount.amount.toFixed(2)} TL indirim</span>
-                        </div>
-                      </div>
-                    )}
-                    
-                    <button 
-                      type="button" 
-                      className="continue-button"
-                      onClick={() => toggleSection('payment')}
-                    >
-                      {discount.applied ? 'İndirim Uygulandı, Devam Et' : 'Kupon Kullanmadan Devam Et'}
-                    </button>
+                {discount.applied && (
+                  <div className="price-row discount">
+                    <span>İndirim:</span>
+                    <span className="price-value discount-value">-{discount.amount?.toFixed(2)} TL</span>
                   </div>
-                </div>
-              </div>
-              
-              {/* Updated payment details section with card detection */}
-              <div className={`collapsible-section ${expandedSection === 'payment' ? 'expanded' : ''}`}>
-                <div 
-                  className="section-header" 
-                  onClick={() => toggleSection('payment')}
-                >
-                  <h4>
-                    <span className="section-number">3</span>
-                    Ödeme Bilgileri
-                  </h4>
-                  <span className="toggle-icon">{expandedSection === 'payment' ? '−' : '+'}</span>
+                )}
+                
+                {selectedInstallment > 1 && getMonthlyInstallment() && (
+                  <div className="price-row installment-info">
+                    <span>Taksit:</span>
+                    <span className="price-value">{getMonthlyInstallment()?.toFixed(2)} TL x {selectedInstallment} ay</span>
+                  </div>
+                )}
+                
+                <div className="price-row total">
+                  <span>Toplam Ödenecek Tutar:</span>
+                  <span className="final-price">{calculateFinalPrice()?.toFixed(2)} TL</span>
                 </div>
                 
-                <div className="section-content">
-                  <div className="card-input-container">
-                    <div className="card-header">
-                      <div className="card-types">
-                        <span className={`card-type visa ${cardDetails.cardAssociation === 'VISA' ? 'active' : ''}`}>Visa</span>
-                        <span className={`card-type mastercard ${cardDetails.cardAssociation === 'MASTER_CARD' ? 'active' : ''}`}>MasterCard</span>
-                        <span className={`card-type amex ${cardDetails.cardAssociation === 'AMERICAN_EXPRESS' ? 'active' : ''}`}>Amex</span>
-                      </div>
-                      
-                      {cardDetails.bankName && (
-                        <div className="detected-card-info">
-                          <span>{cardDetails.bankName} {cardDetails.cardFamilyName}</span>
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="form-group">
-                      <label>Kart Sahibinin Adı</label>
-                      <input 
-                        type="text" 
-                        name="cardName" 
-                        value={formData.cardName}
-                        onChange={handleFormChange}
-                        placeholder="Kart üzerindeki isim" 
-                        required 
-                      />
-                    </div>
-                    
-                    <div className="form-group">
-                      <label>Kart Numarası</label>
-                      <div className="card-number-input">
-                        <input 
-                          type="text" 
-                          name="cardNumber" 
-                          value={formData.cardNumber}
-                          onChange={handleFormChange}
-                          placeholder="XXXX XXXX XXXX XXXX" 
-                          required 
-                        />
-                        <span className="card-icon">
-                          {isCheckingInstallments ? 
-                            <span className="spinner">⟳</span> : 
-                            '💳'}
-                        </span>
-                      </div>
-                      {isCheckingInstallments && (
-                        <div className="checking-message">
-                          Taksit seçenekleri kontrol ediliyor...
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="form-row">
-                      <div className="form-group">
-                        <label>Son Kullanma Tarihi</label>
-                        <input 
-                          type="text" 
-                          name="expireMonth"
-                          value={formData.expireMonth} 
-                          onChange={handleFormChange}
-                          placeholder="AA" 
-                          required 
-                        />
-                        <input 
-                          type="text" 
-                          name="expireYear"
-                          value={formData.expireYear} 
-                          onChange={handleFormChange}
-                          placeholder="YY" 
-                          required 
-                        />
-                      </div>
-                      <div className="form-group card-cvv">
-                        <label>CVC/CVV</label>
-                        <div className="cvv-input">
-                          <input 
-                            type="text" 
-                            name="cvv" 
-                            value={formData.cvv}
-                            onChange={handleFormChange}
-                            placeholder="123" 
-                            required 
-                          />
-                          <span className="cvv-info" title="Kartınızın arkasındaki 3 haneli güvenlik kodu">?</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <div className="payment-actions">
+                  <button type="submit" className="payment-button">
+                    {selectedInstallment === 1 ? 'Ödemeyi Tamamla' : `${selectedInstallment} Taksitle Öde`}
+                  </button>
+                  <p className="secure-payment-notice">
+                    <span className="lock-icon">🔒</span> 
+                    Ödeme bilgileriniz güvenli bir şekilde işleniyor
+                  </p>
                 </div>
               </div>
-              
-              {/* Separate collapsible section for installment options */}
-              {installmentOptions.length > 0 && (
-                <div className={`collapsible-section installment-section ${expandedSection === 'installment' ? 'expanded' : ''}`}>
-                  <div 
-                    className="section-header" 
-                    onClick={() => toggleSection('installment')}
-                  >
-                    <h4>
-                      <span className="section-number">4</span>
-                      Taksit Seçenekleri
-                      <span className="badge new-badge">Yeni</span>
-                    </h4>
-                    <span className="toggle-icon">{expandedSection === 'installment' ? '−' : '+'}</span>
-                  </div>
-                  
-                  <div className="section-content">
-                    <div className="installment-options-container">
-                      {cardDetails.bankName && (
-                        <div className="card-info-banner">
-                          <span className="bank-logo">🏦</span>
-                          <span>{cardDetails.bankName} {cardDetails.cardFamilyName} kartınız için taksit seçenekleri</span>
-                        </div>
-                      )}
-                      
-                      <div className="installment-options">
-                        {/* Display all available installment options from the API response */}
-                        {installmentOptions.map((option) => (
-                          <div 
-                            key={option.installmentNumber} 
-                            className={`installment-option ${selectedInstallment === option.installmentNumber ? 'selected' : ''}`}
-                            onClick={() => handleInstallmentChange(option.installmentNumber)}
-                          >
-                            <div className="installment-radio">
-                              <input 
-                                type="radio" 
-                                id={`installment-${option.installmentNumber}`}
-                                name="installment"
-                                checked={selectedInstallment === option.installmentNumber}
-                                onChange={() => handleInstallmentChange(option.installmentNumber)}
-                              />
-                              <label htmlFor={`installment-${option.installmentNumber}`}>
-                                {option.installmentNumber === 1 ? 'Tek Çekim' : `${option.installmentNumber} Taksit`}
-                              </label>
-                            </div>
-                            <div className="installment-details">
-                              {option.installmentNumber === 1 ? (
-                                <span className="total-price">{option.totalPrice} TL</span>
-                              ) : (
-                                <>
-                                  <span className="monthly-price">{option.price} TL x {option.installmentNumber}</span>
-                                  <span className="total-price">Toplam: {option.totalPrice} TL</span>
-                                </>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                      
-                      <button 
-                        type="button" 
-                        className="continue-button"
-                        onClick={() => toggleSection('summary')}
-                      >
-                        Taksit Seçimini Tamamla
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-              
-              {/* Updated Price Summary Section with its own collapsible section */}
-              <div className={`collapsible-section summary-section ${expandedSection === 'summary' ? 'expanded' : ''}`}>
-                <div 
-                  className="section-header" 
-                  onClick={() => toggleSection('summary')}
-                >
-                  <h4>
-                    <span className="section-number">{installmentOptions.length > 0 ? '5' : '4'}</span>
-                    Ödeme Özeti
-                  </h4>
-                  <span className="toggle-icon">{expandedSection === 'summary' ? '−' : '+'}</span>
-                </div>
-                
-                <div className="section-content">
-                  <div className="price-summary">
-                    <div className="price-row">
-                      <span>Bootcamp Ücreti:</span>
-                      <span className="price-value">{bootcamp.price?.toFixed(2)} TL</span>
-                    </div>
-                    
-                    {discount.applied && (
-                      <div className="price-row discount">
-                        <span>İndirim:</span>
-                        <span className="price-value discount-value">-{discount.amount?.toFixed(2)} TL</span>
-                      </div>
-                    )}
-                    
-                    {selectedInstallment > 1 && getMonthlyInstallment() && (
-                      <div className="price-row installment-info">
-                        <span>Taksit:</span>
-                        <span className="price-value">{getMonthlyInstallment()?.toFixed(2)} TL x {selectedInstallment} ay</span>
-                      </div>
-                    )}
-                    
-                    <div className="price-row total">
-                      <span>Toplam Ödenecek Tutar:</span>
-                      <span className="final-price">{calculateFinalPrice()?.toFixed(2)} TL</span>
-                    </div>
-                    
-                    <div className="payment-actions">
-                      <button type="submit" className="payment-button">
-                        {selectedInstallment === 1 ? 'Ödemeyi Tamamla' : `${selectedInstallment} Taksitle Öde`}
-                      </button>
-                      <p className="secure-payment-notice">
-                        <span className="lock-icon">🔒</span> 
-                        Ödeme bilgileriniz güvenli bir şekilde işleniyor
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </form>
+            </div>
           </div>
-        </div>
+        </form>
       </div>
-    )}
+    </div>
+  </div>
+)}
 
-    {/* 3D Secure popup for payment processing */}
+    {/* Improved 3D Secure popup for payment processing */}
     {securePopupOpen && secureHtmlContent && (
       <SecurePaymentPopup 
         htmlContent={secureHtmlContent} 
