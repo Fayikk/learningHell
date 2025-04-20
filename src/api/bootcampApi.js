@@ -37,8 +37,14 @@ export const bootcampApi = createApi({
                 url:`GetAllBootcampsByUser`,
                 method:"GET"
             })
-        })
+        }),
+        getBootcampBySlug:builder.query({
+            query:(slug) => ({
+                url:`GetBootcampBySlug?slug=${slug}`,
+                method:"GET"
+            })
+        }),
     })
 })
 
-export const {useGetAllBootcampByUserQuery,useCreateNewBootcampMutation,useUpdateBootcampMutation,useGetAllBootcampsMutation} = bootcampApi
+export const {useGetAllBootcampByUserQuery,useGetBootcampBySlugQuery,useCreateNewBootcampMutation,useUpdateBootcampMutation,useGetAllBootcampsMutation} = bootcampApi
