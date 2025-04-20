@@ -284,7 +284,7 @@ const Footer = (props) => {
           <div className="row align-items-center">
             <div className="col-lg-6 col-md-12 col-12">
               <div className="copyright">
-                &copy; 2024{" "}
+                &copy; {new Date().getFullYear()} {" "}
                 <Link onClick={ClickHandler} to="/" className="copyright-link">
                   Teleferic ltd şti - LH
                 </Link>
