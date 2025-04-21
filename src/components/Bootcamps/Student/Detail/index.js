@@ -495,6 +495,12 @@ function BootcampDetail() {
 
   // Add new state for active tab
   const [activeTab, setActiveTab] = useState('bootcamp');
+  const [showAllSchedule, setShowAllSchedule] = useState(false);
+
+  // Function to toggle showing all schedule items
+  const toggleScheduleView = () => {
+    setShowAllSchedule(!showAllSchedule);
+  };
 
   if (isLoading) {
     return <div className="loading-container"><div className="loading-spinner"></div></div>;
@@ -535,7 +541,6 @@ function BootcampDetail() {
           <Badge bg="light" text="dark" className="hero-badge">
             <MoneyIcon /> ₺{bootcamp.price.toFixed(2)}
           </Badge>
-         
         </div>
       </div>
     </div>
@@ -630,17 +635,30 @@ function BootcampDetail() {
                   <h3 className="section-title">Program</h3>
                   {bootcamp.bootcampSchedule.length > 0 ? (
                     <div className="schedule-list">
-                      {bootcamp.bootcampSchedule.map((schedule) => (
-                        <div className="schedule-item" key={schedule.id}>
-                          <div className="schedule-date">
-                            {new Date(schedule.date).toLocaleDateString('tr-TR')}
+                      {bootcamp.bootcampSchedule
+                        .slice(0, showAllSchedule ? bootcamp.bootcampSchedule.length : 5)
+                        .map((schedule) => (
+                          <div className="schedule-item" key={schedule.id}>
+                            <div className="schedule-date">
+                              {new Date(schedule.date).toLocaleDateString('tr-TR')}
+                            </div>
+                            <div className="schedule-details">
+                              <h4>{schedule.topic}</h4>
+                              <p>{schedule.startAndEndDate}</p>
+                            </div>
                           </div>
-                          <div className="schedule-details">
-                            <h4>{schedule.topic}</h4>
-                            <p>{schedule.startAndEndDate}</p>
-                          </div>
+                        ))}
+                        
+                      {bootcamp.bootcampSchedule.length > 5 && (
+                        <div className="show-more-container">
+                          <button 
+                            className="show-more-button" 
+                            onClick={toggleScheduleView}
+                          >
+                            {showAllSchedule ? 'Daha Az Göster' : `Daha Fazla Göster (${bootcamp.bootcampSchedule.length - 5} tane daha)`}
+                          </button>
                         </div>
-                      ))}
+                      )}
                     </div>
                   ) : (
                     <p>Henüz program detayı bulunmamaktadır.</p>
