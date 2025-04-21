@@ -16,6 +16,7 @@ import visa from '../../images/icon/visa.png';
 import mastercard from '../../images/icon/mastercard.png';
 import iyzico from '../../images/icon/iyzico_ile_ode_colored_horizontal.png'
 import './Styles/Footer.css'
+
 const ClickHandler = () => {
   window.scrollTo(10, 0);
 };
@@ -34,6 +35,7 @@ const cardType = [
       img: iyzico
   },
 ];
+
 const Footer = (props) => {
   const { t, i18n } = useTranslation(); 
   const [isAgreementOpen, setIsAgreementOpen] = useState(false);
@@ -44,10 +46,8 @@ const Footer = (props) => {
   };
   const [forms, setForms] = React.useState({
     cupon_key: '',
-    // ...existing code...
     payment_method: 'cash',
     card_type: '',
-    // ...existing code...
     card_holder: '',
     card_number: '',
     cvv: '',
@@ -81,7 +81,7 @@ const Footer = (props) => {
   return (
     <footer className="wpo-site-footer">
       <div className='text text-center'>
-        {/* Dialog Bileşenleriniz */}
+        {/* Dialog Bileşenleri */}
         <Dialog
           open={isAgreementOpen}
           onClose={handleCloseAgreement}
@@ -141,7 +141,7 @@ const Footer = (props) => {
       <div className="wpo-upper-footer">
         <div className="container">
           <div className="row footer-row">
-            {/* İlk Kolon */}
+            {/* Logo ve Sosyal Medya */}
             <div className="col-lg-3 col-md-6 col-sm-12">
               <div className="widget about-widget">
                 <div className="logo widget-title">
@@ -150,9 +150,7 @@ const Footer = (props) => {
                   </Link>
                 </div>
                 <p className="footer-description">
-                  {t(
-                   
-                  )}
+                  {t("Learning solutions for everyone")}
                 </p>
                 <div className="social">
                   <ul className="social-icons">
@@ -181,57 +179,57 @@ const Footer = (props) => {
               </div>
             </div>
     
-            {/* İkinci Kolon */}
+            {/* Quick Links */}
             <div className="col-lg-3 col-md-6 col-sm-12">
               <div className="widget link-widget">
                 <div className="widget-title">
                   <h3 className="footer-heading">{t("Quick Links")}</h3>
                 </div>
                 <ul className="footer-links">
-                  <li>
+                  <li className="footer-link-item">
                     <Link onClick={ClickHandler} to="/home" className="footer-link">
-                      <i className="ti-angle-right"></i> {t("Home")}
+                      <i className="ti-angle-right"></i> <span>{t("Home")}</span>
                     </Link>
                   </li>
-                  <li>
+                  <li className="footer-link-item">
                     <Link onClick={ClickHandler} to="/about" className="footer-link">
-                      <i className="ti-angle-right"></i> {t("About Us")}
+                      <i className="ti-angle-right"></i> <span>{t("About Us")}</span>
                     </Link>
                   </li>
-                  <li>
+                  <li className="footer-link-item">
                     <Link onClick={ClickHandler} to="/teacher" className="footer-link">
-                      <i className="ti-angle-right"></i> {t("Teachers")}
+                      <i className="ti-angle-right"></i> <span>{t("Teachers")}</span>
                     </Link>
                   </li>
-                  <li>
+                  <li className="footer-link-item">
                     <Button onClick={handleOpenAgreement} className="footer-btn-link">
-                      <i className="ti-file"></i> {t("Mesafeli Satış Sözleşmesi")}
+                      <i className="ti-file"></i> <span>{t("Mesafeli Satış Sözleşmesi")}</span>
                     </Button>
                   </li>
-                  <li>
+                  <li className="footer-link-item">
                     <Button onClick={handleSecurityOpenAgreement} className="footer-btn-link">
-                      <i className="ti-lock"></i> {t("Gizlilik Politikası")}
+                      <i className="ti-lock"></i> <span>{t("Gizlilik Politikası")}</span>
                     </Button>
                   </li>
-                  <li>
+                  <li className="footer-link-item">
                     <Button onClick={handleCancelOpenAgreement} className="footer-btn-link">
-                      <i className="ti-package"></i> {t("Teslimat Ve İade")}
+                      <i className="ti-package"></i> <span>{t("Teslimat Ve İade")}</span>
                     </Button>
                   </li>
                 </ul>
               </div>
             </div>
     
-            {/* Üçüncü Kolon */}
+            {/* Useful Links */}
             <div className="col-lg-3 col-md-6 col-sm-12">
               <div className="widget link-widget s2">
                 <div className="widget-title">
                   <h3 className="footer-heading">{t("Useful Links")}</h3>
                 </div>
                 <ul className="footer-links">
-                  <li>
+                  <li className="footer-link-item">
                     <Link onClick={ClickHandler} to="/contact" className="footer-link">
-                      <i className="ti-angle-right"></i> {t("Contact Us")}
+                      <i className="ti-angle-right"></i> <span>{t("Contact Us")}</span>
                     </Link>
                   </li>
                   {/* Diğer linkler */}
@@ -239,7 +237,7 @@ const Footer = (props) => {
               </div>
             </div>
     
-            {/* Dördüncü Kolon */}
+            {/* Contact */}
             <div className="col-lg-3 col-md-6 col-sm-12">
               <div className="widget wpo-contact-widget">
                 <div className="widget-title">
@@ -248,16 +246,22 @@ const Footer = (props) => {
                 <div className="contact-ft">
                   <ul className="contact-list">
                     <li className="contact-item">
-                      <i className="fi flaticon-email"></i>
-                      <span className="contact-text">mail@learninghell.com</span>
+                      <div className="contact-icon">
+                        <i className="fi flaticon-email"></i>
+                      </div>
+                      <div className="contact-text">mail@learninghell.com</div>
                     </li>
                     <li className="contact-item">
-                      <i className="fi flaticon-email"></i>
-                      <span className="contact-text">education@learninghell.com</span>
+                      <div className="contact-icon">
+                        <i className="fi flaticon-email"></i>
+                      </div>
+                      <div className="contact-text">education@learninghell.com</div>
                     </li>
                     <li className="contact-item">
-                      <i className="fi flaticon-placeholder"></i>
-                      <span className="contact-text">Türkiye</span>
+                      <div className="contact-icon">
+                        <i className="fi flaticon-placeholder"></i>
+                      </div>
+                      <div className="contact-text">Türkiye</div>
                     </li>
                   </ul>
                 </div>
@@ -266,12 +270,12 @@ const Footer = (props) => {
           </div>
     
           {/* Payment Methods */}
-          <div className="payment-methods">
-            <h4>Ödeme Yöntemleri</h4>
-            <div className="payment-icons">
+          <div className="payment-methods-section">
+            <h4 className="payment-heading">{t("Ödeme Yöntemleri")}</h4>
+            <div className="payment-icons-container">
               {cardType.map((item, i) => (
-                <div key={i} className="payment-icon">
-                  <img src={item.img} alt={item.title} />
+                <div key={i} className="payment-icon-wrapper">
+                  <img src={item.img} alt={item.title} className="payment-img" />
                 </div>
               ))}
             </div>
