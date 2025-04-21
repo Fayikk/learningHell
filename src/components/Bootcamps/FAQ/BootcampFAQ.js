@@ -59,7 +59,7 @@ const BootcampFAQ = ({ bootcampTitle }) => {
       </div>
       
       <div className="faq-contact">
-        <p>Başka sorularınız mı var? <a href="#contact">Bizimle iletişime geçin</a> ya da <a href="https://wa.me/905310149046" target="_blank" rel="noopener noreferrer">WhatsApp</a> üzerinden destek alın.</p>
+        <p>Başka sorularınız mı var? <a href="/contact">Bizimle iletişime geçin</a> ya da <a href="https://wa.me/905310149046" target="_blank" rel="noopener noreferrer">WhatsApp</a> üzerinden destek alın.</p>
       </div>
     </div>
   );
