@@ -13,6 +13,7 @@ import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signal
 import { payHub } from '../../../../api/Base/payHubModel';
 import { rootBaseUrl } from '../../../../api/Base/baseApiModel';
 import BootcampFAQ from '../../../Bootcamps/FAQ/BootcampFAQ';
+import {Helmet} from "react-helmet";
 
 // SVG Icons as React components
 const CalendarIcon = () => (
@@ -191,11 +192,6 @@ function BootcampDetail() {
   });
   
   // Payment options for the bootcamp with Turkish Lira
-  const paymentOptions = [
-    { id: 1, method: 'Tam Ödeme', discount: '%10', amount: data?.result?.price ? (data.result.price * 0.9).toFixed(2) : 0 },
-    { id: 2, method: 'Taksit (3 ay)', amount: data?.result?.price ? (data.result.price / 3).toFixed(2) : 0 },
-    { id: 3, method: 'Taksit (6 ay)', amount: data?.result?.price ? (data.result.price / 6).toFixed(2) : 0 }
-  ];
   
   // Create hub connection for payment processing
   const createHubConnection = async () => {
@@ -224,7 +220,6 @@ function BootcampDetail() {
   useEffect(() => {
     if (hubConnection) {
       hubConnection.on("MessageForBootcampSocket", (res) => {
-        console.log("trigger socket response", res)
         if (res.item1 == "success") {
           toast.success("Ödeme Başarı İle Alındı, Bootcamp Programına Kaydınız Alındı.")
           handleSecurePopupClose(); // Also close the 3D Secure popup if open
@@ -510,9 +505,16 @@ function BootcampDetail() {
   }
 
   const bootcamp = data.result;
-
   return (
     <>
+    <Helmet>
+      <title>{bootcamp.title} - Bootcamp Detayları</title>
+      <meta property="og:title" content={bootcamp.title} />
+        <meta property="og:description" content={bootcamp.description} />
+        <meta property="og:image" content={bootcamp.thumbnail_Url} />
+        <meta property="og:url" content={`https://www.learninghell.com${window.location.pathname}`} />
+        <meta property="og:type" content="website" />
+    </Helmet>
     <Navbar/>
     <div className="hero-section" style={{ 
       backgroundImage: `url(${bootcamp.thumbnail_Url})`,
