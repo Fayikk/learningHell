@@ -544,15 +544,17 @@
   display: flex;
   align-items: center;
   gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .instructor-avatar {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   overflow: hidden;
   border: 2px solid #f0f0f0;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border: 3px solid white;
 }
 
 .instructor-img {
@@ -581,17 +583,23 @@
   font-weight: 600;
   margin-bottom: 0.25rem;
   color: #333;
+  margin-bottom: 0.5rem;
+  color: #212529;
 }
 
 .instructor-title {
   font-size: 1rem;
   color: #666;
   margin-bottom: 0.75rem;
+  color: #6c757d;
+  margin-bottom: 1rem;
 }
 
 .instructor-social {
   display: flex;
   gap: 0.5rem;
+  display: flex;
+  gap: 0.75rem;
 }
 
 .social-link {
@@ -603,6 +611,15 @@
   border-radius: 50%;
   color: white;
   font-size: 1rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #f8f9fa;
+  color: #6c757d;
   transition: all 0.2s ease;
 }
 
@@ -625,6 +642,27 @@
 .social-link:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.social-link.linkedin:hover {
+  background-color: #0077b5;
+  color: white;
+}
+
+.social-link.twitter:hover {
+  background-color: #1da1f2;
+  color: white;
+}
+
+.social-link.youtube:hover {
+  background-color: #ff0000;
+  color: white;
+}
+
+.social-link.udemy:hover {
+  background-color: #eb5252;
+  color: white;
 }
 
 .instructor-details {
@@ -653,6 +691,7 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  margin-top: 2rem;
 }
 
 .qualification-item {
@@ -661,6 +700,16 @@
   padding: 1rem;
   border-radius: 8px;
   background-color: #f9f9f9;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  transition: transform 0.2s ease;
+}
+
+.qualification-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .qualification-icon {
@@ -673,6 +722,15 @@
   background-color: #e3f2fd;
   color: #1976d2;
   font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: #e9ecef;
+  border-radius: 8px;
+  color: #007bff;
+  margin-right: 1rem;
 }
 
 .qualification-content h5 {
@@ -680,15 +738,25 @@
   font-weight: 600;
   margin-bottom: 0.25rem;
   color: #444;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: #343a40;
 }
 
 .qualification-content p {
   margin: 0;
   font-size: 0.9rem;
   color: #666;
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin-bottom: 0;
 }
 
 .skills-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
@@ -702,6 +770,18 @@
   color: #0288d1;
   font-size: 0.8rem;
   font-weight: 500;
+  background-color: #e9ecef;
+  color: #495057;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.skill-badge:hover {
+  background-color: #007bff;
+  color: white;
 }
 
 /* Student count section */
@@ -714,6 +794,9 @@
   display: flex;
   justify-content: center;
   padding: 1rem 0;
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 1rem;
 }
 
 .student-count-card {
@@ -724,6 +807,18 @@
   border-radius: 8px;
   background-color: #f5f5f5;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  transition: transform 0.2s ease;
+  min-width: 200px;
+}
+
+.student-count-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .count-icon {
@@ -736,6 +831,15 @@
   background-color: #e8f5e9;
   color: #4caf50;
   font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: #007bff;
+  border-radius: 50%;
+  color: white;
+  margin-right: 1rem;
 }
 
 .count-details {
@@ -747,11 +851,16 @@
   font-size: 1.8rem;
   font-weight: 700;
   color: #333;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #343a40;
 }
 
 .count-label {
   font-size: 0.9rem;
   color: #666;
+  font-size: 0.85rem;
+  color: #6c757d;
 }
 
 /* Instructor badge in sidebar */
@@ -930,4 +1039,54 @@
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* Add these new styles for the tabbed interface */
+.tab-navigation {
+  padding: 0.5rem;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.custom-tabs {
+  border-bottom: none;
+}
+
+.custom-tabs .nav-link {
+  color: #6c757d;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease-in-out;
+}
+
+.custom-tabs .nav-link:hover {
+  color: #343a40;
+  border-bottom-color: #adb5bd;
+}
+
+.custom-tabs .nav-link.active {
+  color: #007bff;
+  background-color: transparent;
+  border-bottom-color: #007bff;
+}
+
+.custom-tabs .nav-link i {
+  margin-right: 8px;
+}
+
+.tab-content {
+  padding: 1.5rem;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.instructor-tab-content .instructor-section {
+  padding: 0;
+}
+
+/* Animation for tab transitions */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
