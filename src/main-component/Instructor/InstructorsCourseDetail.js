@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useRef,
   useState,
+  useMemo,
 } from "react";
 import Accordion from "react-bootstrap/Accordion";
 import Navbar from "../../components/Navbar/Navbar";
@@ -58,6 +59,8 @@ import Roles from "../../Constants/Roles";
 import { useTranslation } from "react-i18next";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { createContext } from "react";
+import { IoRefresh } from "react-icons/io5"; // Add import for refresh icon
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -147,18 +150,70 @@ function InstructorsCourseDetail() {
   const [unassignedVideos, setUnassignedVideos] = useState([]);
   const [showUnassignedModal, setShowUnassignedModal] = useState(false);
   const [currentSectionId, setCurrentSectionId] = useState(null);
-  const { data: unassignedVideosData, refetch: refetchUnassignedVideos } = useGetUnAssignedVideosAsyncQuery();
+  const [unassignedVideosLoading, setUnassignedVideosLoading] = useState(false); // Add loading state
+  const [unassignedVideosError, setUnassignedVideosError] = useState(null); // Add error state
+  
+  // Modify the query to include skip option to manually control when it runs
+  const { 
+    data: unassignedVideosData, 
+    refetch: refetchUnassignedVideos,
+    isLoading: isUnassignedVideosLoading,
+    isError: isUnassignedVideosError,
+    error: unassignedVideosQueryError
+  } = useGetUnAssignedVideosAsyncQuery(undefined, {
+    // Use polling to periodically check for new data
+    pollingInterval: 30000, // Poll every 30 seconds
+    refetchOnMountOrArgChange: true,
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+  });
   
   // New state for video assignment
   const [assigningVideo, setAssigningVideo] = useState(false);
   const [selectedRowNumber, setSelectedRowNumber] = useState(1);
+  const [videoTitle, setVideoTitle] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // Fetch unassigned videos when component mounts
+  // Filter unassigned videos based on search query
+  const filteredUnassignedVideos = useMemo(() => {
+    if (!unassignedVideosData) return [];
+    
+    return unassignedVideosData.filter((video) => 
+      video.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [unassignedVideosData, searchQuery]);
+
+  // Enhanced function to fetch unassigned videos with better error handling
+  const fetchUnassignedVideos = useCallback(async () => {
+    try {
+      setUnassignedVideosLoading(true);
+      setUnassignedVideosError(null);
+      await refetchUnassignedVideos();
+    } catch (error) {
+      console.error("Error fetching unassigned videos:", error);
+      setUnassignedVideosError(error.message || "Failed to load videos");
+      toast.error(t("Failed to load unassigned videos. Please try again."));
+    } finally {
+      setUnassignedVideosLoading(false);
+    }
+  }, [refetchUnassignedVideos, t]);
+
+  // Fetch unassigned videos when component mounts and when modal is opened
+  useEffect(() => {
+    if (showUnassignedModal) {
+      fetchUnassignedVideos();
+    }
+  }, [showUnassignedModal, fetchUnassignedVideos]);
+
+  // Better handling of unassigned videos data
   useEffect(() => {
     if (unassignedVideosData) {
       setUnassignedVideos(unassignedVideosData);
+    } else if (isUnassignedVideosError && unassignedVideosQueryError) {
+      console.error("Error in unassigned videos query:", unassignedVideosQueryError);
+      toast.error(t("Failed to load videos. Please try refreshing."));
     }
-  }, [unassignedVideosData]);
+  }, [unassignedVideosData, isUnassignedVideosError, unassignedVideosQueryError, t]);
 
   useEffect(() => {
     if (data && data.result[0] && data.result[0].sections) {
@@ -577,6 +632,8 @@ function InstructorsCourseDetail() {
     
     // Create the appropriate model structure for the assignment
     const bulkVideoAssignModel = {
+      RowNumberForSection:selectedRowNumber,
+      title: videoTitle,
       sectionId: currentSectionId,
       videoId: videoId
     };
@@ -603,8 +660,10 @@ function InstructorsCourseDetail() {
 
   const openUnassignedVideosModal = (sectionId) => {
     setCurrentSectionId(sectionId);
-    refetchUnassignedVideos(); // Ensure we have the latest data
+    setSearchQuery(""); // Reset search when opening modal
     setShowUnassignedModal(true);
+    // Fetch videos immediately when modal opens
+    fetchUnassignedVideos();
   };
 
   if (isContinueProocess) {
@@ -1005,13 +1064,45 @@ function InstructorsCourseDetail() {
                   fontWeight: 'bold',
                   textAlign: 'center',
                   borderBottom: '1px solid #eee',
-                  paddingBottom: '10px'
+                  paddingBottom: '10px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}
               >
                 {t("Unassigned Videos")}
+                {/* Add refresh button */}
+                <Button 
+                  variant="text"
+                  color="primary"
+                  sx={{ ml: 2 }}
+                  onClick={fetchUnassignedVideos}
+                  disabled={isUnassignedVideosLoading || unassignedVideosLoading}
+                >
+                  <IoRefresh size={24} />
+                </Button>
               </Typography>
               
-              {unassignedVideosData && unassignedVideosData.length > 0 ? (
+              {(isUnassignedVideosLoading || unassignedVideosLoading) ? (
+                <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
+                  <Spinner />
+                  <span style={{ marginLeft: '10px' }}>{t("Loading videos...")}</span>
+                </div>
+              ) : unassignedVideosError || isUnassignedVideosError ? (
+                <div style={{ textAlign: 'center', padding: '20px' }}>
+                  <Typography variant="body1" color="error">
+                    {t("Failed to load videos")}
+                  </Typography>
+                  <Button 
+                    variant="contained" 
+                    color="primary" 
+                    onClick={fetchUnassignedVideos}
+                    sx={{ mt: 2 }}
+                  >
+                    {t("Try Again")}
+                  </Button>
+                </div>
+              ) : unassignedVideosData && unassignedVideosData.length > 0 ? (
                 <div>
                   <Typography variant="body2" sx={{ mb: 2 }}>
                     {t("Select a video to add to this section")}
@@ -1029,40 +1120,74 @@ function InstructorsCourseDetail() {
                       sx={{ mb: 3 }}
                     />
                   </div>
+                  <div style={{ mb: 3 }}>
+                    <Typography variant="body2" sx={{ mb: 1 }}>
+                      {t("Video Title")}:
+                    </Typography>
+                    <Input 
+                      type="text" 
+                      defaultValue={"Title"} 
+                      onChange={(e) => setVideoTitle(e.target.value) || ""}
+                      sx={{ mb: 3 }}
+                    />
+                  </div>
+                  {/* Add search input */}
+                  <div style={{ marginBottom: '20px' }}>
+                    <Input
+                      type="text"
+                      placeholder={t("Search videos...")}
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '8px 12px',
+                        borderRadius: '4px',
+                        border: '1px solid #ddd'
+                      }}
+                    />
+                  </div>
                   
                   <div style={{ maxHeight: '400px', overflow: 'auto' }}>
-                    {unassignedVideosData.map((video) => (
-                      <div 
-                        key={video.videoId} 
-                        style={{ 
-                          display: 'flex', 
-                          justifyContent: 'space-between', 
-                          alignItems: 'center',
-                          padding: '12px',
-                          marginBottom: '10px',
-                          border: '1px solid #eee',
-                          borderRadius: '8px',
-                          backgroundColor: '#f9f9f9'
-                        }}
-                      >
-                        <div>
-                          <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
-                            {video.title}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            ID: {video.publicVideoId}
-                          </Typography>
-                        </div>
-                        <Button 
-                          variant="contained"
-                          color="primary"
-                          onClick={() => handleAssignVideo(video.videoId, video.publicVideoId)}
-                          disabled={assigningVideo}
+                    {filteredUnassignedVideos.length > 0 ? (
+                      filteredUnassignedVideos.map((video) => (
+                        <div 
+                          key={video.videoId} 
+                          style={{ 
+                            display: 'flex', 
+                            justifyContent: 'space-between', 
+                            alignItems: 'center',
+                            padding: '12px',
+                            marginBottom: '10px',
+                            border: '1px solid #eee',
+                            borderRadius: '8px',
+                            backgroundColor: '#f9f9f9'
+                          }}
                         >
-                          {assigningVideo ? <Spinner size="sm" /> : t("Add to Section")}
-                        </Button>
+                          <div>
+                            <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
+                              {video.title}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              ID: {video.publicVideoId}
+                            </Typography>
+                          </div>
+                          <Button 
+                            variant="contained"
+                            color="primary"
+                            onClick={() => handleAssignVideo(video.videoId, video.publicVideoId)}
+                            disabled={assigningVideo}
+                          >
+                            {assigningVideo ? <Spinner size="sm" /> : t("Add to Section")}
+                          </Button>
+                        </div>
+                      ))
+                    ) : (
+                      <div style={{ textAlign: 'center', padding: '20px' }}>
+                        <Typography variant="body1">
+                          {t("No videos found matching your search")}
+                        </Typography>
                       </div>
-                    ))}
+                    )}
                   </div>
                 </div>
               ) : (
