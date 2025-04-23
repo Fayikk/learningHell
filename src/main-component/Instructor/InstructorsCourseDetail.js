@@ -28,6 +28,8 @@ import {
   useGetWatchVideoUrlMutation,
   useRemoveVideoAsyncMutation,
   useUpdateVideoAsyncMutation,
+  useGetUnAssignedVideosAsyncQuery,
+  useUpdateAssignVideoAsyncMutation, // Add this import
 } from "../../api/videoApi";
 import VideoPage from "../LessonPage/VideoPage";
 import { CiCircleRemove } from "react-icons/ci";
@@ -67,6 +69,20 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
+const modalStyle = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 600,
+  maxHeight: "80vh",
+  overflow: "auto",
+  bgcolor: "background.paper",
+  border: "none",
+  borderRadius: "12px",
+  boxShadow: "0 10px 25px rgba(0, 0, 0, 0.2)",
+  p: 4,
+};
 const VideoRefContext = createContext();
 
 function InstructorsCourseDetail() {
@@ -92,6 +108,7 @@ function InstructorsCourseDetail() {
   const [updateVideoAsync] = useUpdateVideoAsyncMutation();
   const [updateEvaluate] = useEvaluateUpdateCourseMutation();
   const [updateSectionRows] = useUpdateSectionRowsMutation();
+  const [updateAssignVideoAsync] = useUpdateAssignVideoAsyncMutation(); // Add this hook
   const [title, setTitle] = useState("");
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -127,6 +144,21 @@ function InstructorsCourseDetail() {
   const [videoId, setVideoId] = useState(
     buttonRef.current ? buttonRef.current.dataset.value : ""
   );
+  const [unassignedVideos, setUnassignedVideos] = useState([]);
+  const [showUnassignedModal, setShowUnassignedModal] = useState(false);
+  const [currentSectionId, setCurrentSectionId] = useState(null);
+  const { data: unassignedVideosData, refetch: refetchUnassignedVideos } = useGetUnAssignedVideosAsyncQuery();
+  
+  // New state for video assignment
+  const [assigningVideo, setAssigningVideo] = useState(false);
+  const [selectedRowNumber, setSelectedRowNumber] = useState(1);
+
+  // Fetch unassigned videos when component mounts
+  useEffect(() => {
+    if (unassignedVideosData) {
+      setUnassignedVideos(unassignedVideosData);
+    }
+  }, [unassignedVideosData]);
 
   useEffect(() => {
     if (data && data.result[0] && data.result[0].sections) {
@@ -540,6 +572,41 @@ function InstructorsCourseDetail() {
     }
   };
 
+  const handleAssignVideo = async (videoId, publicVideoId) => {
+    setAssigningVideo(true);
+    
+    // Create the appropriate model structure for the assignment
+    const bulkVideoAssignModel = {
+      sectionId: currentSectionId,
+      videoId: videoId
+    };
+
+    try {
+      // Use the new mutation instead of updateVideoAsync
+      await updateAssignVideoAsync(bulkVideoAssignModel).then((response) => {
+        if (response.data && response.data.isSuccess) {
+          toast.success("Video assigned successfully");
+          setShowUnassignedModal(false);
+          refetchUnassignedVideos(); // Refresh unassigned videos list
+          dispatch(instructorApi.util.invalidateTags(["instructor"]));
+        } else {
+          toast.error(response.data?.messages?.[0] || "Failed to assign video");
+        }
+      });
+    } catch (error) {
+      toast.error("Error assigning video");
+      console.error(error);
+    } finally {
+      setAssigningVideo(false);
+    }
+  };
+
+  const openUnassignedVideosModal = (sectionId) => {
+    setCurrentSectionId(sectionId);
+    refetchUnassignedVideos(); // Ensure we have the latest data
+    setShowUnassignedModal(true);
+  };
+
   if (isContinueProocess) {
     return isContinueProocess ? (
       <div>
@@ -755,13 +822,7 @@ function InstructorsCourseDetail() {
                                 <button
                                   style={{ marginLeft: "auto" }}
                                   data-target={section.sectionId}
-                                  onClick={() => {
-                                    setVideoDetail({
-                                      publicVideoId: "",
-                                      sectionId: section.sectionId,
-                                    });
-                                    handleOpenCustomModal("NewVideo");
-                                  }}
+                                  onClick={() => openUnassignedVideosModal(section.sectionId)}
                                   className="btn btn-secondary"
                                 >
                                   {t("Add Video")}
@@ -927,6 +988,116 @@ function InstructorsCourseDetail() {
               )}
             </Droppable>
           </DragDropContext>
+
+          <Modal
+            open={showUnassignedModal}
+            onClose={() => setShowUnassignedModal(false)}
+            aria-labelledby="unassigned-videos-modal-title"
+            aria-describedby="unassigned-videos-modal-description"
+          >
+            <Box sx={modalStyle}>
+              <Typography 
+                id="unassigned-videos-modal-title" 
+                variant="h6" 
+                component="h2" 
+                sx={{ 
+                  mb: 3,
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                  borderBottom: '1px solid #eee',
+                  paddingBottom: '10px'
+                }}
+              >
+                {t("Unassigned Videos")}
+              </Typography>
+              
+              {unassignedVideosData && unassignedVideosData.length > 0 ? (
+                <div>
+                  <Typography variant="body2" sx={{ mb: 2 }}>
+                    {t("Select a video to add to this section")}
+                  </Typography>
+                  
+                  <div style={{ mb: 3 }}>
+                    <Typography variant="body2" sx={{ mb: 1 }}>
+                      {t("Row number for this video in section")}:
+                    </Typography>
+                    <Input 
+                      type="number" 
+                      defaultValue={1} 
+                      min={1}
+                      onChange={(e) => setSelectedRowNumber(parseInt(e.target.value) || 1)}
+                      sx={{ mb: 3 }}
+                    />
+                  </div>
+                  
+                  <div style={{ maxHeight: '400px', overflow: 'auto' }}>
+                    {unassignedVideosData.map((video) => (
+                      <div 
+                        key={video.videoId} 
+                        style={{ 
+                          display: 'flex', 
+                          justifyContent: 'space-between', 
+                          alignItems: 'center',
+                          padding: '12px',
+                          marginBottom: '10px',
+                          border: '1px solid #eee',
+                          borderRadius: '8px',
+                          backgroundColor: '#f9f9f9'
+                        }}
+                      >
+                        <div>
+                          <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
+                            {video.title}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            ID: {video.publicVideoId}
+                          </Typography>
+                        </div>
+                        <Button 
+                          variant="contained"
+                          color="primary"
+                          onClick={() => handleAssignVideo(video.videoId, video.publicVideoId)}
+                          disabled={assigningVideo}
+                        >
+                          {assigningVideo ? <Spinner size="sm" /> : t("Add to Section")}
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div style={{ textAlign: 'center', padding: '20px' }}>
+                  <Typography variant="body1">
+                    {t("No unassigned videos available")}
+                  </Typography>
+                </div>
+              )}
+              
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+                <Button 
+                  onClick={() => {
+                    setVideoDetail({
+                      ...videoDetail,
+                      sectionId: currentSectionId,  // Make sure to set the current section ID
+                    });
+                    handleOpenCustomModal("NewVideo");
+                    setShowUnassignedModal(false);
+                  }}
+                  variant="outlined"
+                >
+                  {t("Upload New Video")}
+                </Button>
+                
+                <Button 
+                  onClick={() => setShowUnassignedModal(false)}
+                  variant="contained"
+                  color="secondary"
+                >
+                  {t("Close")}
+                </Button>
+              </Box>
+            </Box>
+          </Modal>
 
           <Footer />
           <Scrollbar />
