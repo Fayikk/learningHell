@@ -140,7 +140,7 @@ const SecurePaymentPopup = ({ htmlContent, onClose }) => {
   );
 };
 
-function BootcampDetail() {
+function  BootcampDetail() {
   const { slug } = useParams();
   const { data, isLoading, error } = useGetBootcampBySlugQuery(slug);
   const navigate = useNavigate();
@@ -811,75 +811,131 @@ function BootcampDetail() {
           </Card>
         </Col>
         
-        <Col lg={4}>
-          <Card className="payment-card">
-            <div className="payment-header">
-              <h3>Hemen Kaydol</h3>
-            </div>
-            <Card.Body>
-              <div className="price-container">
-                <span className="currency">₺</span>
-                <span className="price">{bootcamp.price.toFixed(2)}</span>
-              </div>
-              
-              <h5 className="payment-title">Ödeme Seçenekleri</h5>
-              {/* {paymentOptions.map((option, index) => (
-                <div className="payment-option-card" key={index}>
-                  <div className="d-flex justify-content-between">
-                    <span className="option-name">{option.method}</span>
-                    <span className="option-price">₺{option.amount}</span>
-                  </div>
-                  {option.discount && (
-                    <div className="discount-badge">
-                      {option.discount} indirim
-                    </div>
-                  )}
-                </div>
-              ))} */}
-              
-              <Button 
-                variant="primary" 
-                className="enroll-button pulse-effect"
-                onClick={handleEnrollClick}
-              >
-                Şimdi Kaydol
-              </Button>
-              
-              <div className="guarantee">
-                <div className="guarantee-icon">✓</div>
-                <div className="guarantee-text">7 gün para iade garantisi</div>
-              </div>
 
-              {/* Add instructor badge in sidebar */}
-              {bootcamp.bootcampInstructorDetail && (
-                <div className="instructor-badge">
-                  <div className="instructor-badge-image">
-                    {bootcamp.bootcampInstructorDetail.image_Url ? (
-                      <img 
-                        src={bootcamp.bootcampInstructorDetail.image_Url.startsWith('http') 
-                          ? bootcamp.bootcampInstructorDetail.image_Url 
-                          : `${rootBaseUrl}${bootcamp.bootcampInstructorDetail.image_Url}`} 
-                        alt={bootcamp.bootcampInstructorDetail.full_Name} 
-                      />
-                    ) : (
-                      <div className="instructor-icon">
-                        <UserIcon />
+        {
+          bootcamp.isActive ? (
+            <Col lg={4}>
+            <Card className="payment-card">
+              <div className="payment-header">
+                <h3>Hemen Kaydol</h3>
+              </div>
+              <Card.Body>
+                <div className="price-container">
+                  <span className="currency">₺</span>
+                  <span className="price">{bootcamp.price.toFixed(2)}</span>
+                </div>
+                
+                <h5 className="payment-title">Ödeme Seçenekleri</h5>
+                {/* {paymentOptions.map((option, index) => (
+                  <div className="payment-option-card" key={index}>
+                    <div className="d-flex justify-content-between">
+                      <span className="option-name">{option.method}</span>
+                      <span className="option-price">₺{option.amount}</span>
+                    </div>
+                    {option.discount && (
+                      <div className="discount-badge">
+                        {option.discount} indirim
                       </div>
                     )}
                   </div>
-                  <div className="instructor-badge-info">
-                    <div className="instructor-badge-label">Eğitmen</div>
-                    <div className="instructor-badge-name">{bootcamp.bootcampInstructorDetail.full_Name}</div>
-                  </div>
+                ))} */}
+                
+                <Button 
+                  variant="primary" 
+                  className="enroll-button pulse-effect"
+                  onClick={handleEnrollClick}
+                >
+                  Şimdi Kaydol
+                </Button>
+                
+                <div className="guarantee">
+                  <div className="guarantee-icon">✓</div>
+                  <div className="guarantee-text">7 gün para iade garantisi</div>
                 </div>
-              )}
-            </Card.Body>
-          </Card>
-          
-          <div className="floating-cta">
-            <span className="floating-text">Sınırlı Kontenjan!</span>
+  
+                {/* Add instructor badge in sidebar */}
+                {bootcamp.bootcampInstructorDetail && (
+                  <div className="instructor-badge">
+                    <div className="instructor-badge-image">
+                      {bootcamp.bootcampInstructorDetail.image_Url ? (
+                        <img 
+                          src={bootcamp.bootcampInstructorDetail.image_Url.startsWith('http') 
+                            ? bootcamp.bootcampInstructorDetail.image_Url 
+                            : `${rootBaseUrl}${bootcamp.bootcampInstructorDetail.image_Url}`} 
+                          alt={bootcamp.bootcampInstructorDetail.full_Name} 
+                        />
+                      ) : (
+                        <div className="instructor-icon">
+                          <UserIcon />
+                        </div>
+                      )}
+                    </div>
+                    <div className="instructor-badge-info">
+                      <div className="instructor-badge-label">Eğitmen</div>
+                      <div className="instructor-badge-name">{bootcamp.bootcampInstructorDetail.full_Name}</div>
+                    </div>
+                  </div>
+                )}
+              </Card.Body>
+            </Card>
+            
+            <div className="floating-cta">
+              <span className="floating-text">Sınırlı Kontenjan!</span>
+            </div>
+          </Col>
+          ):(
+            <Col lg={4}>
+  <Card className="payment-card inactive-bootcamp-card">
+    <div className="payment-header">
+      <h3>Bootcamp Aktif Değil</h3>
+    </div>
+    <Card.Body>
+      <div className="alert alert-warning mb-3">
+        <TimeIcon />
+        Bu bootcamp şu anda aktif değildir. Kayıt olamazsınız.
+      </div>
+      
+      <p className="text-center mb-4">
+        Diğer bootcamplerimizi inceleyerek kariyer yolculuğunuza devam edebilirsiniz.
+      </p>
+      
+      <Button 
+        variant="outline-primary" 
+        className="enroll-button w-100"
+        href="/Student/Bootcamps"
+      >
+        Diğer Bootcampleri Keşfet
+      </Button>
+      
+      {bootcamp.bootcampInstructorDetail && (
+        <div className="instructor-badge mt-4">
+          <div className="instructor-badge-image">
+            {bootcamp.bootcampInstructorDetail.image_Url ? (
+              <img 
+                src={bootcamp.bootcampInstructorDetail.image_Url.startsWith('http') 
+                  ? bootcamp.bootcampInstructorDetail.image_Url 
+                  : `${rootBaseUrl}${bootcamp.bootcampInstructorDetail.image_Url}`} 
+                alt={bootcamp.bootcampInstructorDetail.full_Name} 
+                style={{ opacity: '0.7' }}
+              />
+            ) : (
+              <div className="instructor-icon">
+                <UserIcon />
+              </div>
+            )}
           </div>
-        </Col>
+          <div className="instructor-badge-info">
+            <div className="instructor-badge-label">Eğitmen</div>
+            <div className="instructor-badge-name">{bootcamp.bootcampInstructorDetail.full_Name}</div>
+          </div>
+        </div>
+      )}
+    </Card.Body>
+  </Card>
+</Col>
+          )
+        }
+       
       </Row>
     </Container>
 
