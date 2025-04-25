@@ -50,6 +50,13 @@ export const bootcampApi = createApi({
                 method:"GET"
             })
         }),
+        updateBootcamp:builder.mutation({
+            query:(bootcampModel) => ({
+                url:"UpdateBootcamp",
+                method:"PUT",
+                body:bootcampModel
+            })
+        }),
     })
 })
 

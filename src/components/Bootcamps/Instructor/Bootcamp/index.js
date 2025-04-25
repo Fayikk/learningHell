@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Container,
   Tab,
@@ -11,7 +11,8 @@ import {
   Table,
   Alert,
   Badge,
-  Image
+  Image,
+  Modal
 } from 'react-bootstrap';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -21,12 +22,13 @@ import { v4 as uuidv4 } from 'uuid';
 import './style.css';
 import Navbar from '../../../Navbar/Navbar';
 import Footer from '../../../footer/Footer';
-import { useCreateNewBootcampMutation, useGetAllBootcampByUserQuery } from '../../../../api/bootcampApi';
+import { useCreateNewBootcampMutation, useGetAllBootcampByUserQuery, useUpdateBootcampMutation } from '../../../../api/bootcampApi';
 import { useCreateNewBootcampTopicMutation } from '../../../../api/bootcampTopicApi';
 import { useCreateNewBootcampScheduleMutation } from '../../../../api/bootcampScheduleApi';
 import {toast} from 'react-toastify';
 import InstructorAuth from '../../../../Wrappers/HoC/InstructorAuth';
 import { useAddBootcampInstructorDetailMutation } from '../../../../api/bootcampInstructorDetailApi';
+
 const InstructorBootcampManagement = () => {
   const [key, setKey] = useState('bootcamp');
   const [bootcampData, setBootcampData] = useState(null);
@@ -41,6 +43,38 @@ const InstructorBootcampManagement = () => {
   const [createNewBootcampTopic] = useCreateNewBootcampTopicMutation();
   const [createNewBootcampSchedule] = useCreateNewBootcampScheduleMutation();
   const [addBootcampInstructorDetail] = useAddBootcampInstructorDetailMutation();
+  const [updateBootcamp] = useUpdateBootcampMutation();
+  
+  // Yeni state'ler
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [updateFormInitialValues, setUpdateFormInitialValues] = useState({
+    bootcampId: '',
+    title: '',
+    slug: '',
+    short_Description: '',
+    description: '',
+    thumbnail_Url: '',
+    price: 0,
+    start_Date: new Date(),
+    end_Date: new Date(),
+    isOnline: true,
+    isActive: true,
+    userId: ''
+  });
+
+  // Kullanıcı ID'sini alma
+  const getUserId = () => {
+    try {
+      const userInfo = localStorage.getItem('userInfo');
+      if (userInfo) {
+        const user = JSON.parse(userInfo);
+        return user.id || '';
+      }
+    } catch (error) {
+      console.error("Failed to get user ID from localStorage:", error);
+    }
+    return '';
+  };
 
   // Validation schemas
   const bootcampValidationSchema = Yup.object().shape({
@@ -75,6 +109,94 @@ const InstructorBootcampManagement = () => {
     udemy_Url: Yup.string().url('Must be a valid URL')
   });
 
+  // Güncelleme modalını açma
+  const handleOpenUpdateModal = () => {
+    if (!selectedBootcamp) {
+      toast.error('Lütfen güncellenecek bootcamp seçin');
+      return;
+    }
+
+
+    console.log("trigger selectedBootcamp", selectedBootcamp);  
+    // Form için başlangıç değerlerini ayarla
+    setUpdateFormInitialValues({
+      bootcampId: selectedBootcamp.id,
+      title: selectedBootcamp.title || '',
+      slug: selectedBootcamp.slug || '',
+      short_Description: selectedBootcamp.short_Description || '',
+      description: selectedBootcamp.description || '',
+      thumbnail_Url: selectedBootcamp.thumbnail_Url || '',
+      price: selectedBootcamp.price || 0,
+      start_Date: selectedBootcamp.start_Date ? new Date(selectedBootcamp.start_Date) : new Date(),
+      end_Date: selectedBootcamp.end_Date ? new Date(selectedBootcamp.end_Date) : new Date(),
+      isOnline: selectedBootcamp.isOnline !== undefined ? selectedBootcamp.isOnline : true,
+      isActive: selectedBootcamp.isActive !== undefined ? selectedBootcamp.isActive : true,
+      userId: getUserId()
+    });
+
+    setShowUpdateModal(true);
+  };
+
+  // Bootcamp güncelleme validasyonu
+  const updateBootcampValidationSchema = Yup.object().shape({
+    title: Yup.string().required('Başlık gereklidir'),
+    slug: Yup.string().required('Slug gereklidir'),
+    short_Description: Yup.string().required('Kısa açıklama gereklidir'),
+    description: Yup.string().required('Açıklama gereklidir'),
+    thumbnail_Url: Yup.string().url('Geçerli bir URL girmelisiniz').required('Resim URL gereklidir'),
+    price: Yup.number().min(0, 'Fiyat negatif olamaz').required('Fiyat gereklidir'),
+    start_Date: Yup.date().required('Başlangıç tarihi gereklidir'),
+    end_Date: Yup.date()
+      .min(Yup.ref('start_Date'), 'Bitiş tarihi başlangıç tarihinden sonra olmalıdır')
+      .required('Bitiş tarihi gereklidir'),
+    isOnline: Yup.boolean().required('Online durumu gereklidir'),
+    isActive: Yup.boolean().required('Aktiflik Durumu gereklidir'),
+  });
+
+  // Bootcamp güncelleme fonksiyonu
+  const handleUpdateBootcamp = async (values, { setSubmitting }) => {
+    try {
+      const response = await updateBootcamp({
+        bootcampId: values.bootcampId,
+        title: values.title,
+        slug: values.slug,
+        short_Description: values.short_Description,
+        description: values.description,
+        thumbnail_Url: values.thumbnail_Url,
+        price: Number(values.price),
+        start_Date: values.start_Date,
+        end_Date: values.end_Date,
+        isOnline: values.isOnline,
+        isActive: values.isActive,
+        userId: values.userId
+      }).unwrap();
+
+      console.log("trigger updateBootcamp", response);
+
+
+      if (response.isSuccess) {
+        toast.success('Bootcamp başarıyla güncellendi');
+        setShowUpdateModal(false);
+        
+        // Güncellenmiş bootcamp'i diğer bootcamp'ler arasında güncelle
+        if (bootcampFetchData && bootcampFetchData.result) {
+          const updatedBootcamps = bootcampFetchData.result.map(bootcamp => 
+            bootcamp.id === values.bootcampId ? { ...bootcamp, ...values } : bootcamp
+          );
+          
+          // Seçili bootcamp'i güncelle
+          setSelectedBootcamp({ ...selectedBootcamp, ...values });
+        }
+      } else {
+        toast.error(response.message || 'Güncelleme başarısız oldu');
+      }
+    } catch (error) {
+      toast.error('Güncelleme sırasında hata oluştu: ' + (error.data?.message || 'Bilinmeyen hata'));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   // Check if bootcamps are available from API response
   const hasBootcamps = bootcampFetchData && 
                        bootcampFetchData.isSuccess !== false && 
@@ -83,6 +205,7 @@ const InstructorBootcampManagement = () => {
 
   // Handle bootcamp selection
   const handleBootcampSelect = (bootcamp) => {
+    console.log("trigger bootcamp handleBootcampSelect", bootcamp);  
     setSelectedBootcamp(bootcamp);
     // Reset local schedules and topics since we'll display from API
     setSchedules([]);
@@ -97,6 +220,7 @@ const InstructorBootcampManagement = () => {
       const bootcamp = bootcampFetchData.result.find(bootcamp => bootcamp.id === selectedId);
       if (bootcamp) {
         setSelectedBootcamp(bootcamp);
+        console.log("trigger bootcamp handleBootcampDropdownChange", bootcamp);
         // Reset local schedules and topics since we'll display from API
         setSchedules([]);
         setTopics([]);
@@ -572,21 +696,6 @@ const InstructorBootcampManagement = () => {
                           />
                           <Form.Control.Feedback type="invalid">
                             {errors.startAndEndDate}
-                          </Form.Control.Feedback>
-                        </Form.Group>
-
-                        <Form.Group className="mb-3">
-                          <Form.Label>Topic</Form.Label>
-                          <Form.Control
-                            type="text"
-                            name="topic"
-                            value={values.topic}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            isInvalid={touched.topic && !!errors.topic}
-                          />
-                          <Form.Control.Feedback type="invalid">
-                            {errors.topic}
                           </Form.Control.Feedback>
                         </Form.Group>
 <Form.Group className="mb-4">
@@ -1126,9 +1235,19 @@ const InstructorBootcampManagement = () => {
           <Card className="shadow-sm mb-4">
             <Card.Header className="bg-primary text-white d-flex justify-content-between align-items-center">
               <h5 className="mb-0">Selected Bootcamp Details</h5>
-              <Badge bg={selectedBootcamp.isOnline ? "info" : "warning"}>
-                {selectedBootcamp.isOnline ? "Online" : "In-person"}
-              </Badge>
+              <div>
+                <Button 
+                  variant="light" 
+                  size="sm" 
+                  onClick={handleOpenUpdateModal}
+                  className="me-2"
+                >
+                  <i className="fa fa-edit"></i> Güncelle
+                </Button>
+                <Badge bg={selectedBootcamp.isOnline ? "info" : "warning"}>
+                  {selectedBootcamp.isOnline ? "Online" : "In-person"}
+                </Badge>
+              </div>
             </Card.Header>
             <Card.Body>
               <Row>
@@ -1290,6 +1409,209 @@ const InstructorBootcampManagement = () => {
           <p className="mb-0">Please select a bootcamp from above to view and manage its details.</p>
         </Alert>
       )}
+      {/* Güncelleme Modal */}
+      <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)} size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>Bootcamp Güncelle</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Formik
+            initialValues={updateFormInitialValues}
+            validationSchema={updateBootcampValidationSchema}
+            onSubmit={handleUpdateBootcamp}
+            enableReinitialize
+          >
+            {({
+              values,
+              errors,
+              touched,
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              setFieldValue,
+              isSubmitting
+            }) => (
+              <Form onSubmit={handleSubmit}>
+                <Row>
+                  <Col md={6}>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Başlık</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="title"
+                        value={values.title}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        isInvalid={touched.title && !!errors.title}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {errors.title}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Col>
+                  <Col md={6}>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Slug</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="slug"
+                        value={values.slug}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        isInvalid={touched.slug && !!errors.slug}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {errors.slug}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Col>
+                </Row>
+
+                <Form.Group className="mb-3">
+                  <Form.Label>Kısa Açıklama</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="short_Description"
+                    value={values.short_Description}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    isInvalid={touched.short_Description && !!errors.short_Description}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.short_Description}
+                  </Form.Control.Feedback>
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <Form.Label>Açıklama</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={4}
+                    name="description"
+                    value={values.description}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    isInvalid={touched.description && !!errors.description}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.description}
+                  </Form.Control.Feedback>
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <Form.Label>Resim URL</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="thumbnail_Url"
+                    value={values.thumbnail_Url}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    isInvalid={touched.thumbnail_Url && !!errors.thumbnail_Url}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.thumbnail_Url}
+                  </Form.Control.Feedback>
+                  {values.thumbnail_Url && (
+                    <div className="mt-2">
+                      <img 
+                        src={values.thumbnail_Url} 
+                        alt="Thumbnail Preview" 
+                        style={{ width: '100%', maxHeight: '200px', objectFit: 'cover' }}
+                        className="img-thumbnail"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "https://via.placeholder.com/400x300?text=Invalid+Image+URL";
+                        }}
+                      />
+                    </div>
+                  )}
+                </Form.Group>
+
+                <Row>
+                  <Col md={4}>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Fiyat</Form.Label>
+                      <Form.Control
+                        type="number"
+                        name="price"
+                        value={values.price}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        isInvalid={touched.price && !!errors.price}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {errors.price}
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                  </Col>
+                  <Col md={4}>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Başlangıç Tarihi</Form.Label>
+                      <DatePicker
+                        selected={values.start_Date}
+                        onChange={(date) => setFieldValue('start_Date', date)}
+                        className={`form-control ${touched.start_Date && errors.start_Date ? 'is-invalid' : ''}`}
+                        dateFormat="yyyy-MM-dd"
+                      />
+                      {touched.start_Date && errors.start_Date && (
+                        <div className="invalid-feedback d-block">
+                          {errors.start_Date}
+                        </div>
+                      )}
+                    </Form.Group>
+                  </Col>
+                  <Col md={4}>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Bitiş Tarihi</Form.Label>
+                      <DatePicker
+                        selected={values.end_Date}
+                        onChange={(date) => setFieldValue('end_Date', date)}
+                        className={`form-control ${touched.end_Date && errors.end_Date ? 'is-invalid' : ''}`}
+                        dateFormat="yyyy-MM-dd"
+                      />
+                      {touched.end_Date && errors.end_Date && (
+                        <div className="invalid-feedback d-block">
+                          {errors.end_Date}
+                        </div>
+                      )}
+                    </Form.Group>
+                  </Col>
+                </Row>
+
+                <Form.Group className="mb-3">
+                  <Form.Check
+                    type="switch"
+                    id="updateIsOnline"
+                    name="isOnline"
+                    label="Online Bootcamp"
+                    checked={values.isOnline}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Check
+                    type="switch"
+                    id="updateIsActive"
+                    name="isActive"
+                    label="Is Active"
+                    checked={values.isActive}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+
+                <div className="text-end mt-4">
+                  <Button variant="secondary" onClick={() => setShowUpdateModal(false)} className="me-2">
+                    İptal
+                  </Button>
+                  <Button variant="primary" type="submit" disabled={isSubmitting}>
+                    {isSubmitting ? 'Güncelleniyor...' : 'Kaydet'}
+                  </Button>
+                </div>
+              </Form>
+            )}
+          </Formik>
+        </Modal.Body>
+      </Modal>
     </Container>
     <Footer></Footer>
     </>
