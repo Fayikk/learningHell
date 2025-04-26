@@ -533,7 +533,7 @@ function  BootcampDetail() {
         <p className="hero-subtitle">{bootcamp.short_Description}</p>
         <div className="hero-badges">
           <Badge bg="light" text="dark" className="hero-badge">
-            <CalendarIcon /> {new Date(bootcamp.start_Date).toLocaleDateString('tr-TR')} - {new Date(bootcamp.end_Date).toLocaleDateString('tr-TR')}
+            <CalendarIcon /> 8 - 14 HAFTA
           </Badge>
           <Badge bg="light" text="dark" className="hero-badge">
             {bootcamp.isOnline ? 'Online' : 'Yüz Yüze'}
@@ -602,7 +602,8 @@ function  BootcampDetail() {
                       <div className="stat-card">
                         <div className="stat-icon">📅</div>
                         <div className="stat-value">
-                          {Math.ceil((new Date(bootcamp.end_Date) - new Date(bootcamp.start_Date)) / (1000 * 60 * 60 * 24))} gün
+                          {/* {Math.ceil((new Date(bootcamp.end_Date) - new Date(bootcamp.start_Date)) / (1000 * 60 * 60 * 24))} gün */}
+                          8 - 14 Hafta
                         </div>
                         <div className="stat-label">Süre</div>
                       </div>
@@ -666,13 +667,13 @@ function  BootcampDetail() {
                   
                   <div className="date-cards mt-4">
                     <div className="date-card start">
-                      <div className="date-label">Başlangıç Tarihi</div>
-                      <div className="date-value">{new Date(bootcamp.start_Date).toLocaleDateString('tr-TR')}</div>
+                      <div className="date-label">Optimum Bootcamp Haftası</div>
+                      <div className="date-value">8 Hafta</div>
                     </div>
                     <div className="date-connection"></div>
                     <div className="date-card end">
-                      <div className="date-label">Bitiş Tarihi</div>
-                      <div className="date-value">{new Date(bootcamp.end_Date).toLocaleDateString('tr-TR')}</div>
+                      <div className="date-label">Maksimum Bootcamp Haftası</div>
+                      <div className="date-value">14 Hafta</div>
                     </div>
                   </div>
                 </div>
@@ -1326,16 +1327,7 @@ function  BootcampDetail() {
 
 
 
-    <a 
-        href="https://wa.me/905310149046" 
-        className="whatsapp-floating-button" 
-        target="_blank" 
-        rel="noopener noreferrer"
-        aria-label="Bizimle WhatsApp üzerinden iletişime geçin"
-      >
-        <WhatsAppIcon />
-        <span className="whatsapp-tooltip">Bize Ulaşın</span>
-      </a>
+    
 
     {/* Improved 3D Secure popup for payment processing */}
     {securePopupOpen && secureHtmlContent && (
@@ -1344,7 +1336,21 @@ function  BootcampDetail() {
         onClose={handleSecurePopupClose} 
       />
     )}
-
+<div className="whatsapp-container">
+  <div className="whatsapp-promo">Bizimle İletişime Geç İndirimi Yakala!</div>
+  <div className="whatsapp-button-container">
+    <a 
+      href="https://wa.me/905310149046" 
+      className="whatsapp-floating-button" 
+      target="_blank" 
+      rel="noopener noreferrer"
+      aria-label="Bizimle WhatsApp üzerinden iletişime geçin"
+    >
+      <WhatsAppIcon />
+      <span className="whatsapp-tooltip">Bize Ulaşın</span>
+    </a>
+  </div>
+</div>
     <Footer/>
     </>
   );
