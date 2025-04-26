@@ -559,12 +559,12 @@ const StudentBootcampList = () => {
               </div>
               
               <div className="bootcamp-info">
-                <div className="info-item">
+                {/* <div className="info-item">
                   <CalendarIcon />
                   <span>
                     {formatDate(bootcamp.start_Date)} - {formatDate(bootcamp.end_Date)}
                   </span>
-                </div>
+                </div> */}
                 
                 <div className="info-item">
                   <LocationIcon />
@@ -573,7 +573,7 @@ const StudentBootcampList = () => {
                 
                 <div className="info-item">
                   <TimeIcon />
-                  <span>{bootcamp.duration || '8'} Hafta</span>
+                  <span>{bootcamp.duration || '8 - 14'} Hafta</span>
                 </div>
                 
                 <div className="info-item">
@@ -1238,16 +1238,21 @@ const StudentBootcampList = () => {
       )}
       
       {/* Add WhatsApp floating button */}
-      <a 
-        href="https://wa.me/905310149046" 
-        className="whatsapp-floating-button" 
-        target="_blank" 
-        rel="noopener noreferrer"
-        aria-label="Bizimle WhatsApp üzerinden iletişime geçin"
-      >
-        <WhatsAppIcon />
-        <span className="whatsapp-tooltip">Bize Ulaşın</span>
-      </a>
+      <div className="whatsapp-container">
+  <div className="whatsapp-promo">Bizimle İletişime Geç İndirimi Yakala!</div>
+  <div className="whatsapp-button-container">
+    <a 
+      href="https://wa.me/905310149046" 
+      className="whatsapp-floating-button" 
+      target="_blank" 
+      rel="noopener noreferrer"
+      aria-label="Bizimle WhatsApp üzerinden iletişime geçin"
+    >
+      <WhatsAppIcon />
+      <span className="whatsapp-tooltip">Bize Ulaşın</span>
+    </a>
+  </div>
+</div>
       
       {/* Add the 3D Secure popup */}
       {securePopupOpen && secureHtmlContent && (
