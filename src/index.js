@@ -17,9 +17,11 @@ import store from './store/store'
 import { AuthProvider } from './main-component/Extensions/AuthProvider';
 import './Localization/i18n'
 import ErrorBoundary from './main-component/Extensions/Errors/ErrorBoundary';
+import { HelmetProvider } from 'react-helmet-async';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <Provider store={store}>
+        <HelmetProvider>
         <ParallaxProvider>
             <ErrorBoundary>
                 <ThemeProvider>
@@ -27,6 +29,7 @@ root.render(
                     </ThemeProvider>
                     </ErrorBoundary>
             </ParallaxProvider>
+            </HelmetProvider>
     </Provider>
 );
 
