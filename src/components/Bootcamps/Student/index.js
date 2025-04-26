@@ -9,11 +9,10 @@ import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signal
 import {toast} from 'react-toastify';
 import { useSelector } from 'react-redux';
 import { payHub } from '../../../api/Base/payHubModel';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { rootBaseUrl,baseUrl } from '../../../api/Base/baseApiModel';
 import BootcampFAQ from '../FAQ/BootcampFAQ'; // Import the FAQ component
-
 // SVG Icons as React components
 const CalendarIcon = () => (
   <svg className="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
@@ -502,23 +501,16 @@ const StudentBootcampList = () => {
     <>
     <Helmet>
       {/* Primary Meta Tags */}
-      <title>LearningHell - Limitless</title>
-      <meta name="description" content="The path to learning has no limits." />
-      
-      {/* Open Graph / Facebook */}
-      <meta property="og:url" content="https://www.learninghell.com/Student/Bootcamps" />
-      <meta property="og:type" content="website" />
-      <meta property="og:title" content="LearningHell - Limitless" />
-      <meta property="og:description" content="The path to learning has no limits." />
-      <meta property="og:image" content="" />
-
-      {/* Twitter */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta property="twitter:domain" content="learninghell.com" />
-      <meta property="twitter:url" content="https://www.learninghell.com/Student/Bootcamps" />
-      <meta name="twitter:title" content="LearningHell - Limitless" />
-      <meta name="twitter:description" content="The path to learning has no limits." />
-      <meta name="twitter:image" content="" />
+      <title>Yepyeni Bootcampleri Keşfet</title>
+      <meta name="description" content="Learning Hell platformunda yazılım, tasarım ve dijital pazarlama alanındaki en güncel bootcamp'leri keşfedin ve kariyer yolculuğunuzu hızlandırın." />
+<meta property="og:title" content="Bootcamp Listesi | Learning Hell" />
+<meta property="og:description" content="Learning Hell platformunda yazılım, tasarım ve dijital pazarlama alanındaki en güncel bootcamp'leri keşfedin ve kariyer yolculuğunuzu hızlandırın." />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="tr_TR" />
+<meta property="og:image" content="https://thestatetimes.com/wp-content/uploads/2019/10/schools-2-jumbo.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Learning Hell Bootcamp Listesi" />
     </Helmet>
     
     <Navbar />
