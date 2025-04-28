@@ -201,8 +201,10 @@ function InstructorDetail() {
 
   const openManuelBankInfoModal = async  () => {
 
+    console.log("userId openManuelBankInfoModal",user)
 
     await instructorDetails(user.InstructorSubId).then((response) => {
+      console.log("instructorDetails response",response)
       if (response.data.isSuccess) {
         setBankInfo((prevState) =>({
           ...prevState,
@@ -216,6 +218,9 @@ function InstructorDetail() {
         setBankStateInfo("update")
         setOpenBankInfoModal(true)
         
+      }
+      else {
+        toast.warning("Üye iş yeri ile ilgili bir problem var. Lütfen destek ile iletişime geçin.")
       }
     })
 
@@ -263,7 +268,6 @@ function InstructorDetail() {
     }
   }
 
-  console.log("trigger course model",courseModel.isFree)
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -393,6 +397,7 @@ function InstructorDetail() {
     setIsActiveButton(false);
 
     await handleUpdateCourse(courseUpdateModel).then((response) => {
+      console.log("trigger update course response", response);
       if (response.data.isSuccess) {
         setImage(null);
         setIsActiveButton(true);
@@ -462,7 +467,7 @@ function InstructorDetail() {
 
               handleModalClose();
             } else {
-              toast.error(response.data.message);
+              toast.warning("Alt üye işyeri ile ilgili bir problem var. Lütfen destek ile iletişime geçin.");
             }
           });
       }
