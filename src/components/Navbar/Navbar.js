@@ -22,8 +22,10 @@ export default function   Navbar({ onAuthData }) {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    console.log("before the token", token);
     if (token) {
       const decodedToken = jwtDecode(token);
+      console.log("trigger if exist token", decodedToken);
       dispatch(
         setLoggedInUser({
           nameIdentifier: decodedToken.nameid,

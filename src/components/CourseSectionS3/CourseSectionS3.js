@@ -28,7 +28,6 @@ const CourseSectionS3 = (props) => {
     const savePageNumber = () => {
         localStorage.setItem("currentPageNumber",props.paginationNumber)
     }
-    console.log("trigger props",props)
 
     const [courses, setCourses] = useState([]);
     useEffect(() => {
