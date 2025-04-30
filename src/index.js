@@ -18,9 +18,11 @@ import { AuthProvider } from './main-component/Extensions/AuthProvider';
 import './Localization/i18n'
 import ErrorBoundary from './main-component/Extensions/Errors/ErrorBoundary';
 import { HelmetProvider } from 'react-helmet-async';
+import MetaPixel from './Extensions/MetaPixel';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <Provider store={store}>
+        <MetaPixel />
         <HelmetProvider>
         <ParallaxProvider>
             <ErrorBoundary>
