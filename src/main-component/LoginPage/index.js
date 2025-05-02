@@ -66,6 +66,11 @@ const LoginPage = (props) => {
         var tokenResult = await LoginWithGoogle({
             credential:response.credential
         });
+        if(tokenResult.data.errorMessages.length > 0){
+            toast.warning(tokenResult.data.errorMessages[0]);
+            setLoader(false);
+            return;}
+
         if (tokenResult && tokenResult.data && tokenResult.data.result && tokenResult.data.result.accessToken) {
             localStorage.setItem("token",tokenResult.data.result.accessToken);
             localStorage.setItem("refreshToken", tokenResult.data.result.refreshToken);
