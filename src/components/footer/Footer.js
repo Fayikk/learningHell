@@ -16,6 +16,7 @@ import visa from '../../images/icon/visa.png';
 import mastercard from '../../images/icon/mastercard.png';
 import iyzico from '../../images/icon/iyzico_ile_ode_colored_horizontal.png'
 import './Styles/Footer.css'
+import Etbis from "../../Extensions/Etbis";
 
 const ClickHandler = () => {
   window.scrollTo(10, 0);
@@ -149,36 +150,19 @@ const Footer = (props) => {
                     <img src={Logo} alt="LearningHell Logo" className="footer-logo" />
                   </Link>
                 </div>
+
                 <p className="footer-description">
-                  {t("Learning solutions for everyone")}
+                  {t("Limitless learning, limitless opportunities. Join us today!")}
                 </p>
-                <div className="social">
-                  <ul className="social-icons">
-                    <li>
-                      <Link onClick={ClickHandler} to="/" className="social-icon">
-                        <i className="ti-facebook"></i>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link onClick={ClickHandler} to="/" className="social-icon">
-                        <i className="ti-twitter-alt"></i>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link onClick={ClickHandler} to="/" className="social-icon">
-                        <i className="ti-instagram"></i>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link onClick={ClickHandler} to="/" className="social-icon">
-                        <i className="ti-google"></i>
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
               </div>
             </div>
-    
+    <div className="col-lg-3 col-md-6 col-sm-12">
+    <iframe
+  src="/Etbis/etbis.html"
+  title="ETBIS"
+  style={{ width: 160, height: 180, border: "none", background: "transparent" }}
+/>
+    </div>
             {/* Quick Links */}
             <div className="col-lg-3 col-md-6 col-sm-12">
               <div className="widget link-widget">
@@ -216,23 +200,6 @@ const Footer = (props) => {
                       <i className="ti-package"></i> <span>{t("Teslimat Ve İade")}</span>
                     </Button>
                   </li>
-                </ul>
-              </div>
-            </div>
-    
-            {/* Useful Links */}
-            <div className="col-lg-3 col-md-6 col-sm-12">
-              <div className="widget link-widget s2">
-                <div className="widget-title">
-                  <h3 className="footer-heading">{t("Useful Links")}</h3>
-                </div>
-                <ul className="footer-links">
-                  <li className="footer-link-item">
-                    <Link onClick={ClickHandler} to="/contact" className="footer-link">
-                      <i className="ti-angle-right"></i> <span>{t("Contact Us")}</span>
-                    </Link>
-                  </li>
-                  {/* Diğer linkler */}
                 </ul>
               </div>
             </div>
@@ -303,6 +270,7 @@ const Footer = (props) => {
           </div>
         </div>
       </div>
+      
     </footer>
   );
 };
