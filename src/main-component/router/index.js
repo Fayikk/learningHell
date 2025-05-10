@@ -54,6 +54,7 @@ import PaymentSuccess from '../../components/Bootcamps/Student/Payments';
 import Dashboard from '../../components/Dashboard';
 import BootcampDetail from '../../components/Bootcamps/Student/Detail';
 import ActiveBootcamps from '../../components/Bootcamps/Student/Active';
+import FreeContent from '../../components/FreeContent/FreeContent';
 
 const AllRoute = () => {
   return (
@@ -120,6 +121,7 @@ const AllRoute = () => {
           <Route path='/Dashboard' element={<><GoogleTag></GoogleTag><Dashboard></Dashboard></>} ></Route>
           <Route path='/Bootcamp/Detail/:slug' element={<><GoogleTag></GoogleTag><BootcampDetail></BootcampDetail></>} ></Route>
           <Route path='/Active/Bootcamps' element={<><GoogleTag></GoogleTag><ActiveBootcamps></ActiveBootcamps></>} ></Route>
+          <Route path='/Free/Content' element={<><GoogleTag></GoogleTag><FreeContent></FreeContent></>} ></Route>
         </Routes>
       </BrowserRouter>
     </div>

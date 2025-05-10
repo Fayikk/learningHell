@@ -31,6 +31,7 @@ import { bootcampTopicApi } from "../api/bootcampTopicApi";
 import { bootcampScheduleApi } from "../api/bootcampScheduleApi";
 import { enrollmentApi } from "../api/enrollmentApi";
 import { bootcampInstructorDetailApi } from "../api/bootcampInstructorDetailApi";
+import { freeContentApi } from "../api/freeContentApi";
 
 
 
@@ -100,6 +101,7 @@ const store = configureStore({
         [bootcampScheduleApi.reducerPath]:bootcampScheduleApi.reducer,
         [enrollmentApi.reducerPath]:enrollmentApi.reducer,
         [bootcampInstructorDetailApi.reducerPath]:bootcampInstructorDetailApi.reducer,
+        [freeContentApi.reducerPath]:freeContentApi.reducer,
 
     },middleware:(getDefaultMiddleware) => getDefaultMiddleware()
         .concat(
@@ -127,6 +129,7 @@ const store = configureStore({
             ,bootcampScheduleApi.middleware
             ,enrollmentApi.middleware
             ,bootcampInstructorDetailApi.middleware
+            ,freeContentApi.middleware
             // ,errorLoggerMiddleware
             )
 })
