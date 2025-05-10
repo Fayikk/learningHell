@@ -56,6 +56,17 @@ function FreeContent() {
   const handleClickDownloadFreeContentItem = async (fileUrl) => {
     // public string FileUrl { get; set; } = null!;
     // public MaterialType Type { get; set; } 
+
+    const token = localStorage.getItem("token");
+    if (token == null) {
+      // Store current URL to return after login
+      const currentUrl = window.location.pathname;
+      // Redirect to login with return URL parameter
+      window.location.replace(`/login?returnUrl=${encodeURIComponent(currentUrl)}`);
+      toast.warning("Önce giriş yapmalısınız!");
+      return null;
+    }
+
     const formData = {
       fileUrl: fileUrl,
       type: 3
@@ -63,20 +74,18 @@ function FreeContent() {
 
     await downloadFreeContentMaterial(formData).then((response) => {
       if (response.data.isSuccess) {
-
         const linkSource = `data:application/pdf;base64,${response.data.result}`;
         const downloadLink = document.createElement("a");
         const fileName = fileUrl;
         downloadLink.href = linkSource;
         downloadLink.download = fileName;
         downloadLink.click();
-        toast.success("Download process is success completed")
+        toast.success("Download process is success completed");
       }
       else {
-        toast.error("Ooops! something went wrong")
+        toast.error("Ooops! something went wrong");
       }
-
-    })
+    });
   }
 
   // Function to open modal with webinar details
