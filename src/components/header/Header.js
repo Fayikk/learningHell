@@ -1,4 +1,4 @@
-buimport './Styles/Header.css'
+import './Styles/Header.css'
 import './Styles/ModernHeader.css'
 import React, { useState, startTransition } from "react";
 import { Link, useNavigate } from "react-router-dom";
