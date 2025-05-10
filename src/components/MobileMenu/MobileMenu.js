@@ -47,18 +47,23 @@ const MobileMenu = () => {
       title: t("Bootcamps"),
       link: "/Student/Bootcamps",
     },
+     {
+      id: 3,
+      title: t("Free Content"),
+      link: "/Free/Content",
+    },
     {
-      id: 2,
+      id: 4,
       title: t("Become Teacher"),
       link: "/become-teacher",
     },
     {
-      id: 3,
+      id: 5,
       title: t("Cart"),
       link: "/cart",
     },
     {
-      id: 3,
+      id: 6,
       title: t("Blogs"),
       link: "/blogs",
     }
