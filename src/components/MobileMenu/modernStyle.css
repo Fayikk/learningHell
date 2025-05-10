@@ -1,0 +1,295 @@
+/* Modern Mobile Menu Styles */
+:root {
+  --mobile-primary: #8e44ad;
+  --mobile-text: #ffffff;
+  --mobile-bg: #1a1729;
+  --mobile-secondary: #f8f9fa;
+  --mobile-hover: #7d3c98;
+  --mobile-border: rgba(255, 255, 255, 0.1);
+  --mobile-shadow: rgba(0, 0, 0, 0.2);
+  --mobile-transition: all 0.3s ease;
+}
+
+/* Mobile Menu Container */
+.mobileMenu {
+  position: fixed;
+  left: -300px;
+  top: 0;
+  z-index: 9999;
+  height: 100vh;
+  width: 300px;
+  background: var(--mobile-bg);
+  transition: var(--mobile-transition);
+  box-shadow: 0px 10px 40px 0px var(--mobile-shadow);
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--mobile-primary) var(--mobile-bg);
+}
+
+/* Scrollbar Styling */
+.mobileMenu::-webkit-scrollbar {
+  width: 5px;
+}
+
+.mobileMenu::-webkit-scrollbar-track {
+  background: var(--mobile-bg);
+}
+
+.mobileMenu::-webkit-scrollbar-thumb {
+  background-color: var(--mobile-primary);
+  border-radius: 10px;
+}
+
+.mobileMenu.show {
+  left: 0;
+}
+
+/* Menu Header */
+.menu-close {
+  display: flex;
+  justify-content: flex-end;
+  padding: 15px;
+}
+
+.menu-close .clox {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--mobile-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--mobile-transition);
+}
+
+.menu-close .clox:hover {
+  background-color: var(--mobile-hover);
+  transform: rotate(90deg);
+}
+
+.menu-close i {
+  color: var(--mobile-text);
+  font-size: 18px;
+}
+
+/* Menu Items */
+.responsivemenu {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.responsivemenu li {
+  border-bottom: 1px solid var(--mobile-border);
+}
+
+.responsivemenu li:last-child {
+  border-bottom: none;
+}
+
+.responsivemenu li a,
+.responsivemenu li p {
+  display: block;
+  padding: 15px 20px;
+  font-size: 16px;
+  letter-spacing: 0;
+  text-transform: capitalize;
+  font-weight: 500;
+  color: var(--mobile-text);
+  cursor: pointer;
+  transition: var(--mobile-transition);
+  position: relative;
+  text-decoration: none;
+}
+
+.responsivemenu li.active a,
+.responsivemenu li.active p,
+.responsivemenu li a:hover,
+.responsivemenu li p:hover {
+  color: var(--mobile-primary);
+  padding-left: 25px;
+  background-color: rgba(142, 68, 173, 0.1);
+}
+
+/* Submenu */
+.responsivemenu ul.subMenu {
+  padding: 0;
+  list-style: none;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.responsivemenu ul.subMenu li {
+  border-bottom: 1px solid var(--mobile-border);
+}
+
+.responsivemenu ul.subMenu li:last-child {
+  border-bottom: none;
+}
+
+.responsivemenu ul.subMenu a {
+  padding-left: 40px;
+  font-size: 15px;
+  color: var(--mobile-text);
+}
+
+.responsivemenu ul.subMenu a:hover {
+  color: var(--mobile-primary);
+  padding-left: 45px;
+}
+
+/* Icons in Menu */
+.responsivemenu li p i {
+  position: absolute;
+  right: 20px;
+  transition: var(--mobile-transition);
+}
+
+.responsivemenu li p:hover i {
+  color: var(--mobile-primary);
+}
+
+/* Hamburger Button */
+.showmenu {
+  position: relative;
+  cursor: pointer;
+  display: block;
+}
+
+.navbar-toggler {
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.navbar-toggler:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.open-btn {
+  width: 30px;
+  height: 25px;
+  position: relative;
+  transition: var(--mobile-transition);
+}
+
+.icon-bar {
+  width: 30px;
+  height: 2px;
+  background-color: #333;
+  display: block;
+  transition: var(--mobile-transition);
+  position: absolute;
+}
+
+.first-angle {
+  top: 0;
+}
+
+.middle-angle {
+  top: 50%;
+  margin-top: -1px;
+}
+
+.last-angle {
+  bottom: 0;
+}
+
+/* Hover effect for hamburger */
+.open-btn:hover .first-angle {
+  transform: translateY(-2px);
+}
+
+.open-btn:hover .last-angle {
+  transform: translateY(2px);
+}
+
+/* Special Login/Register/Logout buttons */
+.responsivemenu li a.login-link,
+.responsivemenu li a.register-link,
+.responsivemenu li p.logout-link {
+  background-color: transparent;
+  border-radius: 20px;
+  margin: 5px 20px;
+  text-align: center;
+  transition: var(--mobile-transition);
+}
+
+.responsivemenu li a.login-link {
+  border: 1px solid var(--mobile-primary);
+  color: var(--mobile-primary);
+}
+
+.responsivemenu li a.register-link {
+  background-color: var(--mobile-primary);
+  border: 1px solid var(--mobile-primary);
+  color: white;
+}
+
+.responsivemenu li p.logout-link {
+  background-color: rgba(231, 76, 60, 0.2);
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+}
+
+.responsivemenu li a.login-link:hover {
+  background-color: rgba(142, 68, 173, 0.1);
+}
+
+.responsivemenu li a.register-link:hover {
+  background-color: var(--mobile-hover);
+}
+
+.responsivemenu li p.logout-link:hover {
+  background-color: rgba(231, 76, 60, 0.3);
+}
+
+/* User Info Section */
+.user-info {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.2);
+  margin-bottom: 10px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--mobile-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  color: white;
+  font-weight: bold;
+}
+
+.user-name {
+  color: var(--mobile-text);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Make sure menu is visible on mobile */
+@media (max-width: 992px) {
+  .mobileMenu {
+    display: block;
+  }
+  
+  .showmenu {
+    display: block;
+  }
+}
+
+/* Section Divider */
+.menu-divider {
+  height: 1px;
+  background-color: var(--mobile-border);
+  margin: 10px 0;
+}
