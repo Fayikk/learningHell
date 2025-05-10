@@ -13,7 +13,11 @@
   visibility: visible;
   transform: translateY(0);
 }
-
+@media (max-width: 991px) {
+  .my-bootcamp-desktop-only {
+    display: none !important;
+  }
+}
 .custom-dropdown-menu {
   opacity: 0;
   visibility: hidden;
