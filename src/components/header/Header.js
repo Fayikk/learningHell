@@ -1,4 +1,4 @@
-import './Styles/Header.css'
+buimport './Styles/Header.css'
 import './Styles/ModernHeader.css'
 import React, { useState, startTransition } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -280,14 +280,17 @@ const Header = ({ props, onAuthStateChange }) => {
                   ) : (
                     /* Logged In */
                     <>
-                      {/* My Bootcamps Button */}
-                      <Link 
+<div className="my-bootcamp-desktop-only">
+  <Link 
                         to="/Dashboard" 
                         className="bootcamp-button"
                       >
                         <i className="fi flaticon-online-learning"></i>
                         {t("My Bootcamps")}
                       </Link>
+</div>
+                      {/* My Bootcamps Button */}
+                      
                       
                       {/* User Menu */}
                       <div className="user-menu">
