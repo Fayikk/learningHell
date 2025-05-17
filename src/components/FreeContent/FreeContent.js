@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './FreeContent.css';
 import Navbar from '../Navbar/Navbar';
 import Footer from '../footer/Footer';
-import { useGetAllFreeContentQuery, useSubmitContactFormMutation } from '../../api/freeContentApi';
+import { useGetAllFreeContentQuery, useSubmitContactFormMutation, useSubmitWebinarRegisterMutation } from '../../api/freeContentApi';
 import { baseUrl } from '../../api/Base/baseApiModel';
 import { useDownloadMaterialFileMutation } from '../../api/materialApi';
 import { toast } from 'react-toastify';
@@ -21,6 +21,7 @@ function FreeContent() {
   // Fetch free content data
   const { data, error, isLoading } = useGetAllFreeContentQuery();
   const [submitContactForm] = useSubmitContactFormMutation();
+  const [submitWebinarRegister, { isLoading: isRegistering }] = useSubmitWebinarRegisterMutation();
 
   // Filter content by type
   const getContentByType = (type) => {
@@ -102,6 +103,50 @@ function FreeContent() {
     setSelectedWebinar(null);
     // Re-enable page scrolling
     document.body.style.overflow = 'auto';
+  };
+
+  // Webinar kayıt formu için state
+  const [registerName, setRegisterName] = useState("");
+  const [registerEmail, setRegisterEmail] = useState("");
+  const [registerPhone, setRegisterPhone] = useState("");
+  const [registerSuccess, setRegisterSuccess] = useState(false);
+  const [registerError, setRegisterError] = useState("");
+
+  // Webinar kayıt formu submit
+  const handleWebinarRegister = async (e) => {
+    e.preventDefault();
+    setRegisterError("");
+    setRegisterSuccess(false);
+    // Telefon numarası validasyonu
+    const phoneRegex = /^05\d{9}$/;
+    if (!registerName || !registerEmail || !registerPhone) {
+      setRegisterError("Lütfen tüm alanları doldurun.");
+      return;
+    }
+    if (!phoneRegex.test(registerPhone)) {
+      setRegisterError("Telefon numarası 05 ile başlamalı ve 11 haneli olmalıdır.");
+      return;
+    }
+    // E-posta validasyonu
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(registerEmail)) {
+      setRegisterError("Geçerli bir e-posta adresi giriniz.");
+      return;
+    }
+    try {
+      await submitWebinarRegister({
+        fullName: registerName,
+        email: registerEmail,
+        phoneNumber: registerPhone,
+        webinarContentId: selectedWebinar.id
+      }).unwrap();
+      setRegisterSuccess(true);
+      setRegisterName("");
+      setRegisterEmail("");
+      setRegisterPhone("");
+    } catch (err) {
+      setRegisterError("Kayıt başarısız. Lütfen tekrar deneyin.");
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -466,25 +511,49 @@ function FreeContent() {
 
                 <div className="modal-registration">
                   <h3>Webinara Katılım</h3>
-                  <form className="registration-form">
+                  <form className="registration-form" onSubmit={handleWebinarRegister}>
                     <div className="form-group">
                       <label htmlFor="register-name">Ad Soyad</label>
-                      <input type="text" id="register-name" placeholder="Adınız ve soyadınız" required />
+                      <input
+                        type="text"
+                        id="register-name"
+                        placeholder="Adınız ve soyadınız"
+                        value={registerName}
+                        onChange={e => setRegisterName(e.target.value)}
+                        required
+                      />
                     </div>
-
                     <div className="form-group">
                       <label htmlFor="register-email">E-posta Adresi</label>
-                      <input type="email" id="register-email" placeholder="E-posta adresiniz" required />
+                      <input
+                        type="email"
+                        id="register-email"
+                        placeholder="E-posta adresiniz"
+                        value={registerEmail}
+                        onChange={e => setRegisterEmail(e.target.value)}
+                        required
+                      />
                     </div>
-
-                    <a
-                      href={selectedWebinar.contentUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="modal-register-btn"
-                    >
-                      Webinara Kaydol
-                    </a>
+                    <div className="form-group">
+                      <label htmlFor="register-phone">Telefon Numarası</label>
+                      <input
+                        type="tel"
+                        id="register-phone"
+                        placeholder="Telefon numaranız"
+                        value={registerPhone}
+                        onChange={e => setRegisterPhone(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <button type="submit" className="modal-register-btn" disabled={isRegistering}>
+                      {isRegistering ? "Kaydediliyor..." : "Webinara Kaydol"}
+                    </button>
+                    {registerSuccess && (
+                      <p className="success-message">Kayıt başarılı! Webinar linki e-posta adresinize gönderilecektir.</p>
+                    )}
+                    {registerError && (
+                      <p className="error-message">{registerError}</p>
+                    )}
                   </form>
                 </div>
               </div>

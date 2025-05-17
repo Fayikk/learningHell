@@ -65,6 +65,16 @@ export const freeContentApi = createApi({
                     'Content-Type': 'application/json',
                 }
             })
+        }),
+        submitWebinarRegister: builder.mutation({
+            query: (registerData) => ({
+                url: "WebinarRegister",
+                method: "POST",
+                body: registerData,
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
         })
     })
 })
@@ -76,5 +86,6 @@ export const {
     useCreateFreeContentMutation,
     useUpdateFreeContentMutation,
     useDeleteFreeContentMutation,
-    useSubmitContactFormMutation
+    useSubmitContactFormMutation,
+    useSubmitWebinarRegisterMutation
 } = freeContentApi
