@@ -107,6 +107,20 @@ export const accountApi = createApi({
                     }
                 )
             }
+        }),
+        getUserProfile: builder.query({
+            query: (userId) => ({
+                url: `GetUserDetail?userId=${userId}`,
+                method: "GET"
+            })
+        }),
+        updateUserProfile: builder.mutation({
+            query: (formData) => ({
+                url: "UpdateProfile",
+                method: "PUT",
+                body: formData,
+                formData: true
+            })
         })
 
     })
@@ -124,4 +138,7 @@ export const {
         useForgotPasswordMutation,
         useCheckVerificationDigitCodeMutation,
         useChechBankInformationMutation,
-        useChangePasswordMutation} = accountApi
+        useChangePasswordMutation,
+        useGetUserProfileQuery,
+        useUpdateUserProfileMutation
+} = accountApi

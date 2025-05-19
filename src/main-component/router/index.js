@@ -55,6 +55,7 @@ import Dashboard from '../../components/Dashboard';
 import BootcampDetail from '../../components/Bootcamps/Student/Detail';
 import ActiveBootcamps from '../../components/Bootcamps/Student/Active';
 import FreeContent from '../../components/FreeContent/FreeContent';
+import ProfileEdit from '../../components/Profile/ProfileEdit';
 
 const AllRoute = () => {
   return (
@@ -105,7 +106,7 @@ const AllRoute = () => {
           <Route path='forgot-password' element={<><GoogleTag /><ForgotPassword /></>} />
           <Route path='verify-email/:slug' element={<><GoogleTag /><VerifyEmail /></>} />
           <Route path='verify-digit/:slug' element={<><GoogleTag /><VerifyDigitCode /></>} />
-          <Route path='MyAccount' element={<><GoogleTag /><MyAccount /></>} />
+          <Route path='MyAccount' element={<><GoogleTag /> <ProfileEdit></ProfileEdit> </>} />
           <Route path="/admin/tags" element={<><GoogleTag /><TagsManagement /></>} />
           <Route path="/admin/news" element={<><GoogleTag /><NewsManagement /></>} />
           <Route path="/blogs" element={<><GoogleTag /><NewsPortal /></>} />
