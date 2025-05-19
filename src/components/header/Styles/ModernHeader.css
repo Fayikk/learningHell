@@ -459,3 +459,18 @@
   color: #c0392b;
   background-color: rgba(231, 76, 60, 0.1);
 }
+
+/* User Avatar Responsive */
+.user-avatar-responsive {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .user-avatar-responsive {
+    margin-right: 8px;
+    width: 38px;
+    height: 38px;
+  }
+}
