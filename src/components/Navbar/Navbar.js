@@ -33,7 +33,8 @@ export default function   Navbar({ onAuthData }) {
           role: decodedToken.role,
           userName: decodedToken.unique_name,
           name: decodedToken.givenName,
-          InstructorSubId:decodedToken.InstructorSubId
+          InstructorSubId:decodedToken.InstructorSubId,
+          profilePicture: decodedToken.ProfilePicure,
         })
       );
     } else {

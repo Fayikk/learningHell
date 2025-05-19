@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import Navbar from '../Navbar/Navbar';
 import { useSelector } from 'react-redux';
 import Footer from '../footer/Footer';
-
+import { rootBaseUrl } from '../../api/Base/baseApiModel';
 function ProfileEdit() {
       const nameIdentifier = useSelector((state) => state.authStore.nameIdentifier);
   const { data, isLoading, isError, refetch } = useGetUserProfileQuery(nameIdentifier);
@@ -123,7 +123,7 @@ function ProfileEdit() {
       };
       setForm(currentForm);
       setOriginalForm(currentForm);
-      setPreviewImage(data.result.profileImageUrl ? `https://localhost:7042${data.result.profileImageUrl}` : null);
+      setPreviewImage(data.result.profileImageUrl ? `${rootBaseUrl}${data.result.profileImageUrl}` : null);
     }
     setEditMode(true);
   };
@@ -132,7 +132,7 @@ function ProfileEdit() {
   const handleCancel = () => {
     if (originalForm) {
       setForm(originalForm);
-      setPreviewImage(data.result && data.result.profileImageUrl ? `https://localhost:7042${data.result.profileImageUrl}` : null);
+      setPreviewImage(data.result && data.result.profileImageUrl ? `${rootBaseUrl}${data.result.profileImageUrl}` : null);
     }
     setEditMode(false);
   };

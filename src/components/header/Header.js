@@ -24,6 +24,7 @@ import { cartStateUpdate } from "../../store/reducers/cartSlice";
 import { ThemeProvider } from "../../main-component/Extensions/Theme/ThemeProvider";
 import ThemeToggle from "../../main-component/Extensions/Theme/ThemeToggle";
 import { useRef } from 'react';
+import { rootBaseUrl } from '../../api/Base/baseApiModel';
 const Header = ({ props, onAuthStateChange }) => {
   const [menuActive, setMenuState] = useState(false);
   const authenticationState = useSelector((state) => state.authStore);
@@ -37,7 +38,7 @@ const Header = ({ props, onAuthStateChange }) => {
   const [error, setError] = useState(null);
   const [country, setCountry] = useState("");
   const {data,isLoading} = useGetShoppingCartQuery();
-
+  console.log("trigger authStore",authenticationState)
   // useEffect(() => {
   //   if (data && data.result) {
   //     console.log("trigger data result",data.result)
@@ -291,11 +292,42 @@ const Header = ({ props, onAuthStateChange }) => {
 </div>
                       {/* My Bootcamps Button */}
                       
-                      
+                                         
+      
                       {/* User Menu */}
                       <div className="user-menu">
-                        <div className="user-avatar">
-                          {authenticationState.userName.charAt(0).toUpperCase()}
+                        <div className="user-avatar user-avatar-responsive">
+                          {authenticationState.profilePicture === "" ? (
+                            <span
+                              style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                width: 38,
+                                height: 38,
+                                borderRadius: "50%",
+                                background: "#e5e7eb",
+                                color: "#374151",
+                                fontWeight: 600,
+                                fontSize: 20,
+                                userSelect: "none"
+                              }}
+                            >
+                              {authenticationState.userName.charAt(0).toUpperCase()}
+                            </span>
+                          ) : (
+                            <img
+                              src={`${rootBaseUrl}${authenticationState.profilePicture}`}
+                              alt="Profil"
+                              style={{
+                                width: 38,
+                                height: 38,
+                                borderRadius: "50%",
+                                objectFit: "cover",
+                                background: "#f3f4f6"
+                              }}
+                            />
+                          )}
                         </div>
                         
                         {/* User Dropdown */}

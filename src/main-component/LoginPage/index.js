@@ -122,7 +122,7 @@ const LoginPage = (props) => {
                     if (email.match(userRegex)) {
                         localStorage.setItem("token",response.data.result.accessToken)
                         localStorage.setItem("refreshToken",response.data.result.refreshToken)
-                        toast.success('Eduko\'ya başarıyla giriş yaptınız!');
+                        toast.success('LearningHell\'e başarıyla giriş yaptınız!');
                         setLoader(false);
                         
                         // Redirect to returnUrl if available
