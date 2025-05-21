@@ -1087,6 +1087,7 @@
 .tab-content {
   padding: 1.5rem;
   animation: fadeIn 0.3s ease-in-out;
+  overflow: visible !important;
 }
 
 .instructor-tab-content .instructor-section {
@@ -1097,4 +1098,22 @@
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+.bootcamp-description {
+  color: #222;
+  font-size: 1.05rem;
+  word-break: break-word;
+  width: 100%;
+  display: block;
+  overflow: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  visibility: visible !important;
+}
+
+.card-3d-container,
+.info-section,
+.description-section {
+  overflow: visible !important;
 }

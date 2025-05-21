@@ -596,13 +596,11 @@ function  BootcampDetail() {
                 
                 <div className="info-section">
                   <h3 className="section-title">Bootcamp Bilgileri</h3>
-                  
                   <Row className="bootcamp-stats mb-4">
                     <Col md={4}>
                       <div className="stat-card">
                         <div className="stat-icon">📅</div>
                         <div className="stat-value">
-                          {/* {Math.ceil((new Date(bootcamp.end_Date) - new Date(bootcamp.start_Date)) / (1000 * 60 * 60 * 24))} gün */}
                           8 - 14 Hafta
                         </div>
                         <div className="stat-label">Süre</div>
@@ -625,13 +623,14 @@ function  BootcampDetail() {
                       </div>
                     </Col>
                   </Row>
+                  {/* Açıklama HTML içerebilir, güvenli şekilde göster */}
+                  <div className="description-section mb-4">
+                    <h3 className="section-title">Açıklama</h3>
+                    <div
+                      dangerouslySetInnerHTML={{ __html: bootcamp.description }}
+                    />
+                  </div>
                 </div>
-                
-                <div className="description-section mb-4">
-                  <h3 className="section-title">Açıklama</h3>
-                  <p>{bootcamp.description}</p>
-                </div>
-                
                 <div className="schedule-section">
                   <h3 className="section-title">Program</h3>
                   {bootcamp.bootcampSchedule.length > 0 ? (
