@@ -13,6 +13,7 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { rootBaseUrl,baseUrl } from '../../../api/Base/baseApiModel';
 import BootcampFAQ from '../FAQ/BootcampFAQ'; // Import the FAQ component
+import { useGetCouponByCodeMutation } from '../../../api/couponApi';
 // SVG Icons as React components
 const CalendarIcon = () => (
   <svg className="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
@@ -114,6 +115,7 @@ const StudentBootcampList = () => {
   const [checkInstallmentDebitCard] = useCheckInstallmentDebitCardMutation();
   const [hubConnection,setHubConnection] = useState();
   const nameIdentifier = useSelector((state) => state.authStore.nameIdentifier);
+  const [discountDetail] = useGetCouponByCodeMutation();
   const [html, setHtml] = useState(null);
   const [activeTab, setActiveTab] = useState('bootcamp'); 
   // Add new state variables for installment options
@@ -361,16 +363,20 @@ const StudentBootcampList = () => {
   };
   
   // Add handler for applying discount coupon
-  const handleApplyCoupon = () => {
+  const handleApplyCoupon = async () => {
+    console.log("trigger handleApplyCoupon",formData.couponCode)
     // This would typically check against an API
     // For demo, let's just apply a fixed discount if any code is entered
-    if (formData.couponCode.trim()) {
-      setDiscount({
-        applied: true,
-        amount: selectedBootcamp.price * 0.1, // 10% discount for demo
-        code: formData.couponCode
+      await discountDetail(discount.code.trim()).then((response) => {
+        console.log("trigger discount coupon response",response)
+
       });
-    }
+
+      // setDiscount({
+      //   applied: true,
+      //   amount: selectedBootcamp.price * 0.1, // 10% discount for demo
+      //   code: formData.couponCode
+      // });
   };
   
 
