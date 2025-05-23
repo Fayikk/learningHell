@@ -14,6 +14,7 @@ import { payHub } from '../../../../api/Base/payHubModel';
 import { rootBaseUrl } from '../../../../api/Base/baseApiModel';
 import BootcampFAQ from '../../../Bootcamps/FAQ/BootcampFAQ';
 import {Helmet} from "react-helmet";
+import { useGetCouponByCodeMutation } from '../../../../api/couponApi';
 
 // SVG Icons as React components
 const CalendarIcon = () => (
@@ -160,7 +161,7 @@ function  BootcampDetail() {
   const [html, setHtml] = useState(null);
   const [securePopupOpen, setSecurePopupOpen] = useState(false);
   const [secureHtmlContent, setSecureHtmlContent] = useState('');
-  
+  const [couponDetail] = useGetCouponByCodeMutation();
   // Add new state variables for installment options
   const [installmentOptions, setInstallmentOptions] = useState([]);
   const [selectedInstallment, setSelectedInstallment] = useState(1); // Default to single payment
@@ -302,7 +303,7 @@ function  BootcampDetail() {
       
       try {
         const requestBody = {
-          price: data?.result?.price || 0,
+          price: calculateFinalPrice(), // Use discounted price if discount is applied
           binNumber: binNumber,
           locale: "tr",
           conversationId: Date.now().toString() // Generate a unique conversation ID
@@ -379,15 +380,30 @@ function  BootcampDetail() {
   };
   
   // Add handler for applying discount coupon
-  const handleApplyCoupon = () => {
-    // This would typically check against an API
-    // For demo, let's just apply a fixed discount if any code is entered
+  const handleApplyCoupon = async () => {
     if (formData.couponCode.trim()) {
-      setDiscount({
-        applied: true,
-        amount: data?.result?.price * 0.1, // 10% discount for demo
-        code: formData.couponCode
-      });
+      try {
+        const response = await couponDetail(formData.couponCode);
+        if (response.data && response.data.isSuccess && response.data.result) {
+          setDiscount({
+            applied: true,
+            amount: response.data.result.discountAmount || 0, // this is percentage
+            code: response.data.result.code || formData.couponCode
+          });
+          toast.success(`İndirim başarıyla uygulandı! %${response.data.result.discountAmount}`);
+          // İndirim uygulandığında kart numarası 16 haneliyse taksit seçeneklerini tekrar çek
+          const cleanCardNumber = formData.cardNumber.replace(/\D/g, '');
+          if (cleanCardNumber.length === 16) {
+            checkInstallmentOptions(cleanCardNumber);
+          }
+        } else {
+          setDiscount({ applied: false, amount: 0, code: '' });
+          toast.error('Geçersiz veya kullanılamayan kupon kodu.');
+        }
+      } catch (error) {
+        setDiscount({ applied: false, amount: 0, code: '' });
+        toast.error('Kupon kodu uygulanırken bir hata oluştu.');
+      }
     }
   };
   
@@ -420,6 +436,7 @@ function  BootcampDetail() {
     formDataToSend.append("cvc", formData.cvv);
     formDataToSend.append("IdentityNumber", formData.identityNumber);
     formDataToSend.append("BootcampId", bootcamp.id);
+    formDataToSend.append("CouponCode", discount.code);
     // Add installment information
     formDataToSend.append("InstallmentNumber", selectedInstallment);
 
@@ -456,19 +473,18 @@ function  BootcampDetail() {
   // Calculate final price after discount and with installment
   const calculateFinalPrice = () => {
     if (!data?.result) return 0;
-    
-    let price = discount.applied 
-      ? data.result.price - discount.amount 
-      : data.result.price;
-    
-    // If installment option is selected, use the total price from installment
+    // Eğer taksit seçeneği varsa, backend'den gelen totalPrice'ı kullan (zaten indirimli)
     if (selectedInstallment > 1 && installmentOptions.length > 0) {
       const selectedOption = installmentOptions.find(option => option.installmentNumber === selectedInstallment);
       if (selectedOption) {
-        price = parseFloat(selectedOption.totalPrice);
+        return parseFloat(selectedOption.totalPrice);
       }
     }
-    
+    // Taksit yoksa, indirim uygula
+    let price = data.result.price;
+    if (discount.applied && discount.amount > 0) {
+      price = price * (1 - discount.amount / 100);
+    }
     return price;
   };
   
@@ -1077,7 +1093,7 @@ function  BootcampDetail() {
                   <div className="discount-applied">
                     <div className="coupon-badge">
                       <span className="coupon-code">{discount.code}</span>
-                      <span className="discount-amount">{discount.amount.toFixed(2)} TL indirim</span>
+                      <span className="discount-amount">%{discount.amount.toFixed(2)} indirim</span>
                     </div>
                   </div>
                 )}
@@ -1290,7 +1306,7 @@ function  BootcampDetail() {
                 {discount.applied && (
                   <div className="price-row discount">
                     <span>İndirim:</span>
-                    <span className="price-value discount-value">-{discount.amount?.toFixed(2)} TL</span>
+                    <span className="price-value discount-value">-%{discount.amount?.toFixed(2)}</span>
                   </div>
                 )}
                 
