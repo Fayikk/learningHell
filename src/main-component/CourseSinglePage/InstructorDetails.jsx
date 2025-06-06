@@ -4,7 +4,7 @@ import PointIcon from "../../icons/PointIcon";
 import ClockIcon from "../../icons/ClockIcon";
 import InstructorIcon from "../../icons/InstructorIcon";
 import profiles from "../../images/profile-picture.jpg";
-
+import { rootBaseUrl } from '../../api/Base/baseApiModel';
 const InstructorDetails = (props) => {
   
   
@@ -53,7 +53,7 @@ const InstructorDetails = (props) => {
       </div>
       <span className="text-black font-bold">{props.instructor.fullName ? props.instructor.fullName : ""}</span>
     </div>
-    <img src={profiles} className="h-24 w-24" />
+    <img src={`${rootBaseUrl}${props.instructor.profileImageUrl}`} className="h-24 w-24" />
     <p className="sm:max-w-[400px] items-center justify-center">
     
     </p>
