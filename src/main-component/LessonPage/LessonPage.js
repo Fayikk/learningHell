@@ -28,7 +28,7 @@ const LessonPage = () => {
   const { courseId } = useParams();
   const [expanded, setExpanded] = React.useState(false);
   const { data, isLoading } = useGetEnrolledCourseIdQuery(courseId);
-  const userId = useSelector((state) => state.authStore.nameIdentifier)
+  const user = useSelector((state) => state.authStore)
   const[accountUserId,setAccountUserId] = useState();
   const [videos, setVideos] = useState([]);
   const [courseInsideDetail,setCourseInsideDetail] = useState([]);
@@ -42,6 +42,9 @@ const LessonPage = () => {
   const [downloadFile] = useDownloadMaterialFileMutation();
   const [completionStatus, setCompletionStatus] = useState({});
   
+
+  console.log("trigger lesson page user",user)
+
   const toggleSection = (index) => {
     setOpenSections((prevOpen) => {
       if (prevOpen.includes(index)) {
@@ -53,7 +56,7 @@ const LessonPage = () => {
   };
   
   useEffect(() => {
-    if (userId === "") {
+    if (user.nameIdentifier === "") {
       const token = localStorage.getItem('token'); 
       if (token) {
         try {
@@ -68,7 +71,7 @@ const LessonPage = () => {
         }
       }
     }
-  }, [userId]);
+  }, [user.nameIdentifier]);
 
   const onData = (progressData) => {
     if (progressData ) {
@@ -151,13 +154,21 @@ const LessonPage = () => {
       changeVideo(videos[0].videoId || "");
     }
   }, [videos]);
-
   const changeVideo = async (publicVideoId,videoId) => {
     setVideoId(videoId);
       await decryptVideoUrl(publicVideoId)
         .then((response) => {
           if (sharedRef.current) {
-          sharedRef.current.src = response.data.result
+            sharedRef.current.src = response.data.result;
+            // Facebook Pixel - Lead event
+            if (window.fbq) {
+              window.fbq('track', 'Lead', {
+                content_category: 'Video Started',
+                content_name: data?.result?.item1?.courseName || 'Course Video',
+                content_ids: [courseId, videoId],
+                content_email:user.email || "",
+              });
+            }
           }
         })
         .catch((err) => console.error(err));
@@ -268,7 +279,7 @@ const LessonPage = () => {
            </div>
          </div>
          <RefContext.Provider value={sharedRef}>
-           <VideoPage videoId={videoId} videoRef={sharedRef} courseId={courseId} userId={userId !== "" ? userId : accountUserId} onData={onData}  />
+           <VideoPage videoId={videoId} videoRef={sharedRef} courseId={courseId} userId={user.nameIdentifier !== "" ? user.nameIdentifier : accountUserId} onData={onData}  />
          </RefContext.Provider>
        </div>
       </section>
