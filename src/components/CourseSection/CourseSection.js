@@ -62,7 +62,7 @@ const CourseSection = (props) => {
                           <span>
 
                           {
-  course.coursePrice === "0" ? (
+  course.coursePrice === "0" || course.coursePrice === 0 ? (
     "free"
   ) : (
     <>
