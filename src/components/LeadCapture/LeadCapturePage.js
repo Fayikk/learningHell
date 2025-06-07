@@ -75,9 +75,9 @@ const LeadCapturePage = () => {
           <div>
             <h1 className="text-4xl sm:text-6xl font-bold text-gray-900 leading-tight">
               <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                Ücretsiz
+                Ücretsiz Yazılım
               </span>
-              {" "}Eğitimlerle
+              {" "}Eğitimleriyle
               <br />
               Kariyerinizi İleriye Taşıyın
             </h1>
