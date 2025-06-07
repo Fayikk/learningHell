@@ -22,8 +22,10 @@ export default function   Navbar({ onAuthData }) {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    console.log("before the token", token);
     if (token) {
       const decodedToken = jwtDecode(token);
+      console.log("trigger if exist token", decodedToken);
       dispatch(
         setLoggedInUser({
           nameIdentifier: decodedToken.nameid,
@@ -31,7 +33,8 @@ export default function   Navbar({ onAuthData }) {
           role: decodedToken.role,
           userName: decodedToken.unique_name,
           name: decodedToken.givenName,
-          InstructorSubId:decodedToken.InstructorSubId
+          InstructorSubId:decodedToken.InstructorSubId,
+          profilePicture: decodedToken.ProfilePicure,
         })
       );
     } else {
@@ -44,7 +47,7 @@ export default function   Navbar({ onAuthData }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const className = scroll > 80 ? "fixed-navbar active" : "fixed-navbar";
+  const className = scroll > 80 ? "fixed-navbar" : "fixed-navbar";
 
   return (
     <div className={className}>

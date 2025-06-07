@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Grid from "@mui/material/Grid";
 import SimpleReactValidator from "simple-react-validator";
 import {toast} from "react-toastify";
@@ -21,11 +21,16 @@ const LoginPage = (props) => {
     const [Login] = useSignInMutation();
     const [LoginWithGoogle] = useSignInWithGoogleMutation();
     const location = useLocation();
-    const from = location.state?.from || "/home";
+    
+    // Check for returnUrl in query parameters
+    const searchParams = new URLSearchParams(location.search);
+    const returnUrl = searchParams.get('returnUrl');
+    
+    // Use returnUrl if available, otherwise use from or default to home
+    const from = returnUrl || location.state?.from || "/home";
+    
     const [loader,setLoader] = useState(false);
     const recaptcha = useRef()
-
-
 
     const [value, setValue] = useState({
         email: '',
@@ -66,15 +71,19 @@ const LoginPage = (props) => {
         var tokenResult = await LoginWithGoogle({
             credential:response.credential
         });
+        if(tokenResult.data.errorMessages.length > 0){
+            toast.warning(tokenResult.data.errorMessages[0]);
+            setLoader(false);
+            return;}
+
         if (tokenResult && tokenResult.data && tokenResult.data.result && tokenResult.data.result.accessToken) {
-            localStorage.setItem("token", tokenResult.data.result.accessToken);
+            localStorage.setItem("token",tokenResult.data.result.accessToken);
             localStorage.setItem("refreshToken", tokenResult.data.result.refreshToken);
-        // push('/home');
-        push(from,{replace:true})
-
-                
+            
+            // Redirect to returnUrl if available
+            push(from, {replace: true});
+            toast.success('Google ile başarıyla giriş yaptınız!');
         }
-
      
         
           
@@ -113,12 +122,11 @@ const LoginPage = (props) => {
                     if (email.match(userRegex)) {
                         localStorage.setItem("token",response.data.result.accessToken)
                         localStorage.setItem("refreshToken",response.data.result.refreshToken)
-                        toast.success('You successfully Login on Eduko !');
+                        toast.success('LearningHell\'e başarıyla giriş yaptınız!');
                         setLoader(false);
                         
-        
-                        push(from,{replace:true})
-                        // push('/home');
+                        // Redirect to returnUrl if available
+                        push(from, {replace: true});
                     }
                 } else {
                     validator.showMessages();

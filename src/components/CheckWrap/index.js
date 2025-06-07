@@ -21,7 +21,6 @@ import RadioGroup from "@mui/material/RadioGroup";
 import Radio from "@mui/material/Radio";
 import { shoppingCartApi } from '../../api/shoppingCartApi';
 import { radio } from '@material-tailwind/react';
-
 const style = {
     position: 'absolute',
     top: '50%',
@@ -111,9 +110,14 @@ const CheckWrap = (props) => {
     }));
 
     const submitForm = async (e) => {
+        e.preventDefault();
+
+        if (!value.card_holder || !value.card_number || !value.cvv || !value.expire_month || !value.expire_year) {
+            toast.warning("Please fill out all required fields.")
+            return; 
+        }
         var formData = new FormData();
 
-        e.preventDefault();
         if (validator.allValid()) {
             // setValue({
             //     email: '',
@@ -296,12 +300,8 @@ const CheckWrap = (props) => {
   aria-describedby="keep-mounted-modal-description"
 >
   <Box sx={style}>
-    <Typography id="keep-mounted-modal-title" variant="h6" component="h2">
-      Iyzico 3d Secure
-    </Typography>
-    <Typography id="keep-mounted-modal-description" sx={{ mt: 2 }}>
+    
     {html && <iframe src={html} width="500" height="500" title="Payment"></iframe>}
-    </Typography>
   </Box>
 </Modal>
 </div>

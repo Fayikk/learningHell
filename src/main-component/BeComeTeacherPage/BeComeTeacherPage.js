@@ -79,91 +79,84 @@ const BeComeTeacherPage = (props) => {
 
     return (
         <div className="teacher-page">
-           <Navbar hclass={'wpo-header-style-2'} topbarClass={'d-block'}/>
+            <Navbar hclass={'wpo-header-style-2'} topbarClass={'d-block'}/>
             <PageTitle pageTitle={t("Apply for Teacher")} pagesub={'Teacher'} />
-            <div className="teacher-area section-padding pb-0 mt-80">
-                <div className="teacher-wrap">
-                    <div className="container">
-                        <div className="row justify-content-center">
-                            <div className="col-lg-10">
-                                <div className="teacher-contact">
-                                    <div className="teacher-contact-form">
-                                        <h2>{t("Become a teacher")}</h2>
-                                        <form onSubmit={submitHandler} className="contact-validation-active" id="contact-form-main">
-                                            <div className="row">
-                                                <div className="col-lg-6 col-md-6 col-sm-6 col-12 form-group">
-                                                    <div className="form-field">
-                                                        <input
-                                                            type="text"
-                                                            name="name"
-                                                            onBlur={changeHandler}
-                                                            onChange={changeHandler}
-                                                            placeholder={t("Your Name")}
-                                                            value={forms.name}
-                                                        />
-                                                        {validator.message('name', forms.name, 'required|alpha_space')}
-                                                    </div>
-                                                </div>
-                                                <div className="col-lg-6 col-md-6 col-sm-6 col-12 form-group clearfix">
-                                                    <div className="form-field">
-                                                        <input
-                                                            type="email"
-                                                            name="email"
-                                                            onBlur={changeHandler}
-                                                            onChange={changeHandler}
-                                                            placeholder={t("Your Email")}
-                                                            value={forms.email}
-                                                        />
-                                                        {validator.message('email', forms.email, 'required|email')}
-                                                    </div>
-                                                </div>
-                                                <div className="col-lg-6 col-md-6 col-sm-6 col-12 form-group">
-                                                    <div className="form-field">
-                                                        <input
-                                                            type="text"
-                                                            name="subject"
-                                                            onBlur={changeHandler}
-                                                            onChange={changeHandler}
-                                                            placeholder={t("Your Subject")}
-                                                            value={forms.subject}
-                                                        />
-                                                        {validator.message('subject', forms.subject, 'required|alpha_space')}
-                                                    </div>
-                                                </div>
-                                                <div className="col-lg-6 col-md-6 col-sm-6 col-12 form-group form-group-in">
-                                                    <label htmlFor="file">{t("Upload Your CV")}</label>
-                                                    <input
-                                                        type="file"
-                                                        name="file"
-                                                        id="file"
-                                                        onBlur={changeFileHandler}
-                                                        onChange={changeFileHandler}
-                                                    />
-                                                    <i className="ti-cloud-up"></i>
-                                                </div>
-                                                <div className="col-lg-12 col-12 form-group">
-                                                    <textarea
-                                                        onBlur={changeHandler}
-                                                        onChange={changeHandler}
-                                                        name="message"
-                                                        placeholder={t("Message")}
-                                                        value={forms.message}
-                                                    />
-                                                    {validator.message('message', forms.message, 'required')}
-                                                </div>
-                                                <div className="submit-area col-lg-12 col-12">
-                                                    <button type="submit" className="theme-btn submit-btn">{t("Send Message")}</button>
-                                                    <div id="loader">
-                                                        <i className="ti-reload"></i>
-                                                    </div>
-                                                </div>
+            <div className="teacher-area section-padding pb-0 mt-5">
+                <div className="container">
+                   
+                    <div className="row justify-content-center">
+                        <div className="col-lg-8">
+                            <div className="card shadow border-0 mb-5">
+                                <div className="card-body p-4 p-md-5">
+                                    <h3 className="mb-4 text-center">{t("Apply Now")}</h3>
+                                    <form onSubmit={submitHandler} id="contact-form-main">
+                                        <div className="row g-3">
+                                            <div className="col-md-6">
+                                                <input
+                                                    type="text"
+                                                    name="name"
+                                                    onBlur={changeHandler}
+                                                    onChange={changeHandler}
+                                                    placeholder={t("Your Name")}
+                                                    value={forms.name}
+                                                    className="form-control"
+                                                />
+                                                {validator.message('name', forms.name, 'required|alpha_space')}
                                             </div>
-                                            <div className="clearfix error-handling-messages">
-                                                <div id="success">Thank you</div>
-                                                <div id="error"> Error occurred while sending email. Please try again later.</div>
+                                            <div className="col-md-6">
+                                                <input
+                                                    type="email"
+                                                    name="email"
+                                                    onBlur={changeHandler}
+                                                    onChange={changeHandler}
+                                                    placeholder={t("Your Email")}
+                                                    value={forms.email}
+                                                    className="form-control"
+                                                />
+                                                {validator.message('email', forms.email, 'required|email')}
                                             </div>
-                                        </form>
-                                    </div>
+                                            <div className="col-md-6">
+                                                <input
+                                                    type="text"
+                                                    name="subject"
+                                                    onBlur={changeHandler}
+                                                    onChange={changeHandler}
+                                                    placeholder={t("Your Subject")}
+                                                    value={forms.subject}
+                                                    className="form-control"
+                                                />
+                                                {validator.message('subject', forms.subject, 'required|alpha_space')}
+                                            </div>
+                                            <div className="col-md-6">
+                                                <label htmlFor="file" className="form-label">{t("Upload Your CV")}</label>
+                                                <input
+                                                    type="file"
+                                                    name="file"
+                                                    id="file"
+                                                    onBlur={changeFileHandler}
+                                                    onChange={changeFileHandler}
+                                                    className="form-control"
+                                                />
+                                                <small className="text-muted">{file ? file.name : t("No file selected")}</small>
+                                            </div>
+                                            <div className="col-12">
+                                                <textarea
+                                                    onBlur={changeHandler}
+                                                    onChange={changeHandler}
+                                                    name="message"
+                                                    placeholder={t("Message")}
+                                                    value={forms.message}
+                                                    className="form-control"
+                                                    rows={4}
+                                                />
+                                                {validator.message('message', forms.message, 'required')}
+                                            </div>
+                                            <div className="col-12 text-center">
+                                                <button type="submit" className="theme-btn submit-btn px-5 py-2">{t("Send Message")}</button>
+                                            </div>
+                                            
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>

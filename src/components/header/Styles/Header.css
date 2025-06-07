@@ -1,4 +1,40 @@
 .dropdown-toggle::after {
     display: none; /* Ok simgesini gizle */
   }
-  
+  .wpo-site-header {
+    position: static; /* fixed veya sticky varsa bunu static yapın */
+}
+.theme-btn:hover {
+  background-color: darkviolet;
+}
+
+.custom-dropdown-menu.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+@media (max-width: 991px) {
+  .my-bootcamp-desktop-only {
+    display: none !important;
+  }
+}
+.custom-dropdown-menu {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+}
+
+.dropdown-item {
+  padding: 10px 15px;
+  color: #333;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border-radius: 10px;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+  color: #4b0082;
+}
+/* Mobil görünümde sadece localization logosunu göster */

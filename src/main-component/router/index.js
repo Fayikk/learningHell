@@ -42,60 +42,89 @@ import { AuthProvider } from '../Extensions/AuthProvider';
 import PrivateRoute from '../Extensions/PrivateRoute';
 import MyAccount from '../Account/MyAccount';
 import PrivateEnrolledCourseRoute from '../Extensions/PrivateEnrolledCourseRoute';
+import TagsManagement from '../../components/Tags/TagsManagement';
+import NewsManagement from '../../components/News/NewsManagement';
+import NewsPortal from '../../components/News/NewsPortal';
+import GoogleTag from '../../Extensions/GoogleTag'; // Import the GoogleTag component
+import Shopping from '../Shopping';
+import ShoppingDetail from '../Shopping/ShoppingDetail';
+import InstructorBootcampManagement from '../../components/Bootcamps/Instructor/Bootcamp';
+import StudentBootcampList from '../../components/Bootcamps/Student';
+import PaymentSuccess from '../../components/Bootcamps/Student/Payments';
+import Dashboard from '../../components/Dashboard';
+import BootcampDetail from '../../components/Bootcamps/Student/Detail';
+import ActiveBootcamps from '../../components/Bootcamps/Student/Active';
+import FreeContent from '../../components/FreeContent/FreeContent';
+import ProfileEdit from '../../components/Profile/ProfileEdit';
+
 const AllRoute = () => {
   return (
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Homepage />} />
-          <Route path="home" element={<Homepage />} />
-          {/* <Route path="home-2" element={<HomePage2 />} /> */}
-          {/* <Route path="home-3" element={<HomePage3 />} /> */}
-          {/* <Route path="home-4" element={<HomePage4 />} /> */}
-          {/* <Route path="home-5" element={<HomePage5 />} /> */}
-          <Route path="about" element={<AboutPage />} />
-          <Route path="category-single/:slug" element={<CategorySinglePage />} />
-          <Route path="course-single/:slug" element={<CourseSinglePage />} />
-          <Route path="course/:slug" element={<CoursePage />} />
-          <Route path="course-2" element={<CoursePageS2 />} />
-          {/* <Route path="course-3" element={<CoursePageS3 />} /> */}
-          <Route path="lessons/:courseId" element={<PrivateEnrolledCourseRoute><LessonPage /></PrivateEnrolledCourseRoute>} />
-          <Route path='TeacherApplications' element={<TeacherApplications></TeacherApplications>} ></Route>
-          <Route path="gallery" element={<GalleryPage />} />
-          <Route path="testimonial" element={<TestimonialPage />} />
-          <Route path="teacher" element={<TeamPage />} />
-          <Route path="Instructor" element={<InstructorDetail />} />
-          <Route path="Instructor/CourseDetail/:slug" element={<InstructorsCourseDetail />} />
-          <Route path="team-single/:slug" element={<TeamSinglePage />} />
-          <Route path="event-single/:slug" element={<EventSinglePage />} />
-          <Route path='become-teacher' element={<PrivateRoute><BeComeTeacherPage /></PrivateRoute>} />
-          <Route path="shop" element={<ShopPage />} />
-          <Route path='product-single/:slug' element={<ProductSinglePage />} />
-          <Route path='cart' element={<PrivateRoute ><CartPage /></PrivateRoute>} />
-          <Route path='checkout' element={<CheckoutPage />} />
-          <Route path='supervisor/evaluatecourses' element={<EvaluateCourses></EvaluateCourses>} ></Route>
-          <Route path='order_received' element={<OrderRecived />} />
-          <Route path='faq' element={<FaqPage />} />
-          <Route path='privacy' element={<PrivacyPage/>} />
-          <Route path='terms' element={<TermsPage/>} />
-          {/* <Route path='blog' element={<BlogPage />} /> */}
-          <Route path='blog-left-sidebar' element={<BlogPageLeft />} />
-          <Route path='MyCourse' element={<MyCourses />} />
-          <Route path='blog-single/:slug' element={<BlogDetails />} />
-          <Route path='blog-single-left-sidebar/:slug' element={<BlogDetailsLeftSiide />} />
-          <Route path='blog-single-fullwidth/:slug' element={<BlogDetailsFull />} />
-          <Route path='ErrorPage/:slug' element={<ErrorPage />} />
-          <Route path='contact' element={<ContactPage />} />
-          <Route path='login' element={<LoginPage />} />
-          <Route path='register' element={<SignUpPage />} />
-          <Route path='forgot-password' element={<ForgotPassword />} />
-          <Route path='verify-email/:slug' element={<VerifyEmail></VerifyEmail>} ></Route>
-          <Route path='verify-digit/:slug' element={<VerifyDigitCode></VerifyDigitCode>} ></Route>
-          <Route path='MyAccount' element={<MyAccount></MyAccount>} ></Route>
+          <Route path="/" element={<><GoogleTag /><Homepage /></>} />
+          <Route path="home" element={<><GoogleTag /><Homepage /></>} />
+          {/* <Route path="home-2" element={<><GoogleTag /><HomePage2 /></>} /> */}
+          {/* <Route path="home-3" element={<><GoogleTag /><HomePage3 /></>} /> */}
+          {/* <Route path="home-4" element={<><GoogleTag /><HomePage4 /></>} /> */}
+          {/* <Route path="home-5" element={<><GoogleTag /><HomePage5 /></>} /> */}
+          <Route path="about" element={<><GoogleTag /><AboutPage /></>} />
+          <Route path="category-single/:slug" element={<><GoogleTag /><CategorySinglePage /></>} />
+          <Route path="course-single/:slug" element={<><GoogleTag /><CourseSinglePage /></>} />
+          <Route path="course/:slug" element={<><GoogleTag /><CoursePage /></>} />
+          <Route path="course-2" element={<><GoogleTag /><CoursePageS2 /></>} />
+          {/* <Route path="course-3" element={<><GoogleTag /><CoursePageS3 /></>} /> */}
+          <Route path="lessons/:courseId" element={<PrivateEnrolledCourseRoute><GoogleTag /><LessonPage /></PrivateEnrolledCourseRoute>} />
+          <Route path='TeacherApplications' element={<><GoogleTag /><TeacherApplications /></>} />
+          <Route path="gallery" element={<><GoogleTag /><GalleryPage /></>} />
+          <Route path="testimonial" element={<><GoogleTag /><TestimonialPage /></>} />
+          <Route path="teacher" element={<><GoogleTag /><TeamPage /></>} />
+          <Route path="Instructor" element={<><GoogleTag /><InstructorDetail /></>} />
+          <Route path="Instructor/CourseDetail/:slug" element={<><GoogleTag /><InstructorsCourseDetail /></>} />
+          <Route path="team-single/:slug" element={<><GoogleTag /><TeamSinglePage /></>} />
+          <Route path="event-single/:slug" element={<><GoogleTag /><EventSinglePage /></>} />
+          <Route path='become-teacher' element={<PrivateRoute><GoogleTag /><BeComeTeacherPage /></PrivateRoute>} />
+          <Route path="shop" element={<><GoogleTag /><ShopPage /></>} />
+          <Route path='product-single/:slug' element={<><GoogleTag /><ProductSinglePage /></>} />
+          <Route path='cart' element={<PrivateRoute><GoogleTag /><CartPage /></PrivateRoute>} />
+          <Route path='checkout' element={<><GoogleTag /><CheckoutPage /></>} />
+          <Route path='supervisor/evaluatecourses' element={<><GoogleTag /><EvaluateCourses /></>} />
+          <Route path='order_received' element={<><GoogleTag /><OrderRecived /></>} />
+          <Route path='faq' element={<><GoogleTag /><FaqPage /></>} />
+          <Route path='privacy' element={<><GoogleTag /><PrivacyPage /></>} />
+          <Route path='terms' element={<><GoogleTag /><TermsPage /></>} />
+          {/* <Route path='blog' element={<><GoogleTag /><BlogPage /></>} /> */}
+          <Route path='blog-left-sidebar' element={<><GoogleTag /><BlogPageLeft /></>} />
+          <Route path='MyCourse' element={<><GoogleTag /><MyCourses /></>} />
+          <Route path='blog-single/:slug' element={<><GoogleTag /><BlogDetails /></>} />
+          <Route path='blog-single-left-sidebar/:slug' element={<><GoogleTag /><BlogDetailsLeftSiide /></>} />
+          <Route path='blog-single-fullwidth/:slug' element={<><GoogleTag /><BlogDetailsFull /></>} />
+          <Route path='ErrorPage/:slug' element={<><GoogleTag /><ErrorPage /></>} />
+          <Route path='contact' element={<><GoogleTag /><ContactPage /></>} />
+          <Route path='login' element={<><GoogleTag /><LoginPage /></>} />
+          <Route path='register' element={<><GoogleTag /><SignUpPage /></>} />
+          <Route path='forgot-password' element={<><GoogleTag /><ForgotPassword /></>} />
+          <Route path='verify-email/:slug' element={<><GoogleTag /><VerifyEmail /></>} />
+          <Route path='verify-digit/:slug' element={<><GoogleTag /><VerifyDigitCode /></>} />
+          <Route path='MyAccount' element={<><GoogleTag /> <ProfileEdit></ProfileEdit> </>} />
+          <Route path="/admin/tags" element={<><GoogleTag /><TagsManagement /></>} />
+          <Route path="/admin/news" element={<><GoogleTag /><NewsManagement /></>} />
+          <Route path="/blogs" element={<><GoogleTag /><NewsPortal /></>} />
+          <Route path="/news/category/:category" element={<><GoogleTag /><NewsPortal /></>} />
+          <Route path="/news/tag/:tagName" element={<><GoogleTag /><NewsPortal /></>} />
+          <Route path="/news/search" element={<><GoogleTag /><NewsPortal /></>} />
+          <Route path="/news/:slug" element={<><GoogleTag /><NewsPortal /></>} />
+          <Route path='Shopping' element={<> <GoogleTag></GoogleTag><Shopping></Shopping> </>} ></Route>
+          <Route path='/Shopping/Detail/:slug' element={<> <GoogleTag></GoogleTag> <ShoppingDetail></ShoppingDetail> </>} />
+          <Route path='/Instructor/BootcampManagement' element={<><InstructorBootcampManagement></InstructorBootcampManagement></>}></Route>
+          <Route path='/Student/Bootcamps' element={<><StudentBootcampList></StudentBootcampList></>}></Route>
+          <Route path='/Bootcamp/SuccessPay' element={<><GoogleTag></GoogleTag><PaymentSuccess></PaymentSuccess></>} ></Route>
+          <Route path='/Dashboard' element={<><GoogleTag></GoogleTag><Dashboard></Dashboard></>} ></Route>
+          <Route path='/Bootcamp/Detail/:slug' element={<><GoogleTag></GoogleTag><BootcampDetail></BootcampDetail></>} ></Route>
+          <Route path='/Active/Bootcamps' element={<><GoogleTag></GoogleTag><ActiveBootcamps></ActiveBootcamps></>} ></Route>
+          <Route path='/Free/Content' element={<><GoogleTag></GoogleTag><FreeContent></FreeContent></>} ></Route>
         </Routes>
-
       </BrowserRouter>
-
     </div>
   );
 }

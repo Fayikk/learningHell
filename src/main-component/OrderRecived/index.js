@@ -7,6 +7,11 @@ import Navbar from '../../components/Navbar/Navbar';
 const OrderRecived =({cartList}) => {
 
 
+
+
+
+
+    
     return(
         <Fragment>
             <Navbar/>

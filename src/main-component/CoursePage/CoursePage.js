@@ -13,19 +13,52 @@ import Search from '../../components/Search/Search';
 import MainPageFilter from '../../components/Filters/MainPageFilter';
 import { Languages } from '../Extensions/Languages';
 
-const butonStyle = {
-    padding: '10px 20px',        // Daha az iç boşluk
-    width: '150px',              // Buton genişliği
-    backgroundColor: '#4CAF50',  // Arka plan rengi
-    color: '#fff',               // Metin rengi
-    border: 'none',              // Kenar çizgisi
-    borderRadius: '8px',         // Yuvarlatılmış kenarlar
-    cursor: 'pointer',           // Fare imleci
-    fontSize: '16px',            // Metin boyutu
-    fontWeight: 'bold',          // Kalın metin
-    transition: 'background-color 0.3s ease',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Gölge efekti
-  }
+// Stil nesnelerini daha organize bir şekilde düzenleyelim
+const styles = {
+    buttonStyle: {
+        padding: '10px 20px',
+        width: '150px',
+        backgroundColor: '#4CAF50',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '8px',
+        cursor: 'pointer',
+        fontSize: '16px',
+        fontWeight: 'bold',
+        transition: 'background-color 0.3s ease, transform 0.2s ease',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+        margin: '10px 0',
+    },
+    container: {
+        padding: '20px 0',
+        margin: '0 auto'
+    },
+    filterContainer: {
+        backgroundColor: '#f8f9fa',
+        padding: '15px',
+        borderRadius: '10px',
+        marginBottom: '20px',
+        boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+    },
+    paginationContainer: {
+        display: 'flex',
+        justifyContent: 'center',
+        margin: '30px 0',
+    },
+    paginationButton: {
+        margin: '0 5px',
+    },
+    noCoursesMessage: {
+        textAlign: 'center',
+        padding: '50px 0',
+        fontSize: '1.5rem',
+        color: '#666'
+    }
+}
 
 
 const CoursePage = () => {
@@ -41,6 +74,7 @@ const CoursePage = () => {
     const [openModal,setOpenModal] = useState(false);
     const [advanceFilter,setAdvanceFilter]= useState();
     const [isClickedEnter,setIsClickedEnter] = useState(false)
+    const [loading, setLoading] = useState(true);
     const [newRule,setNewRule] = useState({
         field:"CourseName",
         op:3,
@@ -117,7 +151,7 @@ const CoursePage = () => {
 
    
     useEffect(()=>{
-
+        setLoading(true);
 
         async function fetchData() {    
             await fetchAllDatas(filter).then((response) => {
@@ -130,6 +164,10 @@ const CoursePage = () => {
                     
                 }
                 localStorage.removeItem("currentPageNumber")
+                setLoading(false);
+            }).catch(error => {
+                console.error("Veri yüklenirken bir hata oluştu:", error);
+                setLoading(false);
             })
 
             // ...
@@ -248,90 +286,111 @@ const CoursePage = () => {
     }
 
 
-    if (courses.length <0 && pageCounter == 0) {
-        
-        return (
-            <IsLoading></IsLoading>
-        )
+    if (loading) {
+        return <IsLoading />
     }
-    
-
-
-
 
     return (
         <Fragment>
             <Navbar />
-            <PageTitle pageTitle={'Course'} pagesub={'Course'} />
-            {
-                courses.length>0 ? (
-                    <>
-                    <div className='container' >
-                        <div className='row' >
-                        <Search onData={handleDataFromChild} onChangeClick={handleClickedEnter} ></Search>
-                        <button
-  onClick={() => setOpenModal(!openModal)}
-  style={butonStyle}
-  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#45a049'}
-  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#4CAF50'}
->
-  Filter
-</button>
-
+            <PageTitle pageTitle={'Kurslar'} pagesub={'Eğitimlerinizi keşfedin'} />
+            
+            <div className='container' style={styles.container}>
+                <div style={styles.filterContainer}>
+                    <div className='row w-100'>
+                        <div className='col-md-8 mb-2'>
+                            <Search onData={handleDataFromChild} onChangeClick={handleClickedEnter} />
                         </div>
-                        {
-                            openModal ? (
-                                <div className='row' >
-                                <MainPageFilter onData={handleDataFromChild} openModal={handleOpenModal} ></MainPageFilter>
-        
-                                </div>
-                            ) : ""
-                        }
-                      
+                        <div className='col-md-4 text-right mb-2'>
+                            <button
+                                onClick={() => setOpenModal(!openModal)}
+                                style={styles.buttonStyle}
+                                onMouseOver={(e) => {
+                                    e.currentTarget.style.backgroundColor = '#45a049';
+                                    e.currentTarget.style.transform = 'translateY(-2px)';
+                                }}
+                                onMouseOut={(e) => {
+                                    e.currentTarget.style.backgroundColor = '#4CAF50';
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                }}
+                            >
+                                {openModal ? 'Filtreyi Kapat' : 'Filtrele'}
+                            </button>
+                        </div>
                     </div>
-             </>
-                ) : ("")
-            }
-
-            <CourseSectionS3 courses={courses} paginationNumber={filter.pageIndex} component={"course"} />
-            <div className="pagination-wrapper">
-                        <ul className="pg-pagination">
-                            {
-                                filter.pageIndex != 1 ? (
+                    
+                    {openModal && (
+                        <div className='row w-100 mt-3'>
+                            <div className='col-12'>
+                                <MainPageFilter onData={handleDataFromChild} openModal={handleOpenModal} />
+                            </div>
+                        </div>
+                    )}
+                </div>
+                
+                {courses.length > 0 ? (
+                    <>
+                        <CourseSectionS3 courses={courses} paginationNumber={filter.pageIndex} component={"course"} />
+                        
+                        <div style={styles.paginationContainer} className="pagination-wrapper">
+                            <ul className="pg-pagination d-flex align-items-center list-unstyled">
+                                {filter.pageIndex !== 1 && (
                                     <li>
-                                    <Button color='primary' aria-label="Previous" onClick={()=>{
-                                        handleClickChangePageNumber(filter.pageIndex-1),
-                                        setTrick()
-                                    }}>
-                                        <i className="fi ti-angle-left"></i>
-                                    </Button>
-                                   </li>
-
-                                ) : ("")
-                            }
-                          
-                            {
-                                [...Array(pageCounter)].map((_, index) => (
-                                    <li key={index} className={index === 0 ? "active" : ""}>
-                                        <li className="active"><Button color={index === trick-1 ? "primary" : "warning"} onClick={()=>{
-                                                                                                handleClickChangePageNumber(index+1),
-                                                                                                setTrick(index+1)}} >{index + 1}</Button></li>
+                                        <Button 
+                                            color='primary' 
+                                            style={styles.paginationButton}
+                                            onClick={() => {
+                                                handleClickChangePageNumber(filter.pageIndex - 1);
+                                                setTrick();
+                                            }}
+                                        >
+                                            <i className="fi ti-angle-left"></i>
+                                        </Button>
                                     </li>
-                                ))
-                            }
-                            {
-                                filter.pageIndex != pageCounter ? (
+                                )}
+                                
+                                {[...Array(pageCounter)].map((_, index) => (
+                                    <li key={index}>
+                                        <Button 
+                                            color={index === trick - 1 ? "primary" : "light"}
+                                            style={styles.paginationButton} 
+                                            onClick={() => {
+                                                handleClickChangePageNumber(index + 1);
+                                                setTrick(index + 1);
+                                            }}
+                                        >
+                                            {index + 1}
+                                        </Button>
+                                    </li>
+                                ))}
+                                
+                                {filter.pageIndex !== pageCounter && pageCounter > 0 && (
                                     <li>
-                                    <Button color='primary' aria-label="Next" onClick={()=>{handleClickChangePageNumber(filter.pageIndex+1),setTrick()}}>
-                                        <i className="fi ti-angle-right"></i>
-                                    </Button>
-                                </li>
-                                ) : ("")
-                            }
-
-                           
-                        </ul>
+                                        <Button 
+                                            color='primary'
+                                            style={styles.paginationButton}
+                                            onClick={() => {
+                                                handleClickChangePageNumber(filter.pageIndex + 1);
+                                                setTrick();
+                                            }}
+                                        >
+                                            <i className="fi ti-angle-right"></i>
+                                        </Button>
+                                    </li>
+                                )}
+                            </ul>
+                        </div>
+                    </>
+                ) : (
+                    <div style={styles.noCoursesMessage}>
+                        <div className="alert alert-info">
+                            <i className="fa fa-info-circle mr-2"></i>
+                            Bu kategoride kurs bulunamadı. Lütfen farklı bir arama veya filtre deneyin.
+                        </div>
                     </div>
+                )}
+            </div>
+            
             <Newslatter2/>
             <Footer />
             <Scrollbar />

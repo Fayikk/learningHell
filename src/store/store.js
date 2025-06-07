@@ -23,7 +23,15 @@ import { ratingApi } from "../api/ratingApi";
 import { locationReducer } from "./reducers/locationSlice";
 import { instructorSubApi } from "../api/InstructorSubApi";
 import { couponApi } from "../api/couponApi";
-
+import { courseProgressApi } from "../api/courseProgressApi";
+import { tagsApi } from "../api/tagsApi";
+import { newsApi } from "../api/newsApi";
+import { bootcampApi } from "../api/bootcampApi";
+import { bootcampTopicApi } from "../api/bootcampTopicApi";
+import { bootcampScheduleApi } from "../api/bootcampScheduleApi";
+import { enrollmentApi } from "../api/enrollmentApi";
+import { bootcampInstructorDetailApi } from "../api/bootcampInstructorDetailApi";
+import { freeContentApi } from "../api/freeContentApi";
 
 
 
@@ -85,6 +93,15 @@ const store = configureStore({
         [ratingApi.reducerPath]:ratingApi.reducer,
         [instructorSubApi.reducerPath]:instructorSubApi.reducer,
         [couponApi.reducerPath]:couponApi.reducer,
+        [courseProgressApi.reducerPath]:courseProgressApi.reducer,
+        [tagsApi.reducerPath]:tagsApi.reducer,
+        [newsApi.reducerPath]:newsApi.reducer,
+        [bootcampApi.reducerPath]:bootcampApi.reducer,
+        [bootcampTopicApi.reducerPath]:bootcampTopicApi.reducer,
+        [bootcampScheduleApi.reducerPath]:bootcampScheduleApi.reducer,
+        [enrollmentApi.reducerPath]:enrollmentApi.reducer,
+        [bootcampInstructorDetailApi.reducerPath]:bootcampInstructorDetailApi.reducer,
+        [freeContentApi.reducerPath]:freeContentApi.reducer,
 
     },middleware:(getDefaultMiddleware) => getDefaultMiddleware()
         .concat(
@@ -104,6 +121,15 @@ const store = configureStore({
             ,ratingApi.middleware
             ,instructorSubApi.middleware
             ,couponApi.middleware
+            ,courseProgressApi.middleware
+            ,tagsApi.middleware
+            ,newsApi.middleware
+            ,bootcampApi.middleware
+            ,bootcampTopicApi.middleware
+            ,bootcampScheduleApi.middleware
+            ,enrollmentApi.middleware
+            ,bootcampInstructorDetailApi.middleware
+            ,freeContentApi.middleware
             // ,errorLoggerMiddleware
             )
 })

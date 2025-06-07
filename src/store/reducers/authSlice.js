@@ -8,6 +8,7 @@ export const InitialState  = {
     role:"",
     email:"",
     InstructorSubId:"",
+    profilePicture:""
 }
 
 
@@ -21,10 +22,14 @@ export const authSlice = createSlice({
             state.nameIdentifier = action.payload.nameIdentifier;
             state.role=action.payload.role;
             state.userName=action.payload.userName
+            state.profilePicture=action.payload.profilePicture
             state.InstructorSubId=action.payload.InstructorSubId
         }
     }
 })
+
+
+
 
 
 

@@ -17,10 +17,13 @@ import store from './store/store'
 import { AuthProvider } from './main-component/Extensions/AuthProvider';
 import './Localization/i18n'
 import ErrorBoundary from './main-component/Extensions/Errors/ErrorBoundary';
+import { HelmetProvider } from 'react-helmet-async';
+import MetaPixel from './Extensions/MetaPixel';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
+        <MetaPixel />
+        <HelmetProvider>
         <ParallaxProvider>
             <ErrorBoundary>
                 <ThemeProvider>
@@ -28,7 +31,7 @@ root.render(
                     </ThemeProvider>
                     </ErrorBoundary>
             </ParallaxProvider>
-        </PersistGate>
+            </HelmetProvider>
     </Provider>
 );
 

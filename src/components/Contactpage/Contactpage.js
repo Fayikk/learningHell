@@ -48,7 +48,6 @@ const Contactpage = () => {
                                         <div className="office-info-text">
                                             <h2>Call Now</h2>
                                             <p>+90 531 014 90 46</p>
-                                            <p>+90 531 306 25 67</p>
                                         </div>
                                     </div>
                                 </div> 

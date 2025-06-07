@@ -107,7 +107,7 @@ const SignUpPage = (props) => {
                                 onBlur={(e) => changeHandler(e)}
                                 onChange={(e) => changeHandler(e)}
                             />
-                            {validator.message('full_name', value.full_name, 'required|alpha')}
+                            {validator.message('full_name', value.full_name, 'required')}
                         </Grid>
                         <Grid item xs={12}>
                             <TextField

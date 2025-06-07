@@ -7,9 +7,19 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import {totalPrice} from "../../utils";
 import './style.scss'
+import GoogleConversionTracker from '../../Extensions/GoogleConversionTracker';
 
 const OrderRecivedSec = ({cartList}) => {
+
+
+
+
+
     return(
+        <>
+
+    <GoogleConversionTracker />
+
         <section className="cart-recived-section section-padding">
             <div className="container">
                 <div className="row">
@@ -53,6 +63,7 @@ const OrderRecivedSec = ({cartList}) => {
                 </div>
             </div>
         </section>
+        </>
     )
 }
 

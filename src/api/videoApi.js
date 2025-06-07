@@ -29,13 +29,6 @@ export const videoApi = createApi({
             })
         }),
 
-        // const updateVideoModel = {
-        //     videoId:videoId,
-        //     videoModel:rowNumber
-        //   }
-      
-
-      
         updateVideoAsync:builder.mutation({
             query:(updateVideoModel) =>   (
                 {
@@ -43,7 +36,8 @@ export const videoApi = createApi({
                     method:"PUT",
                      body:updateVideoModel.updateVideoModel
                 }
-            )         }),
+            )         
+        }),
         changeVideoAsnc:builder.mutation({
             query:(fileModel) => (
                 
@@ -60,11 +54,31 @@ export const videoApi = createApi({
                 method:"POST",
                 body:videoModel
             })
-        })
+        }),
+        bulkVideoAsync:builder.mutation({
+            query:(bulkVideoModels) => ({
+                url:"BulkUploadVideo",
+                method:"POST",
+                body:bulkVideoModels
+            })
+        }),
+        getUnAssignedVideosAsync:builder.query({
+            query:() => ({
+                url:"GetUnAssignedVideos",
+                method:"GET",
+            })
+        }),
+        updateAssignVideoAsync:builder.mutation({
+            query:(updateAssignVideoModel) => ({
+                url:`AssignVideoAsync`,
+                method:"PUT",
+                body:updateAssignVideoModel
+            })
+        }),
     })
 })
 
 // fileName,formData
 
 
-export const {useGetWatchVideoUrlMutation,useRemoveVideoAsyncMutation,useChangeVideoAsncMutation,useAddVideoAsyncMutation,useUpdateVideoAsyncMutation} = videoApi;
+export const {useGetWatchVideoUrlMutation,useUpdateAssignVideoAsyncMutation,useGetUnAssignedVideosAsyncQuery,useRemoveVideoAsyncMutation,useChangeVideoAsncMutation,useAddVideoAsyncMutation,useUpdateVideoAsyncMutation,useBulkVideoAsyncMutation} = videoApi;
