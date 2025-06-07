@@ -56,7 +56,9 @@ import BootcampDetail from '../../components/Bootcamps/Student/Detail';
 import ActiveBootcamps from '../../components/Bootcamps/Student/Active';
 import FreeContent from '../../components/FreeContent/FreeContent';
 import ProfileEdit from '../../components/Profile/ProfileEdit';
-
+// import LeadCapturePage from '../../components/LeadCapture/LeadCapturePage';
+import LeadCaptureSuccessPage from '../../components/LeadCapture/LeadCaptureSuccessPage';
+import LeadCapturePage from '../../components/LeadCapture/LeadCapturePage';
 const AllRoute = () => {
   return (
     <div className="App">
@@ -123,6 +125,8 @@ const AllRoute = () => {
           <Route path='/Bootcamp/Detail/:slug' element={<><GoogleTag></GoogleTag><BootcampDetail></BootcampDetail></>} ></Route>
           <Route path='/Active/Bootcamps' element={<><GoogleTag></GoogleTag><ActiveBootcamps></ActiveBootcamps></>} ></Route>
           <Route path='/Free/Content' element={<><GoogleTag></GoogleTag><FreeContent></FreeContent></>} ></Route>
+          <Route path='/Campaigns' element={<><GoogleTag></GoogleTag><LeadCapturePage></LeadCapturePage></>} ></Route>
+          <Route path='/lead-capture-success' element={<><GoogleTag></GoogleTag><LeadCaptureSuccessPage></LeadCaptureSuccessPage></>} ></Route>
         </Routes>
       </BrowserRouter>
     </div>
