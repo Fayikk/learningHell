@@ -16,13 +16,10 @@ module.exports = {
     ],
     '@babel/preset-react'
   ],
-  // Sadece production'da minify
+  // Production için ekstra plugin yok
   env: {
     production: {
-      plugins: [
-        ['transform-remove-console'],
-        ['transform-react-remove-prop-types']
-      ]
+      plugins: []
     }
   }
 };
