@@ -56,7 +56,7 @@ const LeadCaptureSuccessPage = () => {
           </h1>
           
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Premium eğitimler için özel kupon kodunuz e-posta adresinize gönderildi.
+            Premium eğitimler için özel kupon kodunuz e-posta adresinize gönderilecektir.
             <br />
             <span className="font-medium text-teal-600">{email}</span> adresini kontrol ediniz.
           </p>
