@@ -1,12 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-// import onlineLearningImage from '../../images/online-learning-hero.jpg';
 import { useRegisterNewsLetterMutation } from '../../api/newsLetterApi';
-import Footer from '../footer/Footer';
-import Header from '../header/Header';
-import Navbar from '../Navbar/Navbar';
+
+// Lazy load components
+const Navbar = lazy(() => import('../Navbar/Navbar'));
+const Footer = lazy(() => import('../footer/Footer'));
+
+// Optimize SVG components
+const DecorationSVG = React.memo(({ className, children }) => (
+  <motion.div
+    className={className}
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 0.1 }}
+    transition={{ duration: 0.5 }}
+  >
+    {children}
+  </motion.div>
+));
 
 const LeadCapturePage = () => {
   const navigate = useNavigate();
@@ -19,22 +31,19 @@ const LeadCapturePage = () => {
     seconds: 59
   });
 
-  // Countdown timer effect
+  // Optimize timer effect
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft(prevTime => {
         const newSeconds = prevTime.seconds - 1;
-        if (newSeconds >= 0) {
-          return { ...prevTime, seconds: newSeconds };
-        }
+        if (newSeconds >= 0) return { ...prevTime, seconds: newSeconds };
+        
         const newMinutes = prevTime.minutes - 1;
-        if (newMinutes >= 0) {
-          return { ...prevTime, minutes: newMinutes, seconds: 59 };
-        }
+        if (newMinutes >= 0) return { ...prevTime, minutes: newMinutes, seconds: 59 };
+        
         const newHours = prevTime.hours - 1;
-        if (newHours >= 0) {
-          return { hours: newHours, minutes: 59, seconds: 59 };
-        }
+        if (newHours >= 0) return { hours: newHours, minutes: 59, seconds: 59 };
+        
         clearInterval(timer);
         return prevTime;
       });
@@ -53,7 +62,6 @@ const LeadCapturePage = () => {
     try {
       const response = await addNewsLetter({ email });
       if (response.data?.isSuccess) {
-        // Redirect to success page with email
         navigate('/lead-capture-success', { state: { email } });
       } else {
         toast.error('Bir hata oluştu. Lütfen tekrar deneyiniz.');
@@ -66,71 +74,34 @@ const LeadCapturePage = () => {
   };
 
   return (
-    <>
+    <Suspense fallback={null}>
       <Navbar />
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 relative overflow-hidden">
-        {/* Dekoratif SVG'ler - Sol Üst */}
-        <motion.div
-          className="absolute left-0 top-0 opacity-10 -translate-x-1/4 -translate-y-1/4"
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 0.1, scale: 1 }}
-          transition={{ duration: 1 }}
-        >
-          <svg width="400" height="400" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <div 
+        className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 relative overflow-hidden"
+        style={{ minHeight: '100vh' }} // Prevent CLS
+      >
+        {/* Decorative SVGs - Optimized */}
+        <DecorationSVG className="absolute left-0 top-0 opacity-10 -translate-x-1/4 -translate-y-1/4">
+          <svg width="300" height="300" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="2" className="text-indigo-600" />
             <path d="M30 50h40M50 30v40" stroke="currentColor" strokeWidth="2" className="text-indigo-600" />
-            <circle cx="50" cy="50" r="20" stroke="currentColor" strokeWidth="2" className="text-purple-600" strokeDasharray="4 4" />
           </svg>
-        </motion.div>
+        </DecorationSVG>
 
-        {/* Dekoratif SVG'ler - Sağ Alt */}
-        <motion.div
-          className="absolute right-0 bottom-0 opacity-10 translate-x-1/4 translate-y-1/4"
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 0.1, scale: 1 }}
-          transition={{ duration: 1, delay: 0.2 }}
-        >
-          <svg width="400" height="400" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <DecorationSVG className="absolute right-0 bottom-0 opacity-10 translate-x-1/4 translate-y-1/4">
+          <svg width="300" height="300" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="20" y="20" width="60" height="60" rx="2" stroke="currentColor" strokeWidth="2" className="text-blue-600" />
             <path d="M40 40l20 20M60 40L40 60" stroke="currentColor" strokeWidth="2" className="text-blue-600" />
-            <circle cx="50" cy="50" r="15" stroke="currentColor" strokeWidth="2" className="text-indigo-600" />
           </svg>
-        </motion.div>
-
-        {/* Yapay Zeka Sembolü - Orta Sol */}
-        <motion.div
-          className="absolute left-1/4 top-1/2 opacity-5"
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 0.05, scale: 1 }}
-          transition={{ duration: 1, delay: 0.4 }}
-        >
-          <svg width="300" height="300" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20 50c0-16.569 13.431-30 30-30s30 13.431 30 30-13.431 30-30 30S20 66.569 20 50z" stroke="currentColor" strokeWidth="2" className="text-purple-600" />
-            <path d="M35 50c0-8.284 6.716-15 15-15 8.284 0 15 6.716 15 15 0 8.284-6.716 15-15 15-8.284 0-15-6.716-15-15z" stroke="currentColor" strokeWidth="2" className="text-indigo-600" />
-            <path d="M45 35l10 30M35 45l30 10" stroke="currentColor" strokeWidth="2" className="text-blue-600" />
-          </svg>
-        </motion.div>
-
-        {/* Kod Sembolleri - Orta Sağ */}
-        <motion.div
-          className="absolute right-1/4 top-1/2 opacity-5"
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 0.05, scale: 1 }}
-          transition={{ duration: 1, delay: 0.6 }}
-        >
-          <svg width="300" height="300" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M30 40l15 10-15 10M70 40l-15 10 15 10" stroke="currentColor" strokeWidth="2" className="text-indigo-600" />
-            <rect x="25" y="25" width="50" height="50" rx="4" stroke="currentColor" strokeWidth="2" className="text-purple-600" strokeDasharray="4 4" />
-          </svg>
-        </motion.div>
+        </DecorationSVG>
 
         <div className="max-w-7xl w-full space-y-12 relative z-10">
-          {/* Başlık Bölümü */}
+          {/* Main Content */}
           <motion.div 
             className="text-center"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
           >
             <h1 className="text-4xl sm:text-6xl font-bold text-gray-900 leading-tight">
               <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
@@ -147,13 +118,13 @@ const LeadCapturePage = () => {
             </p>
           </motion.div>
 
-          {/* Form Bölümü - Ortalanmış */}
+          {/* Form Section - Optimized */}
           <div className="flex justify-center">
             <motion.div
               className="w-full max-w-md mx-auto"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4 }}
             >
               <form onSubmit={handleSubmit} className="bg-white shadow-2xl rounded-2xl p-8 space-y-6">
                 <div>
@@ -191,7 +162,7 @@ const LeadCapturePage = () => {
             </motion.div>
           </div>
 
-          {/* İstatistikler */}
+          {/* Statistics Section */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition duration-200">
               <div className="text-3xl font-bold text-blue-600 mb-2">5K+</div>
@@ -207,7 +178,7 @@ const LeadCapturePage = () => {
             </div>
           </div>
           
-          {/* Özellikler listesi */}
+          {/* Features List */}
           <div className="max-w-2xl mx-auto">
             <div className="space-y-4 bg-white/50 p-6 rounded-xl backdrop-blur-sm">
               <motion.div 
@@ -253,8 +224,9 @@ const LeadCapturePage = () => {
         </div>
       </div>
       <Footer />
-    </>
+    </Suspense>
   );
-}
+};
 
-export default LeadCapturePage;
+// Performance optimization
+export default React.memo(LeadCapturePage);
