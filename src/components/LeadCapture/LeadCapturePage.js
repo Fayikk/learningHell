@@ -1,23 +1,76 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, lazy, Suspense, useCallback, useMemo } from 'react';
+import { motion } from 'framer-motion'; // AnimatePresence kaldırıldı çünkü kullanılmıyor
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { useRegisterNewsLetterMutation } from '../../api/newsLetterApi';
 
-// Lazy load components
-const Navbar = lazy(() => import('../Navbar/Navbar'));
-const Footer = lazy(() => import('../footer/Footer'));
+// SVG'leri ayrı component'e taşıyoruz
+const SVGIcons = React.memo(() => (
+  <>
+    {/* SVG'lerin sayısını azalttık ve optimize ettik */}
+    <motion.div
+      className="absolute left-0 top-0 opacity-10 -translate-x-1/4 -translate-y-1/4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 0.1 }}
+      transition={{ duration: 0.3 }}
+    >
+      <svg width="200" height="200" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="40" stroke="currentColor" className="text-indigo-600" />
+      </svg>
+    </motion.div>
 
-// Optimize SVG components
-const DecorationSVG = React.memo(({ className, children }) => (
-  <motion.div
-    className={className}
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 0.1 }}
-    transition={{ duration: 0.5 }}
-  >
-    {children}
-  </motion.div>
+    <motion.div
+      className="absolute right-0 bottom-0 opacity-10 translate-x-1/4 translate-y-1/4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 0.1 }}
+      transition={{ duration: 0.3 }}
+    >
+      <svg width="200" height="200" viewBox="0 0 100 100">
+        <rect x="20" y="20" width="60" height="60" rx="2" stroke="currentColor" className="text-blue-600" />
+      </svg>
+    </motion.div>
+  </>
+));
+
+// Lazy load edilen componentler
+const Navbar = lazy(() => import(/* webpackChunkName: "navbar" */'../Navbar/Navbar'));
+const Footer = lazy(() => import(/* webpackChunkName: "footer" */'../footer/Footer'));
+
+// Form komponenti ayrı bir bileşene taşındı
+const EmailForm = React.memo(({ email, isSubmitting, onSubmit, onChange }) => (
+  <form onSubmit={onSubmit} className="bg-white shadow-2xl rounded-2xl p-8 space-y-6">
+    <div>
+      <label htmlFor="email" className="block text-sm font-medium text-gray-700 text-center">
+        E-posta Adresiniz
+      </label>
+      <div className="mt-1">
+        <input
+          id="email"
+          name="email"
+          type="email"
+          required
+          value={email}
+          onChange={onChange}
+          className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          placeholder="ornek@email.com"
+        />
+      </div>
+    </div>
+
+    <div>
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${isSubmitting ? 'opacity-75 cursor-not-allowed' : ''}`}
+      >
+        {isSubmitting ? 'Gönderiliyor...' : 'Ücretsiz Kupon Kodunu Al'}
+      </button>
+    </div>
+
+    <p className="text-xs text-gray-500 text-center">
+      Kaydolarak, kampanya koşullarını kabul etmiş olursunuz.
+    </p>
+  </form>
 ));
 
 const LeadCapturePage = () => {
@@ -25,33 +78,36 @@ const LeadCapturePage = () => {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [addNewsLetter] = useRegisterNewsLetterMutation();
-  const [timeLeft, setTimeLeft] = useState({
+  
+  // Timer state'i useMemo ile optimize edildi
+  const [timeLeft, setTimeLeft] = useState(() => ({
     hours: 47,
     minutes: 59,
     seconds: 59
-  });
+  }));
 
-  // Optimize timer effect
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(prevTime => {
-        const newSeconds = prevTime.seconds - 1;
-        if (newSeconds >= 0) return { ...prevTime, seconds: newSeconds };
-        
-        const newMinutes = prevTime.minutes - 1;
-        if (newMinutes >= 0) return { ...prevTime, minutes: newMinutes, seconds: 59 };
-        
-        const newHours = prevTime.hours - 1;
-        if (newHours >= 0) return { hours: newHours, minutes: 59, seconds: 59 };
-        
-        clearInterval(timer);
-        return prevTime;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
+  // Timer effect'i useCallback ile optimize edildi
+  const updateTimer = useCallback(() => {
+    setTimeLeft(prevTime => {
+      const newSeconds = prevTime.seconds - 1;
+      if (newSeconds >= 0) return { ...prevTime, seconds: newSeconds };
+      
+      const newMinutes = prevTime.minutes - 1;
+      if (newMinutes >= 0) return { ...prevTime, minutes: newMinutes, seconds: 59 };
+      
+      const newHours = prevTime.hours - 1;
+      if (newHours >= 0) return { hours: newHours, minutes: 59, seconds: 59 };
+      
+      return prevTime;
+    });
   }, []);
 
-  const handleSubmit = async (e) => {
+  useEffect(() => {
+    const timer = setInterval(updateTimer, 1000);
+    return () => clearInterval(timer);
+  }, [updateTimer]);
+
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     if (!email) {
       toast.error('Lütfen e-posta adresinizi giriniz');
@@ -71,36 +127,24 @@ const LeadCapturePage = () => {
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [email, addNewsLetter, navigate]);
+
+  const handleEmailChange = useCallback((e) => setEmail(e.target.value), []);
 
   return (
     <Suspense fallback={null}>
       <div 
         className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 relative overflow-hidden"
-        style={{ minHeight: '100vh' }} // Prevent CLS
+        style={{ minHeight: '100vh', contain: 'content' }}
       >
-        {/* Decorative SVGs - Optimized */}
-        <DecorationSVG className="absolute left-0 top-0 opacity-10 -translate-x-1/4 -translate-y-1/4">
-          <svg width="300" height="300" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="2" className="text-indigo-600" />
-            <path d="M30 50h40M50 30v40" stroke="currentColor" strokeWidth="2" className="text-indigo-600" />
-          </svg>
-        </DecorationSVG>
-
-        <DecorationSVG className="absolute right-0 bottom-0 opacity-10 translate-x-1/4 translate-y-1/4">
-          <svg width="300" height="300" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="20" y="20" width="60" height="60" rx="2" stroke="currentColor" strokeWidth="2" className="text-blue-600" />
-            <path d="M40 40l20 20M60 40L40 60" stroke="currentColor" strokeWidth="2" className="text-blue-600" />
-          </svg>
-        </DecorationSVG>
+        <SVGIcons />
 
         <div className="max-w-7xl w-full space-y-12 relative z-10">
-          {/* Main Content */}
           <motion.div 
             className="text-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.3 }}
           >
             <h1 className="text-4xl sm:text-6xl font-bold text-gray-900 leading-tight">
               <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
@@ -117,47 +161,19 @@ const LeadCapturePage = () => {
             </p>
           </motion.div>
 
-          {/* Form Section - Optimized */}
           <div className="flex justify-center">
             <motion.div
               className="w-full max-w-md mx-auto"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.4 }}
+              transition={{ duration: 0.3 }}
             >
-              <form onSubmit={handleSubmit} className="bg-white shadow-2xl rounded-2xl p-8 space-y-6">
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 text-center">
-                    E-posta Adresiniz
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                      placeholder="ornek@email.com"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${isSubmitting ? 'opacity-75 cursor-not-allowed' : ''}`}
-                  >
-                    {isSubmitting ? 'Gönderiliyor...' : 'Ücretsiz Kupon Kodunu Al'}
-                  </button>
-                </div>
-
-                <p className="text-xs text-gray-500 text-center">
-                  Kaydolarak, kampanya koşullarını kabul etmiş olursunuz.
-                </p>
-              </form>
+              <EmailForm 
+                email={email}
+                isSubmitting={isSubmitting}
+                onSubmit={handleSubmit}
+                onChange={handleEmailChange}
+              />
             </motion.div>
           </div>
 
@@ -226,5 +242,4 @@ const LeadCapturePage = () => {
   );
 };
 
-// Performance optimization
 export default React.memo(LeadCapturePage);

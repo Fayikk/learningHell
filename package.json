@@ -89,9 +89,14 @@
     ]
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.27.2",
     "autoprefixer": "^10.4.20",
+    "compression-webpack-plugin": "^11.1.0",
+    "core-js": "^3.42.0",
+    "css-minimizer-webpack-plugin": "^7.0.2",
     "env-cmd": "^10.1.0",
     "postcss": "^8.4.41",
-    "tailwindcss": "^3.4.10"
+    "tailwindcss": "^3.4.10",
+    "terser-webpack-plugin": "^5.3.14"
   }
 }
