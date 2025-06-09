@@ -1,244 +1,252 @@
-import React, { useState, useEffect, lazy, Suspense, useCallback, useMemo } from 'react';
-import { motion } from 'framer-motion'; // AnimatePresence kaldırıldı çünkü kullanılmıyor
-import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRegisterNewsLetterMutation } from '../../api/newsLetterApi';
-
-// SVG'leri ayrı component'e taşıyoruz
-const SVGIcons = React.memo(() => (
-  <>
-    {/* SVG'lerin sayısını azalttık ve optimize ettik */}
-    <motion.div
-      className="absolute left-0 top-0 opacity-10 -translate-x-1/4 -translate-y-1/4"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 0.1 }}
-      transition={{ duration: 0.3 }}
-    >
-      <svg width="200" height="200" viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="40" stroke="currentColor" className="text-indigo-600" />
-      </svg>
-    </motion.div>
-
-    <motion.div
-      className="absolute right-0 bottom-0 opacity-10 translate-x-1/4 translate-y-1/4"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 0.1 }}
-      transition={{ duration: 0.3 }}
-    >
-      <svg width="200" height="200" viewBox="0 0 100 100">
-        <rect x="20" y="20" width="60" height="60" rx="2" stroke="currentColor" className="text-blue-600" />
-      </svg>
-    </motion.div>
-  </>
-));
-
-// Lazy load edilen componentler
-const Navbar = lazy(() => import(/* webpackChunkName: "navbar" */'../Navbar/Navbar'));
-const Footer = lazy(() => import(/* webpackChunkName: "footer" */'../footer/Footer'));
-
-// Form komponenti ayrı bir bileşene taşındı
-const EmailForm = React.memo(({ email, isSubmitting, onSubmit, onChange }) => (
-  <form onSubmit={onSubmit} className="bg-white shadow-2xl rounded-2xl p-8 space-y-6">
-    <div>
-      <label htmlFor="email" className="block text-sm font-medium text-gray-700 text-center">
-        E-posta Adresiniz
-      </label>
-      <div className="mt-1">
-        <input
-          id="email"
-          name="email"
-          type="email"
-          required
-          value={email}
-          onChange={onChange}
-          className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          placeholder="ornek@email.com"
-        />
-      </div>
-    </div>
-
-    <div>
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${isSubmitting ? 'opacity-75 cursor-not-allowed' : ''}`}
-      >
-        {isSubmitting ? 'Gönderiliyor...' : 'Ücretsiz Kupon Kodunu Al'}
-      </button>
-    </div>
-
-    <p className="text-xs text-gray-500 text-center">
-      Kaydolarak, kampanya koşullarını kabul etmiş olursunuz.
-    </p>
-  </form>
-));
+import { useNavigate } from 'react-router-dom';
 
 const LeadCapturePage = () => {
-  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [addNewsLetter] = useRegisterNewsLetterMutation();
-  
-  // Timer state'i useMemo ile optimize edildi
-  const [timeLeft, setTimeLeft] = useState(() => ({
-    hours: 47,
-    minutes: 59,
-    seconds: 59
-  }));
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [registerNewsLetter] = useRegisterNewsLetterMutation();
+  const navigate = useNavigate();
 
-  // Timer effect'i useCallback ile optimize edildi
-  const updateTimer = useCallback(() => {
-    setTimeLeft(prevTime => {
-      const newSeconds = prevTime.seconds - 1;
-      if (newSeconds >= 0) return { ...prevTime, seconds: newSeconds };
-      
-      const newMinutes = prevTime.minutes - 1;
-      if (newMinutes >= 0) return { ...prevTime, minutes: newMinutes, seconds: 59 };
-      
-      const newHours = prevTime.hours - 1;
-      if (newHours >= 0) return { hours: newHours, minutes: 59, seconds: 59 };
-      
-      return prevTime;
-    });
+  // Timer state'ini session storage ile senkronize et
+  const [timeLeft, setTimeLeft] = useState(() => {
+    const savedTime = sessionStorage.getItem('countdown');
+    if (savedTime) {
+      const parsed = JSON.parse(savedTime);
+      if (Date.now() < parsed.expiry) {
+        return parsed.time;
+      }
+    }
+    return { hours: 1, minutes: 59, seconds: 59 };
+  });
+
+  // Timer'ı optimize et
+  useEffect(() => {
+    const expiry = Date.now() + ((timeLeft.hours * 3600 + timeLeft.minutes * 60 + timeLeft.seconds) * 1000);
+    
+    const timer = setInterval(() => {
+      setTimeLeft(prevTime => {
+        if (prevTime.hours === 0 && prevTime.minutes === 0 && prevTime.seconds === 0) {
+          clearInterval(timer);
+          return prevTime;
+        }
+
+        const newTime = { ...prevTime };
+        
+        if (newTime.seconds > 0) {
+          newTime.seconds--;
+        } else {
+          newTime.seconds = 59;
+          if (newTime.minutes > 0) {
+            newTime.minutes--;
+          } else {
+            newTime.minutes = 59;
+            if (newTime.hours > 0) {
+              newTime.hours--;
+            }
+          }
+        }
+
+        // Session storage'a kaydet
+        sessionStorage.setItem('countdown', JSON.stringify({ 
+          time: newTime, 
+          expiry 
+        }));
+        
+        return newTime;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    const timer = setInterval(updateTimer, 1000);
-    return () => clearInterval(timer);
-  }, [updateTimer]);
-
-  const handleSubmit = useCallback(async (e) => {
-    e.preventDefault();
-    if (!email) {
-      toast.error('Lütfen e-posta adresinizi giriniz');
+  // Form submission'ı optimize et
+  const handleSubmit = useCallback(async () => {
+    if (!email || !email.includes('@')) {
+      alert('Lütfen geçerli bir e-posta adresi giriniz');
       return;
     }
 
     setIsSubmitting(true);
     try {
-      const response = await addNewsLetter({ email });
-      if (response.data?.isSuccess) {
-        navigate('/lead-capture-success', { state: { email } });
-      } else {
-        toast.error('Bir hata oluştu. Lütfen tekrar deneyiniz.');
-      }
+      await registerNewsLetter({ email });
+
+      console.log('Kayıt başarılı:', email);
+
+      setShowSuccess(true);
+      navigate('/lead-capture-success',{ state: { email } });
     } catch (error) {
-      toast.error('Bir hata oluştu. Lütfen tekrar deneyiniz.');
+      console.error('Kayıt hatası:', error);
+      alert('Kayıt sırasında bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setIsSubmitting(false);
     }
-  }, [email, addNewsLetter, navigate]);
+  }, [email, registerNewsLetter, navigate]);
 
-  const handleEmailChange = useCallback((e) => setEmail(e.target.value), []);
+  // Input değişikliğini optimize et
+  const handleEmailChange = useCallback((e) => {
+    setEmail(e.target.value.trim());
+  }, []);
+
+  // Benefits array'ini memoize et
+  const benefits = useMemo(() => [
+    '✅ ChatGPT ile Para Kazanma Teknikleri',
+    '✅ 1 Saatte Web Sitesi Yapma',
+    '✅ AI ile E-Ticaret Kurma',
+    '✅ Sıfırdan Mobil Uygulama Geliştirme'
+  ], []);
+
+  // Formatlı zamanı memoize et
+  const formattedTime = useMemo(() => ({
+    hours: String(timeLeft.hours).padStart(2, '0'),
+    minutes: String(timeLeft.minutes).padStart(2, '0'),
+    seconds: String(timeLeft.seconds).padStart(2, '0')
+  }), [timeLeft.hours, timeLeft.minutes, timeLeft.seconds]);
 
   return (
-    <Suspense fallback={null}>
-      <div 
-        className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 relative overflow-hidden"
-        style={{ minHeight: '100vh', contain: 'content' }}
-      >
-        <SVGIcons />
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 relative overflow-hidden">
+      {/* Animated Background - React.memo ile sarmalanmış komponente taşınabilir */}
+      <div className="absolute inset-0">
+        <div className="absolute top-10 left-10 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+        <div className="absolute top-40 right-10 w-72 h-72 bg-yellow-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
+        <div className="absolute -bottom-32 left-20 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-4000"></div>
+      </div>
 
-        <div className="max-w-7xl w-full space-y-12 relative z-10">
-          <motion.div 
-            className="text-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-          >
-            <h1 className="text-4xl sm:text-6xl font-bold text-gray-900 leading-tight">
-              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                Ücretsiz Yapay Zeka Ve Yazılım
+      <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-8">
+        <div className="max-w-4xl w-full">
+          {/* Urgency Timer */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 bg-red-500 text-white px-6 py-3 rounded-full text-lg font-bold animate-pulse">
+              ⏰ Kampanya Bitiyor: 
+              <span className="tabular-nums">
+                {formattedTime.hours}:{formattedTime.minutes}:{formattedTime.seconds}
               </span>
-              {" "}Eğitimleriyle
-              <br />
-              Kariyerinizi İleriye Taşıyın
-            </h1>
-            <p className="mt-6 text-xl text-gray-600 mx-auto max-w-2xl">
-              Özel fırsatlardan yararlanın ve profesyonel kurslarımıza
-              <span className="font-semibold text-indigo-600"> ücretsiz kupon kodu </span>
-              ile erişin!
-            </p>
-          </motion.div>
-
-          <div className="flex justify-center">
-            <motion.div
-              className="w-full max-w-md mx-auto"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3 }}
-            >
-              <EmailForm 
-                email={email}
-                isSubmitting={isSubmitting}
-                onSubmit={handleSubmit}
-                onChange={handleEmailChange}
-              />
-            </motion.div>
-          </div>
-
-          {/* Statistics Section */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition duration-200">
-              <div className="text-3xl font-bold text-blue-600 mb-2">5K+</div>
-              <div className="text-gray-600">Aktif Öğrenci</div>
-            </div>
-            <div className="bg-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition duration-200">
-              <div className="text-3xl font-bold text-indigo-600 mb-2">50+</div>
-              <div className="text-gray-600">Premium Kurs</div>
-            </div>
-            <div className="bg-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition duration-200">
-              <div className="text-3xl font-bold text-purple-600 mb-2">4.8/5</div>
-              <div className="text-gray-600">Öğrenci Puanı</div>
             </div>
           </div>
-          
-          {/* Features List */}
-          <div className="max-w-2xl mx-auto">
-            <div className="space-y-4 bg-white/50 p-6 rounded-xl backdrop-blur-sm">
-              <motion.div 
-                className="flex items-center gap-3"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                <div className="bg-gradient-to-r from-green-400 to-green-500 p-2 rounded-full">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
+
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Sol Taraf - Value Proposition */}
+            <div className="text-white space-y-6">
+              <h1 className="text-4xl lg:text-6xl font-bold leading-tight">
+                <span className="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
+                  ÜCRETSİZ
+                </span>
+                <br />
+                Yapay Zeka Eğitimi
+              </h1>
+              
+              <p className="text-xl lg:text-2xl text-gray-200 leading-relaxed">
+                <strong className="text-yellow-400">2024'ün en popüler becerilerini</strong> öğrenin ve 
+                <strong className="text-green-400"> maaşınızı 3 katına</strong> çıkarın
+              </p>
+
+              {/* Social Proof */}
+              <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                <div className="flex -space-x-2">
+                  {[1,2,3,4,5].map(i => (
+                    <div key={i} className="w-8 h-8 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full border-2 border-white"></div>
+                  ))}
                 </div>
-                <span className="text-gray-700 text-lg">Premium eğitimlere ücretsiz erişim</span>
-              </motion.div>
-              <motion.div 
-                className="flex items-center gap-3"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                <div className="bg-gradient-to-r from-blue-400 to-blue-500 p-2 rounded-full">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+                <div>
+                  <div className="text-yellow-400 font-bold">12,847+ öğrenci</div>
+                  <div className="text-sm text-gray-300">bu hafta kaydoldu</div>
                 </div>
-                <span className="text-gray-700 text-lg">Sınırsız tekrar izleme hakkı</span>
-              </motion.div>
-              <motion.div 
-                className="flex items-center gap-3"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-              >              <div className="bg-gradient-to-r from-purple-400 to-purple-500 p-2 rounded-full">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 012.944 12c0 2.901 1.027 5.56 2.735 7.634" />
-                </svg>
               </div>
-                <span className="text-gray-700 text-lg">Sertifika alma imkanı</span>
-              </motion.div>
+
+              {/* Benefits */}
+              <div className="space-y-3">
+                {benefits.map((benefit, index) => (
+                  <div key={index} className="flex items-center gap-3 text-lg">
+                    <span>{benefit}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Sağ Taraf - Form */}
+            <div className="bg-white rounded-3xl shadow-2xl p-8 lg:p-10">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                  Şimdi Başla!
+                </h2>
+                <p className="text-gray-600">
+                  E-postanı gir, <span className="font-bold text-green-600">%100 ücretsiz</span> erişim kazan
+                </p>
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={handleEmailChange}
+                    className="w-full px-4 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition duration-200"
+                    placeholder="E-posta adresinizi girin..."
+                  />
+                </div>
+
+                <button
+                  onClick={handleSubmit}
+                  disabled={isSubmitting}
+                  className={`w-full py-4 px-6 text-xl font-bold text-white rounded-xl transition duration-200 transform hover:scale-105 ${
+                    isSubmitting 
+                      ? 'bg-gray-400 cursor-not-allowed' 
+                      : 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 shadow-lg hover:shadow-xl'
+                  }`}
+                >
+                  {isSubmitting ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Gönderiliyor...
+                    </div>
+                  ) : (
+                    '🚀 ÜCRETSİZ ERİŞİM KAZAN'
+                  )}
+                </button>
+              </div>
+
+              {/* Trust Signals - React.memo ile sarmalanmış ayrı komponente taşınabilir */}
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <div className="flex items-center justify-center gap-4 text-sm text-gray-500">
+                  <div className="flex items-center gap-1">
+                    <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                    </svg>
+                    100% Güvenli
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                      <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                    </svg>
+                    Spam Yok
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <svg className="w-4 h-4 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                    </svg>
+                    Anında Erişim
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Trust Bar */}
+          <div className="mt-12 text-center">
+            <div className="flex flex-wrap justify-center items-center gap-8 text-white/60">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span>2,341 kişi şu anda online</span>
+              </div>
+              <div>⭐⭐⭐⭐⭐ 4.9/5 (8,242 değerlendirme)</div>
             </div>
           </div>
         </div>
       </div>
-    </Suspense>
+    </div>
   );
 };
 
