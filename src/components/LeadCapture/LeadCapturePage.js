@@ -137,7 +137,7 @@ const LeadCapturePage = () => {
               </h1>
               
               <p className="text-xl lg:text-2xl text-gray-200 leading-relaxed">
-                <strong className="text-yellow-400">2024'ün en popüler becerilerini</strong> öğrenin ve 
+                <strong className="text-yellow-400">2025'ün en popüler becerilerini</strong> öğrenin ve 
                 <strong className="text-green-400"> maaşınızı 3 katına</strong> çıkarın
               </p>
 
