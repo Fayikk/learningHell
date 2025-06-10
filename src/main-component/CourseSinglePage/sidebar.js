@@ -1,17 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useAddShoppingCartItemMutation } from "../../api/shoppingCartApi";
 import { cartStateUpdate } from "../../store/reducers/cartSlice";
-import { MatchLocationToCurrency } from "../Extensions/MatchLocationToCurrency";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import CartDropdown from "../../components/header/Cart/CartDropdown";
+import { MatchLocationToCurrency } from "../Extensions/MatchLocationToCurrency";
 
 const Sidebar = (props) => {
   const [addBasketItem] = useAddShoppingCartItemMutation();
   const dispatch = useDispatch();
   const userDetail = useSelector((state) => state.authStore.nameIdentifier);
   const navigate = useNavigate();
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const addBasket = async () => {
     if (userDetail === "") {
@@ -30,6 +31,7 @@ const Sidebar = (props) => {
     if (response && response.data.isSuccess) {
       dispatch(cartStateUpdate(response.data.result.item2));
       toast.success(response.data.messages[0]);
+      setShowDropdown(true); // Show dropdown after successful addition
     } else {
       if (response.data.errorMessages.length > 0) {
         toast.error(response.data.errorMessages[0]);
@@ -65,6 +67,10 @@ const Sidebar = (props) => {
           Add To Cart
         </button>
       </div>
+      <CartDropdown 
+        show={showDropdown} 
+        onClose={() => setShowDropdown(false)} 
+      />
     </div>
   );
 };
