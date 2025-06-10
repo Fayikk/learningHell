@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useGetShoppingCartQuery } from '../../../api/shoppingCartApi';
 import './CartDropdown.css';
-
+import { MatchLocationToCurrency } from '../../../main-component/Extensions/MatchLocationToCurrency';
 const CartDropdown = ({ show, onClose }) => {
     const { data } = useGetShoppingCartQuery();
     const [courses, setCourses] = useState([]);
@@ -36,7 +36,7 @@ const CartDropdown = ({ show, onClose }) => {
                         />
                         <div className="cart-item-details">
                             <p className="cart-item-name">{course.courseName}</p>
-                            <p className="cart-item-price">${course.price}</p>
+                            <p className="cart-item-price">{MatchLocationToCurrency()}{course.coursePrice}</p>
                         </div>
                     </div>
                 ))}
