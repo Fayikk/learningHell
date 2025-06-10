@@ -6,7 +6,7 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import {Link, useLocation, useNavigate} from "react-router-dom";
+import {Link, useLocation, useNavigate, useSearchParams} from "react-router-dom";
 import './style.scss';
 import { useSignInMutation,useSignInWithGoogleMutation } from '../../api/accountApi';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
@@ -21,13 +21,8 @@ const LoginPage = (props) => {
     const [Login] = useSignInMutation();
     const [LoginWithGoogle] = useSignInWithGoogleMutation();
     const location = useLocation();
-    
-    // Check for returnUrl in query parameters
-    const searchParams = new URLSearchParams(location.search);
-    const returnUrl = searchParams.get('returnUrl');
-    
-    // Use returnUrl if available, otherwise use from or default to home
-    const from = returnUrl || location.state?.from || "/home";
+    const [searchParams] = useSearchParams();
+    const returnUrl = searchParams.get('returnUrl') || '/home';
     
     const [loader,setLoader] = useState(false);
     const recaptcha = useRef()
@@ -52,37 +47,13 @@ const LoginPage = (props) => {
           return;
         }
         
-        var decodeJwt = jwtDecode(response.credential)
-        // const tokenBlob = new Blob([JSON.stringify({ tokenId: response.tokenId }, null, 2)], { type: 'application/json' });
-        // const options = {
-        //   method: 'POST',
-        //   body: tokenBlob,
-        //   mode: 'cors',
-        //   cache: 'default'
-        // };
-        // fetch(config.GOOGLE_AUTH_CALLBACK_URL, options)
-        //   .then(r => {
-        //     r.json().then(user => {
-        //       const token = user.token;
-        //       this.props.login(token);
-        //     });
-        //   })
-
         var tokenResult = await LoginWithGoogle({
-            credential:response.credential
+            credential: response.credential
         });
-        if(tokenResult.data.errorMessages.length > 0){
-            toast.warning(tokenResult.data.errorMessages[0]);
-            setLoader(false);
-            return;}
-
         if (tokenResult && tokenResult.data && tokenResult.data.result && tokenResult.data.result.accessToken) {
-            localStorage.setItem("token",tokenResult.data.result.accessToken);
+            localStorage.setItem("token", tokenResult.data.result.accessToken);
             localStorage.setItem("refreshToken", tokenResult.data.result.refreshToken);
-            
-            // Redirect to returnUrl if available
-            push(from, {replace: true});
-            toast.success('Google ile başarıyla giriş yaptınız!');
+            push(returnUrl);
         }
      
         
@@ -126,7 +97,7 @@ const LoginPage = (props) => {
                         setLoader(false);
                         
                         // Redirect to returnUrl if available
-                        push(from, {replace: true});
+                        push(decodeURIComponent(returnUrl));
                     }
                 } else {
                     validator.showMessages();

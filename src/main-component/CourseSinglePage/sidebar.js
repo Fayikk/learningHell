@@ -11,11 +11,14 @@ const Sidebar = (props) => {
   const [addBasketItem] = useAddShoppingCartItemMutation();
   const dispatch = useDispatch();
   const userDetail = useSelector((state) => state.authStore.nameIdentifier);
-
+  const navigate = useNavigate();
 
   const addBasket = async () => {
     if (userDetail === "") {
-      toast.warning("You Must SignIn For Before  Add The Basket Item");
+      toast.info("Please sign in to add this course to your cart");
+      const currentPath = `/course-single/${props.courseDetail.courseId}`;
+      const returnUrl = encodeURIComponent(currentPath);
+      navigate(`/login?returnUrl=${returnUrl}`);
       return;
     }
 
