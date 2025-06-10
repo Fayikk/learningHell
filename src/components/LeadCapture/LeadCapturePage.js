@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRegisterNewsLetterMutation } from '../../api/newsLetterApi';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../Navbar/Navbar';
+import Footer from '../footer/Footer';
 
 const LeadCapturePage = () => {
   const [email, setEmail] = useState('');
@@ -89,12 +91,12 @@ const LeadCapturePage = () => {
     setEmail(e.target.value.trim());
   }, []);
 
-  // Benefits array'ini memoize et
+  // Benefits array'ini güncelle
   const benefits = useMemo(() => [
-    '✅ ChatGPT ile Para Kazanma Teknikleri',
-    '✅ 1 Saatte Web Sitesi Yapma',
-    '✅ AI ile E-Ticaret Kurma',
-    '✅ Sıfırdan Mobil Uygulama Geliştirme'
+    '🎓 Tüm kurslarda geçerli',
+    '💰 100 TL değerinde kupon',
+    '🕒 Anında hesabınıza tanımlanır',
+    '📱 Mobil ve masaüstünde kullanılabilir'
   ], []);
 
   // Formatlı zamanı memoize et
@@ -105,6 +107,8 @@ const LeadCapturePage = () => {
   }), [timeLeft.hours, timeLeft.minutes, timeLeft.seconds]);
 
   return (
+    <>
+    <Navbar />
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800 relative overflow-hidden">
       {/* Animated Background - React.memo ile sarmalanmış komponente taşınabilir */}
       <div className="absolute inset-0">
@@ -118,7 +122,7 @@ const LeadCapturePage = () => {
           {/* Urgency Timer */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 bg-red-500 text-white px-6 py-3 rounded-full text-lg font-bold animate-pulse">
-              ⏰ Kampanya Bitiyor: 
+              ⏰ Kupon Süresi Doluyor: 
               <span className="tabular-nums">
                 {formattedTime.hours}:{formattedTime.minutes}:{formattedTime.seconds}
               </span>
@@ -130,15 +134,15 @@ const LeadCapturePage = () => {
             <div className="text-white space-y-6">
               <h1 className="text-4xl lg:text-6xl font-bold leading-tight">
                 <span className="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
-                  ÜCRETSİZ
+                  100 TL
                 </span>
                 <br />
-                Yapay Zeka Eğitimi
+                Hoşgeldin Kuponu
               </h1>
               
               <p className="text-xl lg:text-2xl text-gray-200 leading-relaxed">
-                <strong className="text-yellow-400">2025'ün en popüler becerilerini</strong> öğrenin ve 
-                <strong className="text-green-400"> maaşınızı 3 katına</strong> çıkarın
+                Hemen kaydol, <strong className="text-yellow-400">100 TL değerinde kupon</strong> kazanarak 
+                <strong className="text-green-400"> eğitimlerimize indirimli başla!</strong>
               </p>
 
               {/* Social Proof */}
@@ -150,7 +154,7 @@ const LeadCapturePage = () => {
                 </div>
                 <div>
                   <div className="text-yellow-400 font-bold">12,847+ öğrenci</div>
-                  <div className="text-sm text-gray-300">bu hafta kaydoldu</div>
+                  <div className="text-sm text-gray-300">kuponlarını kullandı</div>
                 </div>
               </div>
 
@@ -168,10 +172,10 @@ const LeadCapturePage = () => {
             <div className="bg-white rounded-3xl shadow-2xl p-8 lg:p-10">
               <div className="text-center mb-8">
                 <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                  Şimdi Başla!
+                  Kuponunu Hemen Al!
                 </h2>
                 <p className="text-gray-600">
-                  E-postanı gir, <span className="font-bold text-green-600">%100 ücretsiz</span> erişim kazan
+                  E-postanı gir, <span className="font-bold text-green-600">100 TL değerinde kupon</span> kazanmaya başla
                 </p>
               </div>
 
@@ -202,7 +206,7 @@ const LeadCapturePage = () => {
                       Gönderiliyor...
                     </div>
                   ) : (
-                    '🚀 ÜCRETSİZ ERİŞİM KAZAN'
+                    '🚀 Kuponu Gönder'
                   )}
                 </button>
               </div>
@@ -214,20 +218,20 @@ const LeadCapturePage = () => {
                     <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                     </svg>
-                    100% Güvenli
+                    Anında Tanımlanır
                   </div>
                   <div className="flex items-center gap-1">
                     <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
                       <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                     </svg>
-                    Spam Yok
+                    Tüm Kurslarda Geçerli
                   </div>
                   <div className="flex items-center gap-1">
                     <svg className="w-4 h-4 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                     </svg>
-                    Anında Erişim
+                    Sınırsız Geçerlilik
                   </div>
                 </div>
               </div>
@@ -239,14 +243,16 @@ const LeadCapturePage = () => {
             <div className="flex flex-wrap justify-center items-center gap-8 text-white/60">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <span>2,341 kişi şu anda online</span>
+                <span>2,341 kişi şu anda kupon kazandı</span>
               </div>
-              <div>⭐⭐⭐⭐⭐ 4.9/5 (8,242 değerlendirme)</div>
+              <div>⭐⭐⭐⭐⭐ 4.9/5 (8,242 kullanıcı değerlendirmesi)</div>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <Footer />
+    </>
   );
 };
 
