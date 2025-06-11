@@ -1,8 +1,9 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import Grid from "@mui/material/Grid";
 import SimpleReactValidator from "simple-react-validator";
 import {toast} from "react-toastify";
 import TextField from "@mui/material/TextField";
+import { useRef } from 'react';
 import Button from "@mui/material/Button";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
@@ -115,7 +116,7 @@ const LoginPage = (props) => {
                         
                         toast.success('You successfully logged in to Eduko!');
                         setLoader(false);
-                        push(from, {replace: true});
+                        push(returnUrl || '/home');
                     }
                 } else {
                     validator.showMessages();

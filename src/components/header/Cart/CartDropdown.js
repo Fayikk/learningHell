@@ -38,6 +38,9 @@ const CartDropdown = ({ show, onClose }) => {
         return courses.reduce((total, course) => total + course.coursePrice, 0);
     };
 
+
+    console.log(userDetail, "userDetail");
+
     if (!show) return null;
 
     return (
@@ -68,9 +71,17 @@ const CartDropdown = ({ show, onClose }) => {
                                 <Link to="/cart" onClick={onClose} className="theme-btn">
                                     {t("View Cart")}
                                 </Link>
-                                <Link to={userDetail ? "/checkout" : "/login"} onClick={onClose} className="theme-btn theme-btn-s2">
-                                    {userDetail ? t("Checkout") : t("Sign in to Checkout")}
-                                </Link>
+                                {                                    !userDetail ? (
+                                        <Link 
+                                            to={`/login?returnUrl=${encodeURIComponent('/cart')}`} 
+                                            onClick={onClose} 
+                                            className="theme-btn theme-btn-s2"
+                                        >
+                                            {t("Sign in to Checkout")}
+                                        </Link>
+                                    ) : ""
+                                }
+
                             </div>
                         </div>
                     </>                ) : (
