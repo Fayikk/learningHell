@@ -1,11 +1,10 @@
 import './Styles/Header.css'
 import './Styles/ModernHeader.css'
-import React, { useState, startTransition } from "react";
+import React, { useState, startTransition, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import MobileMenu from "../MobileMenu/MobileMenu";
 import Logo from "../../images/logo/LH.png";
 import HeaderTopbar from "../HeaderTopbar/HeaderTopbar";
-import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { InitialState, setLoggedInUser } from "../../store/reducers/authSlice";
 import { useSelector } from "react-redux";
@@ -25,10 +24,14 @@ import { ThemeProvider } from "../../main-component/Extensions/Theme/ThemeProvid
 import ThemeToggle from "../../main-component/Extensions/Theme/ThemeToggle";
 import { useRef } from 'react';
 import { rootBaseUrl } from '../../api/Base/baseApiModel';
+import CartDropdown from './Cart/CartDropdown';
+
 const Header = ({ props, onAuthStateChange }) => {
+  const [showCartDropdown, setShowCartDropdown] = useState(false);
   const [menuActive, setMenuState] = useState(false);
   const authenticationState = useSelector((state) => state.authStore);
   const cartCounter = useSelector((state) => state.cartStore.cartCounter);
+  const guestCart = useSelector((state) => state.guestCartStore);
   const Navigate = useNavigate();
   const Dispatch = useDispatch();
   const { t, i18n } = useTranslation();
@@ -45,22 +48,19 @@ const Header = ({ props, onAuthStateChange }) => {
   //     Dispatch(cartStateUpdate(data.result.courses.length));
   //   }
   // }, [data]);
-
-  useEffect(()=>{
-    if (data) {
-      if (data.result != null) {
-        Dispatch(cartStateUpdate(data.result.courses.length))
-
+  useEffect(() => {
+    if (authenticationState.nameIdentifier) {
+      // Giriş yapmış kullanıcı - sunucu sepet sayısını kullan
+      if (data && data.result != null) {
+        Dispatch(cartStateUpdate(data.result.courses.length));
+      } else {
+        Dispatch(cartStateUpdate(0));
       }
-      else {
-    Dispatch(cartStateUpdate(0))
-
-      }
-     
-    } 
-
-
-  },[data])
+    } else {
+      // Misafir kullanıcı - yerel sepet sayısını kullan
+      Dispatch(cartStateUpdate(guestCart.items.length));
+    }
+  }, [data, authenticationState.nameIdentifier, guestCart])
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -139,6 +139,17 @@ const Header = ({ props, onAuthStateChange }) => {
   const SubmitHandler = (e) => {
     e.preventDefault();
   };
+
+  // Force re-render when language changes
+  useEffect(() => {
+    const currentLang = i18n.language;
+    const savedLang = localStorage.getItem("language");
+    
+    // If there's a saved language preference, use it
+    if (savedLang && savedLang !== currentLang) {
+      changeLanguage(savedLang);
+    }
+  }, [i18n.language]); // This will run whenever the language changes
 
   const changeLanguage = (lng) => {
     localStorage.setItem("language", lng);
@@ -247,10 +258,20 @@ const Header = ({ props, onAuthStateChange }) => {
                     
                     {/* Cart */}
                     <li className="modern-menu-item">
-                      <Link onClick={ClickHandler} to="/cart" className="modern-menu-link">
+                      <button 
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setShowCartDropdown(!showCartDropdown);
+                        }} 
+                        className="modern-menu-link"
+                      >
                         <CiShoppingCart />
                         <span className="cart-counter">{cartCounter}</span>
-                      </Link>
+                      </button>
+                      <CartDropdown 
+                        show={showCartDropdown} 
+                        onClose={() => setShowCartDropdown(false)}
+                      />
                     </li>
                   </ul>
                 </div>
@@ -395,22 +416,12 @@ const Header = ({ props, onAuthStateChange }) => {
                   <div className="language-selector">
                     <button className="language-button">
                       <TbWorld />
-                    </button>
-                    <div className="language-dropdown">
+                    </button>                    <div className="language-dropdown">
                       <div className="language-option" onClick={() => changeLanguage("tr")}>
                         <span>Türkçe</span>
                       </div>
                       <div className="language-option" onClick={() => changeLanguage("en")}>
                         <span>English</span>
-                      </div>
-                      <div className="language-option" onClick={() => changeLanguage("de")}>
-                        <span>Deutsch</span>
-                      </div>
-                      <div className="language-option" onClick={() => changeLanguage("ru")}>
-                        <span>РУССКИЙ</span>
-                      </div>
-                      <div className="language-option" onClick={() => changeLanguage("hi")}>
-                        <span>हिंदी</span>
                       </div>
                     </div>
                   </div>

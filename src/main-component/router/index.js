@@ -88,7 +88,7 @@ const AllRoute = () => {
           <Route path='become-teacher' element={<PrivateRoute><GoogleTag /><BeComeTeacherPage /></PrivateRoute>} />
           <Route path="shop" element={<><GoogleTag /><ShopPage /></>} />
           <Route path='product-single/:slug' element={<><GoogleTag /><ProductSinglePage /></>} />
-          <Route path='cart' element={<PrivateRoute><GoogleTag /><CartPage /></PrivateRoute>} />
+          <Route path='cart' element={<><GoogleTag /><CartPage /></>} />
           <Route path='checkout' element={<><GoogleTag /><CheckoutPage /></>} />
           <Route path='supervisor/evaluatecourses' element={<><GoogleTag /><EvaluateCourses /></>} />
           <Route path='order_received' element={<><GoogleTag /><OrderRecived /></>} />

@@ -28,7 +28,7 @@ const CourseSinglePage = () => {
   const [cart, setCart] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const authenticationState = useSelector(
-    (state) => state.authStore
+    (state) => state.authStore.nameIdentifier
   );
   const courseData = data?.result?.item1;
   const reviews = [
@@ -100,16 +100,26 @@ const CourseSinglePage = () => {
     }
 
     async function CheckActiveCourse() {
-      const decode = jwtDecode(localStorage.getItem("token"));
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          const decode = jwtDecode(token);
+          const model = {
+            userId: decode.nameid,
+            courseId: data?.result?.item1?.courseId,
+          };
 
-      const model = {
-        userId: decode.nameid,
-        courseId: data?.result?.item1?.courseId,
-      };
-
-      await CheckHasThisCourse(model).then((response) => {
-        setIsEnrolledCourse(response.data);
-      });
+          await CheckHasThisCourse(model).then((response) => {
+            setIsEnrolledCourse(response.data);
+          });
+        } catch (error) {
+          console.error("Error decoding token:", error);
+          setIsEnrolledCourse(false);
+        }
+      } else {
+        // Handle guest user
+        setIsEnrolledCourse(false);
+      }
     }
     CheckActiveCourse();
   }, [isLoading]);

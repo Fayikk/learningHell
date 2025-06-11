@@ -32,6 +32,7 @@ import { bootcampScheduleApi } from "../api/bootcampScheduleApi";
 import { enrollmentApi } from "../api/enrollmentApi";
 import { bootcampInstructorDetailApi } from "../api/bootcampInstructorDetailApi";
 import { freeContentApi } from "../api/freeContentApi";
+import guestCartReducer from './reducers/guestCartSlice';
 
 
 
@@ -75,6 +76,7 @@ const store = configureStore({
 
         authStore:authenticationReducer,
         cartStore:cartReducer,
+        guestCartStore: guestCartReducer,
         locationStore:locationReducer,
        
         [accountApi.reducerPath]:accountApi.reducer,

@@ -17,6 +17,7 @@ import MesafeliSatis from '../../agrements/MesafeliSatis'
 import TeslimatVeIade from '../../agrements/TeslimatVeIade';
 import GizlilikPolitikasi from '../../agrements/GizlilikPolitikasi';
 import { MatchLocationToCurrency } from '../../main-component/Extensions/MatchLocationToCurrency';
+import { useNavigate } from "react-router-dom";
 // images
 import visa from '../../images/icon/visa.png';
 import mastercard from '../../images/icon/mastercard.png';
@@ -43,15 +44,26 @@ const cardType = [
     },
 ];
 
-
 const CheckoutSection = ({cartList}) => {
-    // states
+    const navigate = useNavigate();
+    const userDetail = useSelector((state) => state.authStore);
 
+    console.log("trigger userDetails",userDetail);
+
+
+    useEffect(() => {
+        if (!userDetail) {
+            navigate("/login", { state: { from: "/checkout" } });
+            return;
+        }
+    }, [userDetail, navigate]);
+
+    // states
     const [applyCode] = useGetCouponByCodeMutation();
-    const cartState = useSelector((state) => state.cartStore)
-    const [cartLists,setCartLists] =useState([]);
-    const basketItems = localStorage.getItem("basketItems")
-    let cartItems = JSON.parse(basketItems)
+    const cartState = useSelector((state) => state.cartStore);
+    const guestCart = useSelector((state) => state.guestCartStore);
+    const [cartLists,setCartLists] = useState([]);
+    const [cartItems, setCartItems] = useState([]);
     const [isAgreementOpen, setIsAgreementOpen] = useState(false);
     const [isRefundAgreementOpen, setIsRefundAgreementOpen] = useState(false);
     const [isSecurityAgreementOpen, setIsSecurityAgreementOpen] = useState(false);
@@ -83,14 +95,23 @@ const CheckoutSection = ({cartList}) => {
         setIsSecurityAgreementOpen(false);
     };
 
-    useEffect(()=>{
-            if (cartState.length > 0) {
-                setCartLists(cartState)
-            }
-
-            
+    useEffect(() => {
+        if (!userDetail) {
+            // Redirect guest users to login with return URL
+            navigate("/login", { state: { from: "/checkout" } });
+            return;
+        }
         
-    },[cartState])
+        // Use server cart or guest cart based on auth status
+        if (userDetail) {
+            const basketItems = localStorage.getItem("basketItems");
+            if (basketItems) {
+                setCartItems(JSON.parse(basketItems));
+            }
+        } else {
+            setCartItems(guestCart.items || []);
+        }
+    }, [userDetail, guestCart])
 
     const [tabs, setExpanded] = React.useState({
         cupon: false,
