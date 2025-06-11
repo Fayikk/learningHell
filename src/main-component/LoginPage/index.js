@@ -25,8 +25,14 @@ const LoginPage = (props) => {
     const [Login] = useSignInMutation();
     const [LoginWithGoogle] = useSignInWithGoogleMutation();
     const [addBasketItem] = useAddShoppingCartItemMutation();
-    const location = useLocation();
-    const from = location.state?.from || "/home";
+   const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const returnUrl = searchParams.get("returnUrl");
+
+  const from = location.state?.from || returnUrl || "/home";
+
+
+
     const [loader, setLoader] = useState(false);
     const recaptcha = useRef();
     const guestCart = useSelector((state) => state.guestCartStore.items);
