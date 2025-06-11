@@ -27,24 +27,35 @@ const Curriculum = ({sections,user,rate}) => {
 
     useEffect(()=>{
             async function CheckActiveCourse(){
-
                 if (sections.Length > 0) {
-                    const model = {
-                        userId:authenticationState.nameIdentifier,
-                        courseId:sections != undefined ? sections[0].courseId : null
-                    }      
+                    const token = localStorage.getItem("token");
+                    if (token && authenticationState.nameIdentifier) {
+                        try {
+                            const model = {
+                                userId: authenticationState.nameIdentifier,
+                                courseId: sections != undefined ? sections[0].courseId : null
+                            };      
 
-                     await  CheckHasThisCourse(model).then((response) => setIsEnrolledCourse(response.response.data))
-                     if (user.id === authenticationState.nameIdentifier) {
-                        setOwnMyCourse(true)
+                            await CheckHasThisCourse(model).then((response) => 
+                                setIsEnrolledCourse(response.response.data)
+                            );
+                            
+                            if (user.id === authenticationState.nameIdentifier) {
+                                setOwnMyCourse(true);
+                            }
+                        } catch (error) {
+                            console.error("Error checking course enrollment:", error);
+                            setIsEnrolledCourse(false);
+                            setOwnMyCourse(false);
+                        }
+                    } else {
+                        // Handle guest user
+                        setIsEnrolledCourse(false);
+                        setOwnMyCourse(false);
                     }
                 }
-              
-             
-
-
-              }
-                CheckActiveCourse();
+            }
+            CheckActiveCourse();
                 
             
     },[authenticationState,sections])

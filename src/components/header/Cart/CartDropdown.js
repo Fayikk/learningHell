@@ -1,17 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useGetShoppingCartQuery } from '../../../api/shoppingCartApi';
+import { useSelector } from 'react-redux';
 import './CartDropdown.css';
 import { MatchLocationToCurrency } from '../../../main-component/Extensions/MatchLocationToCurrency';
+
 const CartDropdown = ({ show, onClose }) => {
     const { data } = useGetShoppingCartQuery();
     const [courses, setCourses] = useState([]);
+    const userDetail = useSelector((state) => state.authStore.nameIdentifier);
+    const guestCart = useSelector((state) => state.guestCartStore);
 
     useEffect(() => {
-        if (data && data.result) {
-            setCourses(data.result.courses || []);
+        if (userDetail) {
+            // Authenticated user - use server cart
+            if (data && data.result) {
+                setCourses(data.result.courses || []);
+            }
+        } else {
+            // Guest user - use guest cart
+            setCourses(guestCart.items || []);
         }
-    }, [data]);
+    }, [data, userDetail, guestCart]);
 
     useEffect(() => {
         if (show) {
@@ -22,27 +32,55 @@ const CartDropdown = ({ show, onClose }) => {
         }
     }, [show, onClose]);
 
+    const calculateTotal = () => {
+        return courses.reduce((total, course) => total + course.coursePrice, 0);
+    };
+
     if (!show) return null;
 
     return (
-        <div className="cart-dropdown">
-            <div className="cart-dropdown-content">
-                {courses.map((course) => (
-                    <div key={course.courseId} className="cart-item">
-                        <img 
-                            src={course.courseImage} 
-                            alt={course.courseName} 
-                            className="cart-item-image"
-                        />
-                        <div className="cart-item-details">
-                            <p className="cart-item-name">{course.courseName}</p>
-                            <p className="cart-item-price">{MatchLocationToCurrency()}{course.coursePrice}</p>
+        <div className="mini-cart-content" style={{ right: show ? '0' : '-320px', opacity: show ? '1' : '0', visibility: show ? 'visible' : 'hidden' }}>
+            <button onClick={onClose} className="mini-cart-close">×</button>
+            <div className="mini-cart-items">
+                {courses.length > 0 ? (
+                    <>
+                        {courses.map((course) => (
+                            <div key={course.courseId} className="mini-cart-item">
+                                <div className="mini-cart-item-image">
+                                    <img src={course.courseImage} alt={course.courseName} />
+                                </div>
+                                <div className="mini-cart-item-des">
+                                    <Link to={`/course/${course.courseId}`} onClick={onClose}>
+                                        {course.courseName}
+                                    </Link>
+                                    <span className="mini-cart-item-price">
+                                        {MatchLocationToCurrency()}{course.coursePrice}
+                                    </span>
+                                </div>
+                            </div>
+                        ))}
+                        <div className="mini-cart-action">
+                            <span className="mini-checkout-price">
+                                Total: {MatchLocationToCurrency()}{calculateTotal()}
+                            </span>
+                            <div className="mini-btn">
+                                <Link to="/cart" onClick={onClose} className="theme-btn">
+                                    View Cart
+                                </Link>
+                                <Link to={userDetail ? "/checkout" : "/login"} onClick={onClose} className="theme-btn theme-btn-s2">
+                                    {userDetail ? "Checkout" : "Sign in to Checkout"}
+                                </Link>
+                            </div>
                         </div>
+                    </>
+                ) : (
+                    <div className="empty-cart">
+                        <p>Your cart is empty</p>
+                        <Link to="/course-3" onClick={onClose} className="theme-btn">
+                            Browse Courses
+                        </Link>
                     </div>
-                ))}
-                <Link to="/cart" className="go-to-cart-btn">
-                    Go to Cart
-                </Link>
+                )}
             </div>
         </div>
     );

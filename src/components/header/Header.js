@@ -29,6 +29,7 @@ const Header = ({ props, onAuthStateChange }) => {
   const [menuActive, setMenuState] = useState(false);
   const authenticationState = useSelector((state) => state.authStore);
   const cartCounter = useSelector((state) => state.cartStore.cartCounter);
+  const guestCart = useSelector((state) => state.guestCartStore);
   const Navigate = useNavigate();
   const Dispatch = useDispatch();
   const { t, i18n } = useTranslation();
@@ -45,22 +46,19 @@ const Header = ({ props, onAuthStateChange }) => {
   //     Dispatch(cartStateUpdate(data.result.courses.length));
   //   }
   // }, [data]);
-
-  useEffect(()=>{
-    if (data) {
-      if (data.result != null) {
-        Dispatch(cartStateUpdate(data.result.courses.length))
-
+  useEffect(() => {
+    if (authenticationState.nameIdentifier) {
+      // Giriş yapmış kullanıcı - sunucu sepet sayısını kullan
+      if (data && data.result != null) {
+        Dispatch(cartStateUpdate(data.result.courses.length));
+      } else {
+        Dispatch(cartStateUpdate(0));
       }
-      else {
-    Dispatch(cartStateUpdate(0))
-
-      }
-     
-    } 
-
-
-  },[data])
+    } else {
+      // Misafir kullanıcı - yerel sepet sayısını kullan
+      Dispatch(cartStateUpdate(guestCart.items.length));
+    }
+  }, [data, authenticationState.nameIdentifier, guestCart])
 
   useEffect(() => {
     if (navigator.geolocation) {

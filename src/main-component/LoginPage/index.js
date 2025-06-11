@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import Grid from "@mui/material/Grid";
 import SimpleReactValidator from "simple-react-validator";
 import {toast} from "react-toastify";
@@ -6,26 +6,30 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import {Link, useLocation, useNavigate, useSearchParams} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import './style.scss';
-import { useSignInMutation,useSignInWithGoogleMutation } from '../../api/accountApi';
+import { useSignInMutation, useSignInWithGoogleMutation } from '../../api/accountApi';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import config from "../config.json"
 import GoogleRecaptcha from '../../Environments/GoogleRecaptcha';
-import ReCAPTCHA from 'react-google-recaptcha'
-import { useRef } from 'react';
+import ReCAPTCHA from 'react-google-recaptcha';
 import { Spinner } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearGuestCart } from '../../store/reducers/guestCartSlice';
+import { useAddShoppingCartItemMutation } from '../../api/shoppingCartApi';
+
 const LoginPage = (props) => {
-    const push = useNavigate()
+    const push = useNavigate();
     const [Login] = useSignInMutation();
     const [LoginWithGoogle] = useSignInWithGoogleMutation();
+    const [addBasketItem] = useAddShoppingCartItemMutation();
     const location = useLocation();
-    const [searchParams] = useSearchParams();
-    const returnUrl = searchParams.get('returnUrl') || '/home';
-    
-    const [loader,setLoader] = useState(false);
-    const recaptcha = useRef()
+    const from = location.state?.from || "/home";
+    const [loader, setLoader] = useState(false);
+    const recaptcha = useRef();
+    const guestCart = useSelector((state) => state.guestCartStore.items);
+    const dispatch = useDispatch();
 
     const [value, setValue] = useState({
         email: '',
@@ -33,18 +37,15 @@ const LoginPage = (props) => {
         remember: false,
     });
 
-
     const changeHandler = (e) => {
         setValue({...value, [e.target.name]: e.target.value});
         validator.showMessages();
     };
-
-
     
-    const googleResponse =async (response) => {
+    const googleResponse = async (response) => {
         if (!response.credential) {
-          console.error("Unable to get clientId from Google", response)
-          return;
+            console.error("Unable to get clientId from Google", response);
+            return;
         }
         
         var tokenResult = await LoginWithGoogle({
@@ -53,14 +54,30 @@ const LoginPage = (props) => {
         if (tokenResult && tokenResult.data && tokenResult.data.result && tokenResult.data.result.accessToken) {
             localStorage.setItem("token", tokenResult.data.result.accessToken);
             localStorage.setItem("refreshToken", tokenResult.data.result.refreshToken);
-            push(returnUrl);
+            
+            // Merge guest cart after Google login
+            await mergeGuestCart();
+            push(from, {replace: true});
         }
-     
-        
-          
-      };
+    };
 
-
+    const mergeGuestCart = async () => {
+        // If there are items in guest cart, add them to authenticated cart
+        if (guestCart && guestCart.length > 0) {
+            for (const item of guestCart) {
+                try {
+                    await addBasketItem({
+                        courseId: item.courseId
+                    });
+                } catch (error) {
+                    console.error("Error adding guest cart item:", error);
+                }
+            }
+            // Clear guest cart after merging
+            dispatch(clearGuestCart());
+            toast.success("Your guest cart items have been added to your account");
+        }
+    };
 
     const rememberHandler = () => {
         setValue({...value, remember: !value.remember});
@@ -70,53 +87,49 @@ const LoginPage = (props) => {
         className: 'errorMessage'
     }));
 
-
-
-    const submitForm = async (e)  => {
+    const submitForm = async (e) => {
         e.preventDefault();
         setLoader(true);
-        const captchaValue = recaptcha.current.getValue()
+        const captchaValue = recaptcha.current.getValue();
         if (!captchaValue) {
-        setLoader(false);
-
-            alert("Please fill the I'm not robot")
-        }
-        else {await Login({
-                userName:value.email,
-                password:value.password
-            }).then((response) => {
+            setLoader(false);
+            alert("Please fill the I'm not robot");
+        } else {
+            try {
+                const response = await Login({
+                    userName: value.email,
+                    password: value.password
+                });
+                
                 if (validator.allValid() && response.data.isSuccess) {
                     validator.hideMessages();
         
                     const userRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
                     const email = value.email;
                     if (email.match(userRegex)) {
-                        localStorage.setItem("token",response.data.result.accessToken)
-                        localStorage.setItem("refreshToken",response.data.result.refreshToken)
-                        toast.success('LearningHell\'e başarıyla giriş yaptınız!');
-                        setLoader(false);
+                        localStorage.setItem("token", response.data.result.accessToken);
+                        localStorage.setItem("refreshToken", response.data.result.refreshToken);
                         
-                        // Redirect to returnUrl if available
-                        push(decodeURIComponent(returnUrl));
+                        // Merge guest cart after successful login
+                        await mergeGuestCart();
+                        
+                        toast.success('You successfully logged in to Eduko!');
+                        setLoader(false);
+                        push(from, {replace: true});
                     }
                 } else {
                     validator.showMessages();
                     toast.error(response.data.errorMessages[0]);
-            setLoader(false);
-    
+                    setLoader(false);
                 }
-            })
-           
-        setLoader(false);
-
-
+            } catch (error) {
+                console.error("Login error:", error);
+                toast.error("An error occurred during login");
+                setLoader(false);
+            }
         }
-
-
-
-
-      
     };
+
     return (
         <Grid className="loginWrapper">
             <Grid className="loginForm">
@@ -168,38 +181,29 @@ const LoginPage = (props) => {
                                 <Link to="/forgot-password">Forgot Password?</Link>
                             </Grid>
                             <Grid className="formFooter">
-                                <Button fullWidth className="cBtnTheme" disabled={loader}  type="submit">
-                                    
-                                {loader ? <Spinner animation="border" sx={{ marginTop: '10px', textAlign: 'center' }} />: "Login" }
-                                    </Button>
+                                <Button fullWidth className="cBtnTheme" disabled={loader} type="submit">
+                                    {loader ? <Spinner animation="border"/> : "Login"}
+                                </Button>
                             </Grid>
                             <Grid>
-                            <div className="loginWithCaptcha" style={{alignItems:"center",justifyContent:"center",marginLeft:"50px",marginTop:"20px"}} >
-                            <ReCAPTCHA  ref={recaptcha} sitekey={GoogleRecaptcha.REACT_APP_SITE_KEY} />
-                            </div>
+                                <div className="loginWithCaptcha" style={{alignItems:"center", justifyContent:"center", marginLeft:"50px", marginTop:"20px"}}>
+                                    <ReCAPTCHA ref={recaptcha} sitekey={GoogleRecaptcha.REACT_APP_SITE_KEY} />
+                                </div>
                             </Grid>
                            
                             <Grid className="loginWithSocial">
                                 <div>
-                                    <GoogleOAuthProvider clientId={config.GOOGLE_CLIENT_ID} >
-                                            <GoogleLogin
-                                                clientId={config.GOOGLE_CLIENT_ID}
-                                                buttonText="Google Login"
-                                                onSuccess={googleResponse}
-                                                onFailure={googleResponse}
-                                            />                                    
+                                    <GoogleOAuthProvider clientId={config.GOOGLE_CLIENT_ID}>
+                                        <GoogleLogin
+                                            clientId={config.GOOGLE_CLIENT_ID}
+                                            buttonText="Google Login"
+                                            onSuccess={googleResponse}
+                                            onFailure={googleResponse}
+                                        />                                    
                                     </GoogleOAuthProvider>
-     
-                               </div>
-                                    
-                                {/* <Button className="twitter"><i className="fa fa-twitter"></i></Button>
-                                <Button className="linkedin"><i className="fa fa-linkedin"></i></Button> */}
+                                </div>
                             </Grid>
-                     
-                          
-                      
-                            <p className="noteHelp">Don't have an account? <Link to="/register">Create free account</Link>
-                            </p>
+                            <p className="noteHelp">Don't have an account? <Link to="/register">Create free account</Link></p>
                         </Grid>
                     </Grid>
                 </form>
@@ -208,7 +212,7 @@ const LoginPage = (props) => {
                 </div>
             </Grid>
         </Grid>
-    )
+    );
 };
 
 export default LoginPage;
