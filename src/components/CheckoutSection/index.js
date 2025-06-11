@@ -46,9 +46,21 @@ const cardType = [
 
 const CheckoutSection = ({cartList}) => {
     const navigate = useNavigate();
+    const userDetail = useSelector((state) => state.authStore);
+
+    console.log("trigger userDetails",userDetail);
+
+
+    useEffect(() => {
+        if (!userDetail) {
+            navigate("/login", { state: { from: "/checkout" } });
+            return;
+        }
+    }, [userDetail, navigate]);
+
+    // states
     const [applyCode] = useGetCouponByCodeMutation();
     const cartState = useSelector((state) => state.cartStore);
-    const userDetail = useSelector((state) => state.authStore.nameIdentifier);
     const guestCart = useSelector((state) => state.guestCartStore);
     const [cartLists,setCartLists] = useState([]);
     const [cartItems, setCartItems] = useState([]);
