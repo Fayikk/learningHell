@@ -9,8 +9,9 @@ i18n
   .use(LanguageDetector)
   .use(HttpApi)
   .init({
-    fallbackLng: "en",
-    supportedLngs: ["en", "tr", "de", "hi", "ru"],
+    fallbackLng: "tr",
+    supportedLngs: ["tr", "en"],
+    lng: "tr", // Default language
     react: {
       useSuspense: false,
     },

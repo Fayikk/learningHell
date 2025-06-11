@@ -4,8 +4,10 @@ import { useGetShoppingCartQuery } from '../../../api/shoppingCartApi';
 import { useSelector } from 'react-redux';
 import './CartDropdown.css';
 import { MatchLocationToCurrency } from '../../../main-component/Extensions/MatchLocationToCurrency';
+import { useTranslation } from 'react-i18next';
 
 const CartDropdown = ({ show, onClose }) => {
+    const { t } = useTranslation();
     const { data } = useGetShoppingCartQuery();
     const [courses, setCourses] = useState([]);
     const userDetail = useSelector((state) => state.authStore.nameIdentifier);
@@ -58,26 +60,24 @@ const CartDropdown = ({ show, onClose }) => {
                                     </span>
                                 </div>
                             </div>
-                        ))}
-                        <div className="mini-cart-action">
+                        ))}                            <div className="mini-cart-action">
                             <span className="mini-checkout-price">
-                                Total: {MatchLocationToCurrency()}{calculateTotal()}
+                                {t("Total")}: {MatchLocationToCurrency()}{calculateTotal()}
                             </span>
                             <div className="mini-btn">
                                 <Link to="/cart" onClick={onClose} className="theme-btn">
-                                    View Cart
+                                    {t("View Cart")}
                                 </Link>
                                 <Link to={userDetail ? "/checkout" : "/login"} onClick={onClose} className="theme-btn theme-btn-s2">
-                                    {userDetail ? "Checkout" : "Sign in to Checkout"}
+                                    {userDetail ? t("Checkout") : t("Sign in to Checkout")}
                                 </Link>
                             </div>
                         </div>
-                    </>
-                ) : (
+                    </>                ) : (
                     <div className="empty-cart">
-                        <p>Your cart is empty</p>
+                        <p>{t("Your cart is empty")}</p>
                         <Link to="/course-3" onClick={onClose} className="theme-btn">
-                            Browse Courses
+                            {t("Browse Courses")}
                         </Link>
                     </div>
                 )}
