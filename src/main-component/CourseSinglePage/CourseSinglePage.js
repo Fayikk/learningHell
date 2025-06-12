@@ -28,7 +28,7 @@ const CourseSinglePage = () => {
   const [cart, setCart] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const authenticationState = useSelector(
-    (state) => state.authStore.nameIdentifier
+    (state) => state.authStore
   );
   const courseData = data?.result?.item1;
   const reviews = [
@@ -133,7 +133,7 @@ const CourseSinglePage = () => {
     navigate(`/lessons/${course.courseId}`);
   };
   const giftCourseThisUser = async () => {
-    console.log("trigger");
+    console.log("triggergiftCourseThisUser",authenticationState);
     const courseModel = {
       email: authenticationState.email,
       courseId: slug
