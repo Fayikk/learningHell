@@ -1352,7 +1352,6 @@ function  BootcampDetail() {
       />
     )}
 <div className="whatsapp-container">
-  <div className="whatsapp-promo">Bizimle İletişime Geç İndirimi Yakala!</div>
   <div className="whatsapp-button-container">
     <a 
       href="https://wa.me/905310149046" 
